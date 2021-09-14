@@ -6,6 +6,8 @@
 
 #include "EasyShape/EasyShape.h"
 
+#include </home/chli/OpenCV/opencv-3.4.10/build/installed/include/opencv2/opencv.hpp>
+
 class BoundaryController
 {
 public:

@@ -30,7 +30,10 @@ HEADERS += \
     EasyShape/EasyLine2D.h \
     EasyShape/EasyIntersection2D.h \
     EasyShape/EasyPolygon2D.h \
-    EasyShape/EasyComputation.h
+    EasyShape/EasyComputation.h \
+
+HEADERS += \
+    EasyShape/EasyShape.h
 
 # SpaceController
 SOURCES += \

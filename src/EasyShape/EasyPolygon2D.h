@@ -24,6 +24,9 @@ public:
     bool setID(
         const int &id_data);
 
+    bool updateRect(
+        const EasyPoint2D &new_point);
+
     bool addPoint(
         const EasyPoint2D &point_2d);
 
@@ -46,6 +49,8 @@ public:
         EasyRect2D &rect_2d);
 
     std::vector<EasyPoint2D> point_list;
+
+    EasyRect2D rect;
 };
 
 #endif //EASYPOLYGON_H

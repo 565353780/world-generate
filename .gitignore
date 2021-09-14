@@ -17,4 +17,5 @@ ui_*
 compile_commands.json
 *.qrc
 .qm
+*.user
 

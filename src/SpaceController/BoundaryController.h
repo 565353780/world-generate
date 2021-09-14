@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 
-#include "EasyShape/EasyComputation.h"
+#include "EasyShape/EasyShape.h"
 
 class BoundaryController
 {
@@ -13,8 +13,13 @@ public:
     {
     }
 
+    bool setBoundary(
+        std::vector<EasyPoint2D> &boundary_point_vec);
+
+    bool showBoundary();
+
 private:
-    // std::vector<>
+    EasyPolygon2D boundary_;
 };
 
 #endif //BOUNDARY_CONTROLLER_H

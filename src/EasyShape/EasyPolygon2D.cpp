@@ -1,4 +1,5 @@
 #include "EasyPolygon2D.h"
+#include <limits>
 
 bool EasyPolygon2D::reset()
 {
@@ -7,10 +8,32 @@ bool EasyPolygon2D::reset()
     return true;
 }
 
+bool EasyPolygon2D::updateRect(
+    const EasyPoint2D &new_point)
+{
+    if(point_list.size() == 1)
+    {
+        rect.setPosition(new_point.x, new_point.y, new_point.x, new_point.y);
+
+        return true;
+    }
+
+    float x_min = std::fmin(new_point.x, rect.x_min);
+    float x_max = std::fmax(new_point.x, rect.x_max);
+    float y_min = std::fmin(new_point.y, rect.y_min);
+    float y_max = std::fmax(new_point.y, rect.y_max);
+
+    rect.setPosition(x_min, y_min, x_max, y_max);
+
+    return true;
+}
+
 bool EasyPolygon2D::addPoint(
     const EasyPoint2D &point_2d)
 {
     point_list.emplace_back(point_2d);
+
+    updateRect(point_2d);
 
     return true;
 }
@@ -27,6 +50,8 @@ bool EasyPolygon2D::insertPoint(
 
     point_list.insert(point_list.begin() + insert_idx, point_2d);
 
+    updateRect(point_2d);
+
     return true;
 }
 
@@ -40,6 +65,21 @@ bool EasyPolygon2D::removePoint(
     }
 
     point_list.erase(point_list.begin() + remove_idx);
+
+    float x_min = std::numeric_limits<float>::max();
+    float x_max = std::numeric_limits<float>::min();
+    float y_min = std::numeric_limits<float>::max();
+    float y_max = std::numeric_limits<float>::min();
+
+    for(const EasyPoint2D &point : point_list)
+    {
+        x_min = std::fmin(x_min, point.x);
+        x_max = std::fmax(x_max, point.x);
+        y_min = std::fmin(y_min, point.y);
+        y_max = std::fmax(y_max, point.y);
+    }
+
+    rect.setPosition(x_min, y_min, x_max, y_max);
 
     return true;
 }

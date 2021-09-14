@@ -63,6 +63,10 @@ public:
         const EasyLine2D &line_1,
         const EasyLine2D &line_2);
 
+    static bool isSamePoint(
+        const EasyPoint2D &point_1,
+        const EasyPoint2D &point_2);
+
     static bool isPointInRect(
         const EasyPoint2D &point,
         const EasyRect2D &rect);
@@ -108,10 +112,6 @@ public:
         const EasyLine2D &line_1,
         const EasyLine2D &line_2,
         std::vector<EasyPoint2D> &line_cross_point_vec);
-
-    static bool isSamePoint(
-        const EasyPoint2D &point_1,
-        const EasyPoint2D &point_2);
 
     static bool getPolygonIntersection(
         std::vector<EasyPolygon2D> &polygon_vec,

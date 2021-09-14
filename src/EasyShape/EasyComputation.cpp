@@ -184,6 +184,18 @@ float EasyComputation::getAntiClockWiseAngle(
     return anti_clock_small_angle;
 }
 
+bool EasyComputation::isSamePoint(
+    const EasyPoint2D &point_1,
+    const EasyPoint2D &point_2)
+{
+    if(point_1.x == point_2.x && point_1.y == point_2.y)
+    {
+        return true;
+    }
+
+    return false;
+}
+
 bool EasyComputation::isPointInRect(
     const EasyPoint2D &point,
     const EasyRect2D &rect)
@@ -538,18 +550,6 @@ bool EasyComputation::getBoundedLineCrossPointVec(
     line_cross_point_vec.emplace_back(line_cross_point);
 
     return true;
-}
-
-bool EasyComputation::isSamePoint(
-    const EasyPoint2D &point_1,
-    const EasyPoint2D &point_2)
-{
-    if(point_1.x == point_2.x && point_1.y == point_2.y)
-    {
-        return true;
-    }
-
-    return false;
 }
 
 bool EasyComputation::getPolygonIntersection(
@@ -1060,7 +1060,7 @@ bool EasyComputation::getUnionPolygonPoints(
                 const EasyPolygon2D &split_polygon = polygon_vec[i];
                 std::cout << "current polygon " << i << " :" << std::endl <<
                   "points :" << std::endl;
-                for(int j = 0; j < split_polygon.point_list.size(); ++j)
+                for(size_t j = 0; j < split_polygon.point_list.size(); ++j)
                 {
                     std::cout << "\t" << j << " : [" <<
                       split_polygon.point_list[j].x << "," <<
@@ -1068,14 +1068,14 @@ bool EasyComputation::getUnionPolygonPoints(
                 }
             }
             std::cout << "current intersection:" << std::endl;
-            for(int i = 0; i < intersection_vec.size(); ++i)
+            for(size_t i = 0; i < intersection_vec.size(); ++i)
             {
                 std::cout << "points :" << std::endl;
                 std::cout << "\t" << i << " : [" <<
                   intersection_vec[i].point.x << "," <<
                   intersection_vec[i].point.y << "]" << std::endl;
                 std::cout << "idx :" << std::endl;
-                for(int j = 0;
+                for(size_t j = 0;
                     j < intersection_vec[i].polygon_point_idx_vec_pair_vec.size();
                     ++j)
                 {
@@ -1084,7 +1084,7 @@ bool EasyComputation::getUnionPolygonPoints(
                     std::cout << "\tpolygon id : " <<
                       polygon_line_idx_vec_pair.first << std::endl;
                     std::cout << "\tpolygon line idx :";
-                    for(int k = 0; k < polygon_line_idx_vec_pair.second.size(); ++k)
+                    for(size_t k = 0; k < polygon_line_idx_vec_pair.second.size(); ++k)
                     {
                         std::cout << polygon_line_idx_vec_pair.second[k] << " , ";
                     }
@@ -1268,7 +1268,7 @@ bool EasyComputation::getUnionPolygonVec(
                 const EasyPolygon2D &split_polygon = split_polygon_vec[i];
                 std::cout << "current polygon " << i << " :" << std::endl <<
                   "points :" << std::endl;
-                for(int j = 0; j < split_polygon.point_list.size(); ++j)
+                for(size_t j = 0; j < split_polygon.point_list.size(); ++j)
                 {
                     std::cout << "\t" << j << " : [" <<
                       split_polygon.point_list[j].x << "," <<
@@ -1276,14 +1276,14 @@ bool EasyComputation::getUnionPolygonVec(
                 }
             }
             std::cout << "current intersection:" << std::endl;
-            for(int i = 0; i < split_intersection_vec.size(); ++i)
+            for(size_t i = 0; i < split_intersection_vec.size(); ++i)
             {
                 std::cout << "points :" << std::endl;
                 std::cout << "\t" << i << " : [" <<
                   split_intersection_vec[i].point.x << "," <<
                   split_intersection_vec[i].point.y << "]" << std::endl;
                 std::cout << "idx :" << std::endl;
-                for(int j = 0;
+                for(size_t j = 0;
                     j < split_intersection_vec[i].polygon_point_idx_vec_pair_vec.size();
                     ++j)
                 {
@@ -1292,7 +1292,7 @@ bool EasyComputation::getUnionPolygonVec(
                     std::cout << "\tpolygon id : " <<
                       polygon_line_idx_vec_pair.first << std::endl;
                     std::cout << "\tpolygon line idx :";
-                    for(int k = 0; k < polygon_line_idx_vec_pair.second.size(); ++k)
+                    for(size_t k = 0; k < polygon_line_idx_vec_pair.second.size(); ++k)
                     {
                         std::cout << polygon_line_idx_vec_pair.second[k] << " , ";
                     }
@@ -1350,7 +1350,7 @@ bool EasyComputation::getUnionPolygonVec(
 
         std::cout << "current union_polygon:" << std::endl <<
           "points :" << std::endl;
-        for(int i = 0; i < current_union_polygon.point_list.size(); ++i)
+        for(size_t i = 0; i < current_union_polygon.point_list.size(); ++i)
         {
             std::cout << "\t" << i << " : [" <<
               current_union_polygon.point_list[i].x << "," <<

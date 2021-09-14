@@ -1,0 +1,20 @@
+# bin
+bin
+bin_win
+bin_linux
+
+# make compiled
+Makefile
+.clangd
+*.o
+
+# qt compiled
+build*
+.qmake.stash
+moc_*
+qrc_*
+ui_*
+compile_commands.json
+*.qrc
+.qm
+

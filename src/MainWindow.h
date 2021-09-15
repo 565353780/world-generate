@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-#include "SpaceController/SpaceController.h"
+#include "EasySpace/SpaceController.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

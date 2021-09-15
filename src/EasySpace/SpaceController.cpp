@@ -1,11 +1,11 @@
 #include "SpaceController.h"
 
-bool SpaceController::createBoundary(
+bool SpaceController::setBoundaryPointVec(
     const std::vector<EasyPoint2D> &boundary_point_vec)
 {
-    boundary_controller_.reset();
+    boundary_.reset();
 
-    if(!boundary_controller_.setBoundaryPointVec(boundary_point_vec))
+    if(!boundary_.setBoundaryPointVec(boundary_point_vec))
     {
         std::cout << "SpaceController::createBoundary : " <<
           "set Boundary Point Vec failed!" << std::endl;
@@ -19,7 +19,22 @@ bool SpaceController::createBoundary(
 bool SpaceController::addBoundaryPoint(
     const EasyPoint2D &boundary_point)
 {
-    if(!boundary_controller_.addBoundaryPoint(boundary_point))
+    if(!boundary_.addBoundaryPoint(boundary_point))
+    {
+        std::cout << "SpaceController::addBoundaryPoint : " <<
+          "add Boundary Point failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool SpaceController::addBoundaryPoint(
+    const float &x,
+    const float &y)
+{
+    if(!boundary_.addBoundaryPoint(x, y))
     {
         std::cout << "SpaceController::addBoundaryPoint : " <<
           "add Boundary Point failed!" << std::endl;
@@ -32,7 +47,7 @@ bool SpaceController::addBoundaryPoint(
 
 bool SpaceController::showBoundary()
 {
-    if(!boundary_controller_.showBoundary())
+    if(!boundary_.showBoundary())
     {
         std::cout << "SpaceController::showBoundary : " <<
           "show Boundary failed!" << std::endl;

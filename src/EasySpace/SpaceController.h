@@ -4,7 +4,8 @@
 #include <iostream>
 #include <string>
 
-#include "BoundaryController.h"
+#include "EasyShape/EasyShape.h"
+#include "EasySpace.h"
 
 class SpaceController
 {
@@ -13,16 +14,20 @@ public:
     {
     }
 
-    bool createBoundary(
+    bool setBoundaryPointVec(
         const std::vector<EasyPoint2D> &boundary_point_vec);
 
     bool addBoundaryPoint(
         const EasyPoint2D &boundary_point);
 
+    bool addBoundaryPoint(
+        const float &x,
+        const float &y);
+
     bool showBoundary();
 
 private:
-    BoundaryController boundary_controller_;
+    EasyBoundary boundary_;
 };
 
 #endif //SPACE_CONTROLLER_H

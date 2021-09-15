@@ -48,14 +48,19 @@ HEADERS += \
 HEADERS += \
     EasyShape/EasyShape.h
 
-# SpaceController
+# EasySpace
 SOURCES += \
-    SpaceController/BoundaryController.cpp \
-    SpaceController/SpaceController.cpp
+    EasySpace/EasyBoundary.cpp \
+    EasySpace/EasyRoom.cpp \
+    EasySpace/SpaceController.cpp
 
 HEADERS += \
-    SpaceController/BoundaryController.h \
-    SpaceController/SpaceController.h
+    EasySpace/EasyBoundary.h \
+    EasySpace/EasyRoom.h \
+    EasySpace/SpaceController.h
+
+HEADERS += \
+    EasySpace/EasySpace.h
 
 SOURCES += \
     main.cpp \

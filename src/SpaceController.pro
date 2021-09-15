@@ -52,11 +52,13 @@ HEADERS += \
 SOURCES += \
     EasySpace/EasyBoundary.cpp \
     EasySpace/EasyRoom.cpp \
+    EasySpace/EasyRoomLine.cpp \
     EasySpace/SpaceController.cpp
 
 HEADERS += \
     EasySpace/EasyBoundary.h \
     EasySpace/EasyRoom.h \
+    EasySpace/EasyRoomLine.h \
     EasySpace/SpaceController.h
 
 HEADERS += \

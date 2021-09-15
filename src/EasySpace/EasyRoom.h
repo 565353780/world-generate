@@ -11,25 +11,23 @@ class EasyRoom
 public:
     EasyRoom()
     {
+        is_on_boundary = false;
     }
 
     bool reset();
 
-    bool findPositionOnBoundary(
-        const EasyPolygon2D &boundary);
-
     bool haveThisNeighboor(
         const size_t &neighboor_room_id);
 
-    bool addNeighboorRoomID(
-        const size_t &room_id);
+    bool addNeighboorRoomIdx(
+        const size_t &room_idx);
 
-    size_t id;
     std::string name;
     bool is_on_boundary;
+    size_t on_boundary_idx;
     EasyPoint2D position;
     EasyPolygon2D boundary;
-    std::vector<size_t> neighboor_room_id_vec;
+    std::vector<size_t> neighboor_room_idx_vec;
 };
 
 #endif //ROOM_CONTROLLER_H

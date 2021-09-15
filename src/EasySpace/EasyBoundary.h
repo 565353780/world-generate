@@ -6,9 +6,6 @@
 
 #include "EasyShape/EasyShape.h"
 
-// for test only
-#include </home/chli/OpenCV/opencv-3.4.10/build/installed/include/opencv2/opencv.hpp>
-
 class EasyBoundary
 {
 public:
@@ -28,10 +25,12 @@ public:
     bool setBoundaryPointVec(
         const std::vector<EasyPoint2D> &boundary_point_vec);
 
-    // for test only
-    bool showBoundary();
+    bool haveThisRoomOnBoundary(
+        const size_t &room_idx);
 
+    std::string name;
     EasyPolygon2D boundary;
+    std::vector<size_t> exist_room_idx_vec;
 };
 
 #endif //BOUNDARY_CONTROLLER_H

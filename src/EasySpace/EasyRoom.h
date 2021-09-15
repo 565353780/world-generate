@@ -23,10 +23,14 @@ public:
         const size_t &room_idx);
 
     std::string name;
+
     bool is_on_boundary;
     size_t on_boundary_idx;
+
     EasyPoint2D position;
+
     EasyPolygon2D boundary;
+
     std::vector<size_t> neighboor_room_idx_vec;
 };
 

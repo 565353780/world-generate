@@ -183,16 +183,18 @@ bool SpaceController::getRoomLine(
         return false;
     }
 
-    const EasyRoom &current_room = room_vec_[current_room_idx];
+    const size_t last_room_idx = room_line.sorted_room_idx_line.back();
 
     room_line.sorted_room_idx_line.emplace_back(current_room_idx);
+
+    const EasyRoom &current_room = room_vec_[current_room_idx];
 
     if(current_room.neighboor_room_idx_vec.size() == 1)
     {
         return true;
     }
 
-    if(current_room.neighboor_room_idx_vec[0] == room_line.sorted_room_idx_line.back())
+    if(current_room.neighboor_room_idx_vec[0] == last_room_idx)
     {
         const size_t &next_room_idx = current_room.neighboor_room_idx_vec[1];
 
@@ -261,7 +263,7 @@ bool SpaceController::getSortedRoomLine(
     if(!getRoomLine(room_idx, next_room_idx_1, room_line_1))
     {
         std::cout << "SpaceController::getSortedRoomLine : " <<
-          "getRoomIdxLine failed!" << std::endl;
+          "getRoomIdxLine 1 failed!" << std::endl;
 
         return false;
     }
@@ -269,7 +271,7 @@ bool SpaceController::getSortedRoomLine(
     if(!getRoomLine(room_idx, next_room_idx_2, room_line_2))
     {
         std::cout << "SpaceController::getSortedRoomLine : " <<
-          "getRoomIdxLine failed!" << std::endl;
+          "getRoomIdxLine 2 failed!" << std::endl;
 
         return false;
     }

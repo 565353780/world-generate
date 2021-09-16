@@ -60,17 +60,7 @@ void MainWindow::run_example()
 
     space_controller.getSortedRoomLineVec(room_line_vec);
 
-    for(const EasyRoomLine &room_line : room_line_vec)
-    {
-        std::cout << "Line : " << std::endl;
-
-        for(const size_t room_idx : room_line.sorted_room_idx_line)
-        {
-            std::cout << room_idx << " - ";
-        }
-
-        std::cout << std::endl;
-    }
+    space_controller.outputRoomLineVec(room_line_vec);
 
     space_controller.showBoundary();
 }

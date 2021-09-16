@@ -9,6 +9,8 @@ bool EasyRoomLine::reset()
     target_height = -1;
     real_height = -1;
 
+    is_circle = false;
+
     sorted_room_idx_line.clear();
 
     return true;

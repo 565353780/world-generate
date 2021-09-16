@@ -27,6 +27,8 @@ public:
     float target_height;
     float real_height;
 
+    bool is_circle;
+
     EasyRect2D rect;
     std::vector<size_t> sorted_room_idx_line;
 };

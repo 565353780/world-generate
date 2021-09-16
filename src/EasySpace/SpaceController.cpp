@@ -201,10 +201,9 @@ bool SpaceController::getRoomLine(
 {
     if(current_room_idx == start_room_idx)
     {
-        std::cout << "SpaceController::getRoomLine : " <<
-          "found circle room line start with room-" << start_room_idx << "!" << std::endl;
+        room_line.is_circle = true;
 
-        return false;
+        return true;
     }
 
     const size_t last_room_idx = room_line.sorted_room_idx_line.back();
@@ -212,6 +211,14 @@ bool SpaceController::getRoomLine(
     room_line.sorted_room_idx_line.emplace_back(current_room_idx);
 
     const EasyRoom &current_room = room_vec_[current_room_idx];
+
+    if(current_room.neighboor_room_idx_vec.size() > 2)
+    {
+        std::cout << "SpaceController::getRoomLine : " <<
+          "room-" << current_room_idx << " has more than 2 neighboor room!" << std::endl;
+        
+        return false;
+    }
 
     if(current_room.neighboor_room_idx_vec.size() == 1)
     {
@@ -234,7 +241,7 @@ bool SpaceController::getSortedRoomLine(
     const size_t &room_idx,
     EasyRoomLine &room_line)
 {
-    room_line.sorted_room_idx_line.clear();
+    room_line.reset();
 
     if(room_idx >= room_vec_.size())
     {
@@ -278,11 +285,11 @@ bool SpaceController::getSortedRoomLine(
         return true;
     }
 
-    const size_t &next_room_idx_1 = start_room.neighboor_room_idx_vec[0];
-    const size_t &next_room_idx_2 = start_room.neighboor_room_idx_vec[1];
-
     EasyRoomLine room_line_1;
-    EasyRoomLine room_line_2;
+
+    room_line_1.sorted_room_idx_line.emplace_back(room_idx);
+
+    const size_t &next_room_idx_1 = start_room.neighboor_room_idx_vec[0];
 
     if(!getRoomLine(room_idx, next_room_idx_1, room_line_1))
     {
@@ -291,6 +298,19 @@ bool SpaceController::getSortedRoomLine(
 
         return false;
     }
+
+    if(room_line_1.is_circle)
+    {
+        room_line = room_line_1;
+
+        return true;
+    }
+
+    EasyRoomLine room_line_2;
+
+    room_line_2.sorted_room_idx_line.emplace_back(room_idx);
+
+    const size_t &next_room_idx_2 = start_room.neighboor_room_idx_vec[1];
 
     if(!getRoomLine(room_idx, next_room_idx_2, room_line_2))
     {
@@ -344,15 +364,12 @@ bool SpaceController::getSortedRoomLineVec(
 
     while(room_used_num < room_vec_.size())
     {
-        std::cout << "in while : " << room_used_num << " / " << room_vec_.size() << std::endl;
         for(size_t i = 0; i < room_vec_.size(); ++i)
         {
             if(room_used_vec[i])
             {
                 continue;
             }
-
-            std::cout << "current at room-" << i << std::endl;
 
             EasyRoomLine room_line;
 
@@ -363,6 +380,8 @@ bool SpaceController::getSortedRoomLineVec(
 
                 return false;
             }
+
+            std::cout << "success run getSortedRoomLine" << std::endl;
 
             room_line_vec.emplace_back(room_line);
             room_used_num += room_line.sorted_room_idx_line.size();
@@ -431,6 +450,31 @@ bool SpaceController::showBoundary()
 
     cv::imshow("boundary_image", boundary_image);
     cv::waitKey(0);
+
+    return true;
+}
+
+bool SpaceController::outputRoomLineVec(
+    const std::vector<EasyRoomLine> &room_line_vec)
+{
+    for(const EasyRoomLine &room_line : room_line_vec)
+    {
+        std::cout << "RoomLine : ";
+
+        for(const size_t room_idx : room_line.sorted_room_idx_line)
+        {
+            std::cout << room_idx << "(" << room_vec_[room_idx].name << ")" << " - ";
+        }
+
+        if(room_line.is_circle)
+        {
+            std::cout << "circle" << std::endl;
+        }
+        else
+        {
+            std::cout << "line" << std::endl;
+        }
+    }
 
     return true;
 }

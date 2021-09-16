@@ -141,6 +141,30 @@ bool SpaceController::addRoomOnBoundary(
     return true;
 }
 
+bool SpaceController::setRoomSize(
+    const size_t &room_idx,
+    const float &width,
+    const float &height)
+{
+    if(room_idx >= room_vec_.size())
+    {
+        std::cout << "SpaceController::setRoomSize : " <<
+          "room idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    if(!room_vec_[room_idx].setTargetSize(width, height))
+    {
+        std::cout << "SpaceController::setRoomSize : " <<
+          "setTargetSize failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 bool SpaceController::setRoomNeighboor(
     const size_t &room_idx_1,
     const size_t &room_idx_2)
@@ -320,12 +344,15 @@ bool SpaceController::getSortedRoomLineVec(
 
     while(room_used_num < room_vec_.size())
     {
+        std::cout << "in while : " << room_used_num << " / " << room_vec_.size() << std::endl;
         for(size_t i = 0; i < room_vec_.size(); ++i)
         {
             if(room_used_vec[i])
             {
                 continue;
             }
+
+            std::cout << "current at room-" << i << std::endl;
 
             EasyRoomLine room_line;
 

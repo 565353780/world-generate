@@ -40,6 +40,11 @@ public:
         const size_t &room_idx,
         const size_t &boundary_idx);
 
+    bool setRoomSize(
+        const size_t &room_idx,
+        const float &width,
+        const float &height);
+
     bool setRoomNeighboor(
         const size_t &room_idx_1,
         const size_t &room_idx_2);

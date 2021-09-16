@@ -16,6 +16,10 @@ public:
 
     bool reset();
 
+    bool setTargetSize(
+        const float &width,
+        const float &height);
+
     bool haveThisNeighboor(
         const size_t &neighboor_room_id);
 
@@ -23,6 +27,13 @@ public:
         const size_t &room_idx);
 
     std::string name;
+
+    float target_area;
+    float real_area;
+    float target_width;
+    float real_width;
+    float target_height;
+    float real_height;
 
     bool is_on_boundary;
     size_t on_boundary_idx;

@@ -3,10 +3,31 @@
 bool EasyRoom::reset()
 {
     name = "";
+
+    target_area = -1;
+    real_area = -1;
+    target_width = -1;
+    real_width = -1;
+    target_height = -1;
+    real_height = -1;
+
     is_on_boundary = false;
+    on_boundary_idx = 0;
+
     position.setPosition(0, 0);
     boundary.reset();
     neighboor_room_idx_vec.clear();
+
+    return true;
+}
+
+bool EasyRoom::setTargetSize(
+    const float &width,
+    const float &height)
+{
+    target_width = width;
+    target_height = height;
+    target_area = target_width * target_height;
 
     return true;
 }

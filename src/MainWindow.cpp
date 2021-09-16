@@ -30,11 +30,17 @@ void MainWindow::run_example()
     space_controller.addBoundaryPoint(0, 0, 800);
 
     space_controller.createRoom("Meeting Room");
+    space_controller.setRoomSize(0, 100, 100);
     space_controller.createRoom("Gaming Room");
+    space_controller.setRoomSize(1, 100, 100);
     space_controller.createRoom("Manager Department");
+    space_controller.setRoomSize(2, 100, 100);
     space_controller.createRoom("Manager Department");
+    space_controller.setRoomSize(3, 100, 100);
     space_controller.createRoom("Gaming Room");
+    space_controller.setRoomSize(4, 100, 100);
     space_controller.createRoom("Meeting Room");
+    space_controller.setRoomSize(5, 100, 100);
 
     space_controller.addRoomOnBoundary(0, 0);
     space_controller.addRoomOnBoundary(1, 0);
@@ -45,7 +51,7 @@ void MainWindow::run_example()
 
     space_controller.setRoomNeighboor(0, 1);
     space_controller.setRoomNeighboor(1, 2);
-    // space_controller.setRoomNeighboor(0, 2);
+    space_controller.setRoomNeighboor(0, 2);
 
     space_controller.setRoomNeighboor(3, 4);
     space_controller.setRoomNeighboor(4, 5);

@@ -454,25 +454,39 @@ bool SpaceController::showBoundary()
     return true;
 }
 
+bool SpaceController::outputRoomLine(
+    const EasyRoomLine &room_line)
+{
+    std::cout << "RoomLine : ";
+
+    for(const size_t room_idx : room_line.sorted_room_idx_line)
+    {
+        std::cout << room_idx << "(" << room_vec_[room_idx].name << ")" << " - ";
+    }
+
+    if(room_line.is_circle)
+    {
+        std::cout << "circle" << std::endl;
+    }
+    else
+    {
+        std::cout << "line" << std::endl;
+    }
+
+    return true;
+}
+
 bool SpaceController::outputRoomLineVec(
     const std::vector<EasyRoomLine> &room_line_vec)
 {
     for(const EasyRoomLine &room_line : room_line_vec)
     {
-        std::cout << "RoomLine : ";
+        if(!outputRoomLine(room_line))
+        {
+            std::cout << "SpaceController::outputRoomLineVec : " <<
+              "outputRoomLine failed!" << std::endl;
 
-        for(const size_t room_idx : room_line.sorted_room_idx_line)
-        {
-            std::cout << room_idx << "(" << room_vec_[room_idx].name << ")" << " - ";
-        }
-
-        if(room_line.is_circle)
-        {
-            std::cout << "circle" << std::endl;
-        }
-        else
-        {
-            std::cout << "line" << std::endl;
+            return false;
         }
     }
 

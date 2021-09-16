@@ -63,6 +63,9 @@ public:
 
     bool showBoundary();
 
+    bool outputRoomLine(
+        const EasyRoomLine &room_line);
+
     bool outputRoomLineVec(
         const std::vector<EasyRoomLine> &room_line_vec);
 

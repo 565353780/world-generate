@@ -1,5 +1,7 @@
 #include "SpaceController.h"
+#include "highgui.hpp"
 #include <limits>
+#include <string>
 
 bool SpaceController::createBoundary(
     const std::string &boundary_name)
@@ -123,41 +125,6 @@ bool SpaceController::addBoundaryPoint(
     return true;
 }
 
-bool SpaceController::setRoomBoundaryPointParam(
-    const size_t &room_idx,
-    const size_t &boundary_idx,
-    const size_t &boundary_line_idx,
-    const float &boundary_line_param)
-{
-    if(room_idx >= room_vec_.size())
-    {
-        std::cout << "SpaceController::setRoomOnBoundaryParam : " <<
-          "room idx out of range!" << std::endl;
-
-        return false;
-    }
-
-    if(boundary_idx >= boundary_vec_.size())
-    {
-        std::cout << "SpaceController::setRoomOnBoundaryParam : " <<
-          "boundary idx out of range!" << std::endl;
-
-        return false;
-    }
-
-    const EasyBoundary &boundary = boundary_vec_[boundary_idx];
-
-    if(boundary_line_idx >= boundary.boundary.point_list.size())
-    {
-        std::cout << "SpaceController::setRoomOnBoundaryParam : " <<
-          "boundary line idx out of range!" << std::endl;
-
-        return false;
-    }
-
-    return true;
-}
-
 bool SpaceController::setRoomSize(
     const size_t &room_idx,
     const float &width,
@@ -211,19 +178,102 @@ bool SpaceController::setRoomNeighboor(
     return true;
 }
 
-bool SpaceController::generateSpace()
+bool SpaceController::setRoomBoundaryPointParam(
+    const size_t &room_idx,
+    const size_t &boundary_idx,
+    const size_t &boundary_line_idx,
+    const float &boundary_line_param)
 {
-    if(!getSortedRoomLineVec())
+    if(room_idx >= room_vec_.size())
     {
-        std::cout << "SpaceController::generateSpace : " <<
-          "getSortedRoomLineVec failed!" << std::endl;
+        std::cout << "SpaceController::setRoomOnBoundaryParam : " <<
+          "room idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    if(boundary_idx >= boundary_vec_.size())
+    {
+        std::cout << "SpaceController::setRoomOnBoundaryParam : " <<
+          "boundary idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    const EasyBoundary &boundary = boundary_vec_[boundary_idx];
+
+    if(boundary_line_idx >= boundary.boundary.point_list.size())
+    {
+        std::cout << "SpaceController::setRoomOnBoundaryParam : " <<
+          "boundary line idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    if(room_line_vec_.size() == 0)
+    {
+        std::cout << "SpaceController::setRoomOnBoundaryParam : " <<
+          "room line is empty!" << std::endl;
+
+        return false;
+    }
+
+    for(size_t i = 0; i < room_line_vec_.size(); ++i)
+    {
+        EasyRoomLine &room_line = room_line_vec_[i];
+
+        if(!room_line.haveThisRoom(room_idx))
+        {
+            continue;
+        }
+
+        float room_line_boundary_point_param;
+
+        if(!getRoomLineBoundaryPointParam(
+              room_line,
+              boundary,
+              room_idx,
+              boundary_line_idx,
+              boundary_line_param,
+              room_line_boundary_point_param))
+        {
+            std::cout << "SpaceController::setRoomOnBoundaryParam : " <<
+              "getRoomLineBoundaryPointParam failed for room-" << room_idx << "!" << std::endl;
+
+            return false;
+        }
+
+        if(!setRoomLineBoundaryPointParam(
+              i,
+              boundary_idx,
+              boundary_line_idx,
+              room_line_boundary_point_param))
+        {
+            std::cout << "SpaceController::setRoomOnBoundaryParam : " <<
+              "setRoomLineBoundaryPointParam failed for room-" << room_idx << "!" << std::endl;
+
+            return false;
+        }
+
+        return true;
+    }
+
+    return true;
+}
+
+bool SpaceController::updateRoomConnection()
+{
+    if(!updateSortedRoomLineVec())
+    {
+        std::cout << "SpaceController::updateSpace : " <<
+          "updateSortedRoomLineVec failed!" << std::endl;
 
         return false;
     }
 
     if(!updateRoomLineVecSize())
     {
-        std::cout << "SpaceController::generateSpace : " <<
+        std::cout << "SpaceController::updateSpace : " <<
           "updateRoomLineVecSize failed!" << std::endl;
 
         return false;
@@ -235,103 +285,14 @@ bool SpaceController::generateSpace()
     return true;
 }
 
-bool SpaceController::showBoundary()
+bool SpaceController::updateRoomPosition()
 {
-    const size_t x_free = 20;
-    const size_t y_free = 20;
-
-    float x_min = std::numeric_limits<float>::max();
-    float x_max = std::numeric_limits<float>::min();
-    float y_min = std::numeric_limits<float>::max();
-    float y_max = std::numeric_limits<float>::min();
-
-    for(const EasyBoundary &boundary : boundary_vec_)
+    if(!updateRoomLineBoundaryPointPosition())
     {
-        x_min = std::fmin(x_min, boundary.boundary.rect.x_min);
-        x_max = std::fmax(x_max, boundary.boundary.rect.x_max);
-        y_min = std::fmin(y_min, boundary.boundary.rect.y_min);
-        y_max = std::fmax(y_max, boundary.boundary.rect.y_max);
-    }
-
-    const float &x_diff = x_max - x_min;
-    const float &y_diff = y_max - y_min;
-
-    size_t image_width = size_t(x_diff) + 2 * x_free;
-    size_t image_height = size_t(y_diff) + 2 * y_free;
-
-    cv::Mat boundary_image = cv::Mat(image_height, image_width, CV_8UC3);
-
-    for(const EasyBoundary &boundary : boundary_vec_)
-    {
-        if(boundary.boundary.point_list.size() == 0)
-        {
-            continue;
-        }
-
-        for(size_t i = 0; i < boundary.boundary.point_list.size(); ++i)
-        {
-            const EasyPolygon2D &boundary_polygon = boundary.boundary;
-            const EasyPoint2D &current_point = boundary_polygon.point_list[i];
-            const EasyPoint2D &next_point = boundary_polygon.point_list[(i + 1) % boundary_polygon.point_list.size()];
-
-            cv::Point current_cv_point = cv::Point(
-                size_t(current_point.x - boundary_polygon.rect.x_min) + x_free,
-                size_t(current_point.y - boundary_polygon.rect.y_min) + y_free);
-            cv::Point next_cv_point = cv::Point(
-                size_t(next_point.x - boundary_polygon.rect.x_min) + x_free,
-                size_t(next_point.y - boundary_polygon.rect.y_min) + y_free);
-
-            cv::line(boundary_image, current_cv_point, next_cv_point, cv::Scalar(0, 0, 255), 3);
-        }
-    }
-
-    cv::imshow("boundary_image", boundary_image);
-    cv::waitKey(0);
-
-    return true;
-}
-
-bool SpaceController::updateRoomLineBoundaryPointPosition()
-{
-    if(room_line_boundary_point_vec_.size() == 0)
-    {
-        std::cout << "SpaceController::updateRoomLineBoundaryPointPosition : " <<
-          "room line boundary point not found!" << std::endl;
+        std::cout << "SpaceController::updateSpace : " <<
+          "updateRoomLineBoundaryPointPosition failed!" << std::endl;
 
         return false;
-    }
-
-    for(EasyBoundaryPoint &room_line_boundary_point : room_line_boundary_point_vec_)
-    {
-        if(!room_line_boundary_point.updatePosition(boundary_vec_))
-        {
-            std::cout << "SpaceController::updateRoomLineBoundaryPointPosition : " <<
-              "updatePosition failed!" << std::endl;
-
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool SpaceController::outputRoomLine(
-    const EasyRoomLine &room_line)
-{
-    std::cout << "RoomLine : ";
-
-    for(const size_t room_idx : room_line.sorted_room_idx_line)
-    {
-        std::cout << room_idx << "(" << room_vec_[room_idx].name << ")" << " - ";
-    }
-
-    if(room_line.is_circle)
-    {
-        std::cout << "circle" << std::endl;
-    }
-    else
-    {
-        std::cout << "line" << std::endl;
     }
 
     return true;
@@ -339,6 +300,11 @@ bool SpaceController::outputRoomLine(
 
 bool SpaceController::outputRoomLineVec()
 {
+    if(room_line_vec_.size() == 0)
+    {
+        return true;
+    }
+
     for(const EasyRoomLine &room_line : room_line_vec_)
     {
         if(!outputRoomLine(room_line))
@@ -349,6 +315,40 @@ bool SpaceController::outputRoomLineVec()
             return false;
         }
     }
+
+    return true;
+}
+
+bool SpaceController::outputRoomLineBoundaryPointVec()
+{
+    if(room_line_boundary_point_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    for(const EasyBoundaryPoint &boundary_point : room_line_boundary_point_vec_)
+    {
+        if(!outputBoundaryPoint(boundary_point))
+        {
+            std::cout << "SpaceController::outputRoomLineBoundaryPointVec : " <<
+              "outputBoundaryPoint failed!" << std::endl;
+
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+bool SpaceController::showSpace()
+{
+    initSpaceImage();
+
+    drawBoundary();
+
+    drawRoom();
+
+    showSpaceImage();
 
     return true;
 }
@@ -504,69 +504,13 @@ bool SpaceController::getSortedRoomLine(
     return true;
 }
 
-bool SpaceController::setRoomLineBoundaryPointParam(
-    const size_t &room_line_idx,
-    const size_t &boundary_idx,
-    const size_t &boundary_line_idx,
-    const float &boundary_line_param)
-{
-    if(room_line_idx >= room_line_vec_.size())
-    {
-        std::cout << "SpaceController::setRoomLineBoundaryPointParam : " <<
-          "room line idx out of range!" << std::endl;
-
-        return false;
-    }
-
-    if(boundary_idx >= boundary_vec_.size())
-    {
-        std::cout << "SpaceController::setRoomLineBoundaryPointParam : " <<
-          "boundary idx out of range!" << std::endl;
-
-        return false;
-    }
-
-    EasyBoundary &boundary = boundary_vec_[boundary_idx];
-
-    if(boundary_line_idx >= boundary.boundary.point_list.size())
-    {
-        std::cout << "SpaceController::setRoomLineBoundaryPointParam : " <<
-          "boundary line idx out of range!" << std::endl;
-
-        return false;
-    }
-
-    if(boundary.haveThisRoomLineOnBoundary(room_line_idx))
-    {
-        std::cout << "SpaceController::setRoomLineBoundaryPointParam : " <<
-          "boundary-" << boundary_idx << " already have room-line-" << room_line_idx << "!" << std::endl;
-
-        return true;
-    }
-
-    boundary.exist_room_line_idx_vec.emplace_back(room_line_idx);
-
-    if(!room_line_boundary_point_vec_[room_line_idx].setPositionParam(
-          boundary_idx,
-          boundary_line_idx,
-          boundary_line_param))
-    {
-        std::cout << "SpaceController::addRoomLineOnBoundary : " <<
-          "setPositionParam failed for room-line-" << room_line_idx << "!" << std::endl;
-
-        return false;
-    }
-
-    return true;
-}
-
-bool SpaceController::getSortedRoomLineVec()
+bool SpaceController::updateSortedRoomLineVec()
 {
     room_line_vec_.clear();
 
     if(room_vec_.size() == 0)
     {
-        std::cout << "SpaceController::getRoomSortedIdxVec : " <<
+        std::cout << "SpaceController::updateSortedRoomLineVec : " <<
           "room vec is empty!" << std::endl;
 
         return false;
@@ -589,7 +533,7 @@ bool SpaceController::getSortedRoomLineVec()
 
             if(!getSortedRoomLine(i, room_line))
             {
-                std::cout << "SpaceController::getSortedRoomLineVec : " <<
+                std::cout << "SpaceController::updateSortedRoomLineVec : " <<
                   "getSortedRoomLine failed!" << std::endl;
 
                 return false;
@@ -646,6 +590,315 @@ bool SpaceController::updateRoomLineVecSize()
             return false;
         }
     }
+
+    return true;
+}
+
+bool SpaceController::getRoomLineBoundaryPointParam(
+    const EasyRoomLine &room_line,
+    const EasyBoundary &boundary,
+    const size_t &room_idx,
+    const size_t &boundary_line_idx,
+    const float &boundary_line_param,
+    float &room_line_boundary_point_param)
+{
+    room_line_boundary_point_param = -1;
+
+    const float boundary_line_length = EasyComputation::pointDist(
+        boundary.boundary.point_list[boundary_line_idx],
+        boundary.boundary.point_list[(boundary_line_idx + 1) % boundary.boundary.point_list.size()]);
+
+    const float &room_line_target_width = room_line.target_width;
+
+    float room_target_width_sum_before = 0;
+
+    for(const size_t &linear_room_idx : room_line.sorted_room_idx_line)
+    {
+        if(linear_room_idx == room_idx)
+        {
+            break;
+        }
+
+        room_target_width_sum_before += room_vec_[linear_room_idx].target_width;
+    }
+
+    room_target_width_sum_before += 0.5 * room_vec_[room_idx].target_width;
+
+    room_line_boundary_point_param = boundary_line_param +
+      0.5 * (room_line_target_width - room_target_width_sum_before) / boundary_line_length;
+
+    room_line_boundary_point_param = std::fmax(room_line_boundary_point_param, 0);
+    room_line_boundary_point_param = std::fmin(room_line_boundary_point_param, 1);
+
+    return true;
+}
+
+bool SpaceController::setRoomLineBoundaryPointParam(
+    const size_t &room_line_idx,
+    const size_t &boundary_idx,
+    const size_t &boundary_line_idx,
+    const float &boundary_line_param)
+{
+    if(room_line_idx >= room_line_vec_.size())
+    {
+        std::cout << "SpaceController::setRoomLineBoundaryPointParam : " <<
+          "room line idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    if(boundary_idx >= boundary_vec_.size())
+    {
+        std::cout << "SpaceController::setRoomLineBoundaryPointParam : " <<
+          "boundary idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    EasyBoundary &boundary = boundary_vec_[boundary_idx];
+
+    if(boundary_line_idx >= boundary.boundary.point_list.size())
+    {
+        std::cout << "SpaceController::setRoomLineBoundaryPointParam : " <<
+          "boundary line idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    EasyBoundaryPoint &room_line_boundary_point = room_line_boundary_point_vec_[room_line_idx];
+
+    if(!room_line_boundary_point.setPositionParam(
+          boundary_idx,
+          boundary_line_idx,
+          boundary_line_param))
+    {
+        std::cout << "SpaceController::addRoomLineOnBoundary : " <<
+          "setPositionParam failed for room-line-" << room_line_idx << "!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool SpaceController::updateRoomLineBoundaryPointPosition()
+{
+    if(room_line_boundary_point_vec_.size() == 0)
+    {
+        std::cout << "SpaceController::updateRoomLineBoundaryPointPosition : " <<
+          "room line boundary point not found!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyBoundaryPoint &room_line_boundary_point : room_line_boundary_point_vec_)
+    {
+        if(!room_line_boundary_point.updatePosition(boundary_vec_))
+        {
+            std::cout << "SpaceController::updateRoomLineBoundaryPointPosition : " <<
+              "updatePosition failed!" << std::endl;
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool SpaceController::updateRoomBoundaryPointParam(
+    const size_t &room_line_idx)
+{
+    if(room_line_idx >= room_line_vec_.size())
+    {
+        std::cout << "SpaceController::updateRoomBoundaryPointParam : " <<
+          "room line idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    if(room_line_idx >= room_line_boundary_point_vec_.size())
+    {
+        std::cout << "SpaceController::updateRoomBoundaryPointParam : " <<
+          "room line boundary point not found!" << std::endl;
+
+        return false;
+    }
+
+    EasyBoundaryPoint &boundary_point = room_line_boundary_point_vec_[room_line_idx];
+    EasyRoomLine &room_line = room_line_vec_[room_line_idx];
+
+    const size_t &boundary_idx = boundary_point.boundary_idx;
+    const size_t &boundary_line_idx = boundary_point.boundary_line_idx;
+    const size_t &boundary_line_param = boundary_point.boundary_line_param;
+
+    const EasyBoundary &boundary = boundary_vec_[boundary_idx];
+
+    const EasyPoint2D &boundary_start_point = boundary.boundary.point_list[boundary_line_idx];
+    const EasyPoint2D &boundary_end_point =
+      boundary.boundary.point_list[(boundary_line_idx + 1) % boundary.boundary.point_list.size()];
+
+    const float boundary_line_length =
+      EasyComputation::pointDist(boundary_start_point, boundary_end_point);
+
+    const float room_line_target_width = room_line.target_width;
+
+    if(room_line_target_width >= boundary_line_length)
+    {
+        boundary_point.boundary_line_param = 0.5;
+
+        room_line.real_width = boundary_line_length;
+    }
+
+    const float room_line_param_min =
+      boundary_line_param - 0.5 * room_line_target_width / boundary_line_length;
+
+    if(room_line_param_min < 0)
+    {
+    }
+
+    const float room_line_param_max =
+      boundary_line_param + 0.5 * room_line_target_width / boundary_line_length;
+
+    return true;
+}
+
+bool SpaceController::outputRoomLine(
+    const EasyRoomLine &room_line)
+{
+    std::cout << "RoomLine : ";
+
+    for(const size_t room_idx : room_line.sorted_room_idx_line)
+    {
+        std::cout << room_idx << "(" << room_vec_[room_idx].name << ")" << " - ";
+    }
+
+    if(room_line.is_circle)
+    {
+        std::cout << "circle" << std::endl;
+    }
+    else
+    {
+        std::cout << "line" << std::endl;
+    }
+
+    return true;
+}
+
+bool SpaceController::outputBoundaryPoint(
+    const EasyBoundaryPoint &boundary_point)
+{
+    std::cout << "BoundaryPoint : " << std::endl;
+    std::cout << "\tboundary_idx = " << boundary_point.boundary_idx << std::endl;
+    std::cout << "\tboundary_line_idx = " << boundary_point.boundary_line_idx << std::endl;
+    std::cout << "\tboundary_line_param = " << boundary_point.boundary_line_param << std::endl;
+    std::cout << "\tposition = [" << boundary_point.position.x << "," << boundary_point.position.y << "]" << std::endl;
+
+    return true;
+}
+
+bool SpaceController::initSpaceImage()
+{
+    x_free_ = 50;
+    y_free_ = 50;
+
+    x_min_ = std::numeric_limits<float>::max();
+    y_min_ = std::numeric_limits<float>::max();
+
+    for(const EasyBoundary &boundary : boundary_vec_)
+    {
+        x_min_ = std::fmin(x_min_, boundary.boundary.rect.x_min);
+        y_min_ = std::fmin(y_min_, boundary.boundary.rect.y_min);
+    }
+
+    return true;
+}
+
+bool SpaceController::drawBoundary()
+{
+    float x_max = std::numeric_limits<float>::min();
+    float y_max = std::numeric_limits<float>::min();
+
+    for(const EasyBoundary &boundary : boundary_vec_)
+    {
+        x_max = std::fmax(x_max, boundary.boundary.rect.x_max);
+        y_max = std::fmax(y_max, boundary.boundary.rect.y_max);
+    }
+
+    const float &x_diff = x_max - x_min_;
+    const float &y_diff = y_max - y_min_;
+
+    size_t image_width = size_t(x_diff) + 2 * x_free_;
+    size_t image_height = size_t(y_diff) + 2 * y_free_;
+
+    space_image_ = cv::Mat(image_height, image_width, CV_8UC3);
+
+    for(const EasyBoundary &boundary : boundary_vec_)
+    {
+        if(boundary.boundary.point_list.size() == 0)
+        {
+            continue;
+        }
+
+        for(size_t i = 0; i < boundary.boundary.point_list.size(); ++i)
+        {
+            const EasyPolygon2D &boundary_polygon = boundary.boundary;
+            const EasyPoint2D &current_point = boundary_polygon.point_list[i];
+            const EasyPoint2D &next_point =
+              boundary_polygon.point_list[(i + 1) % boundary_polygon.point_list.size()];
+
+            cv::Point current_cv_point = cv::Point(
+                size_t(current_point.x - x_min_) + x_free_,
+                size_t(current_point.y - y_min_) + y_free_);
+            cv::Point next_cv_point = cv::Point(
+                size_t(next_point.x - x_min_) + x_free_,
+                size_t(next_point.y - y_min_) + y_free_);
+
+            cv::line(space_image_, current_cv_point, next_cv_point, cv::Scalar(0, 0, 255), 3);
+
+            std::string text = "b" + std::to_string(i);
+
+            cv::putText(space_image_, text, current_cv_point, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(255, 255, 255));
+        }
+    }
+
+    return true;
+}
+
+bool SpaceController::drawRoom()
+{
+    if(room_line_boundary_point_vec_.size() == 0)
+    {
+        std::cout << "SpaceController::drawRoom : " <<
+          "room line boundary point not found!" << std::endl;
+
+        return false;
+    }
+
+    for(size_t i = 0; i < room_line_boundary_point_vec_.size(); ++i)
+    {
+        EasyBoundaryPoint &room_line_boundary_point = room_line_boundary_point_vec_[i];
+
+        const EasyPoint2D &room_line_boundary_point_position =
+          room_line_boundary_point.position;
+
+        cv::Point cv_point = cv::Point(
+            size_t(room_line_boundary_point_position.x - x_min_) + x_free_,
+            size_t(room_line_boundary_point_position.y - y_min_) + y_free_);
+
+        cv::circle(space_image_, cv_point, 3, cv::Scalar(0, 255, 0), 3);
+
+        std::string text = "r" + std::to_string(i);
+
+        cv::putText(space_image_, text, cv_point, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(255, 255, 255));
+    }
+
+    return true;
+}
+
+bool SpaceController::showSpaceImage()
+{
+    cv::imshow("space_image", space_image_);
+    cv::waitKey(0);
 
     return true;
 }

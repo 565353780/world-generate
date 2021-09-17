@@ -39,13 +39,7 @@ public:
         const float &x,
         const float &y);
 
-    bool setRoomBoundaryPointParam(
-        const size_t &room_idx,
-        const size_t &boundary_idx,
-        const size_t &boundary_line_idx,
-        const float &boundary_line_param);
-
-    bool setRoomSize(
+        bool setRoomSize(
         const size_t &room_idx,
         const float &width,
         const float &height);
@@ -54,11 +48,21 @@ public:
         const size_t &room_idx_1,
         const size_t &room_idx_2);
 
-    bool generateSpace();
+    bool setRoomBoundaryPointParam(
+        const size_t &room_idx,
+        const size_t &boundary_idx,
+        const size_t &boundary_line_idx,
+        const float &boundary_line_param);
 
-    bool showBoundary();
+    bool updateRoomConnection();
+
+    bool updateRoomPosition();
 
     bool outputRoomLineVec();
+
+    bool outputRoomLineBoundaryPointVec();
+
+    bool showSpace();
 
 private:
     bool getRoomLine(
@@ -70,30 +74,62 @@ private:
         const size_t &room_idx,
         EasyRoomLine &room_line);
 
-    bool setRoomLineBoundaryPointParam(
-        const size_t &room_line_idx,
-        const size_t &boundary_idx,
-        const size_t &boundary_line_idx,
-        const float &boundary_line_param);
-
-    bool getSortedRoomLineVec();
+    bool updateSortedRoomLineVec();
 
     bool updateRoomLineSize(
         EasyRoomLine &room_line);
 
     bool updateRoomLineVecSize();
 
+    bool getRoomLineBoundaryPointParam(
+        const EasyRoomLine &room_line,
+        const EasyBoundary &boundary,
+        const size_t &room_idx,
+        const size_t &boundary_line_idx,
+        const float &boundary_line_param,
+        float &room_line_boundary_point_param);
+
+    bool setRoomLineBoundaryPointParam(
+        const size_t &room_line_idx,
+        const size_t &boundary_idx,
+        const size_t &boundary_line_idx,
+        const float &boundary_line_param);
+
     bool updateRoomLineBoundaryPointPosition();
+
+    bool updateRoomBoundaryPointParam(
+        const size_t &room_line_idx);
 
     bool outputRoomLine(
         const EasyRoomLine &room_line);
 
+    bool outputBoundaryPoint(
+        const EasyBoundaryPoint &boundary_point);
+
+    bool initSpaceImage();
+
+    bool drawBoundary();
+
+    bool drawRoom();
+
+    bool showSpaceImage();
+
 private:
     std::vector<EasyBoundary> boundary_vec_;
+
     std::vector<EasyRoom> room_vec_;
+    std::vector<EasyBoundaryPoint> room_boundary_point_vec_;
+    std::vector<EasyBoundaryLine> room_boundary_line_vec_;
+
     std::vector<EasyRoomLine> room_line_vec_;
     std::vector<EasyBoundaryPoint> room_line_boundary_point_vec_;
     std::vector<EasyBoundaryLine> room_line_boundary_line_vec_;
+
+    cv::Mat space_image_;
+    size_t x_free_;
+    size_t y_free_;
+    float x_min_;
+    float y_min_;
 };
 
 #endif //SPACE_CONTROLLER_H

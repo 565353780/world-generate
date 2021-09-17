@@ -51,12 +51,16 @@ void MainWindow::run_example()
     space_controller.setRoomNeighboor(3, 4);
     space_controller.setRoomNeighboor(4, 5);
 
-    space_controller.generateSpace();
+    space_controller.updateRoomConnection();
 
-    space_controller.setRoomBoundaryPointParam(0, 0, 0, 0);
-    space_controller.setRoomBoundaryPointParam(3, 0, 1, 0.3);
+    space_controller.setRoomBoundaryPointParam(0, 0, 0, 0.3);
+    space_controller.setRoomBoundaryPointParam(3, 0, 7, 0.6);
+    space_controller.setRoomBoundaryPointParam(4, 0, 6, 0.6);
+
+    space_controller.updateRoomPosition();
 
     space_controller.outputRoomLineVec();
+    space_controller.outputRoomLineBoundaryPointVec();
 
-    space_controller.showBoundary();
+    space_controller.showSpace();
 }

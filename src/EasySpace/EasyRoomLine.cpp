@@ -34,3 +34,22 @@ bool EasyRoomLine::setTargetSize(
     return true;
 }
 
+bool EasyRoomLine::haveThisRoom(
+    const size_t &room_idx)
+{
+    if(sorted_room_idx_line.size() == 0)
+    {
+        return false;
+    }
+
+    for(const size_t &exist_room_idx : sorted_room_idx_line)
+    {
+        if(exist_room_idx == room_idx)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+

@@ -6,6 +6,8 @@
 
 #include "EasyShape/EasyShape.h"
 #include "EasyRoom.h"
+#include "EasyBoundaryPoint.h"
+#include "EasyBoundaryLine.h"
 
 class EasyRoomLine
 {
@@ -21,6 +23,9 @@ public:
     bool setTargetSize(
         const float &width,
         const float &height);
+
+    bool haveThisRoom(
+        const size_t &room_idx);
 
     float target_area;
     float real_area;

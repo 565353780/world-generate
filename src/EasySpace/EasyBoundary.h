@@ -28,15 +28,10 @@ public:
     bool setBoundaryPointVec(
         const std::vector<EasyPoint2D> &boundary_point_vec);
 
-    bool haveThisRoomLineOnBoundary(
-        const size_t &room_line_idx);
-
     std::string name;
 
     bool is_outer_boundary;
     EasyPolygon2D boundary;
-
-    std::vector<size_t> exist_room_line_idx_vec;
 };
 
 #endif //BOUNDARY_CONTROLLER_H

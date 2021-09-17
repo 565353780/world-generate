@@ -8,8 +8,6 @@ bool EasyBoundary::reset()
     is_outer_boundary = false;
     boundary.reset();
 
-    exist_room_line_idx_vec.clear();
-
     return true;
 }
 
@@ -59,24 +57,5 @@ bool EasyBoundary::setBoundaryPointVec(
     }
 
     return true;
-}
-
-bool EasyBoundary::haveThisRoomLineOnBoundary(
-    const size_t &room_line_idx)
-{
-    if(exist_room_line_idx_vec.size() == 0)
-    {
-        return false;
-    }
-
-    for(const size_t &exist_room_line_idx : exist_room_line_idx_vec)
-    {
-        if(exist_room_line_idx == room_line_idx)
-        {
-            return true;
-        }
-    }
-
-    return false;
 }
 

@@ -6,12 +6,18 @@
 
 #include "EasyShape/EasyShape.h"
 
+enum BoundaryState
+{
+    Free = 0,
+    NearRoom = 1,
+    NearWall = 2
+};
+
 class EasyRoom
 {
 public:
     EasyRoom()
     {
-        is_on_boundary = false;
     }
 
     bool reset();
@@ -35,12 +41,10 @@ public:
     float target_height;
     float real_height;
 
-    bool is_on_boundary;
-    size_t on_boundary_idx;
-
     EasyPoint2D position;
 
     EasyPolygon2D boundary;
+    std::vector<BoundaryState> boundary_near_vec;
 
     std::vector<size_t> neighboor_room_idx_vec;
 };

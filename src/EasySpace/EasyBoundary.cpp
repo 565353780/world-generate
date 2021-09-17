@@ -4,8 +4,18 @@
 bool EasyBoundary::reset()
 {
     name = "";
+
+    is_outer_boundary = false;
     boundary.reset();
-    exist_room_idx_vec.clear();
+
+    exist_room_line_idx_vec.clear();
+
+    return true;
+}
+
+bool EasyBoundary::setOuterBoundary()
+{
+    is_outer_boundary = true;
 
     return true;
 }
@@ -51,17 +61,17 @@ bool EasyBoundary::setBoundaryPointVec(
     return true;
 }
 
-bool EasyBoundary::haveThisRoomOnBoundary(
-    const size_t &room_idx)
+bool EasyBoundary::haveThisRoomLineOnBoundary(
+    const size_t &room_line_idx)
 {
-    if(exist_room_idx_vec.size() == 0)
+    if(exist_room_line_idx_vec.size() == 0)
     {
         return false;
     }
 
-    for(const size_t &exist_room_idx : exist_room_idx_vec)
+    for(const size_t &exist_room_line_idx : exist_room_line_idx_vec)
     {
-        if(exist_room_idx == room_idx)
+        if(exist_room_line_idx == room_line_idx)
         {
             return true;
         }

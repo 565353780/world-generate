@@ -16,6 +16,8 @@ public:
 
     bool reset();
 
+    bool resetSize();
+
     bool setTargetSize(
         const float &width,
         const float &height);

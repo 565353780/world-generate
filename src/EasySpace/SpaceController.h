@@ -23,6 +23,9 @@ public:
     bool createRoom(
         const std::string &room_name);
 
+    bool setOuterBoundary(
+        const size_t &boundary_idx);
+
     bool setBoundaryPointVec(
         const size_t &boundary_idx,
         const std::vector<EasyPoint2D> &boundary_point_vec);
@@ -36,9 +39,11 @@ public:
         const float &x,
         const float &y);
 
-    bool addRoomOnBoundary(
+    bool setRoomBoundaryPointParam(
         const size_t &room_idx,
-        const size_t &boundary_idx);
+        const size_t &boundary_idx,
+        const size_t &boundary_line_idx,
+        const float &boundary_line_param);
 
     bool setRoomSize(
         const size_t &room_idx,
@@ -49,6 +54,13 @@ public:
         const size_t &room_idx_1,
         const size_t &room_idx_2);
 
+    bool generateSpace();
+
+    bool showBoundary();
+
+    bool outputRoomLineVec();
+
+private:
     bool getRoomLine(
         const size_t &start_room_idx,
         const size_t &current_room_idx,
@@ -58,20 +70,30 @@ public:
         const size_t &room_idx,
         EasyRoomLine &room_line);
 
-    bool getSortedRoomLineVec(
-        std::vector<EasyRoomLine> &room_line_vec);
+    bool setRoomLineBoundaryPointParam(
+        const size_t &room_line_idx,
+        const size_t &boundary_idx,
+        const size_t &boundary_line_idx,
+        const float &boundary_line_param);
 
-    bool showBoundary();
+    bool getSortedRoomLineVec();
+
+    bool updateRoomLineSize(
+        EasyRoomLine &room_line);
+
+    bool updateRoomLineVecSize();
+
+    bool updateRoomLineBoundaryPointPosition();
 
     bool outputRoomLine(
         const EasyRoomLine &room_line);
 
-    bool outputRoomLineVec(
-        const std::vector<EasyRoomLine> &room_line_vec);
-
 private:
     std::vector<EasyBoundary> boundary_vec_;
     std::vector<EasyRoom> room_vec_;
+    std::vector<EasyRoomLine> room_line_vec_;
+    std::vector<EasyBoundaryPoint> room_line_boundary_point_vec_;
+    std::vector<EasyBoundaryLine> room_line_boundary_line_vec_;
 };
 
 #endif //SPACE_CONTROLLER_H

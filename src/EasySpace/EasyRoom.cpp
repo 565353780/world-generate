@@ -11,11 +11,11 @@ bool EasyRoom::reset()
     target_height = -1;
     real_height = -1;
 
-    is_on_boundary = false;
-    on_boundary_idx = 0;
-
     position.setPosition(0, 0);
+
     boundary.reset();
+    boundary_near_vec.clear();
+
     neighboor_room_idx_vec.clear();
 
     return true;

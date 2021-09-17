@@ -20,6 +20,8 @@ void MainWindow::run_example()
     SpaceController space_controller;
 
     space_controller.createBoundary("Outer Wall");
+    space_controller.setOuterBoundary(0);
+
     space_controller.addBoundaryPoint(0, 0, 0);
     space_controller.addBoundaryPoint(0, 400, 0);
     space_controller.addBoundaryPoint(0, 400, 200);
@@ -42,13 +44,6 @@ void MainWindow::run_example()
     space_controller.createRoom("Meeting Room");
     space_controller.setRoomSize(5, 100, 100);
 
-    space_controller.addRoomOnBoundary(0, 0);
-    space_controller.addRoomOnBoundary(1, 0);
-    space_controller.addRoomOnBoundary(2, 0);
-    space_controller.addRoomOnBoundary(3, 0);
-    space_controller.addRoomOnBoundary(4, 0);
-    space_controller.addRoomOnBoundary(5, 0);
-
     space_controller.setRoomNeighboor(0, 1);
     space_controller.setRoomNeighboor(1, 2);
     space_controller.setRoomNeighboor(0, 2);
@@ -56,11 +51,12 @@ void MainWindow::run_example()
     space_controller.setRoomNeighboor(3, 4);
     space_controller.setRoomNeighboor(4, 5);
 
-    std::vector<EasyRoomLine> room_line_vec;
+    space_controller.generateSpace();
 
-    space_controller.getSortedRoomLineVec(room_line_vec);
+    space_controller.setRoomBoundaryPointParam(0, 0, 0, 0);
+    space_controller.setRoomBoundaryPointParam(3, 0, 1, 0.3);
 
-    space_controller.outputRoomLineVec(room_line_vec);
+    space_controller.outputRoomLineVec();
 
     space_controller.showBoundary();
 }

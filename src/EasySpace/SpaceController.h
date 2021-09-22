@@ -100,6 +100,8 @@ private:
     bool updateRoomBoundaryPointParam(
         const size_t &room_line_idx);
 
+    bool updateAllRoomBoundaryPointParam();
+
     bool outputRoomLine(
         const EasyRoomLine &room_line);
 

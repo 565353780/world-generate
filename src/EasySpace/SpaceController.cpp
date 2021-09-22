@@ -295,6 +295,14 @@ bool SpaceController::updateRoomPosition()
         return false;
     }
 
+    if(!updateAllRoomBoundaryPointParam())
+    {
+        std::cout << "SpaceController::updateSpace : " <<
+          "updateAllRoomBoundaryPointParam failed!" << std::endl;
+
+        return false;
+    }
+
     return true;
 }
 
@@ -749,15 +757,48 @@ bool SpaceController::updateRoomBoundaryPointParam(
         room_line.real_width = boundary_line_length;
     }
 
+    const float half_room_line_target_width_param =
+      0.5 * room_line_target_width / boundary_line_length;
+
     const float room_line_param_min =
-      boundary_line_param - 0.5 * room_line_target_width / boundary_line_length;
+      boundary_line_param - half_room_line_target_width_param;
 
     if(room_line_param_min < 0)
     {
+        boundary_point.boundary_line_param = half_room_line_target_width_param;
     }
 
     const float room_line_param_max =
-      boundary_line_param + 0.5 * room_line_target_width / boundary_line_length;
+      boundary_line_param + half_room_line_target_width_param;
+
+    if(room_line_param_max > 1)
+    {
+        boundary_point.boundary_line_param = 1.0 - half_room_line_target_width_param;
+    }
+
+    return true;
+}
+
+bool SpaceController::updateAllRoomBoundaryPointParam()
+{
+    if(room_line_vec_.size() == 0)
+    {
+        std::cout << "SpaceController::updateAllRoomBoundaryPointParam : " <<
+          "room line vec is empty!" << std::endl;
+
+        return true;
+    }
+
+    for(size_t i = 0; i < room_line_vec_.size(); ++i)
+    {
+        if(!updateRoomBoundaryPointParam(i))
+        {
+            std::cout << "SpaceController::updateAllRoomBoundaryPointParam : " <<
+              "updateRoomBoundaryPointParam failed!" << std::endl;
+
+            return false;
+        }
+    }
 
     return true;
 }

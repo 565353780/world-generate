@@ -17,6 +17,12 @@ public:
     {
     }
 
+    bool resetBoundary();
+
+    bool resetRoom();
+
+    bool reset();
+
     bool createBoundary(
         const std::string &boundary_name);
 
@@ -121,6 +127,13 @@ private:
     bool updateRoomPosition();
 
     bool updateRoomBoundary();
+
+    bool splitRoomPositionOnBoundaryLine(
+        const size_t &boundary_idx,
+        const size_t &boundary_line_idx);
+
+    bool splitRoomPositionOnBoundary(
+        const size_t &boundary_idx);
 
     bool outputRoomLine(
         const EasyRoomLine &room_line);

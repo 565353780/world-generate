@@ -3,6 +3,47 @@
 #include <limits>
 #include <string>
 
+bool SpaceController::resetBoundary()
+{
+    boundary_vec_.clear();
+
+    return true;
+}
+
+bool SpaceController::resetRoom()
+{
+    room_vec_.clear();
+    room_boundary_point_vec_.clear();
+    room_boundary_line_vec_.clear();
+
+    room_line_vec_.clear();
+    room_line_boundary_point_vec_.clear();
+    room_line_boundary_line_vec_.clear();
+
+    return true;
+}
+
+bool SpaceController::reset()
+{
+    if(!resetBoundary())
+    {
+        std::cout << "SpaceController::reset : " <<
+          "resetBoundary failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!resetRoom())
+    {
+        std::cout << "SpaceController::reset : " <<
+          "resetRoom failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 bool SpaceController::createBoundary(
     const std::string &boundary_name)
 {
@@ -342,6 +383,14 @@ bool SpaceController::updateRoom()
 
         return false;
     }
+
+    // if(!splitRoomPositionOnBoundary(0))
+    // {
+        // std::cout << "SpaceController::updateRoom : " <<
+          // "splitRoomPosition failed!" << std::endl;
+//
+        // return false;
+    // }
 
     return true;
 }
@@ -1155,6 +1204,102 @@ bool SpaceController::updateRoomBoundary()
           "updateAllRoomBoundary failed!" << std::endl;
 
         return false;
+    }
+
+    return true;
+}
+
+bool SpaceController::splitRoomPositionOnBoundaryLine(
+    const size_t &boundary_idx,
+    const size_t &boundary_line_idx)
+{
+    if(boundary_idx >= boundary_vec_.size())
+    {
+        std::cout << "SpaceController::splitRoomPositionOnBoundaryLine : " <<
+          "boundary idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    const EasyBoundary &boundary = boundary_vec_[boundary_idx];
+
+    if(boundary_line_idx >= boundary.boundary.point_list.size())
+    {
+        std::cout << "SpaceController::splitRoomPositionOnRoomLine : " <<
+          "boundary line idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    std::vector<size_t> room_line_idx_on_boundary_line_vec;
+
+    for(size_t i = 0; i < room_line_boundary_point_vec_.size(); ++i)
+    {
+        const EasyBoundaryPoint &room_line_boundary_point = room_line_boundary_point_vec_[i];
+
+        if(room_line_boundary_point.boundary_idx == boundary_idx &&
+            room_line_boundary_point.boundary_line_idx == boundary_line_idx)
+        {
+            room_line_idx_on_boundary_line_vec.emplace_back(i);
+        }
+    }
+
+    if(room_line_idx_on_boundary_line_vec.size() < 2)
+    {
+        return true;
+    }
+
+    float room_line_param_sum_on_boundary_line = 0;
+
+    for(const size_t &room_line_idx_on_boundary_line : room_line_idx_on_boundary_line_vec)
+    {
+        const EasyBoundaryLine &room_line_boundary_line =
+          room_line_boundary_line_vec_[room_line_idx_on_boundary_line];
+
+        room_line_param_sum_on_boundary_line +=
+          room_line_boundary_line.line_end_boundary_point.boundary_line_param -
+          room_line_boundary_line.line_start_boundary_point.boundary_line_param;
+    }
+
+    if(room_line_param_sum_on_boundary_line >= 1)
+    {
+        const float room_line_real_width_scale = 1.0 / room_line_param_sum_on_boundary_line;
+
+        float current_room_line_param_min = 0;
+
+        for(const size_t &room_line_idx_on_boundary_line : room_line_idx_on_boundary_line_vec)
+        {
+            const float half_room_line_real_width_param = -1;
+            const EasyBoundaryLine &room_line_boundary_line =
+              room_line_boundary_line_vec_[room_line_idx_on_boundary_line];
+        }
+    }
+
+    return true;
+}
+
+bool SpaceController::splitRoomPositionOnBoundary(
+    const size_t &boundary_idx)
+{
+    if(boundary_idx >= boundary_vec_.size())
+    {
+        std::cout << "SpaceController::splitRoomPositionOnBoundary : " <<
+          "boundary idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    const EasyBoundary &boundary = boundary_vec_[boundary_idx];
+
+    for(size_t i = 0; i < boundary.boundary.point_list.size(); ++i)
+    {
+        if(!splitRoomPositionOnBoundaryLine(boundary_idx, i))
+        {
+            std::cout << "SpaceController::splitRoomPositionOnBoundary : " <<
+              "splitRoomPositionOnBoundaryLine failed!" << std::endl;
+
+            return false;
+        }
     }
 
     return true;

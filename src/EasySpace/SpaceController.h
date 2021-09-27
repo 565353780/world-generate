@@ -58,6 +58,8 @@ public:
 
     bool updateRoomPosition();
 
+    bool updateRoomBoundary();
+
     bool outputRoomLineVec();
 
     bool outputRoomLineBoundaryPointVec();

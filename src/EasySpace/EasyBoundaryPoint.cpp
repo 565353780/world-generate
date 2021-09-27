@@ -6,6 +6,8 @@ bool EasyBoundaryPoint::reset()
     boundary_line_idx = 0;
     boundary_line_param = 0;
 
+    is_valid = false;
+
     is_position_valid = false;
     position.setPosition(0, 0);
 
@@ -28,6 +30,8 @@ bool EasyBoundaryPoint::setPositionParam(
     boundary_idx = target_boundary_idx;
     boundary_line_idx = target_boundary_line_idx;
     boundary_line_param = target_boundary_line_param;
+
+    is_valid = true;
 
     is_position_valid = false;
 
@@ -65,6 +69,7 @@ bool EasyBoundaryPoint::updatePosition(
       line_start_point.y + boundary_line_param * (line_end_point.y - line_start_point.y);
 
     position.setPosition(boundary_point_x, boundary_point_y);
+
     is_position_valid = true;
 
     return true;

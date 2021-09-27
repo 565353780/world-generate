@@ -309,6 +309,11 @@ bool SpaceController::updateRoomPosition()
     return true;
 }
 
+bool SpaceController::updateRoomBoundary()
+{
+    return true;
+}
+
 bool SpaceController::outputRoomLineVec()
 {
     if(room_line_vec_.size() == 0)
@@ -795,6 +800,14 @@ bool SpaceController::updateRoomBoundaryPointParam(
         return false;
     }
 
+    if(!room_line_boundary_point_vec_[room_line_idx].is_valid)
+    {
+        std::cout << "SpaceController::updateRoomBoundaryPointParam : " <<
+          "room-line-" << room_line_idx << " not valid!" << std::endl;
+
+        return true;
+    }
+
     EasyBoundaryPoint &boundary_point = room_line_boundary_point_vec_[room_line_idx];
     EasyRoomLine &room_line = room_line_vec_[room_line_idx];
 
@@ -865,10 +878,10 @@ bool SpaceController::updateRoomBoundaryPointParam(
 
         const float room_real_width_param = room_vec_[room_idx].real_width / boundary_line_length;
 
-        room_boundary_point.boundary_idx = boundary_idx;
-        room_boundary_point.boundary_line_idx = boundary_line_idx;
-        room_boundary_point.boundary_line_param =
-          current_room_real_param_min + 0.5 * room_real_width_param;
+        room_boundary_point.setPositionParam(
+            boundary_idx,
+            boundary_line_idx,
+            current_room_real_param_min + 0.5 * room_real_width_param);
 
         room_boundary_point.updatePosition(boundary_vec_);
 
@@ -1018,6 +1031,11 @@ bool SpaceController::drawRoomLine()
     {
         const EasyBoundaryPoint &room_line_boundary_point = room_line_boundary_point_vec_[i];
 
+        if(!room_line_boundary_point.is_valid)
+        {
+            continue;
+        }
+
         const EasyPoint2D &room_line_boundary_point_position =
           room_line_boundary_point.position;
 
@@ -1048,6 +1066,11 @@ bool SpaceController::drawRoom()
     for(size_t i = 0; i < room_boundary_point_vec_.size(); ++i)
     {
         const EasyBoundaryPoint &room_boundary_point = room_boundary_point_vec_[i];
+
+        if(!room_boundary_point.is_valid)
+        {
+            continue;
+        }
 
         const EasyPoint2D &room_boundary_point_position =
           room_boundary_point.position;

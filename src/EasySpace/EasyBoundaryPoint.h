@@ -12,6 +12,7 @@ class EasyBoundaryPoint
 public:
     EasyBoundaryPoint()
     {
+        reset();
     }
 
     bool reset();
@@ -27,6 +28,7 @@ public:
     size_t boundary_idx;
     size_t boundary_line_idx;
     float boundary_line_param;
+    bool is_valid;
 
     bool is_position_valid;
     EasyPoint2D position;

@@ -54,9 +54,11 @@ void MainWindow::run_example()
     space_controller.updateRoomConnection();
 
     space_controller.setRoomBoundaryPointParam(0, 0, 0, 0);
-    space_controller.setRoomBoundaryPointParam(4, 0, 6, 0);
+    // space_controller.setRoomBoundaryPointParam(4, 0, 6, 0);
 
     space_controller.updateRoomPosition();
+
+    space_controller.updateRoomBoundary();
 
     space_controller.outputRoomLineVec();
 

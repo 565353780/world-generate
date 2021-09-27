@@ -325,33 +325,20 @@ bool SpaceController::updateRoomConnection()
     return true;
 }
 
-bool SpaceController::updateRoomPosition()
+bool SpaceController::updateRoom()
 {
-    if(!updateAllRoomBoundaryParam())
+    if(!updateRoomPosition())
     {
-        std::cout << "SpaceController::updateSpace : " <<
-          "updateAllRoomBoundaryParam failed!" << std::endl;
+        std::cout << "SpaceController::updateRoom : " <<
+          "updateRoomPosition failed!" << std::endl;
 
         return false;
     }
 
-    if(!updateRoomLineBoundaryPointPosition())
+    if(!updateRoomBoundary())
     {
-        std::cout << "SpaceController::updateSpace : " <<
-          "updateRoomLineBoundaryPointPosition failed!" << std::endl;
-
-        return false;
-    }
-
-    return true;
-}
-
-bool SpaceController::updateRoomBoundary()
-{
-    if(!updateAllRoomBoundary())
-    {
-        std::cout << "SpaceController::updateRoomBoundary : " <<
-          "updateAllRoomBoundary failed!" << std::endl;
+        std::cout << "SpaceController::updateRoom : " <<
+          "updateRoomBoundary failed!" << std::endl;
 
         return false;
     }
@@ -1133,6 +1120,40 @@ bool SpaceController::updateAllRoomBoundary()
 
             return false;
         }
+    }
+
+    return true;
+}
+
+bool SpaceController::updateRoomPosition()
+{
+    if(!updateAllRoomBoundaryParam())
+    {
+        std::cout << "SpaceController::updateSpace : " <<
+          "updateAllRoomBoundaryParam failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!updateRoomLineBoundaryPointPosition())
+    {
+        std::cout << "SpaceController::updateSpace : " <<
+          "updateRoomLineBoundaryPointPosition failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool SpaceController::updateRoomBoundary()
+{
+    if(!updateAllRoomBoundary())
+    {
+        std::cout << "SpaceController::updateRoomBoundary : " <<
+          "updateAllRoomBoundary failed!" << std::endl;
+
+        return false;
     }
 
     return true;

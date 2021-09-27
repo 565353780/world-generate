@@ -58,9 +58,7 @@ public:
 
     bool updateRoomConnection();
 
-    bool updateRoomPosition();
-
-    bool updateRoomBoundary();
+    bool updateRoom();
 
     bool outputRoomLineVec();
 
@@ -118,6 +116,10 @@ private:
         const size_t &room_line_idx);
 
     bool updateAllRoomBoundary();
+
+    bool updateRoomPosition();
+
+    bool updateRoomBoundary();
 
     bool outputRoomLine(
         const EasyRoomLine &room_line);

@@ -409,7 +409,8 @@ bool SpaceController::outputRoomBoundaryPointVec()
     return true;
 }
 
-bool SpaceController::showSpace()
+bool SpaceController::showSpace(
+    const size_t &waitKey)
 {
     initSpaceImage();
 
@@ -421,7 +422,7 @@ bool SpaceController::showSpace()
 
     drawRoomBoundary();
 
-    showSpaceImage();
+    showSpaceImage(waitKey);
 
     return true;
 }
@@ -1227,7 +1228,7 @@ bool SpaceController::drawBoundary()
     size_t image_width = size_t(x_diff) + 2 * x_free_;
     size_t image_height = size_t(y_diff) + 2 * y_free_;
 
-    space_image_ = cv::Mat(image_height, image_width, CV_8UC3);
+    space_image_ = cv::Mat(image_height, image_width, CV_8UC3, cv::Scalar(0, 0, 0));
 
     for(const EasyBoundary &boundary : boundary_vec_)
     {
@@ -1388,10 +1389,11 @@ bool SpaceController::drawRoomBoundary()
     return true;
 }
 
-bool SpaceController::showSpaceImage()
+bool SpaceController::showSpaceImage(
+    const size_t &waitKey)
 {
     cv::imshow("space_image", space_image_);
-    cv::waitKey(0);
+    cv::waitKey(waitKey);
 
     return true;
 }

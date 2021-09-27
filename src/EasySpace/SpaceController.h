@@ -66,7 +66,8 @@ public:
 
     bool outputRoomBoundaryPointVec();
 
-    bool showSpace();
+    bool showSpace(
+        const size_t &waitKey);
 
 private:
     bool getRoomLine(
@@ -137,7 +138,8 @@ private:
 
     bool drawRoomBoundary();
 
-    bool showSpaceImage();
+    bool showSpaceImage(
+        const size_t &waitKey);
 
 private:
     std::vector<EasyBoundary> boundary_vec_;

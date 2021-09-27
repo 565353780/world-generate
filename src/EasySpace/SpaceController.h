@@ -62,6 +62,8 @@ public:
 
     bool outputRoomLineBoundaryPointVec();
 
+    bool outputRoomBoundaryPointVec();
+
     bool showSpace();
 
 private:
@@ -97,6 +99,9 @@ private:
 
     bool updateRoomLineBoundaryPointPosition();
 
+    bool updateRoomRealWidthOnRoomLine(
+        const size_t &room_line_idx);
+
     bool updateRoomBoundaryPointParam(
         const size_t &room_line_idx);
 
@@ -111,6 +116,8 @@ private:
     bool initSpaceImage();
 
     bool drawBoundary();
+
+    bool drawRoomLine();
 
     bool drawRoom();
 

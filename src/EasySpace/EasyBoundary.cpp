@@ -59,3 +59,33 @@ bool EasyBoundary::setBoundaryPointVec(
     return true;
 }
 
+bool EasyBoundary::getVerticalDirection(
+    const size_t &boundary_line_idx,
+    // const size_t &boundary_line_param,
+    EasyPoint2D &vertical_direction)
+{
+    vertical_direction.setPosition(0, 0);
+
+    if(boundary_line_idx >= boundary.point_list.size())
+    {
+        std::cout << "EasyBoundary::getVerticalDirection : " <<
+          "boundary line idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    const EasyPoint2D &boundary_start_point = boundary.point_list[boundary_line_idx];
+    const EasyPoint2D &boundary_end_point =
+      boundary.point_list[(boundary_line_idx + 1) % boundary.point_list.size()];
+
+    const float x_diff = boundary_end_point.x - boundary_start_point.x;
+    const float y_diff = boundary_end_point.y - boundary_start_point.y;
+
+    const float boundary_line_length =
+      EasyComputation::pointDist(boundary_start_point, boundary_end_point);
+
+    vertical_direction.setPosition(-y_diff / boundary_line_length, x_diff / boundary_line_length);
+
+    return true;
+}
+

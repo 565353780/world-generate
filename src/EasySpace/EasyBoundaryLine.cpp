@@ -70,6 +70,8 @@ bool EasyBoundaryLine::setEndPointParam(
         return false;
     }
 
+    is_end_point_param_set = true;
+
     return true;
 }
 

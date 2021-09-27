@@ -28,6 +28,11 @@ public:
     bool setBoundaryPointVec(
         const std::vector<EasyPoint2D> &boundary_point_vec);
 
+    bool getVerticalDirection(
+        const size_t &boundary_line_idx,
+        // const size_t &boundary_line_param,
+        EasyPoint2D &vertical_direction);
+
     std::string name;
 
     bool is_outer_boundary;

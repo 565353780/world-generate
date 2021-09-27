@@ -39,7 +39,7 @@ public:
         const float &x,
         const float &y);
 
-        bool setRoomSize(
+    bool setRoomSize(
         const size_t &room_idx,
         const float &width,
         const float &height);
@@ -53,6 +53,8 @@ public:
         const size_t &boundary_idx,
         const size_t &boundary_line_idx,
         const float &boundary_line_param);
+
+    bool updateBoundary();
 
     bool updateRoomConnection();
 
@@ -104,10 +106,18 @@ private:
     bool updateRoomRealWidthOnRoomLine(
         const size_t &room_line_idx);
 
-    bool updateRoomBoundaryPointParam(
+    bool updateRoomRealHeightOnRoomLine(
         const size_t &room_line_idx);
 
-    bool updateAllRoomBoundaryPointParam();
+    bool updateRoomBoundaryParam(
+        const size_t &room_line_idx);
+
+    bool updateAllRoomBoundaryParam();
+
+    bool updateRoomBoundary(
+        const size_t &room_line_idx);
+
+    bool updateAllRoomBoundary();
 
     bool outputRoomLine(
         const EasyRoomLine &room_line);
@@ -119,9 +129,11 @@ private:
 
     bool drawBoundary();
 
-    bool drawRoomLine();
+    bool drawRoomLinePosition();
 
-    bool drawRoom();
+    bool drawRoomPosition();
+
+    bool drawRoomBoundary();
 
     bool showSpaceImage();
 

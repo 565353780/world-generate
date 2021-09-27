@@ -1,5 +1,6 @@
 #include "SpaceController.h"
 #include "highgui.hpp"
+#include <cstdlib>
 #include <limits>
 #include <string>
 
@@ -1373,7 +1374,7 @@ bool SpaceController::drawBoundary()
     size_t image_width = size_t(x_diff) + 2 * x_free_;
     size_t image_height = size_t(y_diff) + 2 * y_free_;
 
-    space_image_ = cv::Mat(image_height, image_width, CV_8UC3, cv::Scalar(0, 0, 0));
+    space_image_ = cv::Mat(image_height, image_width, CV_8UC3, cv::Scalar(255, 255, 255));
 
     for(const EasyBoundary &boundary : boundary_vec_)
     {
@@ -1400,7 +1401,8 @@ bool SpaceController::drawBoundary()
 
             std::string text = "b" + std::to_string(i);
 
-            cv::putText(space_image_, text, current_cv_point, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(255, 255, 255));
+            cv::putText(space_image_, text, current_cv_point,
+                cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(0, 0, 0));
         }
     }
 
@@ -1437,7 +1439,8 @@ bool SpaceController::drawRoomLinePosition()
 
         std::string text = "rl" + std::to_string(i);
 
-        cv::putText(space_image_, text, cv_point, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(255, 255, 255));
+        cv::putText(space_image_, text, cv_point,
+            cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(0, 0, 0));
     }
 
     return true;
@@ -1473,7 +1476,8 @@ bool SpaceController::drawRoomPosition()
 
         std::string text = "r" + std::to_string(i);
 
-        cv::putText(space_image_, text, cv_point, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(255, 255, 255));
+        cv::putText(space_image_, text, cv_point,
+            cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(0, 0, 0));
     }
 
     return true;
@@ -1501,6 +1505,8 @@ bool SpaceController::drawRoomBoundary()
         float average_x = 0;
         float average_y = 0;
 
+        cv::Scalar random_color = cv::Scalar(std::rand() % 200, std::rand() % 200, std::rand() % 200);
+
         for(size_t j = 0; j < room.boundary.point_list.size(); ++j)
         {
             const EasyPoint2D &boundary_line_start_point = room.boundary.point_list[j];
@@ -1518,7 +1524,7 @@ bool SpaceController::drawRoomBoundary()
                 size_t(boundary_line_end_point.x - x_min_) + x_free_,
                 size_t(boundary_line_end_point.y - y_min_) + y_free_);
 
-            cv::line(space_image_, cv_start_point, cv_end_point, cv::Scalar(0, 255, 0), 3);
+            cv::line(space_image_, cv_start_point, cv_end_point, random_color, 3);
         }
 
         average_x = size_t(average_x / room.boundary.point_list.size() - x_min_) + x_free_;
@@ -1528,7 +1534,8 @@ bool SpaceController::drawRoomBoundary()
 
         std::string text = std::to_string(i);
 
-        cv::putText(space_image_, text, cv_text_point, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(255, 255, 255));
+        cv::putText(space_image_, text, cv_text_point,
+            cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(0, 0, 0));
     }
 
     return true;

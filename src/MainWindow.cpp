@@ -22,7 +22,7 @@ void MainWindow::run_example()
     // 1 : Rebuild Demo
     // 2 : Rebuild Demo reset room position speed test // offline 130w fps render 700 fps
     // 3 : Rebuild Demo all process speed test // offline 56w fps render 700 fps
-    size_t demo_mode = 3;
+    size_t demo_mode = 0;
 
     timespec t_spc;
     clock_gettime(CLOCK_REALTIME_COARSE, &t_spc);

@@ -3,10 +3,11 @@
 
 #include <QWidget>
 #include <QString>
+#include <QDebug>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPen>
-#include <QDebug>
+#include <QMouseEvent>
 
 #include <time.h>
 #include "EasySpace/SpaceController.h"
@@ -29,6 +30,10 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event);
+
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 
 private:
     bool drawBoundary();

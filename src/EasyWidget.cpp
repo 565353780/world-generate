@@ -11,8 +11,6 @@ EasyWidget::EasyWidget(QWidget *parent) :
     // run_example();
     
     this->show();
-    
-    createDemo();
 }
 
 EasyWidget::~EasyWidget()
@@ -230,19 +228,16 @@ void EasyWidget::run_example()
 
 bool EasyWidget::createDemo()
 {
-    qDebug() << "in createDemo";
     // 0 : AnHui Applicated Center
     // 1 : Rebuild Demo
-    // 2 : Rebuild Demo reset room position speed test // offline 130w fps render 700 fps
-    // 3 : Rebuild Demo all process speed test // offline 56w fps render 700 fps
-    size_t demo_mode = 0;
-
-    long cycle_num = 0;
-    float average_fps = 0;
+    // 2 : Rebuild Demo all process speed test // offline 56w fps render 700 fps
+    size_t demo_mode = 2;
 
     switch(demo_mode)
     {
     case 0:
+        space_controller_.reset();
+
         space_controller_.createBoundary("Outer Wall");
         space_controller_.setOuterBoundary(0);
 
@@ -289,6 +284,8 @@ bool EasyWidget::createDemo()
         this->update();
         break;
     case 1:
+        space_controller_.reset();
+
         space_controller_.createBoundary("Outer Wall");
         space_controller_.setOuterBoundary(0);
 
@@ -327,6 +324,8 @@ bool EasyWidget::createDemo()
         this->update();
         break;
     case 2:
+        space_controller_.reset();
+
         space_controller_.createBoundary("Outer Wall");
         space_controller_.setOuterBoundary(0);
 
@@ -354,92 +353,23 @@ bool EasyWidget::createDemo()
 
         space_controller_.updateRoomConnection();
 
-        setStartTime();
+        size_t random_room_2_boundary_line_idx = std::rand() % 4;
+        size_t random_room_34_boundary_line_idx = (random_room_2_boundary_line_idx + 2) % 4;
+        float random_room_2_boundary_line_param = 1.0 * (std::rand() % 1000) / 1000.0;
+        float random_room_3_boundary_line_param = 1.0 * (std::rand() % 300) / 1000.0;
+        float random_room_4_boundary_line_param = 0.7 + 1.0 * (std::rand() % 300) / 1000.0;
+        space_controller_.setRoomBoundaryPointParam(2, 0, random_room_2_boundary_line_idx, random_room_2_boundary_line_param);
+        space_controller_.setRoomBoundaryPointParam(3, 0, random_room_34_boundary_line_idx, random_room_3_boundary_line_param);
+        space_controller_.setRoomBoundaryPointParam(4, 0, random_room_34_boundary_line_idx, random_room_4_boundary_line_param);
 
-        while(true)
-        {
-            size_t random_room_2_boundary_line_idx = std::rand() % 4;
-            size_t random_room_34_boundary_line_idx = (random_room_2_boundary_line_idx + 2) % 4;
-            float random_room_2_boundary_line_param = 1.0 * (std::rand() % 1000) / 1000.0;
-            float random_room_3_boundary_line_param = 1.0 * (std::rand() % 300) / 1000.0;
-            float random_room_4_boundary_line_param = 0.7 + 1.0 * (std::rand() % 300) / 1000.0;
-            space_controller_.setRoomBoundaryPointParam(2, 0, random_room_2_boundary_line_idx, random_room_2_boundary_line_param);
-            space_controller_.setRoomBoundaryPointParam(3, 0, random_room_34_boundary_line_idx, random_room_3_boundary_line_param);
-            space_controller_.setRoomBoundaryPointParam(4, 0, random_room_34_boundary_line_idx, random_room_4_boundary_line_param);
+        space_controller_.updateRoom();
 
-            space_controller_.updateRoom();
+        space_controller_.showSpace(0);
 
-            ++cycle_num;
-
-            getFPS(cycle_num, average_fps);
-
-            std::cout << "fps : " << size_t(average_fps) << std::endl;
-
-            space_controller_.showSpace(1);
-            this->update();
-        }
-
-        break;
-    case 3:
-        setStartTime();
-
-        while(true)
-        {
-            space_controller_.reset();
-
-            space_controller_.createBoundary("Outer Wall");
-            space_controller_.setOuterBoundary(0);
-
-            space_controller_.addBoundaryPoint(0, 0, 0);
-            space_controller_.addBoundaryPoint(0, 400, 0);
-            space_controller_.addBoundaryPoint(0, 400, 400);
-            space_controller_.addBoundaryPoint(0, 0, 400);
-
-            space_controller_.updateBoundary();
-
-            space_controller_.createRoom("MR 1");
-            space_controller_.setRoomSize(0, 100, 70);
-            space_controller_.createRoom("MR 2");
-            space_controller_.setRoomSize(1, 100, 70);
-            space_controller_.createRoom("MR 3");
-            space_controller_.setRoomSize(2, 100, 80);
-
-            space_controller_.setRoomNeighboor(0, 1);
-            space_controller_.setRoomNeighboor(1, 2);
-
-            space_controller_.createRoom("MR 4");
-            space_controller_.setRoomSize(3, 100, 100);
-            space_controller_.createRoom("MR 5");
-            space_controller_.setRoomSize(4, 100, 100);
-
-            space_controller_.updateRoomConnection();
-
-            size_t random_room_2_boundary_line_idx = std::rand() % 4;
-            size_t random_room_34_boundary_line_idx = (random_room_2_boundary_line_idx + 2) % 4;
-            float random_room_2_boundary_line_param = 1.0 * (std::rand() % 1000) / 1000.0;
-            float random_room_3_boundary_line_param = 1.0 * (std::rand() % 300) / 1000.0;
-            float random_room_4_boundary_line_param = 0.7 + 1.0 * (std::rand() % 300) / 1000.0;
-            space_controller_.setRoomBoundaryPointParam(2, 0, random_room_2_boundary_line_idx, random_room_2_boundary_line_param);
-            space_controller_.setRoomBoundaryPointParam(3, 0, random_room_34_boundary_line_idx, random_room_3_boundary_line_param);
-            space_controller_.setRoomBoundaryPointParam(4, 0, random_room_34_boundary_line_idx, random_room_4_boundary_line_param);
-
-            space_controller_.updateRoom();
-
-            ++cycle_num;
-
-            getFPS(cycle_num, average_fps);
-
-            std::cout << "fps : " << size_t(average_fps) << std::endl;
-
-            space_controller_.showSpace(1);
-
-            this->update();
-        }
+        this->update();
 
         break;
     }
-
-    qDebug() << "out createDemo";
 
     return true;
 }
@@ -451,6 +381,21 @@ void EasyWidget::paintEvent(QPaintEvent *event)
     drawBoundary();
 
     drawRoomBoundary();
+}
+
+void EasyWidget::mousePressEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+
+    createDemo();
+}
+
+void EasyWidget::mouseMoveEvent(QMouseEvent *event)
+{
+}
+
+void EasyWidget::mouseReleaseEvent(QMouseEvent *event)
+{
 }
 
 bool EasyWidget::drawBoundary()

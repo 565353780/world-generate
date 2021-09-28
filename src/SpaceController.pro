@@ -16,6 +16,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # OpenCV
+unix{
 INCLUDEPATH += \
     /home/chli/OpenCV/opencv-3.4.10/build/installed/include \
     /home/chli/OpenCV/opencv-3.4.10/build/installed/include/opencv \
@@ -27,6 +28,7 @@ LIBS += \
     -lopencv_imgproc \
     -lopencv_imgcodecs \
     -lopencv_highgui
+}
 
 # EasyShape
 SOURCES += \

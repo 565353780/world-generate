@@ -55,6 +55,7 @@ HEADERS += \
 # EasySpace
 SOURCES += \
     EasySpace/EasyBoundary.cpp \
+    EasySpace/EasyDoor.cpp \
     EasySpace/EasyRoom.cpp \
     EasySpace/EasyBoundaryPoint.cpp \
     EasySpace/EasyBoundaryLine.cpp \
@@ -64,6 +65,7 @@ SOURCES += \
 
 HEADERS += \
     EasySpace/EasyBoundary.h \
+    EasySpace/EasyDoor.h \
     EasySpace/EasyRoom.h \
     EasySpace/EasyBoundaryPoint.h \
     EasySpace/EasyBoundaryLine.h \

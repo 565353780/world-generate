@@ -230,8 +230,7 @@ bool EasyWidget::createDemo()
 {
     // 0 : AnHui Applicated Center
     // 1 : Rebuild Demo
-    // 2 : Rebuild Demo all process speed test // offline 56w fps render 700 fps
-    size_t demo_mode = 2;
+    size_t demo_mode = 1;
 
     switch(demo_mode)
     {
@@ -284,46 +283,6 @@ bool EasyWidget::createDemo()
         this->update();
         break;
     case 1:
-        space_controller_.reset();
-
-        space_controller_.createBoundary("Outer Wall");
-        space_controller_.setOuterBoundary(0);
-
-        space_controller_.addBoundaryPoint(0, 0, 0);
-        space_controller_.addBoundaryPoint(0, 400, 0);
-        space_controller_.addBoundaryPoint(0, 400, 400);
-        space_controller_.addBoundaryPoint(0, 0, 400);
-
-        space_controller_.updateBoundary();
-
-        space_controller_.createRoom("MR 1");
-        space_controller_.setRoomSize(0, 100, 70);
-        space_controller_.createRoom("MR 2");
-        space_controller_.setRoomSize(1, 100, 70);
-        space_controller_.createRoom("MR 3");
-        space_controller_.setRoomSize(2, 100, 80);
-
-        space_controller_.setRoomNeighboor(0, 1);
-        space_controller_.setRoomNeighboor(1, 2);
-
-        space_controller_.createRoom("MR 4");
-        space_controller_.setRoomSize(3, 100, 100);
-        space_controller_.createRoom("MR 5");
-        space_controller_.setRoomSize(4, 100, 100);
-
-        space_controller_.updateRoomConnection();
-
-        space_controller_.setRoomBoundaryPointParam(2, 0, 0, 1);
-        space_controller_.setRoomBoundaryPointParam(3, 0, 2, 0);
-        space_controller_.setRoomBoundaryPointParam(4, 0, 2, 1);
-
-        space_controller_.updateRoom();
-
-        space_controller_.showSpace(0);
-
-        this->update();
-        break;
-    case 2:
         space_controller_.reset();
 
         space_controller_.createBoundary("Outer Wall");

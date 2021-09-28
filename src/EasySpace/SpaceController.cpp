@@ -464,15 +464,17 @@ bool SpaceController::showSpace(
 {
     initSpaceImage();
 
+#ifdef USE_OPENCV
     drawBoundary();
 
-    // drawRoomLinePosition();
+    drawRoomLinePosition();
 
-    // drawRoomPosition();
+    drawRoomPosition();
 
     drawRoomBoundary();
 
     showSpaceImage(waitKey);
+#endif
 
     return true;
 }
@@ -1357,6 +1359,7 @@ bool SpaceController::initSpaceImage()
     return true;
 }
 
+#ifdef USE_OPENCV
 bool SpaceController::drawBoundary()
 {
     float x_max = std::numeric_limits<float>::min();
@@ -1390,12 +1393,18 @@ bool SpaceController::drawBoundary()
             const EasyPoint2D &next_point =
               boundary_polygon.point_list[(i + 1) % boundary_polygon.point_list.size()];
 
-            cv::Point current_cv_point = cv::Point(
-                size_t(current_point.x - x_min_) + x_free_,
-                size_t(current_point.y - y_min_) + y_free_);
-            cv::Point next_cv_point = cv::Point(
-                size_t(next_point.x - x_min_) + x_free_,
-                size_t(next_point.y - y_min_) + y_free_);
+            const size_t current_point_x =
+              size_t(current_point.x - x_min_) + x_free_;
+            const size_t current_point_y =
+              size_t(current_point.y - y_min_) + y_free_;
+
+            const size_t next_point_x =
+              size_t(next_point.x - x_min_) + x_free_;
+            const size_t next_point_y =
+              size_t(next_point.y - y_min_) + y_free_;
+
+            cv::Point current_cv_point = cv::Point(current_point_x, current_point_y);
+            cv::Point next_cv_point = cv::Point(next_point_x, next_point_y);
 
             cv::line(space_image_, current_cv_point, next_cv_point, cv::Scalar(0, 0, 255), 3);
 
@@ -1431,9 +1440,12 @@ bool SpaceController::drawRoomLinePosition()
         const EasyPoint2D &room_line_boundary_point_position =
           room_line_boundary_point.position;
 
-        cv::Point cv_point = cv::Point(
-            size_t(room_line_boundary_point_position.x - x_min_) + x_free_,
-            size_t(room_line_boundary_point_position.y - y_min_) + y_free_);
+        const size_t point_x =
+          size_t(room_line_boundary_point_position.x - x_min_) + x_free_;
+        const size_t point_y =
+          size_t(room_line_boundary_point_position.y - y_min_) + y_free_;
+
+        cv::Point cv_point = cv::Point(point_x, point_y);
 
         cv::circle(space_image_, cv_point, 3, cv::Scalar(0, 255, 0), 3);
 
@@ -1468,9 +1480,12 @@ bool SpaceController::drawRoomPosition()
         const EasyPoint2D &room_boundary_point_position =
           room_boundary_point.position;
 
-        cv::Point cv_point = cv::Point(
-            size_t(room_boundary_point_position.x - x_min_) + x_free_,
-            size_t(room_boundary_point_position.y - y_min_) + y_free_);
+        const size_t point_x =
+          size_t(room_boundary_point_position.x - x_min_) + x_free_;
+        const size_t point_y =
+          size_t(room_boundary_point_position.y - y_min_) + y_free_;
+
+        cv::Point cv_point = cv::Point(point_x, point_y);
 
         cv::circle(space_image_, cv_point, 3, cv::Scalar(255, 0, 0), 3);
 
@@ -1516,13 +1531,19 @@ bool SpaceController::drawRoomBoundary()
             average_x += boundary_line_start_point.x;
             average_y += boundary_line_start_point.y;
 
-            cv::Point cv_start_point = cv::Point(
-                size_t(boundary_line_start_point.x - x_min_) + x_free_,
-                size_t(boundary_line_start_point.y - y_min_) + y_free_);
+            const size_t current_point_x =
+              size_t(boundary_line_start_point.x - x_min_) + x_free_;
+            const size_t current_point_y =
+              size_t(boundary_line_start_point.y - y_min_) + y_free_;
 
-            cv::Point cv_end_point = cv::Point(
-                size_t(boundary_line_end_point.x - x_min_) + x_free_,
-                size_t(boundary_line_end_point.y - y_min_) + y_free_);
+            const size_t next_point_x =
+              size_t(boundary_line_end_point.x - x_min_) + x_free_;
+            const size_t next_point_y =
+              size_t(boundary_line_end_point.y - y_min_) + y_free_;
+
+            cv::Point cv_start_point = cv::Point(current_point_x, current_point_y);
+
+            cv::Point cv_end_point = cv::Point(next_point_x, next_point_y);
 
             cv::line(space_image_, cv_start_point, cv_end_point, random_color, 3);
         }
@@ -1549,4 +1570,5 @@ bool SpaceController::showSpaceImage(
 
     return true;
 }
+#endif
 

@@ -35,7 +35,8 @@ SOURCES += \
     EasyShape/EasyLine2D.cpp \
     EasyShape/EasyIntersection2D.cpp \
     EasyShape/EasyPolygon2D.cpp \
-    EasyShape/EasyComputation.cpp
+    EasyShape/EasyComputation.cpp \
+    EasyWidget.cpp
 
 HEADERS += \
     EasyShape/EasyPoint2D.h \
@@ -44,6 +45,7 @@ HEADERS += \
     EasyShape/EasyIntersection2D.h \
     EasyShape/EasyPolygon2D.h \
     EasyShape/EasyComputation.h \
+    EasyWidget.h
 
 HEADERS += \
     EasyShape/EasyShape.h
@@ -55,6 +57,7 @@ SOURCES += \
     EasySpace/EasyBoundaryPoint.cpp \
     EasySpace/EasyBoundaryLine.cpp \
     EasySpace/EasyRoomLine.cpp \
+    EasySpace/EasyFixture.cpp \
     EasySpace/SpaceController.cpp
 
 HEADERS += \
@@ -63,6 +66,7 @@ HEADERS += \
     EasySpace/EasyBoundaryPoint.h \
     EasySpace/EasyBoundaryLine.h \
     EasySpace/EasyRoomLine.h \
+    EasySpace/EasyFixture.h \
     EasySpace/SpaceController.h
 
 HEADERS += \
@@ -76,6 +80,7 @@ HEADERS += \
     MainWindow.h
 
 FORMS += \
+    EasyWidget.ui \
     MainWindow.ui
 
 TRANSLATIONS += \
@@ -88,3 +93,4 @@ CONFIG += embed_translations
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+

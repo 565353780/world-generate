@@ -1,14 +1,17 @@
 #ifndef SPACE_CONTROLLER_H
 #define SPACE_CONTROLLER_H
 
+// #define USE_OPENCV
+
 #include <iostream>
 #include <string>
 
 #include "EasyShape/EasyShape.h"
 #include "EasySpace.h"
 
-// for test only
+#ifdef USE_OPENCV
 #include </home/chli/OpenCV/opencv-3.4.10/build/installed/include/opencv2/opencv.hpp>
+#endif
 
 class SpaceController
 {
@@ -143,6 +146,7 @@ private:
 
     bool initSpaceImage();
 
+#ifdef USE_OPENCV
     bool drawBoundary();
 
     bool drawRoomLinePosition();
@@ -153,8 +157,10 @@ private:
 
     bool showSpaceImage(
         const size_t &waitKey);
+#endif
 
-private:
+// private:
+public:
     std::vector<EasyBoundary> boundary_vec_;
 
     std::vector<EasyRoom> room_vec_;
@@ -165,7 +171,7 @@ private:
     std::vector<EasyBoundaryPoint> room_line_boundary_point_vec_;
     std::vector<EasyBoundaryLine> room_line_boundary_line_vec_;
 
-    cv::Mat space_image_;
+    // cv::Mat space_image_;
     size_t x_free_;
     size_t y_free_;
     float x_min_;

@@ -6,5 +6,6 @@
 #include "EasyBoundaryPoint.h"
 #include "EasyBoundaryLine.h"
 #include "EasyRoomLine.h"
+#include "EasyFixture.h"
 
 #endif //EASY_SPACE_H

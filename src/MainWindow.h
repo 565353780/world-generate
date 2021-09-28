@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-#include "EasySpace/SpaceController.h"
+#include "EasyWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,5 +21,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    EasyWidget *easy_widget_;
 };
 #endif // MAINWINDOW_H

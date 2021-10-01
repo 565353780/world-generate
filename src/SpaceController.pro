@@ -76,6 +76,13 @@ HEADERS += \
 HEADERS += \
     EasySpace/EasySpace.h
 
+# EasyWorld
+SOURCES += \
+    EasyWorld/EasyNode.cpp
+
+HEADERS += \
+    EasyWorld/EasyNode.h
+
 SOURCES += \
     main.cpp \
     MainWindow.cpp

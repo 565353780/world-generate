@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 
+#include "EasyWorld/EasyAxis2D.h"
+
 #include "EasyShape/EasyShape.h"
 
 enum NodeType
@@ -43,9 +45,12 @@ public:
         const size_t &child_id,
         const NodeType &child_type);
 
-    bool setChildPositionInParent(
+    bool setChildAxisInParent(
         const size_t &child_id,
-        const EasyPoint2D &child_position_in_parent);
+        const float &child_axis_center_x_in_parent,
+        const float &child_axis_center_y_in_parent,
+        const float &child_axis_x_direction_x_in_parent,
+        const float &child_axis_x_direction_y_in_parent);
 
 public:
     size_t id_;
@@ -56,11 +61,7 @@ public:
 
     std::vector<EasyNode*> child_vec_;
 
-    EasyPoint2D position_in_parent_;
-    EasyPoint2D direction_in_parent_;
-
-    EasyPoint2D position_;
-    EasyPoint2D direction_;
+    EasyAxis2D axis_;
 };
 
 #endif //EASY_NODE_H

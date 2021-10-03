@@ -49,11 +49,7 @@ bool EasyNode::reset()
 
     child_vec_.clear();
 
-    position_in_parent_.setPosition(0, 0);
-    direction_in_parent_.setPosition(0, 0);
-
-    position_.setPosition(0, 0);
-    direction_.setPosition(0, 0);
+    axis_.reset();
 
     return true;
 }
@@ -166,20 +162,26 @@ bool EasyNode::setChildType(
     return true;
 }
 
-bool EasyNode::setChildPositionInParent(
+bool EasyNode::setChildAxisInParent(
     const size_t &child_id,
-    const EasyPoint2D &child_position_in_parent)
+    const float &child_axis_center_x_in_parent,
+    const float &child_axis_center_y_in_parent,
+    const float &child_axis_x_direction_x_in_parent,
+    const float &child_axis_x_direction_y_in_parent)
 {
     size_t child_idx;
 
     if(!findThisChild(child_id, child_idx))
     {
-        std::cout << "EasyNode::setChildPositionInParent : " <<
+        std::cout << "EasyNode::setChildAxisInParent : " <<
           "Input :\n" <<
           "\tchild_id = " << child_id << std::endl <<
-          "\tchild_position_in_parent = [" <<
-          child_position_in_parent.x << "," <<
-          child_position_in_parent.y << "]" << std::endl <<
+          "\tchild_axis_center_in_parent = [" <<
+          child_axis_center_x_in_parent << "," <<
+          child_axis_center_y_in_parent << "]" << std::endl <<
+          "\t child_axis_x_direction_in_parent = [" <<
+          child_axis_x_direction_x_in_parent << "," <<
+          child_axis_x_direction_y_in_parent << "]" << std::endl <<
           "this id not exist!" << std::endl;
 
         return false;
@@ -189,18 +191,20 @@ bool EasyNode::setChildPositionInParent(
 
     if(child_node == NULL)
     {
-        std::cout << "EasyNode::setChildPositionInParent : " <<
+        std::cout << "EasyNode::setChildAxisInParent : " <<
           "Input :\n" <<
           "\tchild_id = " << child_id << std::endl <<
-          "\tchild_position_in_parent = [" <<
-          child_position_in_parent.x << "," <<
-          child_position_in_parent.y << "]" << std::endl <<
+          "\tchild_axis_center_in_parent = [" <<
+          child_axis_center_x_in_parent << "," <<
+          child_axis_center_y_in_parent << "]" << std::endl <<
+          "\t child_axis_x_direction_in_parent = [" <<
+          child_axis_x_direction_x_in_parent << "," <<
+          child_axis_x_direction_y_in_parent << "]" << std::endl <<
           "this child is NULL!" << std::endl;
 
         return false;
     }
 
-    child_node->position_in_parent_ = child_position_in_parent;
     return true;
 }
 

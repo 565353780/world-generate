@@ -78,10 +78,15 @@ HEADERS += \
 
 # EasyWorld
 SOURCES += \
+    EasyWorld/EasyAxis2D.cpp \
     EasyWorld/EasyNode.cpp
 
 HEADERS += \
+    EasyWorld/EasyAxis2D.h \
     EasyWorld/EasyNode.h
+
+HEADERS += \
+    EasyWorld/EasyWorld.h
 
 SOURCES += \
     main.cpp \

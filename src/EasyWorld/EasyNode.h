@@ -10,20 +10,25 @@
 
 enum NodeType
 {
-    Free = 0,
+    NodeFree = 0,
     World = 1,
     OuterWall = 2,
     InnerWall = 3,
     Room = 4,
-    Door = 5,
-    Furniture = 6,
-    Space = 7
+    Boundary = 5,
+    Door = 6,
+    Furniture = 7,
+    Space = 8
 };
 
 class EasyNode
 {
 public:
-    EasyNode() {}
+    EasyNode()
+    {
+        parent_ = nullptr;
+    }
+
     ~EasyNode();
 
     bool reset();
@@ -42,6 +47,9 @@ public:
 
     bool setParent(
         EasyNode* parent);
+
+    bool setBoundaryPolygon(
+        const EasyPolygon2D &boundary_polygon);
 
     bool findChild(
         const size_t &child_id,
@@ -70,10 +78,6 @@ public:
 
     bool removeAllChild();
 
-    bool setChildType(
-        const size_t &child_id,
-        const NodeType &child_type);
-
     bool setChildAxisInParent(
         const size_t &child_id,
         const NodeType &child_type,
@@ -81,6 +85,11 @@ public:
         const float &child_axis_center_y_in_parent,
         const float &child_axis_x_direction_x_in_parent,
         const float &child_axis_x_direction_y_in_parent);
+
+    bool setChildBoundaryPolygon(
+        const size_t &child_id,
+        const NodeType &child_type,
+        const EasyPolygon2D &child_boundary_polygon);
 
     const size_t& getID() { return id_; }
     const NodeType& getNodeType() { return type_; }
@@ -96,6 +105,8 @@ private:
     std::vector<EasyNode*> child_vec_;
 
     EasyAxis2D axis_;
+
+    EasyPolygon2D boundary_polygon_;
 };
 
 #endif //EASY_NODE_H

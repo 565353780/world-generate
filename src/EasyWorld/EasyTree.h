@@ -18,7 +18,10 @@
 class EasyTree
 {
 public:
-    EasyTree() {}
+    EasyTree()
+    {
+        root_ = nullptr;
+    }
 
     bool reset();
 
@@ -28,8 +31,28 @@ public:
         const size_t &id,
         const NodeType &type);
 
+    bool createWall(
+        const size_t &wall_id,
+        const NodeType &wall_type);
+
+    bool createWallBoundary(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const EasyPolygon2D &wall_boundary_polygon);
+
+    bool createRoom(
+        const size_t &room_id,
+        const size_t &on_wall_id,
+        const NodeType &on_wall_type,
+        const size_t &wall_boundary_id);
+
 private:
     EasyNode *root_;
+
+    std::vector<size_t> outerwall_id_vec_;
+    std::vector<size_t> innerwall_id_vec_;
+    std::vector<size_t> room_id_vec_;
+    std::vector<size_t> furniture_id_vec_;
 };
 
 #endif //EASY_TREE_H

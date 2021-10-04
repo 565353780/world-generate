@@ -38,6 +38,16 @@ bool EasyPolygon2D::addPoint(
     return true;
 }
 
+bool EasyPolygon2D::addPoint(
+    const float &x,
+    const float &y)
+{
+    EasyPoint2D point;
+    point.setPosition(x, y);
+
+    return addPoint(point);
+}
+
 bool EasyPolygon2D::insertPoint(
     const EasyPoint2D &point_2d,
     const size_t &insert_idx)

@@ -11,6 +11,7 @@
 
 #include <time.h>
 #include "EasySpace/SpaceController.h"
+#include "EasyWorld/WorldController.h"
 
 namespace Ui {
 class EasyWidget;
@@ -54,6 +55,8 @@ private:
     Ui::EasyWidget *ui;
 
     SpaceController space_controller_;
+    WorldController world_controller_;
+
     timespec t_spc_;
     long t_start_;
     long last_second_;

@@ -10,6 +10,22 @@ EasyWidget::EasyWidget(QWidget *parent) :
 
     // run_example();
     
+    world_controller_.reset();
+
+    world_controller_.createWorld();
+
+    world_controller_.createWall(0, NodeType::OuterWall);
+
+    EasyPolygon2D wall_boundary_polygon;
+    wall_boundary_polygon.addPoint(0, 0);
+    wall_boundary_polygon.addPoint(400, 0);
+    wall_boundary_polygon.addPoint(400, 400);
+    wall_boundary_polygon.addPoint(0, 400);
+
+    world_controller_.createWallBoundary(0, NodeType::OuterWall, wall_boundary_polygon);
+
+    std::cout << "finish!!!" << std::endl;
+    
     this->show();
 }
 

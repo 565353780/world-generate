@@ -30,6 +30,10 @@ public:
     bool addPoint(
         const EasyPoint2D &point_2d);
 
+    bool addPoint(
+        const float &x,
+        const float &y);
+
     bool insertPoint(
         const EasyPoint2D &point_2d,
         const size_t &insert_idx1);

@@ -43,7 +43,7 @@ bool EasyAxis2D::setXDirection(
 
     if(x_direction_x == 0 && x_direction_y == 0)
     {
-        std::cout << "EasyAxis2D::setXDirection : " <<
+        std::cout << "EasyAxis2D::setXDirection : " << std::endl <<
           "Input:\n" <<
           "\tx_direction_x = " << x_direction_x << std::endl <<
           "\tx_direction_y = " << x_direction_y << std::endl <<
@@ -86,7 +86,7 @@ bool EasyAxis2D::setYDirection(
 
     if(y_direction_x == 0 && y_direction_y == 0)
     {
-        std::cout << "EasyAxis2D::setYDirection : " <<
+        std::cout << "EasyAxis2D::setYDirection : " << std::endl <<
           "Input:\n" <<
           "\ty_direction_x = " << y_direction_x << std::endl <<
           "\ty_direction_y = " << y_direction_y << std::endl <<
@@ -116,6 +116,29 @@ bool EasyAxis2D::setYDirection(
     {
         is_valid_ = true;
     }
+
+    return true;
+}
+
+bool EasyAxis2D::isValid() const
+{
+    return is_valid_;
+}
+
+bool EasyAxis2D::outputInfo(
+    const size_t &info_level) const
+{
+    std::string line_start = "";
+    for(size_t i = 0; i < info_level; ++i)
+    {
+        line_start += "\t";
+    }
+
+    std::cout << line_start << "EasyAxis2D :" << std::endl <<
+      line_start << "\tcenter = [" << center_.x << "," << center_.y << "]" << std::endl <<
+      line_start << "\tx_direction = [" << x_direction_.x << "," <<
+      x_direction_.y << "]" << std::endl <<
+      line_start << "\tis_valid = " << is_valid_ << std::endl;
 
     return true;
 }

@@ -46,6 +46,8 @@ public:
         const NodeType &on_wall_type,
         const size_t &wall_boundary_id);
 
+    bool outputInfo() const;
+
 private:
     EasyNode *root_;
 

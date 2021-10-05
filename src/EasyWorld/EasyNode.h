@@ -39,11 +39,19 @@ public:
     bool setNodeType(
         const NodeType& type);
 
-    bool setAxis(
+    bool setAxisInParent(
         const float &axis_center_x_in_parent,
         const float &axis_center_y_in_parent,
         const float &axis_x_direction_x_in_parent,
         const float &axis_x_direction_y_in_parent);
+
+    bool setAxisInWorld(
+        const float &axis_center_x_in_world,
+        const float &axis_center_y_in_world,
+        const float &axis_x_direction_x_in_world,
+        const float &axis_x_direction_y_in_world);
+
+    bool updateAxisInWorldFromParent();
 
     bool setParent(
         EasyNode* parent);
@@ -91,9 +99,13 @@ public:
         const NodeType &child_type,
         const EasyPolygon2D &child_boundary_polygon);
 
-    const size_t& getID() { return id_; }
-    const NodeType& getNodeType() { return type_; }
-    const EasyAxis2D& getAxis() { return axis_; }
+    const size_t& getID() const { return id_; }
+    const NodeType& getNodeType() const { return type_; }
+    const EasyAxis2D& getAxisInParent() const { return axis_in_parent_; }
+    const EasyAxis2D& getAxisInWorld() const { return axis_in_world_; }
+
+    bool outputInfo(
+        const size_t &info_level) const;
 
 private:
     size_t id_;
@@ -104,7 +116,8 @@ private:
 
     std::vector<EasyNode*> child_vec_;
 
-    EasyAxis2D axis_;
+    EasyAxis2D axis_in_parent_;
+    EasyAxis2D axis_in_world_;
 
     EasyPolygon2D boundary_polygon_;
 };

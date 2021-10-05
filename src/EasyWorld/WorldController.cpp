@@ -63,3 +63,10 @@ bool WorldController::createWallBoundary(
     return true;
 }
 
+bool WorldController::outputInfo()
+{
+    world_tree_.outputInfo();
+
+    return true;
+}
+

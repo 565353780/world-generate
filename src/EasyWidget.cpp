@@ -21,11 +21,16 @@ EasyWidget::EasyWidget(QWidget *parent) :
     wall_boundary_polygon.addPoint(400, 0);
     wall_boundary_polygon.addPoint(400, 400);
     wall_boundary_polygon.addPoint(0, 400);
+    wall_boundary_polygon.setAntiClockWise();
 
     world_controller_.createWallBoundary(0, NodeType::OuterWall, wall_boundary_polygon);
 
+    world_controller_.outputInfo();
+
+    world_controller_.reset();
+
     std::cout << "finish!!!" << std::endl;
-    
+
     this->show();
 }
 

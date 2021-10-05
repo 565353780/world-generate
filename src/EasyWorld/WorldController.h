@@ -24,6 +24,8 @@ public:
         const NodeType &wall_type,
         const EasyPolygon2D &wall_boundary_polygon);
 
+    bool outputInfo();
+
 private:
     EasyTree world_tree_;
 };

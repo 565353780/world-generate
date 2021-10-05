@@ -25,6 +25,11 @@ public:
         const float &y_direction_x,
         const float &y_direction_y);
 
+    bool isValid() const;
+
+    bool outputInfo(
+        const size_t &info_level) const;
+
 public:
     bool is_valid_;
 

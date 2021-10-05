@@ -49,7 +49,10 @@ bool EasyNode::reset()
 
     child_vec_.clear();
 
-    axis_.reset();
+    axis_in_parent_.reset();
+    axis_in_world_.reset();
+
+    boundary_polygon_.reset();
 
     return true;
 }
@@ -70,17 +73,17 @@ bool EasyNode::setNodeType(
     return true;
 }
 
-bool EasyNode::setAxis(
+bool EasyNode::setAxisInParent(
     const float &axis_center_x_in_parent,
     const float &axis_center_y_in_parent,
     const float &axis_x_direction_x_in_parent,
     const float &axis_x_direction_y_in_parent)
 {
-    if(!axis_.setCenter(
+    if(!axis_in_parent_.setCenter(
           axis_center_x_in_parent,
           axis_center_y_in_parent))
     {
-        std::cout << "EasyNode::setAxis : " << std::endl <<
+        std::cout << "EasyNode::setAxisInParent : " << std::endl <<
           "Input :\n" <<
           "\tCenter = [" << axis_center_x_in_parent << "," <<
           axis_center_y_in_parent << "]" << std::endl <<
@@ -91,11 +94,11 @@ bool EasyNode::setAxis(
         return false;
     }
 
-    if(!axis_.setXDirection(
+    if(!axis_in_parent_.setXDirection(
           axis_x_direction_x_in_parent,
           axis_x_direction_y_in_parent))
     {
-        std::cout << "EasyNode::setAxis : " << std::endl <<
+        std::cout << "EasyNode::setAxisInParent : " << std::endl <<
           "Input :\n" <<
           "\tCenter = [" << axis_center_x_in_parent << "," <<
           axis_center_y_in_parent << "]" << std::endl <<
@@ -104,6 +107,137 @@ bool EasyNode::setAxis(
           "setXDirection failed!" << std::endl;
 
         return false;
+    }
+
+    if(!updateAxisInWorldFromParent())
+    {
+        std::cout << "EasyNode::setAxisInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tCenter = [" << axis_center_x_in_parent << "," <<
+          axis_center_y_in_parent << "]" << std::endl <<
+          "\tXDirection = [" << axis_x_direction_x_in_parent << "," <<
+          axis_x_direction_y_in_parent << "]" << std::endl <<
+          "updateAxisInWorldFromParent failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool EasyNode::setAxisInWorld(
+    const float &axis_center_x_in_world,
+    const float &axis_center_y_in_world,
+    const float &axis_x_direction_x_in_world,
+    const float &axis_x_direction_y_in_world)
+{
+    if(!axis_in_world_.setCenter(
+          axis_center_x_in_world,
+          axis_center_y_in_world))
+    {
+        std::cout << "EasyNode::setAxisInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tCenter = [" << axis_center_x_in_world << "," <<
+          axis_center_y_in_world << "]" << std::endl <<
+          "\tXDirection = [" << axis_x_direction_x_in_world << "," <<
+          axis_x_direction_y_in_world << "]" << std::endl <<
+          "setCenter failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!axis_in_world_.setXDirection(
+          axis_x_direction_x_in_world,
+          axis_x_direction_y_in_world))
+    {
+        std::cout << "EasyNode::setAxisInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tCenter = [" << axis_center_x_in_world << "," <<
+          axis_center_y_in_world << "]" << std::endl <<
+          "\tXDirection = [" << axis_x_direction_x_in_world << "," <<
+          axis_x_direction_y_in_world << "]" << std::endl <<
+          "setXDirection failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool EasyNode::updateAxisInWorldFromParent()
+{
+    if(parent_ == nullptr)
+    {
+        return true;
+    }
+
+    if(!axis_in_parent_.isValid())
+    {
+        std::cout << "EasyNode::updateAxisInWorldFromParent : " << std::endl <<
+          "for node : id = " << id_ << " type = " << type_ << std::endl <<
+          "axis_in_parent_ is not valid!" << std::endl;
+
+        return false;
+    }
+
+    const EasyAxis2D &parent_axis_in_world =
+      parent_->getAxisInWorld();
+
+    if(!parent_axis_in_world.isValid())
+    {
+        std::cout << "EasyNode::updateAxisInWorldFromParent : " << std::endl <<
+          "for node : id = " << id_ << " type = " << type_ << std::endl <<
+          "parent_axis_in_world is not valid!" << std::endl;
+
+        return false;
+    }
+
+    const float axis_center_x_in_world =
+      parent_axis_in_world.center_.x +
+      parent_axis_in_world.x_direction_.x * axis_in_parent_.center_.x -
+      parent_axis_in_world.x_direction_.y * axis_in_parent_.center_.y;
+
+    const float axis_center_y_in_world =
+      parent_axis_in_world.center_.y +
+      parent_axis_in_world.x_direction_.y * axis_in_parent_.center_.x +
+      parent_axis_in_world.x_direction_.x * axis_in_parent_.center_.y;
+
+    const float axis_x_direction_x_in_world =
+      parent_axis_in_world.x_direction_.x * axis_in_parent_.x_direction_.x +
+      parent_axis_in_world.x_direction_.y * axis_in_parent_.x_direction_.y;
+
+    const float axis_x_direction_y_in_world =
+      -parent_axis_in_world.x_direction_.y * axis_in_parent_.x_direction_.x +
+      parent_axis_in_world.x_direction_.x * axis_in_parent_.x_direction_.y;
+
+    if(!setAxisInWorld(
+          axis_center_x_in_world,
+          axis_center_y_in_world,
+          axis_x_direction_x_in_world,
+          axis_x_direction_y_in_world))
+    {
+        std::cout << "EasyNode::updateAxisInWorldFromParent : " << std::endl <<
+          "for node : id = " << id_ << " type = " << type_ << std::endl <<
+          "setAxisInWorld failed!" << std::endl;
+
+        return false;
+    }
+
+    if(child_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    for(EasyNode *child_node : child_vec_)
+    {
+        if(!child_node->updateAxisInWorldFromParent())
+        {
+            std::cout << "EasyNode::updateAxisInWorldFromParent : " << std::endl <<
+              "for node : id = " << id_ << " type = " << type_ << std::endl <<
+              "updateAxisInWorldFromParent failed!" << std::endl;
+
+            return false;
+        }
     }
 
     return true;
@@ -121,6 +255,15 @@ bool EasyNode::setParent(
     }
 
     parent_ = parent;
+
+    // try to update axis in world
+    if(!updateAxisInWorldFromParent())
+    {
+        // std::cout << "EasyNode::setParent : " << std::endl <<
+        //   "updateAxisInWorldFromParent failed!" << std::endl;
+
+        return true;
+    }
 
     return true;
 }
@@ -257,6 +400,17 @@ bool EasyNode::createChild(
         return false;
     }
 
+    if(!new_child_node->setAxisInParent(0, 0, 1, 0))
+    {
+        std::cout << "EasyNode::createChild : " << std::endl <<
+          "Input :\n" <<
+          "\tchild_id = " << child_id << std::endl <<
+          "\tchild_type = " << child_type << std::endl <<
+          "setAxisInParent for child failed!" << std::endl;
+
+        return false;
+    }
+
     return true;
 }
 
@@ -375,7 +529,7 @@ bool EasyNode::setChildAxisInParent(
           "\tchild_axis_center_in_parent = [" <<
           child_axis_center_x_in_parent << "," <<
           child_axis_center_y_in_parent << "]" << std::endl <<
-          "\t child_axis_x_direction_in_parent = [" <<
+          "\tchild_axis_x_direction_in_parent = [" <<
           child_axis_x_direction_x_in_parent << "," <<
           child_axis_x_direction_y_in_parent << "]" << std::endl <<
           "this child not exist!" << std::endl;
@@ -394,7 +548,7 @@ bool EasyNode::setChildAxisInParent(
           "\tchild_axis_center_in_parent = [" <<
           child_axis_center_x_in_parent << "," <<
           child_axis_center_y_in_parent << "]" << std::endl <<
-          "\t child_axis_x_direction_in_parent = [" <<
+          "\tchild_axis_x_direction_in_parent = [" <<
           child_axis_x_direction_x_in_parent << "," <<
           child_axis_x_direction_y_in_parent << "]" << std::endl <<
           "this child is nullptr!" << std::endl;
@@ -402,7 +556,7 @@ bool EasyNode::setChildAxisInParent(
         return false;
     }
 
-    if(!child_node->setAxis(
+    if(!child_node->setAxisInParent(
           child_axis_center_x_in_parent,
           child_axis_center_y_in_parent,
           child_axis_x_direction_x_in_parent,
@@ -415,10 +569,27 @@ bool EasyNode::setChildAxisInParent(
           "\tchild_axis_center_in_parent = [" <<
           child_axis_center_x_in_parent << "," <<
           child_axis_center_y_in_parent << "]" << std::endl <<
-          "\t child_axis_x_direction_in_parent = [" <<
+          "\tchild_axis_x_direction_in_parent = [" <<
           child_axis_x_direction_x_in_parent << "," <<
           child_axis_x_direction_y_in_parent << "]" << std::endl <<
-          "setAxis for child failed!" << std::endl;
+          "setAxisInParent for child failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!child_node->updateAxisInWorldFromParent())
+    {
+        std::cout << "EasyNode::setChildAxisInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tchild_id = " << child_id << std::endl <<
+          "\tchild_type = " << child_type << std::endl <<
+          "\tchild_axis_center_in_parent = [" <<
+          child_axis_center_x_in_parent << "," <<
+          child_axis_center_y_in_parent << "]" << std::endl <<
+          "\tchild_axis_x_direction_in_parent = [" <<
+          child_axis_x_direction_x_in_parent << "," <<
+          child_axis_x_direction_y_in_parent << "]" << std::endl <<
+          "updateAxisInWorldFromParent failed!" << std::endl;
 
         return false;
     }
@@ -466,6 +637,45 @@ bool EasyNode::setChildBoundaryPolygon(
           "setBoundaryPolygon for child failed!" << std::endl;
 
         return false;
+    }
+
+    return true;
+}
+
+bool EasyNode::outputInfo(
+    const size_t &info_level) const
+{
+    std::string line_start = "";
+    for(size_t i = 0; i < info_level; ++i)
+    {
+        line_start += "\t";
+    }
+
+    std::cout << line_start << "EasyNode :" << std::endl <<
+      line_start << "\tid = " << id_ << std::endl <<
+      line_start << "\ttype = " << type_ << std::endl;
+
+    if(parent_ != nullptr)
+    {
+        std::cout << line_start << "\tparent : id = " << parent_->getID() <<
+          " type = " << parent_->getNodeType() << std::endl;
+    }
+
+    std::cout << line_start << "\taxis_in_parent :" << std::endl;
+
+    axis_in_parent_.outputInfo(info_level + 1);
+
+    std::cout << line_start << "\taxis_in_world :" << std::endl;
+
+    axis_in_world_.outputInfo(info_level + 1);
+
+    if(child_vec_.size() > 0)
+    {
+        std::cout << line_start << "\tchild :" << std::endl;
+        for(const EasyNode* child_node : child_vec_)
+        {
+            child_node->outputInfo(info_level + 1);
+        }
     }
 
     return true;

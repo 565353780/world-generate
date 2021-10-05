@@ -46,6 +46,22 @@ bool EasyTree::createWorld()
         return false;
     }
 
+    if(!root_->setAxisInParent(0, 0, 1, 0))
+    {
+        std::cout << "EasyTree::createWorld : " << std::endl <<
+          "setAxisInParent for root failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!root_->setAxisInWorld(0, 0, 1, 0))
+    {
+        std::cout << "EasyTree::createWorld : " << std::endl <<
+          "setAxisInWorld for root failed!" << std::endl;
+
+        return false;
+    }
+
     return true;
 }
 
@@ -87,7 +103,7 @@ bool EasyTree::createWall(
     if(wall_type != NodeType::OuterWall &&
         wall_type != NodeType::InnerWall)
     {
-        std::cout << "EasyTree::createOuterWall : " << std::endl <<
+        std::cout << "EasyTree::createWall : " << std::endl <<
           "Input :\n" <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
@@ -100,7 +116,7 @@ bool EasyTree::createWall(
 
     if(root_->findChild(wall_id, wall_type, node_idx))
     {
-        std::cout << "EasyTree::createOuterWall : " << std::endl <<
+        std::cout << "EasyTree::createWall : " << std::endl <<
           "Input :\n" <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
@@ -111,7 +127,7 @@ bool EasyTree::createWall(
 
     if(!root_->createChild(wall_id, wall_type))
     {
-        std::cout << "EasyTree::createOuterWall : " << std::endl <<
+        std::cout << "EasyTree::createWall : " << std::endl <<
           "Input :\n" <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
@@ -231,6 +247,15 @@ bool EasyTree::createRoom(
     const NodeType &on_wall_type,
     const size_t &wall_boundary_id)
 {
+    return true;
+}
+
+bool EasyTree::outputInfo() const
+{
+    std::cout << "EasyTree :" << std::endl;
+
+    root_->outputInfo(0);
+
     return true;
 }
 

@@ -726,11 +726,11 @@ bool EasyNode::getPointInWorld(
     }
 
     const float point_to_node_center_x_in_world =
-      axis_in_world_.x_direction_.x * point_in_node.x +
+      axis_in_world_.x_direction_.x * point_in_node.x -
       axis_in_world_.x_direction_.y * point_in_node.y;
 
     const float point_to_node_center_y_in_world =
-      -axis_in_world_.x_direction_.y * point_in_node.x +
+      axis_in_world_.x_direction_.y * point_in_node.x +
       axis_in_world_.x_direction_.x * point_in_node.y;
 
     point_in_world.x =

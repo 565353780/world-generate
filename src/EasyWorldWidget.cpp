@@ -48,7 +48,9 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
-    drawWallSpaceBoundary();
+    // drawWallSpaceBoundary();
+
+    drawWallBoundaryPolygon();
 
     drawWallBoundaryAxis();
 }
@@ -56,6 +58,15 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
 void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
+
+    EasyPoint2D random_new_point;
+
+    random_new_point.setPosition(100 + rand() % 400, 100 + rand() % 400);
+
+    world_controller_.setWallBoundaryPolygonPointPosition(
+        0, NodeType::OuterWall, 1, random_new_point);
+
+    update();
 }
 
 void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
@@ -108,6 +119,54 @@ bool EasyWorldWidget::drawWallBoundaryAxis()
         
     }
     
+    return true;
+}
+
+bool EasyWorldWidget::drawWallBoundaryPolygon()
+{
+    QPainter painter(this);
+
+    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    // QFont font_song("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song);
+
+    painter.setPen(pen_black);
+
+    std::vector<std::vector<EasyNode*>> wall_boundary_node_vec_vec;
+
+    world_controller_.getWallBoundaryNodeVecVec(wall_boundary_node_vec_vec);
+
+    for(const std::vector<EasyNode*> &wall_boundary_node_vec :
+        wall_boundary_node_vec_vec)
+    {
+        for(EasyNode* wall_boundary_node : wall_boundary_node_vec)
+        {
+            const EasyPolygon2D &wall_boundary_polygon =
+              wall_boundary_node->getBoundaryPolygon();
+
+            for(size_t i = 0; i < wall_boundary_polygon.point_list.size(); ++i)
+            {
+                const EasyPoint2D &current_point =
+                  wall_boundary_polygon.point_list[i];
+                const EasyPoint2D &next_point =
+                  wall_boundary_polygon.point_list[
+                  (i + 1) % wall_boundary_polygon.point_list.size()];
+
+                EasyPoint2D current_point_in_world;
+                EasyPoint2D next_point_in_world;
+                wall_boundary_node->getPointInWorld(
+                    current_point, current_point_in_world);
+                wall_boundary_node->getPointInWorld(
+                    next_point, next_point_in_world);
+
+                painter.drawLine(
+                    current_point_in_world.x, current_point_in_world.y,
+                    next_point_in_world.x, next_point_in_world.y);
+            }
+        }
+    }
+
     return true;
 }
 

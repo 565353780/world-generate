@@ -89,6 +89,31 @@ EasyNode* WorldController::findNode(
     return search_node;
 }
 
+bool WorldController::setWallBoundaryPolygonPointPosition(
+    const size_t &wall_id,
+    const NodeType &wall_type,
+    const size_t &point_idx,
+    const EasyPoint2D &point_new_position_in_world)
+{
+    if(!world_tree_.setWallBoundaryPolygonPointPosition(
+          wall_id, wall_type, point_idx, point_new_position_in_world))
+    {
+        std::cout << "WorldController::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setWallBoundaryPolygonPointPosition failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 bool WorldController::getWallNodeVec(
     std::vector<EasyNode*> &wall_node_vec)
 {

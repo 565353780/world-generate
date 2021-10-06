@@ -28,6 +28,12 @@ public:
         const size_t &node_id,
         const NodeType &node_type);
 
+    bool setWallBoundaryPolygonPointPosition(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const size_t &point_idx,
+        const EasyPoint2D &point_new_position_in_world);
+
     bool getWallNodeVec(
         std::vector<EasyNode*> &wall_node_vec);
 

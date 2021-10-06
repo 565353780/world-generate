@@ -34,6 +34,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event);
 
     bool drawWallBoundaryAxis();
+    bool drawWallBoundaryPolygon();
     bool drawWallSpaceBoundary();
 
 private:

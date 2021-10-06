@@ -229,7 +229,7 @@ bool EasyTree::createWallBoundary(
         EasyPoint2D wall_boundary_point_in_node;
         EasyPoint2D next_wall_boundary_point_in_node;
 
-        if(!new_child_boundary_node->getPonitInNode(
+        if(!new_child_boundary_node->getPointInNode(
               wall_boundary_point,
               wall_boundary_point_in_node))
         {
@@ -237,12 +237,12 @@ bool EasyTree::createWallBoundary(
               "Input :\n" <<
               "\twall_id = " << wall_id << std::endl <<
               "\twall_type = " << wall_type << std::endl <<
-              "getPonitInNode for point " << i << " failed!" << std::endl;
+              "getPointInNode for point " << i << " failed!" << std::endl;
 
             return false;
         }
 
-        if(!new_child_boundary_node->getPonitInNode(
+        if(!new_child_boundary_node->getPointInNode(
               next_wall_boundary_point,
               next_wall_boundary_point_in_node))
         {
@@ -250,7 +250,7 @@ bool EasyTree::createWallBoundary(
               "Input :\n" <<
               "\twall_id = " << wall_id << std::endl <<
               "\twall_type = " << wall_type << std::endl <<
-              "getPonitInNode for point " << i << " failed!" << std::endl;
+              "getPointInNode for point " << i << " failed!" << std::endl;
 
             return false;
         }
@@ -360,6 +360,25 @@ bool EasyTree::setWallBoundaryPolygonPointPosition(
         return false;
     }
 
+    EasyPoint2D point_new_position_in_wall_node;
+
+    if(!wall_node->getPointInNode(
+          point_new_position_in_world,
+          point_new_position_in_wall_node))
+    {
+        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "getPointInNode for new point in wall node failed!" << std::endl;
+
+        return false;
+    }
+
     EasyNode* wall_space_node =
       wall_node->findChild(0, NodeType::Space);
 
@@ -404,13 +423,11 @@ bool EasyTree::setWallBoundaryPolygonPointPosition(
     const EasyPolygon2D &prev_boundary_polygon =
       prev_boundary_node->getBoundaryPolygon();
 
-    const EasyPoint2D prev_boundary_start_point_in_world =
-      prev_boundary_node->getPointInWorld()
+    EasyPoint2D prev_boundary_start_point_in_world;
 
-    EasyNode* wall_boundary_node =
-      wall_node->findChild(point_idx, NodeType::Boundary);
-
-    if(wall_boundary_node == nullptr)
+    if(!prev_boundary_node->getPointInWorld(
+        prev_boundary_polygon.point_list[0],
+        prev_boundary_start_point_in_world))
     {
         std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
@@ -420,7 +437,187 @@ bool EasyTree::setWallBoundaryPolygonPointPosition(
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
-          "can't find wall boundary node!" << std::endl;
+          "getPointInWorld for prev point failed!" << std::endl;
+
+        return false;
+    }
+
+    EasyPoint2D prev_boundary_start_point_in_wall_node;
+
+    if(!wall_node->getPointInNode(
+          prev_boundary_start_point_in_world,
+          prev_boundary_start_point_in_wall_node))
+    {
+        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "getPointInNode for prev point in wall node failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!prev_boundary_node->setAxisInParent(
+          prev_boundary_start_point_in_wall_node.x,
+          prev_boundary_start_point_in_wall_node.y,
+          point_new_position_in_wall_node.x - prev_boundary_start_point_in_wall_node.x,
+          point_new_position_in_wall_node.y - prev_boundary_start_point_in_wall_node.y))
+    {
+        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setAxisInParent for prev point failed!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* current_boundary_node =
+      wall_node->findChild(point_idx, NodeType::Boundary);
+
+    if(current_boundary_node == nullptr)
+    {
+        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "can't find wall current boundary node!" << std::endl;
+
+        return false;
+    }
+
+    const EasyPolygon2D &current_boundary_polygon =
+      current_boundary_node->getBoundaryPolygon();
+
+    EasyPoint2D current_boundary_end_point_in_world;
+
+    if(!current_boundary_node->getPointInWorld(
+        current_boundary_polygon.point_list[1],
+        current_boundary_end_point_in_world))
+    {
+        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "getPointInWorld for current point failed!" << std::endl;
+
+        return false;
+    }
+
+    EasyPoint2D current_boundary_end_point_in_wall_node;
+
+    if(!wall_node->getPointInNode(
+          current_boundary_end_point_in_world,
+          current_boundary_end_point_in_wall_node))
+    {
+        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "getPointInNode for current point in wall node failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!current_boundary_node->setAxisInParent(
+          point_new_position_in_wall_node.x,
+          point_new_position_in_wall_node.y,
+          current_boundary_end_point_in_wall_node.x - point_new_position_in_wall_node.x,
+          current_boundary_end_point_in_wall_node.y - point_new_position_in_wall_node.y))
+    {
+        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setAxisInParent for current point failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!wall_space_node->setBoundaryPolygonPointPosition(
+          point_idx, point_new_position_in_world))
+    {
+        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setBoundaryPolygonPointPosition for space node failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!prev_boundary_node->setBoundaryPolygonPointPosition(
+          1, point_new_position_in_world))
+    {
+        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setBoundaryPolygonPointPosition for prev point node's end point failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!current_boundary_node->setBoundaryPolygonPointPosition(
+          0, point_new_position_in_world))
+    {
+        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setBoundaryPolygonPointPosition for current point node's start point failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!current_boundary_node->setBoundaryPolygonPointPosition(
+          1, current_boundary_end_point_in_world))
+    {
+        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setBoundaryPolygonPointPosition for current point node's end point failed!" << std::endl;
 
         return false;
     }

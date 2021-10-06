@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    space_widget_ = new EasySpaceWidget(this);
+    // space_widget_ = new EasySpaceWidget(this);
     world_widget_ = new EasyWorldWidget(this);
 
     this->ui->VLayout->addWidget(world_widget_);

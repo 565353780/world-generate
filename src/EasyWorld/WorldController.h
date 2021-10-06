@@ -19,20 +19,38 @@ public:
         const size_t &wall_id,
         const NodeType &wall_type);
 
-    bool createWallBoundary(
+    bool setWallBoundaryPolygon(
         const size_t &wall_id,
         const NodeType &wall_type,
         const EasyPolygon2D &wall_boundary_polygon);
-
-    EasyNode* findNode(
-        const size_t &node_id,
-        const NodeType &node_type);
 
     bool setWallBoundaryPolygonPointPosition(
         const size_t &wall_id,
         const NodeType &wall_type,
         const size_t &point_idx,
         const EasyPoint2D &point_new_position_in_world);
+
+    bool createRoom(
+        const size_t &room_id,
+        const NodeType &room_type,
+        const size_t &on_wall_id,
+        const NodeType &on_wall_type,
+        const size_t &wall_boundary_id);
+
+    bool setRoomBoundaryPolygon(
+        const size_t &room_id,
+        const NodeType &room_type,
+        const EasyPolygon2D &room_boundary_polygon);
+
+    bool setRoomBoundaryPolygonPointPosition(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const size_t &point_idx,
+        const EasyPoint2D &point_new_position_in_world);
+
+    EasyNode* findNode(
+        const size_t &node_id,
+        const NodeType &node_type);
 
     bool getWallNodeVec(
         std::vector<EasyNode*> &wall_node_vec);

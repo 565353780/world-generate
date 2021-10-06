@@ -65,6 +65,106 @@ bool EasyTree::createWorld()
     return true;
 }
 
+bool EasyTree::createNode(
+    const size_t &node_id,
+    const NodeType &node_type,
+    const size_t &parent_node_id,
+    const NodeType &parent_node_type,
+    const size_t &parent_boundary_node_id)
+{
+    if(parent_node_type == NodeType::World)
+    {
+        if(root_->haveThisChild(node_id, node_type))
+        {
+            std::cout << "EasyTree::createNode : " << std::endl <<
+              "Input :\n" <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tparent_node_id = " << parent_node_id << std::endl <<
+              "\tparent_node_type = " << parent_node_type << std::endl <<
+              "\tparent_boundary_node_id = " << parent_boundary_node_id << std::endl <<
+              "this node already exist!" << std::endl;
+
+            return false;
+        }
+
+        if(!root_->createChild(node_id, node_type))
+        {
+            std::cout << "EasyTree::createNode : " << std::endl <<
+              "Input :\n" <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tparent_node_id = " << parent_node_id << std::endl <<
+              "\tparent_node_type = " << parent_node_type << std::endl <<
+              "\tparent_boundary_node_id = " << parent_boundary_node_id << std::endl <<
+              "createChild failed!" << std::endl;
+
+            return false;
+        }
+
+        return true;
+    }
+
+    EasyNode* search_node = findNode(node_id, node_type);
+
+    if(search_node != nullptr)
+    {
+        std::cout << "EasyTree::createNode : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tparent_node_id = " << parent_node_id << std::endl <<
+          "\tparent_node_type = " << parent_node_type << std::endl <<
+          "\tparent_boundary_node_id = " << parent_boundary_node_id << std::endl <<
+          "this node already exist!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* parent_node = findNode(parent_node_id, parent_node_type);
+
+    if(parent_node == nullptr)
+    {
+        std::cout << "EasyTree::createNode : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tparent_node_id = " << parent_node_id << std::endl <<
+          "\tparent_node_type = " << parent_node_type << std::endl <<
+          "\tparent_boundary_node_id = " << parent_boundary_node_id << std::endl <<
+          "can't find this parent node!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* parent_boundary_node =
+      parent_node->findChild(parent_boundary_node_id, NodeType::Boundary);
+
+    if(parent_boundary_node == nullptr)
+    {
+        std::cout << "EasyTree::createNode : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tparent_node_id = " << parent_node_id << std::endl <<
+          "\tparent_node_type = " << parent_node_type << std::endl <<
+          "\tparent_boundary_node_id = " << parent_boundary_node_id << std::endl <<
+          "can't find this parent node boundary!" << std::endl;
+
+        return false;
+    }
+
+    if(!parent_boundary_node->createChild(node_id, node_type))
+    {
+        std::cout << "EasyTree::createNode : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tparent_node_id = " << parent_node_id << std::endl <<
+          "\tparent_node_type = " << parent_node_type << std::endl <<
+          "\tparent_boundary_node_id = " << parent_boundary_node_id << std::endl <<
+          "createChild for parent boundary node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 EasyNode* EasyTree::findNode(
     const size_t &id,
     const NodeType &type)
@@ -96,89 +196,34 @@ EasyNode* EasyTree::findNode(
     return search_node;
 }
 
-bool EasyTree::createWall(
-    const size_t &wall_id,
-    const NodeType &wall_type)
+bool EasyTree::setNodeBoundaryPolygon(
+    const size_t &node_id,
+    const NodeType &node_type,
+    const EasyPolygon2D &node_boundary_polygon)
 {
-    if(wall_type != NodeType::OuterWall &&
-        wall_type != NodeType::InnerWall)
+    EasyNode* node_node = findNode(node_id, node_type);
+
+    if(node_node == nullptr)
     {
-        std::cout << "EasyTree::createWall : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "wall_type is not the wall type!" << std::endl;
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "this node not exist!" << std::endl;
 
         return false;
     }
 
-    EasyNode* search_node = root_->findChild(wall_id, wall_type);
-
-    if(search_node != nullptr)
-    {
-        std::cout << "EasyTree::createWall : " << std::endl <<
-          "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "this wall already exist!" << std::endl;
-
-        return false;
-    }
-
-    if(!root_->createChild(wall_id, wall_type))
-    {
-        std::cout << "EasyTree::createWall : " << std::endl <<
-          "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "createChild failed!" << std::endl;
-
-        return false;
-    }
-
-    return true;
-}
-
-bool EasyTree::createWallBoundary(
-    const size_t &wall_id,
-    const NodeType &wall_type,
-    const EasyPolygon2D &wall_boundary_polygon)
-{
-    if(wall_type != NodeType::OuterWall &&
-        wall_type != NodeType::InnerWall)
-    {
-        std::cout << "EasyTree::createWallBoundary : " << std::endl <<
-          "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "wall_type is not the wall type!" << std::endl;
-
-        return false;
-    }
-
-    EasyNode* wall_node = findNode(wall_id, wall_type);
-
-    if(wall_node == nullptr)
-    {
-        std::cout << "EasyTree::createWallBoundary : " << std::endl <<
-          "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "this wall not exist!" << std::endl;
-
-        return false;
-    }
-
-    for(size_t i = 0; i < wall_boundary_polygon.point_list.size(); ++i)
+    for(size_t i = 0; i < node_boundary_polygon.point_list.size(); ++i)
     {
         EasyNode* new_child_boundary_node = new EasyNode();
 
         if(!new_child_boundary_node->setID(i))
         {
-            std::cout << "EasyTree::createWallBoundary : " << std::endl <<
+            std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
               "Input :\n" <<
-              "\twall_id = " << wall_id << std::endl <<
-              "\twall_type = " << wall_type << std::endl <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl <<
               "setID for point " << i << " failed!" << std::endl;
 
             return false;
@@ -186,86 +231,86 @@ bool EasyTree::createWallBoundary(
 
         if(!new_child_boundary_node->setNodeType(NodeType::Boundary))
         {
-            std::cout << "EasyTree::createWallBoundary : " << std::endl <<
+            std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
               "Input :\n" <<
-              "\twall_id = " << wall_id << std::endl <<
-              "\twall_type = " << wall_type << std::endl <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl <<
               "setNodeType for point " << i << " failed!" << std::endl;
 
             return false;
         }
 
-        if(!wall_node->addChild(new_child_boundary_node))
+        if(!node_node->addChild(new_child_boundary_node))
         {
-            std::cout << "EasyTree::createWallBoundary : " << std::endl <<
+            std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
               "Input :\n" <<
-              "\twall_id = " << wall_id << std::endl <<
-              "\twall_type = " << wall_type << std::endl <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl <<
               "addChild for point " << i << " failed!" << std::endl;
 
             return false;
         }
 
-        const EasyPoint2D &wall_boundary_point =
-          wall_boundary_polygon.point_list[i];
-        const EasyPoint2D &next_wall_boundary_point =
-          wall_boundary_polygon.point_list[(i + 1) % wall_boundary_polygon.point_list.size()];
+        const EasyPoint2D &node_boundary_point =
+          node_boundary_polygon.point_list[i];
+        const EasyPoint2D &next_node_boundary_point =
+          node_boundary_polygon.point_list[(i + 1) % node_boundary_polygon.point_list.size()];
 
         if(!new_child_boundary_node->setAxisInParent(
-              wall_boundary_point.x,
-              wall_boundary_point.y,
-              next_wall_boundary_point.x - wall_boundary_point.x,
-              next_wall_boundary_point.y - wall_boundary_point.y))
+              node_boundary_point.x,
+              node_boundary_point.y,
+              next_node_boundary_point.x - node_boundary_point.x,
+              next_node_boundary_point.y - node_boundary_point.y))
         {
-            std::cout << "EasyTree::createWallBoundary : " << std::endl <<
+            std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
               "Input :\n" <<
-              "\twall_id = " << wall_id << std::endl <<
-              "\twall_type = " << wall_type << std::endl <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl <<
               "setAxisInParent for point " << i << " failed!" << std::endl;
 
             return false;
         }
 
-        EasyPoint2D wall_boundary_point_in_node;
-        EasyPoint2D next_wall_boundary_point_in_node;
+        EasyPoint2D node_boundary_point_in_node;
+        EasyPoint2D next_node_boundary_point_in_node;
 
         if(!new_child_boundary_node->getPointInNode(
-              wall_boundary_point,
-              wall_boundary_point_in_node))
+              node_boundary_point,
+              node_boundary_point_in_node))
         {
-            std::cout << "EasyTree::createWallBoundary : " << std::endl <<
+            std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
               "Input :\n" <<
-              "\twall_id = " << wall_id << std::endl <<
-              "\twall_type = " << wall_type << std::endl <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl <<
               "getPointInNode for point " << i << " failed!" << std::endl;
 
             return false;
         }
 
         if(!new_child_boundary_node->getPointInNode(
-              next_wall_boundary_point,
-              next_wall_boundary_point_in_node))
+              next_node_boundary_point,
+              next_node_boundary_point_in_node))
         {
-            std::cout << "EasyTree::createWallBoundary : " << std::endl <<
+            std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
               "Input :\n" <<
-              "\twall_id = " << wall_id << std::endl <<
-              "\twall_type = " << wall_type << std::endl <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl <<
               "getPointInNode for point " << i << " failed!" << std::endl;
 
             return false;
         }
 
-        EasyPolygon2D wall_boundary_node_polygon;
+        EasyPolygon2D node_boundary_node_polygon;
 
-        wall_boundary_node_polygon.addPoint(wall_boundary_point_in_node);
-        wall_boundary_node_polygon.addPoint(next_wall_boundary_point_in_node);
+        node_boundary_node_polygon.addPoint(node_boundary_point_in_node);
+        node_boundary_node_polygon.addPoint(next_node_boundary_point_in_node);
 
-        if(!new_child_boundary_node->setBoundaryPolygon(wall_boundary_node_polygon))
+        if(!new_child_boundary_node->setBoundaryPolygon(node_boundary_node_polygon))
         {
-            std::cout << "EasyTree::createWallBoundary : " << std::endl <<
+            std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
               "Input :\n" <<
-              "\twall_id = " << wall_id << std::endl <<
-              "\twall_type = " << wall_type << std::endl <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl <<
               "setBoundaryPolygon for point " << i << " failed!" << std::endl;
 
             return false;
@@ -276,10 +321,10 @@ bool EasyTree::createWallBoundary(
 
     if(!new_child_space_node->setID(0))
     {
-        std::cout << "EasyTree::createWallBoundary : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "setID for space node failed!" << std::endl;
 
         return false;
@@ -287,32 +332,32 @@ bool EasyTree::createWallBoundary(
 
     if(!new_child_space_node->setNodeType(NodeType::Space))
     {
-        std::cout << "EasyTree::createWallBoundary : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "setNodeType for space node failed!" << std::endl;
 
         return false;
     }
 
-    if(!wall_node->addChild(new_child_space_node))
+    if(!node_node->addChild(new_child_space_node))
     {
-        std::cout << "EasyTree::createWallBoundary : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "addChild for space node failed!" << std::endl;
 
         return false;
     }
 
-    if(!new_child_space_node->setBoundaryPolygon(wall_boundary_polygon))
+    if(!new_child_space_node->setBoundaryPolygon(node_boundary_polygon))
     {
-        std::cout << "EasyTree::createWallBoundary : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "setBoundaryPolygon for space node failed!" << std::endl;
 
         return false;
@@ -321,101 +366,85 @@ bool EasyTree::createWallBoundary(
     return true;
 }
 
-bool EasyTree::setWallBoundaryPolygonPointPosition(
-    const size_t &wall_id,
-    const NodeType &wall_type,
+bool EasyTree::setNodeBoundaryPolygonPointPosition(
+    const size_t &node_id,
+    const NodeType &node_type,
     const size_t &point_idx,
     const EasyPoint2D &point_new_position_in_world)
 {
-    if(wall_type != NodeType::OuterWall &&
-        wall_type != NodeType::InnerWall)
+    EasyNode* node_node = findNode(node_id, node_type);
+
+    if(node_node == nullptr)
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
-          "wall_type is not the wall type!" << std::endl;
+          "this node not exist!" << std::endl;
 
         return false;
     }
 
-    EasyNode* wall_node = findNode(wall_id, wall_type);
+    EasyPoint2D point_new_position_in_node_node;
 
-    if(wall_node == nullptr)
-    {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
-          "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "\tpoint_idx = " << point_idx << std::endl <<
-          "\tpoint_new_position_in_world = [" <<
-          point_new_position_in_world.x << "," <<
-          point_new_position_in_world.y << "]" << std::endl <<
-          "this wall not exist!" << std::endl;
-
-        return false;
-    }
-
-    EasyPoint2D point_new_position_in_wall_node;
-
-    if(!wall_node->getPointInNode(
+    if(!node_node->getPointInNode(
           point_new_position_in_world,
-          point_new_position_in_wall_node))
+          point_new_position_in_node_node))
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
-          "getPointInNode for new point in wall node failed!" << std::endl;
+          "getPointInNode for new point in node node failed!" << std::endl;
 
         return false;
     }
 
-    EasyNode* wall_space_node =
-      wall_node->findChild(0, NodeType::Space);
+    EasyNode* node_space_node =
+      node_node->findChild(0, NodeType::Space);
 
-    if(wall_space_node == nullptr)
+    if(node_space_node == nullptr)
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
-          "can't find wall space node!" << std::endl;
+          "can't find node space node!" << std::endl;
 
         return false;
     }
 
-    const EasyPolygon2D& wall_space_polygon =
-      wall_space_node->getBoundaryPolygon();
+    const EasyPolygon2D& node_space_polygon =
+      node_space_node->getBoundaryPolygon();
 
     EasyNode* prev_boundary_node =
-      wall_node->findChild(
-          (point_idx - 1 + wall_space_polygon.point_list.size()) %
-          wall_space_polygon.point_list.size(), NodeType::Boundary);
+      node_node->findChild(
+          (point_idx - 1 + node_space_polygon.point_list.size()) %
+          node_space_polygon.point_list.size(), NodeType::Boundary);
 
     if(prev_boundary_node == nullptr)
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
-          "can't find wall prev boundary node!" << std::endl;
+          "can't find node prev boundary node!" << std::endl;
 
         return false;
     }
@@ -429,10 +458,10 @@ bool EasyTree::setWallBoundaryPolygonPointPosition(
         prev_boundary_polygon.point_list[0],
         prev_boundary_start_point_in_world))
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
@@ -442,35 +471,35 @@ bool EasyTree::setWallBoundaryPolygonPointPosition(
         return false;
     }
 
-    EasyPoint2D prev_boundary_start_point_in_wall_node;
+    EasyPoint2D prev_boundary_start_point_in_node_node;
 
-    if(!wall_node->getPointInNode(
+    if(!node_node->getPointInNode(
           prev_boundary_start_point_in_world,
-          prev_boundary_start_point_in_wall_node))
+          prev_boundary_start_point_in_node_node))
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
-          "getPointInNode for prev point in wall node failed!" << std::endl;
+          "getPointInNode for prev point in node node failed!" << std::endl;
 
         return false;
     }
 
     if(!prev_boundary_node->setAxisInParent(
-          prev_boundary_start_point_in_wall_node.x,
-          prev_boundary_start_point_in_wall_node.y,
-          point_new_position_in_wall_node.x - prev_boundary_start_point_in_wall_node.x,
-          point_new_position_in_wall_node.y - prev_boundary_start_point_in_wall_node.y))
+          prev_boundary_start_point_in_node_node.x,
+          prev_boundary_start_point_in_node_node.y,
+          point_new_position_in_node_node.x - prev_boundary_start_point_in_node_node.x,
+          point_new_position_in_node_node.y - prev_boundary_start_point_in_node_node.y))
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
@@ -481,19 +510,19 @@ bool EasyTree::setWallBoundaryPolygonPointPosition(
     }
 
     EasyNode* current_boundary_node =
-      wall_node->findChild(point_idx, NodeType::Boundary);
+      node_node->findChild(point_idx, NodeType::Boundary);
 
     if(current_boundary_node == nullptr)
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
-          "can't find wall current boundary node!" << std::endl;
+          "can't find node current boundary node!" << std::endl;
 
         return false;
     }
@@ -507,10 +536,10 @@ bool EasyTree::setWallBoundaryPolygonPointPosition(
         current_boundary_polygon.point_list[1],
         current_boundary_end_point_in_world))
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
@@ -520,35 +549,35 @@ bool EasyTree::setWallBoundaryPolygonPointPosition(
         return false;
     }
 
-    EasyPoint2D current_boundary_end_point_in_wall_node;
+    EasyPoint2D current_boundary_end_point_in_node_node;
 
-    if(!wall_node->getPointInNode(
+    if(!node_node->getPointInNode(
           current_boundary_end_point_in_world,
-          current_boundary_end_point_in_wall_node))
+          current_boundary_end_point_in_node_node))
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
-          "getPointInNode for current point in wall node failed!" << std::endl;
+          "getPointInNode for current point in node node failed!" << std::endl;
 
         return false;
     }
 
     if(!current_boundary_node->setAxisInParent(
-          point_new_position_in_wall_node.x,
-          point_new_position_in_wall_node.y,
-          current_boundary_end_point_in_wall_node.x - point_new_position_in_wall_node.x,
-          current_boundary_end_point_in_wall_node.y - point_new_position_in_wall_node.y))
+          point_new_position_in_node_node.x,
+          point_new_position_in_node_node.y,
+          current_boundary_end_point_in_node_node.x - point_new_position_in_node_node.x,
+          current_boundary_end_point_in_node_node.y - point_new_position_in_node_node.y))
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
@@ -558,13 +587,13 @@ bool EasyTree::setWallBoundaryPolygonPointPosition(
         return false;
     }
 
-    if(!wall_space_node->setBoundaryPolygonPointPosition(
+    if(!node_space_node->setBoundaryPolygonPointPosition(
           point_idx, point_new_position_in_world))
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
@@ -577,10 +606,10 @@ bool EasyTree::setWallBoundaryPolygonPointPosition(
     if(!prev_boundary_node->setBoundaryPolygonPointPosition(
           1, point_new_position_in_world))
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
@@ -593,10 +622,10 @@ bool EasyTree::setWallBoundaryPolygonPointPosition(
     if(!current_boundary_node->setBoundaryPolygonPointPosition(
           0, point_new_position_in_world))
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
@@ -609,10 +638,10 @@ bool EasyTree::setWallBoundaryPolygonPointPosition(
     if(!current_boundary_node->setBoundaryPolygonPointPosition(
           1, current_boundary_end_point_in_world))
     {
-        std::cout << "EasyTree::setWallBoundaryPolygonPointPosition : " << std::endl <<
+        std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
           "\tpoint_idx = " << point_idx << std::endl <<
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
@@ -622,15 +651,6 @@ bool EasyTree::setWallBoundaryPolygonPointPosition(
         return false;
     }
 
-    return true;
-}
-
-bool EasyTree::createRoom(
-    const size_t &room_id,
-    const size_t &on_wall_id,
-    const NodeType &on_wall_type,
-    const size_t &wall_boundary_id)
-{
     return true;
 }
 

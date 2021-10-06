@@ -27,30 +27,27 @@ public:
 
     bool createWorld();
 
+    bool createNode(
+        const size_t &node_id,
+        const NodeType &node_type,
+        const size_t &parent_node_id,
+        const NodeType &parent_node_type,
+        const size_t &parent_boundary_node_id);
+
     EasyNode* findNode(
         const size_t &id,
         const NodeType &type);
 
-    bool createWall(
-        const size_t &wall_id,
-        const NodeType &wall_type);
+    bool setNodeBoundaryPolygon(
+        const size_t &node_id,
+        const NodeType &node_type,
+        const EasyPolygon2D &node_boundary_polygon);
 
-    bool createWallBoundary(
-        const size_t &wall_id,
-        const NodeType &wall_type,
-        const EasyPolygon2D &wall_boundary_polygon);
-
-    bool setWallBoundaryPolygonPointPosition(
-        const size_t &wall_id,
-        const NodeType &wall_type,
+    bool setNodeBoundaryPolygonPointPosition(
+        const size_t &node_id,
+        const NodeType &node_type,
         const size_t &point_idx,
         const EasyPoint2D &point_new_position_in_world);
-
-    bool createRoom(
-        const size_t &room_id,
-        const size_t &on_wall_id,
-        const NodeType &on_wall_type,
-        const size_t &wall_boundary_id);
 
     bool outputInfo() const;
 

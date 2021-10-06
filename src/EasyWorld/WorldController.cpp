@@ -1,4 +1,5 @@
 #include "WorldController.h"
+#include <utility>
 
 bool WorldController::reset()
 {
@@ -30,13 +31,26 @@ bool WorldController::createWall(
     const size_t &wall_id,
     const NodeType &wall_type)
 {
-    if(!world_tree_.createWall(wall_id, wall_type))
+    if(wall_type != NodeType::OuterWall &&
+        wall_type != NodeType::InnerWall)
     {
         std::cout << "WorldController::createWall : " << std::endl <<
           "Input :\n" <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
-          "createWall failed!" << std::endl;
+          "this type is not the wall type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.createNode(
+          wall_id, wall_type, 0, NodeType::World, 0))
+    {
+        std::cout << "WorldController::createWall : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "createNode for wall failed!" << std::endl;
 
         return false;
     }
@@ -50,18 +64,178 @@ bool WorldController::createWall(
     return true;
 }
 
-bool WorldController::createWallBoundary(
+bool WorldController::setWallBoundaryPolygon(
     const size_t &wall_id,
     const NodeType &wall_type,
     const EasyPolygon2D &wall_boundary_polygon)
 {
-    if(!world_tree_.createWallBoundary(wall_id, wall_type, wall_boundary_polygon))
+    if(wall_type != NodeType::OuterWall &&
+        wall_type != NodeType::InnerWall)
     {
-        std::cout << "WorldController::createWallBoundary : " << std::endl <<
+        std::cout << "WorldController::setWallBoundaryPolygon : " << std::endl <<
           "Input :\n" <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
-          "createWallBoundary failed!" << std::endl;
+          "this type is not the wall type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygon(wall_id, wall_type, wall_boundary_polygon))
+    {
+        std::cout << "WorldController::setWallBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "setNodeBoundaryPolygon for wall failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setWallBoundaryPolygonPointPosition(
+    const size_t &wall_id,
+    const NodeType &wall_type,
+    const size_t &point_idx,
+    const EasyPoint2D &point_new_position_in_world)
+{
+    if(wall_type != NodeType::OuterWall &&
+        wall_type != NodeType::InnerWall)
+    {
+        std::cout << "WorldController::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "this type is not the wall type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygonPointPosition(
+          wall_id, wall_type, point_idx, point_new_position_in_world))
+    {
+        std::cout << "WorldController::setWallBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setNodeBoundaryPolygonPointPosition for wall failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::createRoom(
+    const size_t &room_id,
+    const NodeType &room_type,
+    const size_t &on_wall_id,
+    const NodeType &on_wall_type,
+    const size_t &wall_boundary_id)
+{
+    if(room_type != NodeType::Room)
+    {
+        std::cout << "WorldController::createRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_wall_id = " << on_wall_id << std::endl <<
+          "\ton_wall_type = " << on_wall_type << std::endl <<
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "this type is not the room type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.createNode(
+          room_id, room_type, on_wall_id, on_wall_type, wall_boundary_id))
+    {
+        std::cout << "WorldController::createRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_wall_id = " << on_wall_id << std::endl <<
+          "\ton_wall_type = " << on_wall_type << std::endl <<
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "createNode for room failed!" << std::endl;
+
+        return false;
+    }
+
+    std::pair<size_t, NodeType> new_room_pair;
+    new_room_pair.first = room_id;
+    new_room_pair.second = room_type;
+
+    room_pair_vec_.emplace_back(new_room_pair);
+
+    return true;
+}
+
+bool WorldController::setRoomBoundaryPolygon(
+    const size_t &room_id,
+    const NodeType &room_type,
+    const EasyPolygon2D &room_boundary_polygon)
+{
+    if(room_type != NodeType::Room)
+    {
+        std::cout << "WorldController::setRoomBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "this type is not the room type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygon(room_id, room_type, room_boundary_polygon))
+    {
+        std::cout << "WorldController::setRoomBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "setNodeBoundaryPolygon for room failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setRoomBoundaryPolygonPointPosition(
+    const size_t &room_id,
+    const NodeType &room_type,
+    const size_t &point_idx,
+    const EasyPoint2D &point_new_position_in_world)
+{
+    if(room_type != NodeType::Room)
+    {
+        std::cout << "WorldController::setRoomBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "this type is not the room type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygonPointPosition(
+          room_id, room_type, point_idx, point_new_position_in_world))
+    {
+        std::cout << "WorldController::setRoomBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setNodeBoundaryPolygonPointPosition for room failed!" << std::endl;
 
         return false;
     }
@@ -87,31 +261,6 @@ EasyNode* WorldController::findNode(
     }
 
     return search_node;
-}
-
-bool WorldController::setWallBoundaryPolygonPointPosition(
-    const size_t &wall_id,
-    const NodeType &wall_type,
-    const size_t &point_idx,
-    const EasyPoint2D &point_new_position_in_world)
-{
-    if(!world_tree_.setWallBoundaryPolygonPointPosition(
-          wall_id, wall_type, point_idx, point_new_position_in_world))
-    {
-        std::cout << "WorldController::setWallBoundaryPolygonPointPosition : " << std::endl <<
-          "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "\tpoint_idx = " << point_idx << std::endl <<
-          "\tpoint_new_position_in_world = [" <<
-          point_new_position_in_world.x << "," <<
-          point_new_position_in_world.y << "]" << std::endl <<
-          "setWallBoundaryPolygonPointPosition failed!" << std::endl;
-
-        return false;
-    }
-
-    return true;
 }
 
 bool WorldController::getWallNodeVec(

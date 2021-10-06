@@ -31,10 +31,10 @@ void EasyWorldWidget::run_example()
     world_controller_.createWall(0, NodeType::OuterWall);
 
     EasyPolygon2D wall_boundary_polygon;
-    wall_boundary_polygon.addPoint(0, 0);
-    wall_boundary_polygon.addPoint(400, 0);
     wall_boundary_polygon.addPoint(400, 400);
-    wall_boundary_polygon.addPoint(0, 400);
+    wall_boundary_polygon.addPoint(800, 400);
+    wall_boundary_polygon.addPoint(800, 800);
+    wall_boundary_polygon.addPoint(400, 800);
     wall_boundary_polygon.setAntiClockWise();
 
     world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon);
@@ -63,10 +63,10 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
-    // drawWallSpaceBoundary();
+    drawWallSpaceBoundary();
     drawWallBoundaryPolygon();
 
-    // drawRoomSpaceBoundary();
+    drawRoomSpaceBoundary();
     drawRoomBoundaryPolygon();
 
     drawWallBoundaryAxis();

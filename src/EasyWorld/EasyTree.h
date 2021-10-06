@@ -25,7 +25,9 @@ public:
 
     bool reset();
 
-    bool createWorld();
+    bool createWorld(
+        const float &world_center_x,
+        const float &world_center_y);
 
     bool createNode(
         const size_t &node_id,

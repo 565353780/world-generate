@@ -18,11 +18,16 @@ bool EasyTree::reset()
     return true;
 }
 
-bool EasyTree::createWorld()
+bool EasyTree::createWorld(
+    const float &world_center_x,
+    const float &world_center_y)
 {
     if(root_ != nullptr)
     {
         std::cout << "EasyTree::createWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tworld_center = [" << world_center_x << "," <<
+          world_center_y << "]" << std::endl <<
           "tree root already exist!" << std::endl;
 
         return false;
@@ -33,6 +38,9 @@ bool EasyTree::createWorld()
     if(!root_->setID(0))
     {
         std::cout << "EasyTree::createWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tworld_center = [" << world_center_x << "," <<
+          world_center_y << "]" << std::endl <<
           "setID for root failed!" << std::endl;
 
         return false;
@@ -41,6 +49,9 @@ bool EasyTree::createWorld()
     if(!root_->setNodeType(NodeType::World))
     {
         std::cout << "EasyTree::createWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tworld_center = [" << world_center_x << "," <<
+          world_center_y << "]" << std::endl <<
           "setNodeType for root failed!" << std::endl;
 
         return false;
@@ -49,14 +60,20 @@ bool EasyTree::createWorld()
     if(!root_->setAxisInParent(0, 0, 1, 0))
     {
         std::cout << "EasyTree::createWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tworld_center = [" << world_center_x << "," <<
+          world_center_y << "]" << std::endl <<
           "setAxisInParent for root failed!" << std::endl;
 
         return false;
     }
 
-    if(!root_->setAxisInWorld(0, 0, 1, 0))
+    if(!root_->setAxisInWorld(world_center_x, world_center_y, 1, 0))
     {
         std::cout << "EasyTree::createWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tworld_center = [" << world_center_x << "," <<
+          world_center_y << "]" << std::endl <<
           "setAxisInWorld for root failed!" << std::endl;
 
         return false;
@@ -188,7 +205,7 @@ EasyNode* EasyTree::findNode(
           "Input :\n" <<
           "\tid = " << id << std::endl <<
           "\ttype = " << type << std::endl <<
-          "findFromNode start from root failed!" << std::endl;
+          "findFromAllChild start from root failed!" << std::endl;
 
         return nullptr;
     }
@@ -201,9 +218,9 @@ bool EasyTree::setNodeBoundaryPolygon(
     const NodeType &node_type,
     const EasyPolygon2D &node_boundary_polygon)
 {
-    EasyNode* node_node = findNode(node_id, node_type);
+    EasyNode* search_node = findNode(node_id, node_type);
 
-    if(node_node == nullptr)
+    if(search_node == nullptr)
     {
         std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
           "Input :\n" <<
@@ -240,7 +257,7 @@ bool EasyTree::setNodeBoundaryPolygon(
             return false;
         }
 
-        if(!node_node->addChild(new_child_boundary_node))
+        if(!search_node->addChild(new_child_boundary_node))
         {
             std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
               "Input :\n" <<
@@ -251,16 +268,16 @@ bool EasyTree::setNodeBoundaryPolygon(
             return false;
         }
 
-        const EasyPoint2D &node_boundary_point =
+        const EasyPoint2D &current_boundary_point_in_search_node =
           node_boundary_polygon.point_list[i];
-        const EasyPoint2D &next_node_boundary_point =
+        const EasyPoint2D &next_boundary_point_in_search_node =
           node_boundary_polygon.point_list[(i + 1) % node_boundary_polygon.point_list.size()];
 
         if(!new_child_boundary_node->setAxisInParent(
-              node_boundary_point.x,
-              node_boundary_point.y,
-              next_node_boundary_point.x - node_boundary_point.x,
-              next_node_boundary_point.y - node_boundary_point.y))
+              current_boundary_point_in_search_node.x,
+              current_boundary_point_in_search_node.y,
+              next_boundary_point_in_search_node.x - current_boundary_point_in_search_node.x,
+              next_boundary_point_in_search_node.y - current_boundary_point_in_search_node.y))
         {
             std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
               "Input :\n" <<
@@ -271,41 +288,70 @@ bool EasyTree::setNodeBoundaryPolygon(
             return false;
         }
 
-        EasyPoint2D node_boundary_point_in_node;
-        EasyPoint2D next_node_boundary_point_in_node;
+        EasyPoint2D current_boundary_point_in_world;
+        EasyPoint2D next_boundary_point_in_world;
 
-        if(!new_child_boundary_node->getPointInNode(
-              node_boundary_point,
-              node_boundary_point_in_node))
+        if(!search_node->getPointInWorld(
+              current_boundary_point_in_search_node,
+              current_boundary_point_in_world))
         {
             std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
               "Input :\n" <<
               "\tnode_id = " << node_id << std::endl <<
               "\tnode_type = " << node_type << std::endl <<
-              "getPointInNode for point " << i << " failed!" << std::endl;
+              "getPointInWorld for current point " << i << " failed!" << std::endl;
 
             return false;
         }
 
-        if(!new_child_boundary_node->getPointInNode(
-              next_node_boundary_point,
-              next_node_boundary_point_in_node))
+        if(!search_node->getPointInWorld(
+              next_boundary_point_in_search_node,
+              next_boundary_point_in_world))
         {
             std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
               "Input :\n" <<
               "\tnode_id = " << node_id << std::endl <<
               "\tnode_type = " << node_type << std::endl <<
-              "getPointInNode for point " << i << " failed!" << std::endl;
+              "getPointInWorld for next point " << i << " failed!" << std::endl;
 
             return false;
         }
 
-        EasyPolygon2D node_boundary_node_polygon;
+        EasyPoint2D current_boundary_point_in_boundary_node;
+        EasyPoint2D next_boundary_point_in_boundary_node;
 
-        node_boundary_node_polygon.addPoint(node_boundary_point_in_node);
-        node_boundary_node_polygon.addPoint(next_node_boundary_point_in_node);
+        if(!new_child_boundary_node->getPointInNode(
+              current_boundary_point_in_world,
+              current_boundary_point_in_boundary_node))
+        {
+            std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
+              "Input :\n" <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl <<
+              "getPointInNode for current point " << i << " failed!" << std::endl;
 
-        if(!new_child_boundary_node->setBoundaryPolygon(node_boundary_node_polygon))
+            return false;
+        }
+
+        if(!new_child_boundary_node->getPointInNode(
+              next_boundary_point_in_world,
+              next_boundary_point_in_boundary_node))
+        {
+            std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
+              "Input :\n" <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl <<
+              "getPointInNode for next point " << i << " failed!" << std::endl;
+
+            return false;
+        }
+
+        EasyPolygon2D boundary_node_polygon;
+
+        boundary_node_polygon.addPoint(current_boundary_point_in_boundary_node);
+        boundary_node_polygon.addPoint(next_boundary_point_in_boundary_node);
+
+        if(!new_child_boundary_node->setBoundaryPolygon(boundary_node_polygon))
         {
             std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
               "Input :\n" <<
@@ -341,7 +387,7 @@ bool EasyTree::setNodeBoundaryPolygon(
         return false;
     }
 
-    if(!node_node->addChild(new_child_space_node))
+    if(!search_node->addChild(new_child_space_node))
     {
         std::cout << "EasyTree::setNodeBoundaryPolygon : " << std::endl <<
           "Input :\n" <<
@@ -372,9 +418,9 @@ bool EasyTree::setNodeBoundaryPolygonPointPosition(
     const size_t &point_idx,
     const EasyPoint2D &point_new_position_in_world)
 {
-    EasyNode* node_node = findNode(node_id, node_type);
+    EasyNode* search_node = findNode(node_id, node_type);
 
-    if(node_node == nullptr)
+    if(search_node == nullptr)
     {
         std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
@@ -389,11 +435,11 @@ bool EasyTree::setNodeBoundaryPolygonPointPosition(
         return false;
     }
 
-    EasyPoint2D point_new_position_in_node_node;
+    EasyPoint2D point_new_position_in_search_node;
 
-    if(!node_node->getPointInNode(
+    if(!search_node->getPointInNode(
           point_new_position_in_world,
-          point_new_position_in_node_node))
+          point_new_position_in_search_node))
     {
         std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
@@ -403,15 +449,15 @@ bool EasyTree::setNodeBoundaryPolygonPointPosition(
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
-          "getPointInNode for new point in node node failed!" << std::endl;
+          "getPointInNode for new point in search node failed!" << std::endl;
 
         return false;
     }
 
-    EasyNode* node_space_node =
-      node_node->findChild(0, NodeType::Space);
+    EasyNode* search_space_node =
+      search_node->findChild(0, NodeType::Space);
 
-    if(node_space_node == nullptr)
+    if(search_space_node == nullptr)
     {
         std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
@@ -421,18 +467,18 @@ bool EasyTree::setNodeBoundaryPolygonPointPosition(
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
-          "can't find node space node!" << std::endl;
+          "can't find space node!" << std::endl;
 
         return false;
     }
 
-    const EasyPolygon2D& node_space_polygon =
-      node_space_node->getBoundaryPolygon();
+    const EasyPolygon2D& space_node_polygon =
+      search_space_node->getBoundaryPolygon();
 
     EasyNode* prev_boundary_node =
-      node_node->findChild(
-          (point_idx - 1 + node_space_polygon.point_list.size()) %
-          node_space_polygon.point_list.size(), NodeType::Boundary);
+      search_node->findChild(
+          (point_idx - 1 + space_node_polygon.point_list.size()) %
+          space_node_polygon.point_list.size(), NodeType::Boundary);
 
     if(prev_boundary_node == nullptr)
     {
@@ -444,7 +490,7 @@ bool EasyTree::setNodeBoundaryPolygonPointPosition(
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
-          "can't find node prev boundary node!" << std::endl;
+          "can't find prev boundary node!" << std::endl;
 
         return false;
     }
@@ -471,11 +517,11 @@ bool EasyTree::setNodeBoundaryPolygonPointPosition(
         return false;
     }
 
-    EasyPoint2D prev_boundary_start_point_in_node_node;
+    EasyPoint2D prev_boundary_start_point_in_search_node;
 
-    if(!node_node->getPointInNode(
+    if(!search_node->getPointInNode(
           prev_boundary_start_point_in_world,
-          prev_boundary_start_point_in_node_node))
+          prev_boundary_start_point_in_search_node))
     {
         std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
@@ -485,16 +531,16 @@ bool EasyTree::setNodeBoundaryPolygonPointPosition(
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
-          "getPointInNode for prev point in node node failed!" << std::endl;
+          "getPointInNode for prev point in node failed!" << std::endl;
 
         return false;
     }
 
     if(!prev_boundary_node->setAxisInParent(
-          prev_boundary_start_point_in_node_node.x,
-          prev_boundary_start_point_in_node_node.y,
-          point_new_position_in_node_node.x - prev_boundary_start_point_in_node_node.x,
-          point_new_position_in_node_node.y - prev_boundary_start_point_in_node_node.y))
+          prev_boundary_start_point_in_search_node.x,
+          prev_boundary_start_point_in_search_node.y,
+          point_new_position_in_search_node.x - prev_boundary_start_point_in_search_node.x,
+          point_new_position_in_search_node.y - prev_boundary_start_point_in_search_node.y))
     {
         std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
@@ -510,7 +556,7 @@ bool EasyTree::setNodeBoundaryPolygonPointPosition(
     }
 
     EasyNode* current_boundary_node =
-      node_node->findChild(point_idx, NodeType::Boundary);
+      search_node->findChild(point_idx, NodeType::Boundary);
 
     if(current_boundary_node == nullptr)
     {
@@ -549,11 +595,11 @@ bool EasyTree::setNodeBoundaryPolygonPointPosition(
         return false;
     }
 
-    EasyPoint2D current_boundary_end_point_in_node_node;
+    EasyPoint2D current_boundary_end_point_in_search_node;
 
-    if(!node_node->getPointInNode(
+    if(!search_node->getPointInNode(
           current_boundary_end_point_in_world,
-          current_boundary_end_point_in_node_node))
+          current_boundary_end_point_in_search_node))
     {
         std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
@@ -563,16 +609,16 @@ bool EasyTree::setNodeBoundaryPolygonPointPosition(
           "\tpoint_new_position_in_world = [" <<
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
-          "getPointInNode for current point in node node failed!" << std::endl;
+          "getPointInNode for current point in node failed!" << std::endl;
 
         return false;
     }
 
     if(!current_boundary_node->setAxisInParent(
-          point_new_position_in_node_node.x,
-          point_new_position_in_node_node.y,
-          current_boundary_end_point_in_node_node.x - point_new_position_in_node_node.x,
-          current_boundary_end_point_in_node_node.y - point_new_position_in_node_node.y))
+          point_new_position_in_search_node.x,
+          point_new_position_in_search_node.y,
+          current_boundary_end_point_in_search_node.x - point_new_position_in_search_node.x,
+          current_boundary_end_point_in_search_node.y - point_new_position_in_search_node.y))
     {
         std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
@@ -587,7 +633,7 @@ bool EasyTree::setNodeBoundaryPolygonPointPosition(
         return false;
     }
 
-    if(!node_space_node->setBoundaryPolygonPointPosition(
+    if(!search_space_node->setBoundaryPolygonPointPosition(
           point_idx, point_new_position_in_world))
     {
         std::cout << "EasyTree::setNodeBoundaryPolygonPointPosition : " << std::endl <<

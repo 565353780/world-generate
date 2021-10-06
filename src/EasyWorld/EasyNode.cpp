@@ -256,13 +256,12 @@ bool EasyNode::setParent(
 
     parent_ = parent;
 
-    // try to update axis in world
-    if(!updateAxisInWorldFromParent())
+    if(!setAxisInParent(0, 0, 1, 0))
     {
-        // std::cout << "EasyNode::setParent : " << std::endl <<
-        //   "updateAxisInWorldFromParent failed!" << std::endl;
+        std::cout << "EasyNode::setParent : " << std::endl <<
+          "setAxisInParent failed!" << std::endl;
 
-        return true;
+        return false;
     }
 
     return true;
@@ -424,17 +423,6 @@ bool EasyNode::createChild(
         return false;
     }
 
-    if(!new_child_node->setAxisInParent(0, 0, 1, 0))
-    {
-        std::cout << "EasyNode::createChild : " << std::endl <<
-          "Input :\n" <<
-          "\tchild_id = " << child_id << std::endl <<
-          "\tchild_type = " << child_type << std::endl <<
-          "setAxisInParent for child failed!" << std::endl;
-
-        return false;
-    }
-
     child_vec_.emplace_back(new_child_node);
 
     return true;
@@ -469,17 +457,6 @@ bool EasyNode::addChild(
           "\tchild_id = " << child_node->getID() << std::endl <<
           "\tchild_type = " << child_node->getNodeType() << std::endl <<
           "setParent failed!" << std::endl;
-
-        return false;
-    }
-
-    if(!child_node->setAxisInParent(0, 0, 1, 0))
-    {
-        std::cout << "EasyNode::createChild : " << std::endl <<
-          "Input :\n" <<
-          "\tchild_id = " << child_node->getID() << std::endl <<
-          "\tchild_type = " << child_node->getNodeType() << std::endl <<
-          "setAxisInParent failed!" << std::endl;
 
         return false;
     }

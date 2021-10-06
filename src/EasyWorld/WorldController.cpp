@@ -14,11 +14,16 @@ bool WorldController::reset()
     return true;
 }
 
-bool WorldController::createWorld()
+bool WorldController::createWorld(
+    const float &world_center_x,
+    const float &world_center_y)
 {
-    if(!world_tree_.createWorld())
+    if(!world_tree_.createWorld(world_center_x, world_center_y))
     {
         std::cout << "WorldController::createWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tworld_center = [" << world_center_x << "," <<
+          world_center_y << "]" << std::endl <<
           "createWorld failed!" << std::endl;
 
         return false;

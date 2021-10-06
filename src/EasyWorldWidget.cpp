@@ -26,15 +26,15 @@ void EasyWorldWidget::run_example()
 {
     world_controller_.reset();
 
-    world_controller_.createWorld();
+    world_controller_.createWorld(400, 400);
 
     world_controller_.createWall(0, NodeType::OuterWall);
 
     EasyPolygon2D wall_boundary_polygon;
+    wall_boundary_polygon.addPoint(0, 0);
+    wall_boundary_polygon.addPoint(400, 0);
     wall_boundary_polygon.addPoint(400, 400);
-    wall_boundary_polygon.addPoint(800, 400);
-    wall_boundary_polygon.addPoint(800, 800);
-    wall_boundary_polygon.addPoint(400, 800);
+    wall_boundary_polygon.addPoint(0, 400);
     wall_boundary_polygon.setAntiClockWise();
 
     world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon);
@@ -54,7 +54,7 @@ void EasyWorldWidget::run_example()
     world_controller_.setRoomBoundaryPolygon(1, NodeType::Room, room_boundary_polygon);
     world_controller_.setRoomBoundaryPolygon(2, NodeType::Room, room_boundary_polygon);
 
-    world_controller_.outputInfo();
+    // world_controller_.outputInfo();
 
     std::cout << "finish run_example!" << std::endl;
 }
@@ -79,7 +79,7 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
 
     EasyPoint2D random_new_point;
 
-    random_new_point.setPosition(100 + rand() % 400, 100 + rand() % 400);
+    random_new_point.setPosition(700 + rand() % 200, 300 + rand() % 200);
 
     world_controller_.setWallBoundaryPolygonPointPosition(
         0, NodeType::OuterWall, 1, random_new_point);
@@ -165,10 +165,8 @@ bool EasyWorldWidget::drawWallBoundaryPolygon()
 
             for(size_t i = 0; i < wall_boundary_polygon.point_list.size(); ++i)
             {
-                const EasyPoint2D &current_point =
-                  wall_boundary_polygon.point_list[i];
-                const EasyPoint2D &next_point =
-                  wall_boundary_polygon.point_list[
+                const EasyPoint2D &current_point = wall_boundary_polygon.point_list[i];
+                const EasyPoint2D &next_point = wall_boundary_polygon.point_list[
                   (i + 1) % wall_boundary_polygon.point_list.size()];
 
                 EasyPoint2D current_point_in_world;
@@ -178,9 +176,9 @@ bool EasyWorldWidget::drawWallBoundaryPolygon()
                 wall_boundary_node->getPointInWorld(
                     next_point, next_point_in_world);
 
-                painter.drawLine(
-                    current_point_in_world.x, current_point_in_world.y,
-                    next_point_in_world.x, next_point_in_world.y);
+            painter.drawLine(
+                current_point_in_world.x, current_point_in_world.y,
+                next_point_in_world.x, next_point_in_world.y);
             }
         }
     }
@@ -203,7 +201,7 @@ bool EasyWorldWidget::drawWallSpaceBoundary()
 
     world_controller_.getWallSpaceNodeVec(wall_space_node_vec);
 
-    for(const EasyNode* wall_space_node : wall_space_node_vec)
+    for(EasyNode* wall_space_node : wall_space_node_vec)
     {
         if(wall_space_node == nullptr)
         {
@@ -219,9 +217,16 @@ bool EasyWorldWidget::drawWallSpaceBoundary()
             const EasyPoint2D &next_point = wall_space_polygon.point_list[
               (i + 1) % wall_space_polygon.point_list.size()];
 
+            EasyPoint2D current_point_in_world;
+            EasyPoint2D next_point_in_world;
+            wall_space_node->getPointInWorld(
+                current_point, current_point_in_world);
+            wall_space_node->getPointInWorld(
+                next_point, next_point_in_world);
+
             painter.drawLine(
-                current_point.x, current_point.y,
-                next_point.x, next_point.y);
+                current_point_in_world.x, current_point_in_world.y,
+                next_point_in_world.x, next_point_in_world.y);
         }
     }
 
@@ -335,7 +340,7 @@ bool EasyWorldWidget::drawRoomSpaceBoundary()
 
     world_controller_.getRoomSpaceNodeVec(room_space_node_vec);
 
-    for(const EasyNode* room_space_node : room_space_node_vec)
+    for(EasyNode* room_space_node : room_space_node_vec)
     {
         if(room_space_node == nullptr)
         {
@@ -351,9 +356,16 @@ bool EasyWorldWidget::drawRoomSpaceBoundary()
             const EasyPoint2D &next_point = room_space_polygon.point_list[
               (i + 1) % room_space_polygon.point_list.size()];
 
+            EasyPoint2D current_point_in_world;
+            EasyPoint2D next_point_in_world;
+            room_space_node->getPointInWorld(
+                current_point, current_point_in_world);
+            room_space_node->getPointInWorld(
+                next_point, next_point_in_world);
+
             painter.drawLine(
-                current_point.x, current_point.y,
-                next_point.x, next_point.y);
+                current_point_in_world.x, current_point_in_world.y,
+                next_point_in_world.x, next_point_in_world.y);
         }
     }
 

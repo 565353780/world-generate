@@ -13,7 +13,9 @@ public:
 
     bool reset();
 
-    bool createWorld();
+    bool createWorld(
+        const float &world_center_x,
+        const float &world_center_y);
 
     bool createWall(
         const size_t &wall_id,

@@ -62,7 +62,13 @@ public:
         std::vector<EasyNode*> &wall_space_node_vec);
 
     bool getRoomNodeVec(
-        std::vector<EasyNode*> &wall_node_vec);
+        std::vector<EasyNode*> &room_node_vec);
+
+    bool getRoomBoundaryNodeVecVec(
+        std::vector<std::vector<EasyNode*>> &room_boundary_node_vec_vec);
+
+    bool getRoomSpaceNodeVec(
+        std::vector<EasyNode*> &room_space_node_vec);
 
     bool outputInfo();
 

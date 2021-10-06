@@ -37,6 +37,10 @@ protected:
     bool drawWallBoundaryPolygon();
     bool drawWallSpaceBoundary();
 
+    bool drawRoomBoundaryAxis();
+    bool drawRoomBoundaryPolygon();
+    bool drawRoomSpaceBoundary();
+
 private:
     bool setStartTime();
 

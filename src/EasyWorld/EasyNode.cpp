@@ -203,11 +203,11 @@ bool EasyNode::updateAxisInWorldFromParent()
       parent_axis_in_world.x_direction_.x * axis_in_parent_.center_.y;
 
     const float axis_x_direction_x_in_world =
-      parent_axis_in_world.x_direction_.x * axis_in_parent_.x_direction_.x +
+      parent_axis_in_world.x_direction_.x * axis_in_parent_.x_direction_.x -
       parent_axis_in_world.x_direction_.y * axis_in_parent_.x_direction_.y;
 
     const float axis_x_direction_y_in_world =
-      -parent_axis_in_world.x_direction_.y * axis_in_parent_.x_direction_.x +
+      parent_axis_in_world.x_direction_.y * axis_in_parent_.x_direction_.x +
       parent_axis_in_world.x_direction_.x * axis_in_parent_.x_direction_.y;
 
     if(!setAxisInWorld(

@@ -369,6 +369,112 @@ bool WorldController::getWallSpaceNodeVec(
     return true;
 }
 
+bool WorldController::getRoomNodeVec(
+    std::vector<EasyNode*> &room_node_vec)
+{
+    room_node_vec.clear();
+
+    if(room_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    for(const std::pair<size_t, NodeType> &room_pair : room_pair_vec_)
+    {
+        EasyNode* room_node = findNode(room_pair.first, room_pair.second);
+
+        if(room_node == nullptr)
+        {
+            std::cout << "WorldController::getRoomNodeVec : " << std::endl <<
+              "get room : id = " << room_pair.first <<
+              ", type = " << room_pair.second <<
+              " failed!" << std::endl;
+
+            return false;
+        }
+
+        room_node_vec.emplace_back(room_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getRoomBoundaryNodeVecVec(
+    std::vector<std::vector<EasyNode*>> &room_boundary_node_vec_vec)
+{
+    room_boundary_node_vec_vec.clear();
+
+    if(room_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> room_node_vec;
+
+    if(!getRoomNodeVec(room_node_vec))
+    {
+        std::cout << "WorldController::getRoomBoundaryNodeVec : " << std::endl <<
+          "getRoomNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* room_node : room_node_vec)
+    {
+        std::vector<EasyNode*> room_boundary_node_vec;
+        std::vector<EasyNode*> room_child_node_vec = room_node->getChildNodeVec();
+
+        for(EasyNode* room_child_node : room_child_node_vec)
+        {
+            if(room_child_node->getNodeType() == NodeType::Boundary)
+            {
+                room_boundary_node_vec.emplace_back(room_child_node);
+            }
+        }
+
+        room_boundary_node_vec_vec.emplace_back(room_boundary_node_vec);
+    }
+    return true;
+}
+
+bool WorldController::getRoomSpaceNodeVec(
+    std::vector<EasyNode*> &room_space_node_vec)
+{
+    room_space_node_vec.clear();
+
+    if(room_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> room_node_vec;
+
+    if(!getRoomNodeVec(room_node_vec))
+    {
+        std::cout << "WorldController::getRoomSpaceNodeVec : " << std::endl <<
+          "getRoomNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* room_node : room_node_vec)
+    {
+        EasyNode* room_space_node = room_node->findChild(0, NodeType::Space);
+
+        if(room_space_node == nullptr)
+        {
+            std::cout << "WorldController::getRoomNodeVec : " << std::endl <<
+              "get room space node failed!" << std::endl;
+
+            return false;
+        }
+
+        room_space_node_vec.emplace_back(room_space_node);
+    }
+
+    return true;
+}
+
 bool WorldController::outputInfo()
 {
     world_tree_.outputInfo();

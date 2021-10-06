@@ -3,7 +3,8 @@
 
 #include <QMainWindow>
 
-#include "EasyWidget.h"
+#include "EasySpaceWidget.h"
+#include "EasyWorldWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,6 +23,7 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    EasyWidget *easy_widget_;
+    EasySpaceWidget *space_widget_;
+    EasyWorldWidget *world_widget_;
 };
 #endif // MAINWINDOW_H

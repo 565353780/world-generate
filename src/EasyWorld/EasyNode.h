@@ -59,10 +59,13 @@ public:
     bool setBoundaryPolygon(
         const EasyPolygon2D &boundary_polygon);
 
-    bool findChild(
+    bool setBoundaryPolygonPointPosition(
+        const size_t &point_idx,
+        const EasyPoint2D &point_new_position_in_world);
+
+    EasyNode* findChild(
         const size_t &child_id,
-        const NodeType &child_type,
-        size_t &child_idx);
+        const NodeType &child_type);
 
     EasyNode* findFromAllChild(
         const size_t &child_id,
@@ -75,6 +78,9 @@ public:
     bool createChild(
         const size_t &child_id,
         const NodeType &child_type);
+
+    bool addChild(
+        EasyNode* child_node);
 
     bool removeChild(
         const size_t &child_id,
@@ -99,10 +105,20 @@ public:
         const NodeType &child_type,
         const EasyPolygon2D &child_boundary_polygon);
 
+    bool getPointInNode(
+        const EasyPoint2D &point_in_world,
+        EasyPoint2D &point_in_node);
+
+    bool getPointInWorld(
+        const EasyPoint2D &point_in_node,
+        EasyPoint2D &point_in_world);
+
     const size_t& getID() const { return id_; }
     const NodeType& getNodeType() const { return type_; }
+    const std::vector<EasyNode*>& getChildNodeVec() const { return child_vec_; }
     const EasyAxis2D& getAxisInParent() const { return axis_in_parent_; }
     const EasyAxis2D& getAxisInWorld() const { return axis_in_world_; }
+    const EasyPolygon2D& getBoundaryPolygon() const { return boundary_polygon_; }
 
     bool outputInfo(
         const size_t &info_level) const;

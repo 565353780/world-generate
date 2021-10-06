@@ -1,5 +1,5 @@
-#ifndef EASYWIDGET_H
-#define EASYWIDGET_H
+#ifndef EASYWORLDWIDGET_H
+#define EASYWORLDWIDGET_H
 
 #include <QWidget>
 #include <QString>
@@ -10,24 +10,21 @@
 #include <QMouseEvent>
 
 #include <time.h>
-#include "EasySpace/SpaceController.h"
 #include "EasyWorld/WorldController.h"
 
 namespace Ui {
-class EasyWidget;
+class EasyWorldWidget;
 }
 
-class EasyWidget : public QWidget
+class EasyWorldWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit EasyWidget(QWidget *parent = nullptr);
-    ~EasyWidget();
+    explicit EasyWorldWidget(QWidget *parent = nullptr);
+    ~EasyWorldWidget();
 
     void run_example();
-
-    bool createDemo();
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -36,15 +33,10 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
 
+    bool drawWallBoundaryAxis();
+    bool drawWallSpaceBoundary();
+
 private:
-    bool drawBoundary();
-
-    bool drawRoomLinePosition();
-
-    bool drawRoomPosition();
-
-    bool drawRoomBoundary();
-
     bool setStartTime();
 
     bool getFPS(
@@ -52,14 +44,15 @@ private:
         float &average_fps);
 
 private:
-    Ui::EasyWidget *ui;
+    Ui::EasyWorldWidget *ui;
 
-    SpaceController space_controller_;
     WorldController world_controller_;
+
+    float axis_length_;
 
     timespec t_spc_;
     long t_start_;
     long last_second_;
 };
 
-#endif // EASYWIDGET_H
+#endif // EASYWORLDWIDGET_H

@@ -40,6 +40,12 @@ public:
         const NodeType &wall_type,
         const EasyPolygon2D &wall_boundary_polygon);
 
+    bool setWallBoundaryPolygonPointPosition(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const size_t &point_idx,
+        const EasyPoint2D &point_new_position_in_world);
+
     bool createRoom(
         const size_t &room_id,
         const size_t &on_wall_id,

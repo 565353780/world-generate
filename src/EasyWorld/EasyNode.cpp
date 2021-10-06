@@ -276,29 +276,54 @@ bool EasyNode::setBoundaryPolygon(
     return true;
 }
 
-bool EasyNode::findChild(
-    const size_t &child_id,
-    const NodeType &child_type,
-    size_t &child_idx)
+bool EasyNode::setBoundaryPolygonPointPosition(
+    const size_t &point_idx,
+    const EasyPoint2D &point_new_position_in_world)
 {
-    if(child_vec_.size() == 0)
+    if(point_idx >= boundary_polygon_.point_list.size())
     {
+        std::cout << "EasyNode::updateBoundaryPolygonPoint : " << std::endl <<
+          "point_idx out of range!" << std::endl;
+
         return false;
     }
 
-    for(size_t i = 0; i < child_vec_.size(); ++i)
+    EasyPoint2D point_new_position_in_node;
+
+    if(!getPointInNode(
+          point_new_position_in_world,
+          point_new_position_in_node))
     {
-        EasyNode* child_node = child_vec_[i];
+        std::cout << "EasyNode::updateBoundaryPolygonPoint : " << std::endl <<
+          "getPointInNode failed!" << std::endl;
+
+        return false;
+    }
+
+    boundary_polygon_.point_list[point_idx] = point_new_position_in_node;
+
+    return true;
+}
+
+EasyNode* EasyNode::findChild(
+    const size_t &child_id,
+    const NodeType &child_type)
+{
+    if(child_vec_.size() == 0)
+    {
+        return nullptr;
+    }
+
+    for(EasyNode* child_node : child_vec_)
+    {
         if(child_node->getID() == child_id &&
             child_node->getNodeType() == child_type)
         {
-            child_idx = i;
-
-            return true;
+            return child_node;
         }
     }
 
-    return false;
+    return nullptr;
 }
 
 EasyNode* EasyNode::findFromAllChild(
@@ -310,10 +335,11 @@ EasyNode* EasyNode::findFromAllChild(
         return nullptr;
     }
 
-    size_t child_idx;
-    if(findChild(child_id, child_type, child_idx))
+    EasyNode* search_node = findChild(child_id, child_type);
+
+    if(search_node != nullptr)
     {
-        return child_vec_[child_idx];
+        return search_node;
     }
 
     for(EasyNode *child_node : child_vec_)
@@ -338,14 +364,14 @@ bool EasyNode::haveThisChild(
     const size_t &child_id,
     const NodeType &child_type)
 {
-    size_t child_idx;
+    EasyNode* search_node = findChild(child_id, child_type);
 
-    if(findChild(child_id, child_type, child_idx))
+    if(search_node == nullptr)
     {
-        return true;
+        return false;
     }
 
-    return false;
+    return true;
 }
 
 bool EasyNode::createChild(
@@ -358,14 +384,12 @@ bool EasyNode::createChild(
           "Input :\n" <<
           "\tchild_id = " << child_id << std::endl <<
           "\tchild_type = " << child_type << std::endl <<
-          "this id already exist!" << std::endl;
+          "this child already exist!" << std::endl;
 
         return false;
     }
 
-    child_vec_.emplace_back(new EasyNode());
-
-    EasyNode* new_child_node = child_vec_.back();
+    EasyNode* new_child_node = new EasyNode();
 
     if(!new_child_node->setID(child_id))
     {
@@ -411,6 +435,57 @@ bool EasyNode::createChild(
         return false;
     }
 
+    child_vec_.emplace_back(new_child_node);
+
+    return true;
+}
+
+bool EasyNode::addChild(
+    EasyNode* child_node)
+{
+    if(child_node == nullptr)
+    {
+        std::cout << "EasyNode::addChild : " << std::endl <<
+          "child_node is nullptr!" << std::endl;
+
+        return false;
+    }
+
+    if(haveThisChild(child_node->getID(), child_node->getNodeType()))
+    {
+        std::cout << "EasyNode::createChild : " << std::endl <<
+          "Input :\n" <<
+          "\tchild_id = " << child_node->getID() << std::endl <<
+          "\tchild_type = " << child_node->getNodeType() << std::endl <<
+          "this child already exist!" << std::endl;
+
+        return false;
+    }
+
+    if(!child_node->setParent(this))
+    {
+        std::cout << "EasyNode::addChild : " << std::endl <<
+          "Input :\n" <<
+          "\tchild_id = " << child_node->getID() << std::endl <<
+          "\tchild_type = " << child_node->getNodeType() << std::endl <<
+          "setParent failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!child_node->setAxisInParent(0, 0, 1, 0))
+    {
+        std::cout << "EasyNode::createChild : " << std::endl <<
+          "Input :\n" <<
+          "\tchild_id = " << child_node->getID() << std::endl <<
+          "\tchild_type = " << child_node->getNodeType() << std::endl <<
+          "setAxisInParent failed!" << std::endl;
+
+        return false;
+    }
+
+    child_vec_.emplace_back(child_node);
+
     return true;
 }
 
@@ -418,9 +493,9 @@ bool EasyNode::removeChild(
     const size_t &child_id,
     const NodeType &child_type)
 {
-    size_t child_idx;
+    EasyNode* search_node = findChild(child_id, child_type);
 
-    if(!findChild(child_id, child_type, child_idx))
+    if(search_node == nullptr)
     {
         std::cout << "EasyNode::removeChild : " << std::endl <<
           "Input :\n" <<
@@ -431,22 +506,20 @@ bool EasyNode::removeChild(
         return false;
     }
 
-    EasyNode* child_node = child_vec_[child_idx];
-
-    if(!child_node->removeAllChild())
+    if(!search_node->removeAllChild())
     {
         std::cout << "EasyNode::removeChild : " << std::endl <<
           "Input :\n" <<
           "\tchild_id = " << child_id << std::endl <<
           "\tchild_type = " << child_type << std::endl <<
-          "removeAllChild for child " << child_node->getID() << " failed!" << std::endl;
+          "removeAllChild for child " << search_node->getID() << " failed!" << std::endl;
 
         return false;
     }
 
-    delete(child_node);
+    child_vec_.erase(remove(child_vec_.begin(), child_vec_.end(), search_node));
 
-    child_vec_.erase(child_vec_.begin() + child_idx);
+    delete(search_node);
 
     return true;
 }
@@ -455,22 +528,20 @@ bool EasyNode::removeChildButRemainData(
     const size_t &child_id,
     const NodeType &child_type)
 {
-    size_t child_idx;
+    EasyNode* search_node = findChild(child_id, child_type);
 
-    if(!findChild(child_id, child_type, child_idx))
+    if(search_node == nullptr)
     {
         std::cout << "EasyNode::removeChildButRemainData : " << std::endl <<
           "Input :\n" <<
           "\tchild_id = " << child_id << std::endl <<
           "\tchild_type = " << child_type << std::endl <<
-          "this id not found for parent " << id_ << "!" << std::endl;
+          "this child not found for parent " << id_ << "!" << std::endl;
 
         return false;
     }
 
-    child_vec_[child_idx] = nullptr;
-
-    child_vec_.erase(child_vec_.begin() + child_idx);
+    child_vec_.erase(remove(child_vec_.begin(), child_vec_.end(), search_node));
 
     return true;
 }
@@ -518,9 +589,9 @@ bool EasyNode::setChildAxisInParent(
     const float &child_axis_x_direction_x_in_parent,
     const float &child_axis_x_direction_y_in_parent)
 {
-    size_t child_idx;
+    EasyNode* search_node = findChild(child_id, child_type);
 
-    if(!findChild(child_id, child_type, child_idx))
+    if(search_node == nullptr)
     {
         std::cout << "EasyNode::setChildAxisInParent : " << std::endl <<
           "Input :\n" <<
@@ -537,26 +608,7 @@ bool EasyNode::setChildAxisInParent(
         return false;
     }
 
-    EasyNode* child_node = child_vec_[child_idx];
-
-    if(child_node == nullptr)
-    {
-        std::cout << "EasyNode::setChildAxisInParent : " << std::endl <<
-          "Input :\n" <<
-          "\tchild_id = " << child_id << std::endl <<
-          "\tchild_type = " << child_type << std::endl <<
-          "\tchild_axis_center_in_parent = [" <<
-          child_axis_center_x_in_parent << "," <<
-          child_axis_center_y_in_parent << "]" << std::endl <<
-          "\tchild_axis_x_direction_in_parent = [" <<
-          child_axis_x_direction_x_in_parent << "," <<
-          child_axis_x_direction_y_in_parent << "]" << std::endl <<
-          "this child is nullptr!" << std::endl;
-
-        return false;
-    }
-
-    if(!child_node->setAxisInParent(
+    if(!search_node->setAxisInParent(
           child_axis_center_x_in_parent,
           child_axis_center_y_in_parent,
           child_axis_x_direction_x_in_parent,
@@ -577,7 +629,7 @@ bool EasyNode::setChildAxisInParent(
         return false;
     }
 
-    if(!child_node->updateAxisInWorldFromParent())
+    if(!search_node->updateAxisInWorldFromParent())
     {
         std::cout << "EasyNode::setChildAxisInParent : " << std::endl <<
           "Input :\n" <<
@@ -602,9 +654,9 @@ bool EasyNode::setChildBoundaryPolygon(
     const NodeType &child_type,
     const EasyPolygon2D &child_boundary_polygon)
 {
-    size_t child_idx;
+    EasyNode* search_node = findChild(child_id, child_type);
 
-    if(!findChild(child_id, child_type, child_idx))
+    if(search_node == nullptr)
     {
         std::cout << "EasyNode::setChildBoundaryPolygon : " << std::endl <<
           "Input :\n" <<
@@ -615,20 +667,7 @@ bool EasyNode::setChildBoundaryPolygon(
         return false;
     }
 
-    EasyNode* child_node = child_vec_[child_idx];
-
-    if(child_node == nullptr)
-    {
-        std::cout << "EasyNode::setChildBoundaryPolygon : " << std::endl <<
-          "Input :\n" <<
-          "\tchild_id = " << child_id << std::endl <<
-          "\tchild_type = " << child_type << std::endl <<
-          "this child is nullptr!" << std::endl;
-
-        return false;
-    }
-
-    if(!child_node->setBoundaryPolygon(child_boundary_polygon))
+    if(!search_node->setBoundaryPolygon(child_boundary_polygon))
     {
         std::cout << "EasyNode::setChildBoundaryPolygon : " << std::endl <<
           "Input :\n" <<
@@ -638,6 +677,67 @@ bool EasyNode::setChildBoundaryPolygon(
 
         return false;
     }
+
+    return true;
+}
+
+bool EasyNode::getPointInNode(
+    const EasyPoint2D &point_in_world,
+    EasyPoint2D &point_in_node)
+{
+    point_in_node.setPosition(0, 0);
+
+    if(!axis_in_world_.isValid())
+    {
+        std::cout << "EasyNode::getPointInNode : " <<
+          "axis_in_world_ is not valid!" << std::endl;
+
+        return false;
+    }
+
+    const float point_to_node_center_x_in_world =
+      point_in_world.x - axis_in_world_.center_.x;
+    const float point_to_node_center_y_in_world =
+      point_in_world.y - axis_in_world_.center_.y;
+
+    point_in_node.x =
+      axis_in_world_.x_direction_.x * point_to_node_center_x_in_world +
+      axis_in_world_.x_direction_.y * point_to_node_center_y_in_world;
+
+    point_in_node.y =
+      -axis_in_world_.x_direction_.y * point_to_node_center_x_in_world +
+      axis_in_world_.x_direction_.x * point_to_node_center_y_in_world;
+
+    return true;
+}
+
+bool EasyNode::getPointInWorld(
+    const EasyPoint2D &point_in_node,
+    EasyPoint2D &point_in_world)
+{
+    point_in_world.setPosition(0, 0);
+
+    if(!axis_in_world_.isValid())
+    {
+        std::cout << "EasyNode::getPointInWorld : " <<
+          "axis_in_world_ is not valid!" << std::endl;
+
+        return false;
+    }
+
+    const float point_to_node_center_x_in_world =
+      axis_in_world_.x_direction_.x * point_in_node.x +
+      axis_in_world_.x_direction_.y * point_in_node.y;
+
+    const float point_to_node_center_y_in_world =
+      -axis_in_world_.x_direction_.y * point_in_node.x +
+      axis_in_world_.x_direction_.x * point_in_node.y;
+
+    point_in_world.x =
+      axis_in_world_.center_.x + point_to_node_center_x_in_world;
+
+    point_in_world.y =
+      axis_in_world_.center_.y + point_to_node_center_y_in_world;
 
     return true;
 }

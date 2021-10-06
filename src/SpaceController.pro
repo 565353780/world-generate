@@ -37,8 +37,7 @@ SOURCES += \
     EasyShape/EasyLine2D.cpp \
     EasyShape/EasyIntersection2D.cpp \
     EasyShape/EasyPolygon2D.cpp \
-    EasyShape/EasyComputation.cpp \
-    EasyWidget.cpp
+    EasyShape/EasyComputation.cpp
 
 HEADERS += \
     EasyShape/EasyPoint2D.h \
@@ -46,8 +45,7 @@ HEADERS += \
     EasyShape/EasyLine2D.h \
     EasyShape/EasyIntersection2D.h \
     EasyShape/EasyPolygon2D.h \
-    EasyShape/EasyComputation.h \
-    EasyWidget.h
+    EasyShape/EasyComputation.h
 
 HEADERS += \
     EasyShape/EasyShape.h
@@ -94,13 +92,18 @@ HEADERS += \
 
 SOURCES += \
     main.cpp \
+    EasySpaceWidget.cpp \
+    EasyWorldWidget.cpp \
     MainWindow.cpp
 
 HEADERS += \
+    EasySpaceWidget.h \
+    EasyWorldWidget.h \
     MainWindow.h
 
 FORMS += \
-    EasyWidget.ui \
+    EasySpaceWidget.ui \
+    EasyWorldWidget.ui \
     MainWindow.ui
 
 TRANSLATIONS += \

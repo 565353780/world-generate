@@ -1,45 +1,24 @@
-#include "EasyWidget.h"
+#include "EasySpaceWidget.h"
 #include "qglobal.h"
-#include "ui_EasyWidget.h"
+#include "ui_EasySpaceWidget.h"
 
-EasyWidget::EasyWidget(QWidget *parent) :
+EasySpaceWidget::EasySpaceWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::EasyWidget)
+    ui(new Ui::EasySpaceWidget)
 {
     ui->setupUi(this);
 
     // run_example();
     
-    world_controller_.reset();
-
-    world_controller_.createWorld();
-
-    world_controller_.createWall(0, NodeType::OuterWall);
-
-    EasyPolygon2D wall_boundary_polygon;
-    wall_boundary_polygon.addPoint(0, 0);
-    wall_boundary_polygon.addPoint(400, 0);
-    wall_boundary_polygon.addPoint(400, 400);
-    wall_boundary_polygon.addPoint(0, 400);
-    wall_boundary_polygon.setAntiClockWise();
-
-    world_controller_.createWallBoundary(0, NodeType::OuterWall, wall_boundary_polygon);
-
-    world_controller_.outputInfo();
-
-    world_controller_.reset();
-
-    std::cout << "finish!!!" << std::endl;
-
     this->show();
 }
 
-EasyWidget::~EasyWidget()
+EasySpaceWidget::~EasySpaceWidget()
 {
     delete ui;
 }
 
-void EasyWidget::run_example()
+void EasySpaceWidget::run_example()
 {
     // 0 : AnHui Applicated Center
     // 1 : Rebuild Demo
@@ -247,7 +226,7 @@ void EasyWidget::run_example()
     }
 }
 
-bool EasyWidget::createDemo()
+bool EasySpaceWidget::createDemo()
 {
     // 0 : AnHui Applicated Center
     // 1 : Rebuild Demo
@@ -354,7 +333,7 @@ bool EasyWidget::createDemo()
     return true;
 }
 
-void EasyWidget::paintEvent(QPaintEvent *event)
+void EasySpaceWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
@@ -363,22 +342,22 @@ void EasyWidget::paintEvent(QPaintEvent *event)
     drawRoomBoundary();
 }
 
-void EasyWidget::mousePressEvent(QMouseEvent *event)
+void EasySpaceWidget::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
 
     createDemo();
 }
 
-void EasyWidget::mouseMoveEvent(QMouseEvent *event)
+void EasySpaceWidget::mouseMoveEvent(QMouseEvent *event)
 {
 }
 
-void EasyWidget::mouseReleaseEvent(QMouseEvent *event)
+void EasySpaceWidget::mouseReleaseEvent(QMouseEvent *event)
 {
 }
 
-bool EasyWidget::drawBoundary()
+bool EasySpaceWidget::drawBoundary()
 {
     QPainter painter(this);
 
@@ -433,11 +412,11 @@ bool EasyWidget::drawBoundary()
     return true;
 }
 
-bool EasyWidget::drawRoomLinePosition()
+bool EasySpaceWidget::drawRoomLinePosition()
 {
     if(space_controller_.room_line_boundary_point_vec_.size() == 0)
     {
-        std::cout << "EasyWidget::drawRoomLinePosition : " <<
+        std::cout << "EasySpaceWidget::drawRoomLinePosition : " <<
           "room line boundary point not found!" << std::endl;
 
         return false;
@@ -478,11 +457,11 @@ bool EasyWidget::drawRoomLinePosition()
     return true;
 }
 
-bool EasyWidget::drawRoomPosition()
+bool EasySpaceWidget::drawRoomPosition()
 {
     if(space_controller_.room_boundary_point_vec_.size() == 0)
     {
-        std::cout << "EasyWidget::drawRoomPosition : " <<
+        std::cout << "EasySpaceWidget::drawRoomPosition : " <<
           "room boundary point not found!" << std::endl;
 
         return false;
@@ -523,11 +502,11 @@ bool EasyWidget::drawRoomPosition()
     return true;
 }
 
-bool EasyWidget::drawRoomBoundary()
+bool EasySpaceWidget::drawRoomBoundary()
 {
     if(space_controller_.room_vec_.size() == 0)
     {
-        std::cout << "EasyWidget::drawRoomBoundary : " <<
+        std::cout << "EasySpaceWidget::drawRoomBoundary : " <<
           "room vec is empty!" << std::endl;
 
         return false;
@@ -591,7 +570,7 @@ bool EasyWidget::drawRoomBoundary()
 
 
 
-bool EasyWidget::setStartTime()
+bool EasySpaceWidget::setStartTime()
 {
     clock_gettime(CLOCK_REALTIME_COARSE, &t_spc_);
     t_start_ = t_spc_.tv_sec;
@@ -600,7 +579,7 @@ bool EasyWidget::setStartTime()
     return true;
 }
 
-bool EasyWidget::getFPS(
+bool EasySpaceWidget::getFPS(
     const long &cycle_num,
     float &average_fps)
 {

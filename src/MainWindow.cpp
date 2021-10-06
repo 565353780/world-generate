@@ -8,9 +8,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    easy_widget_ = new EasyWidget(this);
+    space_widget_ = new EasySpaceWidget(this);
+    world_widget_ = new EasyWorldWidget(this);
 
-    this->ui->VLayout->addWidget(easy_widget_);
+    this->ui->VLayout->addWidget(world_widget_);
 
     this->show();
 }

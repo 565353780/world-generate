@@ -299,6 +299,7 @@ bool EasyTree::setNodeAxisCenterPositionInParent(
 
     const EasyAxis2D &search_node_axis_in_parent = search_node->getAxisInParent();
 
+    const EasyAxis2D search_node_axis_in_parent_copy = search_node_axis_in_parent;
     EasyAxis2D new_search_node_axis_in_parent = search_node_axis_in_parent;
 
     if(is_allow_x_direction_move_in_parent_axis)
@@ -335,10 +336,10 @@ bool EasyTree::setNodeAxisCenterPositionInParent(
     if(!isNodeInParentSpace(search_node))
     {
         if(!search_node->setAxisInParent(
-              search_node_axis_in_parent.center_.x,
-              search_node_axis_in_parent.center_.y,
-              search_node_axis_in_parent.x_direction_.x,
-              search_node_axis_in_parent.x_direction_.y))
+              search_node_axis_in_parent_copy.center_.x,
+              search_node_axis_in_parent_copy.center_.y,
+              search_node_axis_in_parent_copy.x_direction_.x,
+              search_node_axis_in_parent_copy.x_direction_.y))
         {
             std::cout << "EasyTree::setNodeAxisCenterPositionInParent : " << std::endl <<
               "Input :\n" <<

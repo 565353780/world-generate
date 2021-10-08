@@ -393,20 +393,25 @@ bool EasyComputation::isPointInPolygon(
 
     for(size_t i = 0; i < polygon.point_list.size(); ++i)
     {
-        int next_point_idx = i + 1;
-        if(i == polygon.point_list.size() - 1)
+        const EasyPoint2D &current_point = polygon.point_list[i];
+
+        if(current_point.x == point.x &&
+            current_point.y == point.y)
         {
-            next_point_idx = 0;
+            return true;
         }
+
+        const EasyPoint2D &next_point = polygon.point_list[
+        (i + 1) % polygon.point_list.size()];
 
         EasyLine2D line_1;
         EasyLine2D line_2;
         line_1.setPosition(
             point,
-            polygon.point_list[i]);
+            current_point);
         line_2.setPosition(
             point,
-            polygon.point_list[next_point_idx]);
+            next_point);
 
         angle_value_sum += angle(line_1, line_2);
     }
@@ -425,7 +430,6 @@ bool EasyComputation::isPointInPolygon(
         return true;
     }
 
-    // here is the case point on the bound of polygon
     return true;
 }
 

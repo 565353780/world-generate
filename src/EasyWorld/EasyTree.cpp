@@ -333,7 +333,7 @@ bool EasyTree::setNodeAxisCenterPositionInParent(
         return false;
     }
 
-    if(!isNodeInParentSpace(search_node))
+    if(!isNodeSpaceValid(search_node))
     {
         if(!search_node->setAxisInParent(
               search_node_axis_in_parent_copy.center_.x,
@@ -957,6 +957,168 @@ bool EasyTree::isNodeInParentSpace(
         {
             return false;
         }
+    }
+
+    return true;
+}
+
+bool EasyTree::isNodeInParentChildNodeSpace(
+    EasyNode* node)
+{
+    if(node == nullptr)
+    {
+        std::cout << "EasyTree::isNodeInParentChildNodeSpace : " << std::endl <<
+          "node is nullptr!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* space_node = node->findChild(0, NodeType::Space);
+
+    if(space_node == nullptr)
+    {
+        std::cout << "EasyTree::isNodeInParentChildNodeSpace : " << std::endl <<
+          "space node is nullptr!" << std::endl;
+
+        return false;
+    }
+
+    const EasyPolygon2D &space_boundary_polygon_in_parent =
+      space_node->getBoundaryPolygon();
+
+    if(space_boundary_polygon_in_parent.point_list.size() == 0)
+    {
+        std::cout << "EasyTree::isNodeInParentChildNodeSpace : " << std::endl <<
+          "space boundary polygon is empty!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* parent_boundary_node = node->getParent();
+
+    if(parent_boundary_node == nullptr)
+    {
+        std::cout << "EasyTree::isNodeInParentChildNodeSpace : " << std::endl <<
+          "parent boundary node is nullptr!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* parent_node = parent_boundary_node->getParent();
+
+    if(parent_node == nullptr)
+    {
+        std::cout << "EasyTree::isNodeInParentChildNodeSpace : " << std::endl <<
+          "parent node is nullptr!" << std::endl;
+
+        return false;
+    }
+
+    const std::vector<EasyNode*> &parent_boundary_node_vec = parent_node->getChildNodeVec();
+
+    for(EasyNode* parent_boundary_node : parent_boundary_node_vec)
+    {
+        if(parent_boundary_node == nullptr)
+        {
+            std::cout << "EasyTree::isNodeInParentChildNodeSpace : " << std::endl <<
+              "parent boundary node is nullptr!" << std::endl;
+
+            return false;
+        }
+
+        if(parent_boundary_node->getNodeType() != NodeType::Boundary)
+        {
+            continue;
+        }
+
+        const std::vector<EasyNode*> &parent_child_node_vec =
+          parent_boundary_node->getChildNodeVec();
+
+        for(EasyNode* parent_child_node : parent_child_node_vec)
+        {
+            if(parent_child_node == nullptr)
+            {
+                std::cout << "EasyTree::isNodeInParentChildNodeSpace : " << std::endl <<
+                  "parent child node is nullptr!" << std::endl;
+
+                return false;
+            }
+
+            if(parent_child_node == node)
+            {
+                continue;
+            }
+
+            EasyNode* parent_child_space_node = parent_child_node->findChild(0, NodeType::Space);
+
+            if(parent_child_space_node == nullptr)
+            {
+                std::cout << "EasyTree::isNodeInParentChildNodeSpace : " << std::endl <<
+                  "parent child space node is nullptr!" << std::endl;
+
+                return false;
+            }
+
+            const EasyPolygon2D &parent_child_space_boundary_polygon_in_parent =
+              parent_child_space_node->getBoundaryPolygon();
+
+            for(const EasyPoint2D &parent_child_space_boundary_point_in_parent :
+                parent_child_space_boundary_polygon_in_parent.point_list)
+            {
+                EasyPoint2D parent_child_space_boundary_point_in_world;
+
+                if(!parent_child_space_node->getPointInWorld(
+                      parent_child_space_boundary_point_in_parent,
+                      parent_child_space_boundary_point_in_world))
+                {
+                    std::cout << "EasyTree::isNodeInParentChildNodeSpace : " << std::endl <<
+                      "getPointInWorld for parent child space boundary point failed!" << std::endl;
+
+                    return false;
+                }
+
+                EasyPoint2D parent_child_space_boundary_point_in_space_node;
+
+                if(!space_node->getPointInNode(
+                      parent_child_space_boundary_point_in_world,
+                      parent_child_space_boundary_point_in_space_node))
+                {
+                    std::cout << "EasyTree::isNodeInParentChildNodeSpace : " << std::endl <<
+                      "getPointInNode for parent child space boundary point failed!" << std::endl;
+
+                    return false;
+                }
+
+                if(EasyComputation::isPointInPolygon(
+                      parent_child_space_boundary_point_in_space_node,
+                      space_boundary_polygon_in_parent))
+                {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+bool EasyTree::isNodeSpaceValid(
+    EasyNode* node)
+{
+    if(!isNodeInParentSpace(node))
+    {
+        // std::cout << "EasyTree::isNodeSpaceValid : " << std::endl <<
+        //   "node not in parent node space!" << std::endl;
+
+        return false;
+    }
+
+    if(isNodeInParentChildNodeSpace(node))
+    {
+        // std::cout << "EasyTree::isNodeSpaceValid : " << std::endl <<
+        //   "node in parent child node space!" << std::endl;
+
+        return false;
     }
 
     return true;

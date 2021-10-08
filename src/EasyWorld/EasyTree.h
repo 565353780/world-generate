@@ -64,6 +64,12 @@ private:
     bool isNodeInParentSpace(
         EasyNode* node);
 
+    bool isNodeInParentChildNodeSpace(
+        EasyNode* node);
+
+    bool isNodeSpaceValid(
+        EasyNode* node);
+
 private:
     EasyNode *root_;
 

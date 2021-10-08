@@ -448,11 +448,27 @@ bool EasyComputation::isPolygonCross(
         return false;
     }
 
-    for(const EasyPoint2D &point : polygon_1.point_list)
+    const float polygon_1_area = polygon_1.getPolygonArea();
+    const float polygon_2_area = polygon_2.getPolygonArea();
+
+    if(fabs(polygon_1_area) > fabs(polygon_2_area))
     {
-        if(isPointInPolygon(point, polygon_2))
+        for(const EasyPoint2D &point : polygon_2.point_list)
         {
-            return true;
+            if(isPointInPolygon(point, polygon_1))
+            {
+                return true;
+            }
+        }
+    }
+    else
+    {
+        for(const EasyPoint2D &point : polygon_1.point_list)
+        {
+            if(isPointInPolygon(point, polygon_2))
+            {
+                return true;
+            }
         }
     }
 

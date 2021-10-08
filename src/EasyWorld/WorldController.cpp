@@ -182,6 +182,45 @@ bool WorldController::createRoom(
     return true;
 }
 
+bool WorldController::setRoomAxisCenterPositionInParent(
+    const size_t &room_id,
+    const NodeType &room_type,
+    const EasyPoint2D &axis_new_center_position_in_world)
+{
+    if(room_type != NodeType::Room)
+    {
+        std::cout << "WorldController::setRoomAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "this type is not the room type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInParent(
+          room_id,
+          room_type,
+          axis_new_center_position_in_world,
+          true,
+          false))
+    {
+        std::cout << "WorldController::setRoomAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this room node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 bool WorldController::setRoomBoundaryPolygon(
     const size_t &room_id,
     const NodeType &room_type,

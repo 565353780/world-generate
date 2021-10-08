@@ -40,6 +40,13 @@ public:
         const size_t &id,
         const NodeType &type);
 
+    bool setNodeAxisCenterPositionInParent(
+        const size_t &node_id,
+        const NodeType &node_type,
+        const EasyPoint2D &axis_new_center_position_in_world,
+        const bool &is_allow_x_direction_move_in_parent_axis,
+        const bool &is_allow_y_direction_move_in_parent_axis);
+
     bool setNodeBoundaryPolygon(
         const size_t &node_id,
         const NodeType &node_type,
@@ -52,6 +59,10 @@ public:
         const EasyPoint2D &point_new_position_in_world);
 
     bool outputInfo() const;
+
+private:
+    bool isNodeInParentSpace(
+        EasyNode* node);
 
 private:
     EasyNode *root_;

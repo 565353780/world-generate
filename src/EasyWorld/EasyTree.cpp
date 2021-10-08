@@ -213,6 +213,152 @@ EasyNode* EasyTree::findNode(
     return search_node;
 }
 
+bool EasyTree::setNodeAxisCenterPositionInParent(
+    const size_t &node_id,
+    const NodeType &node_type,
+    const EasyPoint2D &axis_new_center_position_in_world,
+    const bool &is_allow_x_direction_move_in_parent_axis,
+    const bool &is_allow_y_direction_move_in_parent_axis)
+{
+    if(!is_allow_x_direction_move_in_parent_axis &&
+        !is_allow_y_direction_move_in_parent_axis)
+    {
+        std::cout << "EasyTree::setNodeAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "\tis_allow_x_direction_move_in_parent_axis = " <<
+          is_allow_x_direction_move_in_parent_axis << std::endl <<
+          "\tis_allow_y_direction_move_in_parent_axis = " <<
+          is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "can't move this axis in any direction!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* search_node = findNode(node_id, node_type);
+
+    if(search_node == nullptr)
+    {
+        std::cout << "EasyTree::setNodeAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "\tis_allow_x_direction_move_in_parent_axis = " <<
+          is_allow_x_direction_move_in_parent_axis << std::endl <<
+          "\tis_allow_y_direction_move_in_parent_axis = " <<
+          is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "this node not exist!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* parent_node = search_node->getParent();
+
+    if(parent_node == nullptr)
+    {
+        std::cout << "EasyTree::setNodeAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "\tis_allow_x_direction_move_in_parent_axis = " <<
+          is_allow_x_direction_move_in_parent_axis << std::endl <<
+          "\tis_allow_y_direction_move_in_parent_axis = " <<
+          is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "parent node not exist!" << std::endl;
+
+        return false;
+    }
+
+    EasyPoint2D axis_new_center_position_in_parent;
+
+    if(!parent_node->getPointInNode(
+          axis_new_center_position_in_world,
+          axis_new_center_position_in_parent))
+    {
+        std::cout << "EasyTree::setNodeAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "\tis_allow_x_direction_move_in_parent_axis = " <<
+          is_allow_x_direction_move_in_parent_axis << std::endl <<
+          "\tis_allow_y_direction_move_in_parent_axis = " <<
+          is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "getPointInNode for axis_center in parent failed!" << std::endl;
+
+        return false;
+    }
+
+    const EasyAxis2D &search_node_axis_in_parent = search_node->getAxisInParent();
+
+    EasyAxis2D new_search_node_axis_in_parent = search_node_axis_in_parent;
+
+    if(is_allow_x_direction_move_in_parent_axis)
+    {
+        new_search_node_axis_in_parent.center_.x = axis_new_center_position_in_parent.x;
+    }
+
+    if(is_allow_y_direction_move_in_parent_axis)
+    {
+        new_search_node_axis_in_parent.center_.y = axis_new_center_position_in_parent.y;
+    }
+
+    if(!search_node->setAxisInParent(
+          new_search_node_axis_in_parent.center_.x,
+          new_search_node_axis_in_parent.center_.y,
+          new_search_node_axis_in_parent.x_direction_.x,
+          new_search_node_axis_in_parent.x_direction_.y))
+    {
+        std::cout << "EasyTree::setNodeAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "\tis_allow_x_direction_move_in_parent_axis = " <<
+          is_allow_x_direction_move_in_parent_axis << std::endl <<
+          "\tis_allow_y_direction_move_in_parent_axis = " <<
+          is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "setAxisInParent for node failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!isNodeInParentSpace(search_node))
+    {
+        if(!search_node->setAxisInParent(
+              search_node_axis_in_parent.center_.x,
+              search_node_axis_in_parent.center_.y,
+              search_node_axis_in_parent.x_direction_.x,
+              search_node_axis_in_parent.x_direction_.y))
+        {
+            std::cout << "EasyTree::setNodeAxisCenterPositionInParent : " << std::endl <<
+              "Input :\n" <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl <<
+              "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+              axis_new_center_position_in_world.y << "]" << std::endl <<
+              "\tis_allow_x_direction_move_in_parent_axis = " <<
+              is_allow_x_direction_move_in_parent_axis << std::endl <<
+              "\tis_allow_y_direction_move_in_parent_axis = " <<
+              is_allow_y_direction_move_in_parent_axis << std::endl <<
+              "setAxisInParent for node to reset failed!" << std::endl;
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool EasyTree::setNodeBoundaryPolygon(
     const size_t &node_id,
     const NodeType &node_type,
@@ -705,6 +851,112 @@ bool EasyTree::outputInfo() const
     std::cout << "EasyTree :" << std::endl;
 
     root_->outputInfo(0);
+
+    return true;
+}
+
+bool EasyTree::isNodeInParentSpace(
+    EasyNode* node)
+{
+    if(node == nullptr)
+    {
+        std::cout << "EasyTree::isNodeInParentSpace : " << std::endl <<
+          "node is nullptr!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* space_node = node->findChild(0, NodeType::Space);
+
+    if(space_node == nullptr)
+    {
+        std::cout << "EasyTree::isNodeInParentSpace : " << std::endl <<
+          "space node is nullptr!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* parent_boundary_node = node->getParent();
+
+    if(parent_boundary_node == nullptr)
+    {
+        std::cout << "EasyTree::isNodeInParentSpace : " << std::endl <<
+          "parent boundary node is nullptr!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* parent_node = parent_boundary_node->getParent();
+
+    if(parent_node == nullptr)
+    {
+        std::cout << "EasyTree::isNodeInParentSpace : " << std::endl <<
+          "parent node is nullptr!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* parent_space_node = parent_node->findChild(0, NodeType::Space);
+
+    if(parent_space_node == nullptr)
+    {
+        std::cout << "EasyTree::isNodeInParentSpace : " << std::endl <<
+          "parent space node is nullptr!" << std::endl;
+
+        return false;
+    }
+
+    const EasyPolygon2D &parent_space_boundary_polygon_in_parent = parent_space_node->getBoundaryPolygon();
+
+    if(parent_space_boundary_polygon_in_parent.point_list.size() == 0)
+    {
+        std::cout << "EasyTree::isNodeInParentSpace : " << std::endl <<
+          "parent space node boundary polygon is empty!" << std::endl;
+
+        return false;
+    }
+
+    const EasyPolygon2D &space_boundary_polygon_in_parent = space_node->getBoundaryPolygon();
+
+    if(space_boundary_polygon_in_parent.point_list.size() == 0)
+    {
+        std::cout << "EasyTree::isNodeInParentSpace : " << std::endl <<
+          "space node boundary polygon is empty!" << std::endl;
+
+        return false;
+    }
+
+    for(const EasyPoint2D &space_boundary_point_in_parent : space_boundary_polygon_in_parent.point_list)
+    {
+        EasyPoint2D space_boundary_point_in_world;
+
+        if(!space_node->getPointInWorld(
+              space_boundary_point_in_parent,
+              space_boundary_point_in_world))
+        {
+            std::cout << "EasyTree::isNodeInParentSpace : " << std::endl <<
+              "getPointInWorld for space boundary point failed!" << std::endl;
+
+            return false;
+        }
+
+        EasyPoint2D space_boundary_point_in_parent_space;
+
+        if(!parent_space_node->getPointInNode(
+              space_boundary_point_in_world,
+              space_boundary_point_in_parent_space))
+        {
+            std::cout << "EasyTree::isNodeInParentSpace : " << std::endl <<
+              "getPointInNode for space boundary point to parent space failed!" << std::endl;
+
+            return false;
+        }
+
+        if(!EasyComputation::isPointInPolygon(space_boundary_point_in_parent_space, parent_space_boundary_polygon_in_parent))
+        {
+            return false;
+        }
+    }
 
     return true;
 }

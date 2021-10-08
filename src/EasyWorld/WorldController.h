@@ -39,6 +39,11 @@ public:
         const NodeType &on_wall_type,
         const size_t &wall_boundary_id);
 
+    bool setRoomAxisCenterPositionInParent(
+        const size_t &room_id,
+        const NodeType &room_type,
+        const EasyPoint2D &axis_new_center_position_in_world);
+
     bool setRoomBoundaryPolygon(
         const size_t &room_id,
         const NodeType &room_type,

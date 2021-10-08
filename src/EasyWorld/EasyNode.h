@@ -115,6 +115,7 @@ public:
 
     const size_t& getID() const { return id_; }
     const NodeType& getNodeType() const { return type_; }
+    EasyNode* getParent() { return parent_; }
     const std::vector<EasyNode*>& getChildNodeVec() const { return child_vec_; }
     const EasyAxis2D& getAxisInParent() const { return axis_in_parent_; }
     const EasyAxis2D& getAxisInWorld() const { return axis_in_world_; }

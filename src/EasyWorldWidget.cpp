@@ -64,10 +64,10 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
 
     drawWallSpaceBoundary();
-    drawWallBoundaryPolygon();
+    // drawWallBoundaryPolygon();
 
     drawRoomSpaceBoundary();
-    drawRoomBoundaryPolygon();
+    // drawRoomBoundaryPolygon();
 
     drawWallBoundaryAxis();
     drawRoomBoundaryAxis();
@@ -76,23 +76,38 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
 void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
-
-    EasyPoint2D random_new_point;
-
-    random_new_point.setPosition(700 + rand() % 200, 300 + rand() % 200);
-
-    world_controller_.setWallBoundaryPolygonPointPosition(
-        0, NodeType::OuterWall, 1, random_new_point);
-
-    update();
 }
 
 void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
+    
+    if(event->buttons() == Qt::LeftButton)
+    {
+        const QPoint &mouse_pos = event->pos();
+
+        EasyPoint2D new_room_pos;
+
+        new_room_pos.setPosition(mouse_pos.x(), mouse_pos.y());
+
+        world_controller_.setRoomAxisCenterPositionInParent(
+            0, NodeType::Room, new_room_pos);
+
+        update();
+    }
 }
 
 void EasyWorldWidget::mouseReleaseEvent(QMouseEvent *event)
 {
+    const QPoint &mouse_pos = event->pos();
+
+    EasyPoint2D new_room_pos;
+
+    new_room_pos.setPosition(mouse_pos.x(), mouse_pos.y());
+
+    world_controller_.setRoomAxisCenterPositionInParent(
+        0, NodeType::Room, new_room_pos);
+
+    update();
 }
 
 bool EasyWorldWidget::drawWallBoundaryAxis()

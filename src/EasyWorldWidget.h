@@ -8,6 +8,7 @@
 #include <QPainter>
 #include <QPen>
 #include <QMouseEvent>
+#include <QPoint>
 
 #include <time.h>
 #include "EasyWorld/WorldController.h"

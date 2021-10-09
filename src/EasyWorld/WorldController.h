@@ -42,6 +42,11 @@ public:
     bool setRoomAxisCenterPositionInParent(
         const size_t &room_id,
         const NodeType &room_type,
+        const EasyPoint2D &axis_new_center_position_in_parent);
+
+    bool setRoomAxisCenterPositionInWorld(
+        const size_t &room_id,
+        const NodeType &room_type,
         const EasyPoint2D &axis_new_center_position_in_world);
 
     bool setRoomBoundaryPolygon(
@@ -50,8 +55,35 @@ public:
         const EasyPolygon2D &room_boundary_polygon);
 
     bool setRoomBoundaryPolygonPointPosition(
-        const size_t &wall_id,
-        const NodeType &wall_type,
+        const size_t &room_id,
+        const NodeType &room_type,
+        const size_t &point_idx,
+        const EasyPoint2D &point_new_position_in_world);
+
+    bool createFurniture(
+        const size_t &furniture_id,
+        const NodeType &furniture_type,
+        const size_t &on_room_id,
+        const NodeType &on_room_type);
+
+    bool setFurnitureAxisCenterPositionInParent(
+        const size_t &furniture_id,
+        const NodeType &furniture_type,
+        const EasyPoint2D &axis_new_center_position_in_parent);
+
+    bool setFurnitureAxisCenterPositionInWorld(
+        const size_t &furniture_id,
+        const NodeType &furniture_type,
+        const EasyPoint2D &axis_new_center_position_in_world);
+
+    bool setFurnitureBoundaryPolygon(
+        const size_t &furniture_id,
+        const NodeType &furniture_type,
+        const EasyPolygon2D &furniture_boundary_polygon);
+
+    bool setFurnitureBoundaryPolygonPointPosition(
+        const size_t &furniture_id,
+        const NodeType &furniture_type,
         const size_t &point_idx,
         const EasyPoint2D &point_new_position_in_world);
 
@@ -76,6 +108,15 @@ public:
 
     bool getRoomSpaceNodeVec(
         std::vector<EasyNode*> &room_space_node_vec);
+
+    bool getFurnitureNodeVec(
+        std::vector<EasyNode*> &furniture_node_vec);
+
+    bool getFurnitureBoundaryNodeVecVec(
+        std::vector<std::vector<EasyNode*>> &furniture_boundary_node_vec_vec);
+
+    bool getFurnitureSpaceNodeVec(
+        std::vector<EasyNode*> &furniture_space_node_vec);
 
     bool outputInfo();
 

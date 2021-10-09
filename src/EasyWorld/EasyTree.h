@@ -43,6 +43,13 @@ public:
     bool setNodeAxisCenterPositionInParent(
         const size_t &node_id,
         const NodeType &node_type,
+        const EasyPoint2D &axis_new_center_position_in_parent,
+        const bool &is_allow_x_direction_move_in_parent_axis,
+        const bool &is_allow_y_direction_move_in_parent_axis);
+
+    bool setNodeAxisCenterPositionInWorld(
+        const size_t &node_id,
+        const NodeType &node_type,
         const EasyPoint2D &axis_new_center_position_in_world,
         const bool &is_allow_x_direction_move_in_parent_axis,
         const bool &is_allow_y_direction_move_in_parent_axis);

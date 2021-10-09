@@ -185,11 +185,50 @@ bool WorldController::createRoom(
 bool WorldController::setRoomAxisCenterPositionInParent(
     const size_t &room_id,
     const NodeType &room_type,
-    const EasyPoint2D &axis_new_center_position_in_world)
+    const EasyPoint2D &axis_new_center_position_in_parent)
 {
     if(room_type != NodeType::Room)
     {
         std::cout << "WorldController::setRoomAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "this type is not the room type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInParent(
+          room_id,
+          room_type,
+          axis_new_center_position_in_parent,
+          true,
+          false))
+    {
+        std::cout << "WorldController::setRoomAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this room node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setRoomAxisCenterPositionInWorld(
+    const size_t &room_id,
+    const NodeType &room_type,
+    const EasyPoint2D &axis_new_center_position_in_world)
+{
+    if(room_type != NodeType::Room)
+    {
+        std::cout << "WorldController::setRoomAxisCenterPositionInWorld : " << std::endl <<
           "Input :\n" <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
@@ -200,14 +239,14 @@ bool WorldController::setRoomAxisCenterPositionInParent(
         return false;
     }
 
-    if(!world_tree_.setNodeAxisCenterPositionInParent(
+    if(!world_tree_.setNodeAxisCenterPositionInWorld(
           room_id,
           room_type,
           axis_new_center_position_in_world,
           true,
           false))
     {
-        std::cout << "WorldController::setRoomAxisCenterPositionInParent : " << std::endl <<
+        std::cout << "WorldController::setRoomAxisCenterPositionInWorld : " << std::endl <<
           "Input :\n" <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
@@ -280,6 +319,192 @@ bool WorldController::setRoomBoundaryPolygonPointPosition(
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
           "setNodeBoundaryPolygonPointPosition for room failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::createFurniture(
+    const size_t &furniture_id,
+    const NodeType &furniture_type,
+    const size_t &on_room_id,
+    const NodeType &on_room_type)
+{
+    if(furniture_type != NodeType::Furniture)
+    {
+        std::cout << "WorldController::createFurniture : " << std::endl <<
+          "Input :\n" <<
+          "\tfurniture_id = " << furniture_id << std::endl <<
+          "\tfurniture_type = " << furniture_type << std::endl <<
+          "\ton_room_id = " << on_room_id << std::endl <<
+          "\ton_room_type = " << on_room_type << std::endl <<
+          "this type is not the furniture type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.createNode(
+          furniture_id, furniture_type, on_room_id, on_room_type, 0))
+    {
+        std::cout << "WorldController::createFurniture : " << std::endl <<
+          "Input :\n" <<
+          "\tfurniture_id = " << furniture_id << std::endl <<
+          "\tfurniture_type = " << furniture_type << std::endl <<
+          "\ton_room_id = " << on_room_id << std::endl <<
+          "\ton_room_type = " << on_room_type << std::endl <<
+          "createNode for furniture failed!" << std::endl;
+
+        return false;
+    }
+
+    std::pair<size_t, NodeType> new_furniture_pair;
+    new_furniture_pair.first = furniture_id;
+    new_furniture_pair.second = furniture_type;
+
+    furniture_pair_vec_.emplace_back(new_furniture_pair);
+
+    return true;
+}
+
+bool WorldController::setFurnitureAxisCenterPositionInParent(
+    const size_t &furniture_id,
+    const NodeType &furniture_type,
+    const EasyPoint2D &axis_new_center_position_in_parent)
+{
+    if(furniture_type != NodeType::Furniture)
+    {
+        std::cout << "WorldController::setFurnitureAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tfurniture_id = " << furniture_id << std::endl <<
+          "\tfurniture_type = " << furniture_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "this type is not the furniture type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInParent(
+          furniture_id,
+          furniture_type,
+          axis_new_center_position_in_parent,
+          true,
+          true))
+    {
+        std::cout << "WorldController::setFurnitureAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tfurniture_id = " << furniture_id << std::endl <<
+          "\tfurniture_type = " << furniture_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this furniture node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setFurnitureAxisCenterPositionInWorld(
+    const size_t &furniture_id,
+    const NodeType &furniture_type,
+    const EasyPoint2D &axis_new_center_position_in_world)
+{
+    if(furniture_type != NodeType::Furniture)
+    {
+        std::cout << "WorldController::setFurnitureAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tfurniture_id = " << furniture_id << std::endl <<
+          "\tfurniture_type = " << furniture_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "this type is not the furniture type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInWorld(
+          furniture_id,
+          furniture_type,
+          axis_new_center_position_in_world,
+          true,
+          true))
+    {
+        std::cout << "WorldController::setFurnitureAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tfurniture_id = " << furniture_id << std::endl <<
+          "\tfurniture_type = " << furniture_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this furniture node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setFurnitureBoundaryPolygon(
+    const size_t &furniture_id,
+    const NodeType &furniture_type,
+    const EasyPolygon2D &furniture_boundary_polygon)
+{
+    if(furniture_type != NodeType::Furniture)
+    {
+        std::cout << "WorldController::setFurnitureBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\tfurniture_id = " << furniture_id << std::endl <<
+          "\tfurniture_type = " << furniture_type << std::endl <<
+          "this type is not the furniture type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygon(furniture_id, furniture_type, furniture_boundary_polygon))
+    {
+        std::cout << "WorldController::setFurnitureBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\tfurniture_id = " << furniture_id << std::endl <<
+          "\tfurniture_type = " << furniture_type << std::endl <<
+          "setNodeBoundaryPolygon for furniture failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setFurnitureBoundaryPolygonPointPosition(
+    const size_t &furniture_id,
+    const NodeType &furniture_type,
+    const size_t &point_idx,
+    const EasyPoint2D &point_new_position_in_world)
+{
+    if(furniture_type != NodeType::Furniture)
+    {
+        std::cout << "WorldController::setFurnitureBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\tfurniture_id = " << furniture_id << std::endl <<
+          "\tfurniture_type = " << furniture_type << std::endl <<
+          "this type is not the furniture type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygonPointPosition(
+          furniture_id, furniture_type, point_idx, point_new_position_in_world))
+    {
+        std::cout << "WorldController::setFurnitureBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\tfurniture_id = " << furniture_id << std::endl <<
+          "\tfurniture_type = " << furniture_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setNodeBoundaryPolygonPointPosition for furniture failed!" << std::endl;
 
         return false;
     }
@@ -518,6 +743,113 @@ bool WorldController::getRoomSpaceNodeVec(
 
     return true;
 }
+
+bool WorldController::getFurnitureNodeVec(
+    std::vector<EasyNode*> &furniture_node_vec)
+{
+    furniture_node_vec.clear();
+
+    if(furniture_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    for(const std::pair<size_t, NodeType> &furniture_pair : furniture_pair_vec_)
+    {
+        EasyNode* furniture_node = findNode(furniture_pair.first, furniture_pair.second);
+
+        if(furniture_node == nullptr)
+        {
+            std::cout << "WorldController::getFurnitureNodeVec : " << std::endl <<
+              "get furniture : id = " << furniture_pair.first <<
+              ", type = " << furniture_pair.second <<
+              " failed!" << std::endl;
+
+            return false;
+        }
+
+        furniture_node_vec.emplace_back(furniture_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getFurnitureBoundaryNodeVecVec(
+    std::vector<std::vector<EasyNode*>> &furniture_boundary_node_vec_vec)
+{
+    furniture_boundary_node_vec_vec.clear();
+
+    if(furniture_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> furniture_node_vec;
+
+    if(!getFurnitureNodeVec(furniture_node_vec))
+    {
+        std::cout << "WorldController::getFurnitureBoundaryNodeVec : " << std::endl <<
+          "getFurnitureNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* furniture_node : furniture_node_vec)
+    {
+        std::vector<EasyNode*> furniture_boundary_node_vec;
+        std::vector<EasyNode*> furniture_child_node_vec = furniture_node->getChildNodeVec();
+
+        for(EasyNode* furniture_child_node : furniture_child_node_vec)
+        {
+            if(furniture_child_node->getNodeType() == NodeType::Boundary)
+            {
+                furniture_boundary_node_vec.emplace_back(furniture_child_node);
+            }
+        }
+
+        furniture_boundary_node_vec_vec.emplace_back(furniture_boundary_node_vec);
+    }
+    return true;
+}
+
+bool WorldController::getFurnitureSpaceNodeVec(
+    std::vector<EasyNode*> &furniture_space_node_vec)
+{
+    furniture_space_node_vec.clear();
+
+    if(furniture_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> furniture_node_vec;
+
+    if(!getFurnitureNodeVec(furniture_node_vec))
+    {
+        std::cout << "WorldController::getFurnitureSpaceNodeVec : " << std::endl <<
+          "getFurnitureNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* furniture_node : furniture_node_vec)
+    {
+        EasyNode* furniture_space_node = furniture_node->findChild(0, NodeType::Space);
+
+        if(furniture_space_node == nullptr)
+        {
+            std::cout << "WorldController::getFurnitureNodeVec : " << std::endl <<
+              "get furniture space node failed!" << std::endl;
+
+            return false;
+        }
+
+        furniture_space_node_vec.emplace_back(furniture_space_node);
+    }
+
+    return true;
+}
+
 
 bool WorldController::outputInfo()
 {

@@ -21,6 +21,16 @@ public:
         const size_t &wall_id,
         const NodeType &wall_type);
 
+    bool setWallAxisCenterPositionInParent(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const EasyPoint2D &axis_new_center_position_in_parent);
+
+    bool setWallAxisCenterPositionInWorld(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const EasyPoint2D &axis_new_center_position_in_world);
+
     bool setWallBoundaryPolygon(
         const size_t &wall_id,
         const NodeType &wall_type,

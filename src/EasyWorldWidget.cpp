@@ -68,7 +68,9 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
 
 void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    moveRoomInWorld(0, NodeType::Room, event);
+    moveWallInWorld(0, NodeType::OuterWall, event);
+
+    // moveRoomInWorld(0, NodeType::Room, event);
 
     // movePersonInWorld(0, NodeType::Person, event);
 
@@ -184,6 +186,28 @@ bool EasyWorldWidget::createFurniture()
     world_controller_.setFurnitureAxisCenterPositionInParent(0, NodeType::Furniture, furniture_axis_center_position_in_parent);
     world_controller_.setFurnitureAxisCenterPositionInParent(1, NodeType::Furniture, furniture_axis_center_position_in_parent);
     world_controller_.setFurnitureAxisCenterPositionInParent(2, NodeType::Furniture, furniture_axis_center_position_in_parent);
+
+    return true;
+}
+
+bool EasyWorldWidget::moveWallInWorld(
+    const size_t &wall_id,
+    const NodeType &wall_type,
+    QMouseEvent *event)
+{
+    if(event->buttons() == Qt::LeftButton)
+    {
+        const QPoint &mouse_pos = event->pos();
+
+        EasyPoint2D new_wall_pos;
+
+        new_wall_pos.setPosition(mouse_pos.x(), mouse_pos.y());
+
+        world_controller_.setWallAxisCenterPositionInWorld(
+            wall_id, wall_type, new_wall_pos);
+
+        update();
+    }
 
     return true;
 }

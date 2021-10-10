@@ -41,6 +41,11 @@ private:
     bool createPerson();
     bool createFurniture();
 
+    bool moveWallInWorld(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        QMouseEvent *event);
+
     bool moveRoomInWorld(
         const size_t &room_id,
         const NodeType &room_type,

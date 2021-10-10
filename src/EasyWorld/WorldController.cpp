@@ -69,6 +69,86 @@ bool WorldController::createWall(
     return true;
 }
 
+bool WorldController::setWallAxisCenterPositionInParent(
+    const size_t &wall_id,
+    const NodeType &wall_type,
+    const EasyPoint2D &axis_new_center_position_in_parent)
+{
+    if(wall_type != NodeType::OuterWall &&
+        wall_type != NodeType::InnerWall)
+    {
+        std::cout << "WorldController::setWallAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "this type is not the wall type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInParent(
+          wall_id,
+          wall_type,
+          axis_new_center_position_in_parent,
+          true,
+          true))
+    {
+        std::cout << "WorldController::setWallAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this wall node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setWallAxisCenterPositionInWorld(
+    const size_t &wall_id,
+    const NodeType &wall_type,
+    const EasyPoint2D &axis_new_center_position_in_world)
+{
+    if(wall_type != NodeType::OuterWall &&
+        wall_type != NodeType::InnerWall)
+    {
+        std::cout << "WorldController::setWallAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "this type is not the wall type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInWorld(
+          wall_id,
+          wall_type,
+          axis_new_center_position_in_world,
+          true,
+          true))
+    {
+        std::cout << "WorldController::setWallAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this wall node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 bool WorldController::setWallBoundaryPolygon(
     const size_t &wall_id,
     const NodeType &wall_type,

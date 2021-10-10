@@ -993,6 +993,14 @@ bool EasyTree::isNodeInParentSpace(
         return false;
     }
 
+    const NodeType &node_type = node->getNodeType();
+
+    if(node_type == NodeType::OuterWall ||
+        node_type == NodeType::InnerWall)
+    {
+        return true;
+    }
+
     EasyNode* space_node = node->findChild(0, NodeType::Space);
 
     if(space_node == nullptr)
@@ -1096,6 +1104,14 @@ bool EasyTree::isNodeInParentChildNodeSpace(
         std::cout << "EasyTree::isNodeInParentChildNodeSpace : " << std::endl <<
           "node is nullptr!" << std::endl;
 
+        return false;
+    }
+
+    const NodeType &node_type = node->getNodeType();
+
+    if(node_type == NodeType::OuterWall ||
+        node_type == NodeType::InnerWall)
+    {
         return false;
     }
 

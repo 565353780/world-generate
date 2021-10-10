@@ -214,9 +214,11 @@ bool EasyWorldWidget::createPerson()
     world_controller_.createPersonForTeam(3, NodeType::Team, person_width, person_height, person_axis_in_parent);
     world_controller_.createPersonForTeam(4, NodeType::Team, person_width, person_height, person_axis_in_parent);
 
-    world_controller_.createPersonGroupForTeam(5, NodeType::Team, 4, 4, true);
-    world_controller_.createPersonGroupForTeam(6, NodeType::Team, 4, 4, true);
-    world_controller_.createPersonGroupForTeam(7, NodeType::Team, 4, 4, true);
+    const bool is_face_horizontal = true;
+
+    world_controller_.createPersonGroupForTeam(5, NodeType::Team, 4, 4, is_face_horizontal);
+    world_controller_.createPersonGroupForTeam(6, NodeType::Team, 4, 4, is_face_horizontal);
+    world_controller_.createPersonGroupForTeam(7, NodeType::Team, 4, 4, is_face_horizontal);
 
     return true;
 }

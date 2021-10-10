@@ -15,11 +15,12 @@ enum NodeType
     OuterWall = 2,
     InnerWall = 3,
     Room = 4,
-    Person = 5,
-    Furniture = 6,
-    Boundary = 7,
-    Door = 8,
-    Space = 9
+    Team = 5,
+    Person = 6,
+    Furniture = 7,
+    Boundary = 8,
+    Door = 9,
+    Space = 10
 };
 
 class EasyNode

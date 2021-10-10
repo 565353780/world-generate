@@ -8,7 +8,7 @@ EasyWorldWidget::EasyWorldWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    axis_length_ = 20;
+    axis_length_ = 10;
 
     run_example();
     
@@ -25,13 +25,10 @@ EasyWorldWidget::~EasyWorldWidget()
 void EasyWorldWidget::run_example()
 {
     createWorld();
-
     createWall();
-
     createRoom();
-
+    createTeam();
     createPerson();
-
     createFurniture();
 
     // world_controller_.outputInfo();
@@ -48,6 +45,9 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
 
     drawRoomSpaceBoundary();
     // drawRoomBoundaryPolygon();
+
+    drawTeamSpaceBoundary();
+    // drawTeamBoundaryPolygon();
 
     drawPersonSpaceBoundary();
     // drawPersonBoundaryPolygon();
@@ -140,13 +140,46 @@ bool EasyWorldWidget::createRoom()
     return true;
 }
 
+bool EasyWorldWidget::createTeam()
+{
+    world_controller_.createTeam(0, NodeType::Team, 0, NodeType::Room);
+    world_controller_.createTeam(1, NodeType::Team, 1, NodeType::Room);
+    world_controller_.createTeam(2, NodeType::Team, 2, NodeType::Room);
+    world_controller_.createTeam(3, NodeType::Team, 3, NodeType::Room);
+    world_controller_.createTeam(4, NodeType::Team, 4, NodeType::Room);
+
+    EasyPolygon2D team_boundary_polygon;
+    team_boundary_polygon.addPoint(0, 0);
+    team_boundary_polygon.addPoint(50, 0);
+    team_boundary_polygon.addPoint(50, 50);
+    team_boundary_polygon.addPoint(0, 50);
+    team_boundary_polygon.setAntiClockWise();
+
+    world_controller_.setTeamBoundaryPolygon(0, NodeType::Team, team_boundary_polygon);
+    world_controller_.setTeamBoundaryPolygon(1, NodeType::Team, team_boundary_polygon);
+    world_controller_.setTeamBoundaryPolygon(2, NodeType::Team, team_boundary_polygon);
+    world_controller_.setTeamBoundaryPolygon(3, NodeType::Team, team_boundary_polygon);
+    world_controller_.setTeamBoundaryPolygon(4, NodeType::Team, team_boundary_polygon);
+
+    EasyPoint2D team_axis_center_position_in_parent;
+    team_axis_center_position_in_parent.setPosition(25, 25);
+
+    world_controller_.setTeamAxisCenterPositionInParent(0, NodeType::Team, team_axis_center_position_in_parent);
+    world_controller_.setTeamAxisCenterPositionInParent(1, NodeType::Team, team_axis_center_position_in_parent);
+    world_controller_.setTeamAxisCenterPositionInParent(2, NodeType::Team, team_axis_center_position_in_parent);
+    world_controller_.setTeamAxisCenterPositionInParent(3, NodeType::Team, team_axis_center_position_in_parent);
+    world_controller_.setTeamAxisCenterPositionInParent(4, NodeType::Team, team_axis_center_position_in_parent);
+
+    return true;
+}
+
 bool EasyWorldWidget::createPerson()
 {
-    world_controller_.createPerson(0, NodeType::Person, 0, NodeType::Room);
-    world_controller_.createPerson(1, NodeType::Person, 1, NodeType::Room);
-    world_controller_.createPerson(2, NodeType::Person, 2, NodeType::Room);
-    world_controller_.createPerson(3, NodeType::Person, 3, NodeType::Room);
-    world_controller_.createPerson(4, NodeType::Person, 4, NodeType::Room);
+    world_controller_.createPerson(0, NodeType::Person, 0, NodeType::Team);
+    world_controller_.createPerson(1, NodeType::Person, 1, NodeType::Team);
+    world_controller_.createPerson(2, NodeType::Person, 2, NodeType::Team);
+    world_controller_.createPerson(3, NodeType::Person, 3, NodeType::Team);
+    world_controller_.createPerson(4, NodeType::Person, 4, NodeType::Team);
 
     EasyPolygon2D person_boundary_polygon;
     person_boundary_polygon.addPoint(0, 0);
@@ -162,7 +195,7 @@ bool EasyWorldWidget::createPerson()
     world_controller_.setPersonBoundaryPolygon(4, NodeType::Person, person_boundary_polygon);
 
     EasyPoint2D person_axis_center_position_in_parent;
-    person_axis_center_position_in_parent.setPosition(25, 25);
+    person_axis_center_position_in_parent.setPosition(0, 0);
 
     world_controller_.setPersonAxisCenterPositionInParent(0, NodeType::Person, person_axis_center_position_in_parent);
     world_controller_.setPersonAxisCenterPositionInParent(1, NodeType::Person, person_axis_center_position_in_parent);
@@ -247,6 +280,28 @@ bool EasyWorldWidget::moveRoomInWorld(
 
         world_controller_.setRoomAxisCenterPositionInWorld(
             room_id, room_type, new_room_pos);
+
+        update();
+    }
+
+    return true;
+}
+
+bool EasyWorldWidget::moveTeamInWorld(
+    const size_t &team_id,
+    const NodeType &team_type,
+    QMouseEvent *event)
+{
+    if(event->buttons() == Qt::LeftButton)
+    {
+        const QPoint &mouse_pos = event->pos();
+
+        EasyPoint2D new_room_pos;
+
+        new_room_pos.setPosition(mouse_pos.x(), mouse_pos.y());
+
+        world_controller_.setTeamAxisCenterPositionInWorld(
+            team_id, team_type, new_room_pos);
 
         update();
     }
@@ -564,6 +619,145 @@ bool EasyWorldWidget::drawRoomSpaceBoundary()
             room_space_node->getPointInWorld(
                 current_point, current_point_in_world);
             room_space_node->getPointInWorld(
+                next_point, next_point_in_world);
+
+            painter.drawLine(
+                current_point_in_world.x, current_point_in_world.y,
+                next_point_in_world.x, next_point_in_world.y);
+        }
+    }
+
+    return true;
+}
+
+bool EasyWorldWidget::drawTeamBoundaryAxis()
+{
+    QPainter painter(this);
+
+    QPen pen_red(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_green(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    // QFont font_song("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song);
+
+    std::vector<std::vector<EasyNode*>> team_boundary_node_vec_vec;
+
+    world_controller_.getTeamBoundaryNodeVecVec(team_boundary_node_vec_vec);
+
+    for(const std::vector<EasyNode*>& team_boundary_node_vec: team_boundary_node_vec_vec)
+    {
+        for(const EasyNode* team_boundary_node : team_boundary_node_vec)
+        {
+            if(team_boundary_node == nullptr)
+            {
+                continue;
+            }
+
+            EasyAxis2D team_boundary_axis = team_boundary_node->getAxisInWorld();
+
+            painter.setPen(pen_red);
+
+            painter.drawLine(
+                team_boundary_axis.center_.x, team_boundary_axis.center_.y,
+                team_boundary_axis.center_.x + axis_length_ * team_boundary_axis.x_direction_.x,
+                team_boundary_axis.center_.y + axis_length_ * team_boundary_axis.x_direction_.y);
+
+            painter.setPen(pen_green);
+
+            painter.drawLine(
+                team_boundary_axis.center_.x, team_boundary_axis.center_.y,
+                team_boundary_axis.center_.x + axis_length_ * team_boundary_axis.y_direction_.x,
+                team_boundary_axis.center_.y + axis_length_ * team_boundary_axis.y_direction_.y);
+        }
+        
+    }
+    return true;
+}
+
+bool EasyWorldWidget::drawTeamBoundaryPolygon()
+{
+    QPainter painter(this);
+
+    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    // QFont font_song("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song);
+
+    painter.setPen(pen_black);
+
+    std::vector<std::vector<EasyNode*>> team_boundary_node_vec_vec;
+
+    world_controller_.getTeamBoundaryNodeVecVec(team_boundary_node_vec_vec);
+
+    for(const std::vector<EasyNode*> &team_boundary_node_vec :
+        team_boundary_node_vec_vec)
+    {
+        for(EasyNode* team_boundary_node : team_boundary_node_vec)
+        {
+            const EasyPolygon2D &team_boundary_polygon =
+              team_boundary_node->getBoundaryPolygon();
+
+            for(size_t i = 0; i < team_boundary_polygon.point_list.size(); ++i)
+            {
+                const EasyPoint2D &current_point =
+                  team_boundary_polygon.point_list[i];
+                const EasyPoint2D &next_point =
+                  team_boundary_polygon.point_list[
+                  (i + 1) % team_boundary_polygon.point_list.size()];
+
+                EasyPoint2D current_point_in_world;
+                EasyPoint2D next_point_in_world;
+                team_boundary_node->getPointInWorld(
+                    current_point, current_point_in_world);
+                team_boundary_node->getPointInWorld(
+                    next_point, next_point_in_world);
+
+                painter.drawLine(
+                    current_point_in_world.x, current_point_in_world.y,
+                    next_point_in_world.x, next_point_in_world.y);
+            }
+        }
+    }
+
+    return true;
+}
+
+bool EasyWorldWidget::drawTeamSpaceBoundary()
+{
+    QPainter painter(this);
+
+    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    // QFont font_song("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song);
+
+    painter.setPen(pen_black);
+
+    std::vector<EasyNode*> team_space_node_vec;
+
+    world_controller_.getTeamSpaceNodeVec(team_space_node_vec);
+
+    for(EasyNode* team_space_node : team_space_node_vec)
+    {
+        if(team_space_node == nullptr)
+        {
+            continue;
+        }
+
+        const EasyPolygon2D &team_space_polygon =
+          team_space_node->getBoundaryPolygon();
+
+        for(size_t i = 0; i < team_space_polygon.point_list.size(); ++i)
+        {
+            const EasyPoint2D &current_point = team_space_polygon.point_list[i];
+            const EasyPoint2D &next_point = team_space_polygon.point_list[
+              (i + 1) % team_space_polygon.point_list.size()];
+
+            EasyPoint2D current_point_in_world;
+            EasyPoint2D next_point_in_world;
+            team_space_node->getPointInWorld(
+                current_point, current_point_in_world);
+            team_space_node->getPointInWorld(
                 next_point, next_point_in_world);
 
             painter.drawLine(

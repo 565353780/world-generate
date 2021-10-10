@@ -38,6 +38,7 @@ private:
     bool createWorld();
     bool createWall();
     bool createRoom();
+    bool createTeam();
     bool createPerson();
     bool createFurniture();
 
@@ -49,6 +50,11 @@ private:
     bool moveRoomInWorld(
         const size_t &room_id,
         const NodeType &room_type,
+        QMouseEvent *event);
+
+    bool moveTeamInWorld(
+        const size_t &team_id,
+        const NodeType &team_type,
         QMouseEvent *event);
 
     bool movePersonInWorld(
@@ -68,6 +74,10 @@ private:
     bool drawRoomBoundaryAxis();
     bool drawRoomBoundaryPolygon();
     bool drawRoomSpaceBoundary();
+
+    bool drawTeamBoundaryAxis();
+    bool drawTeamBoundaryPolygon();
+    bool drawTeamSpaceBoundary();
 
     bool drawPersonBoundaryAxis();
     bool drawPersonBoundaryPolygon();

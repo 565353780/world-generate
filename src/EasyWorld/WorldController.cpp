@@ -406,11 +406,197 @@ bool WorldController::setRoomBoundaryPolygonPointPosition(
     return true;
 }
 
+bool WorldController::createTeam(
+    const size_t &team_id,
+    const NodeType &team_type,
+    const size_t &on_room_id,
+    const NodeType &on_room_type)
+{
+    if(team_type != NodeType::Team)
+    {
+        std::cout << "WorldController::createTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\ton_room_id = " << on_room_id << std::endl <<
+          "\ton_room_type = " << on_room_type << std::endl <<
+          "this type is not the team type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.createNode(
+          team_id, team_type, on_room_id, on_room_type, 0))
+    {
+        std::cout << "WorldController::createTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\ton_room_id = " << on_room_id << std::endl <<
+          "\ton_room_type = " << on_room_type << std::endl <<
+          "createNode for team failed!" << std::endl;
+
+        return false;
+    }
+
+    std::pair<size_t, NodeType> new_team_pair;
+    new_team_pair.first = team_id;
+    new_team_pair.second = team_type;
+
+    team_pair_vec_.emplace_back(new_team_pair);
+
+    return true;
+}
+
+bool WorldController::setTeamAxisCenterPositionInParent(
+    const size_t &team_id,
+    const NodeType &team_type,
+    const EasyPoint2D &axis_new_center_position_in_parent)
+{
+    if(team_type != NodeType::Team)
+    {
+        std::cout << "WorldController::setTeamAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "this type is not the team type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInParent(
+          team_id,
+          team_type,
+          axis_new_center_position_in_parent,
+          true,
+          true))
+    {
+        std::cout << "WorldController::setTeamAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this team node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setTeamAxisCenterPositionInWorld(
+    const size_t &team_id,
+    const NodeType &team_type,
+    const EasyPoint2D &axis_new_center_position_in_world)
+{
+    if(team_type != NodeType::Team)
+    {
+        std::cout << "WorldController::setTeamAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "this type is not the team type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInWorld(
+          team_id,
+          team_type,
+          axis_new_center_position_in_world,
+          true,
+          true))
+    {
+        std::cout << "WorldController::setTeamAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this team node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setTeamBoundaryPolygon(
+    const size_t &team_id,
+    const NodeType &team_type,
+    const EasyPolygon2D &team_boundary_polygon)
+{
+    if(team_type != NodeType::Team)
+    {
+        std::cout << "WorldController::setTeamBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "this type is not the team type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygon(team_id, team_type, team_boundary_polygon))
+    {
+        std::cout << "WorldController::setTeamBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "setNodeBoundaryPolygon for team failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setTeamBoundaryPolygonPointPosition(
+    const size_t &team_id,
+    const NodeType &team_type,
+    const size_t &point_idx,
+    const EasyPoint2D &point_new_position_in_world)
+{
+    if(team_type != NodeType::Team)
+    {
+        std::cout << "WorldController::setTeamBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "this type is not the team type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygonPointPosition(
+          team_id, team_type, point_idx, point_new_position_in_world))
+    {
+        std::cout << "WorldController::setTeamBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setNodeBoundaryPolygonPointPosition for team failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 bool WorldController::createPerson(
     const size_t &person_id,
     const NodeType &person_type,
-    const size_t &on_room_id,
-    const NodeType &on_room_type)
+    const size_t &on_team_id,
+    const NodeType &on_team_type)
 {
     if(person_type != NodeType::Person)
     {
@@ -418,22 +604,22 @@ bool WorldController::createPerson(
           "Input :\n" <<
           "\tperson_id = " << person_id << std::endl <<
           "\tperson_type = " << person_type << std::endl <<
-          "\ton_room_id = " << on_room_id << std::endl <<
-          "\ton_room_type = " << on_room_type << std::endl <<
+          "\ton_team_id = " << on_team_id << std::endl <<
+          "\ton_team_type = " << on_team_type << std::endl <<
           "this type is not the person type!" << std::endl;
 
         return false;
     }
 
     if(!world_tree_.createNode(
-          person_id, person_type, on_room_id, on_room_type, 0))
+          person_id, person_type, on_team_id, on_team_type, 0))
     {
         std::cout << "WorldController::createPerson : " << std::endl <<
           "Input :\n" <<
           "\tperson_id = " << person_id << std::endl <<
           "\tperson_type = " << person_type << std::endl <<
-          "\ton_room_id = " << on_room_id << std::endl <<
-          "\ton_room_type = " << on_room_type << std::endl <<
+          "\ton_team_id = " << on_team_id << std::endl <<
+          "\ton_team_type = " << on_team_type << std::endl <<
           "createNode for person failed!" << std::endl;
 
         return false;
@@ -1005,6 +1191,112 @@ bool WorldController::getRoomSpaceNodeVec(
         }
 
         room_space_node_vec.emplace_back(room_space_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getTeamNodeVec(
+    std::vector<EasyNode*> &team_node_vec)
+{
+    team_node_vec.clear();
+
+    if(team_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    for(const std::pair<size_t, NodeType> &team_pair : team_pair_vec_)
+    {
+        EasyNode* team_node = findNode(team_pair.first, team_pair.second);
+
+        if(team_node == nullptr)
+        {
+            std::cout << "WorldController::getTeamNodeVec : " << std::endl <<
+              "get team : id = " << team_pair.first <<
+              ", type = " << team_pair.second <<
+              " failed!" << std::endl;
+
+            return false;
+        }
+
+        team_node_vec.emplace_back(team_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getTeamBoundaryNodeVecVec(
+    std::vector<std::vector<EasyNode*>> &team_boundary_node_vec_vec)
+{
+    team_boundary_node_vec_vec.clear();
+
+    if(team_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> team_node_vec;
+
+    if(!getTeamNodeVec(team_node_vec))
+    {
+        std::cout << "WorldController::getTeamBoundaryNodeVec : " << std::endl <<
+          "getTeamNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* team_node : team_node_vec)
+    {
+        std::vector<EasyNode*> team_boundary_node_vec;
+        std::vector<EasyNode*> team_child_node_vec = team_node->getChildNodeVec();
+
+        for(EasyNode* team_child_node : team_child_node_vec)
+        {
+            if(team_child_node->getNodeType() == NodeType::Boundary)
+            {
+                team_boundary_node_vec.emplace_back(team_child_node);
+            }
+        }
+
+        team_boundary_node_vec_vec.emplace_back(team_boundary_node_vec);
+    }
+    return true;
+}
+
+bool WorldController::getTeamSpaceNodeVec(
+    std::vector<EasyNode*> &team_space_node_vec)
+{
+    team_space_node_vec.clear();
+
+    if(team_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> team_node_vec;
+
+    if(!getTeamNodeVec(team_node_vec))
+    {
+        std::cout << "WorldController::getTeamSpaceNodeVec : " << std::endl <<
+          "getTeamNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* team_node : team_node_vec)
+    {
+        EasyNode* team_space_node = team_node->findChild(0, NodeType::Space);
+
+        if(team_space_node == nullptr)
+        {
+            std::cout << "WorldController::getTeamNodeVec : " << std::endl <<
+              "get team space node failed!" << std::endl;
+
+            return false;
+        }
+
+        team_space_node_vec.emplace_back(team_space_node);
     }
 
     return true;

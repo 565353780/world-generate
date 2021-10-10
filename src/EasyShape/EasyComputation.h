@@ -97,7 +97,8 @@ public:
 
     static bool isPointInPolygon(
         const EasyPoint2D &point,
-        const EasyPolygon2D &polygon);
+        const EasyPolygon2D &polygon,
+        const bool &is_contain_boundary);
 
     static bool isPolygonCross(
         EasyPolygon2D &polygon_1,

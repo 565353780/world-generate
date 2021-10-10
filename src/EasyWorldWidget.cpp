@@ -68,9 +68,9 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
 
 void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    moveWallInWorld(0, NodeType::OuterWall, event);
+    // moveWallInWorld(0, NodeType::OuterWall, event);
 
-    // moveRoomInWorld(0, NodeType::Room, event);
+    moveRoomInWorld(0, NodeType::Room, event);
 
     // movePersonInWorld(0, NodeType::Person, event);
 
@@ -97,9 +97,9 @@ bool EasyWorldWidget::createWall()
 
     EasyPolygon2D wall_boundary_polygon;
     wall_boundary_polygon.addPoint(0, 0);
-    wall_boundary_polygon.addPoint(400, 0);
-    wall_boundary_polygon.addPoint(400, 400);
-    wall_boundary_polygon.addPoint(0, 400);
+    wall_boundary_polygon.addPoint(300, 0);
+    wall_boundary_polygon.addPoint(300, 300);
+    wall_boundary_polygon.addPoint(0, 300);
     wall_boundary_polygon.setAntiClockWise();
 
     world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon);
@@ -111,7 +111,9 @@ bool EasyWorldWidget::createRoom()
 {
     world_controller_.createRoom(0, NodeType::Room, 0, NodeType::OuterWall, 0);
     world_controller_.createRoom(1, NodeType::Room, 0, NodeType::OuterWall, 0);
-    world_controller_.createRoom(2, NodeType::Room, 0, NodeType::OuterWall, 2);
+    world_controller_.createRoom(2, NodeType::Room, 0, NodeType::OuterWall, 0);
+    world_controller_.createRoom(3, NodeType::Room, 0, NodeType::OuterWall, 2);
+    world_controller_.createRoom(4, NodeType::Room, 0, NodeType::OuterWall, 2);
 
     EasyPolygon2D room_boundary_polygon;
     room_boundary_polygon.addPoint(0, 0);
@@ -123,11 +125,17 @@ bool EasyWorldWidget::createRoom()
     world_controller_.setRoomBoundaryPolygon(0, NodeType::Room, room_boundary_polygon);
     world_controller_.setRoomBoundaryPolygon(1, NodeType::Room, room_boundary_polygon);
     world_controller_.setRoomBoundaryPolygon(2, NodeType::Room, room_boundary_polygon);
+    world_controller_.setRoomBoundaryPolygon(3, NodeType::Room, room_boundary_polygon);
+    world_controller_.setRoomBoundaryPolygon(4, NodeType::Room, room_boundary_polygon);
 
     EasyPoint2D room_axis_center_position_in_parent;
-    room_axis_center_position_in_parent.setPosition(101, 0);
 
+    room_axis_center_position_in_parent.setPosition(100, 0);
     world_controller_.setRoomAxisCenterPositionInParent(1, NodeType::Room, room_axis_center_position_in_parent);
+
+    room_axis_center_position_in_parent.setPosition(200, 0);
+    world_controller_.setRoomAxisCenterPositionInParent(2, NodeType::Room, room_axis_center_position_in_parent);
+    world_controller_.setRoomAxisCenterPositionInParent(4, NodeType::Room, room_axis_center_position_in_parent);
 
     return true;
 }
@@ -137,6 +145,8 @@ bool EasyWorldWidget::createPerson()
     world_controller_.createPerson(0, NodeType::Person, 0, NodeType::Room);
     world_controller_.createPerson(1, NodeType::Person, 1, NodeType::Room);
     world_controller_.createPerson(2, NodeType::Person, 2, NodeType::Room);
+    world_controller_.createPerson(3, NodeType::Person, 3, NodeType::Room);
+    world_controller_.createPerson(4, NodeType::Person, 4, NodeType::Room);
 
     EasyPolygon2D person_boundary_polygon;
     person_boundary_polygon.addPoint(0, 0);
@@ -148,6 +158,8 @@ bool EasyWorldWidget::createPerson()
     world_controller_.setPersonBoundaryPolygon(0, NodeType::Person, person_boundary_polygon);
     world_controller_.setPersonBoundaryPolygon(1, NodeType::Person, person_boundary_polygon);
     world_controller_.setPersonBoundaryPolygon(2, NodeType::Person, person_boundary_polygon);
+    world_controller_.setPersonBoundaryPolygon(3, NodeType::Person, person_boundary_polygon);
+    world_controller_.setPersonBoundaryPolygon(4, NodeType::Person, person_boundary_polygon);
 
     EasyPoint2D person_axis_center_position_in_parent;
     person_axis_center_position_in_parent.setPosition(25, 25);
@@ -155,6 +167,8 @@ bool EasyWorldWidget::createPerson()
     world_controller_.setPersonAxisCenterPositionInParent(0, NodeType::Person, person_axis_center_position_in_parent);
     world_controller_.setPersonAxisCenterPositionInParent(1, NodeType::Person, person_axis_center_position_in_parent);
     world_controller_.setPersonAxisCenterPositionInParent(2, NodeType::Person, person_axis_center_position_in_parent);
+    world_controller_.setPersonAxisCenterPositionInParent(3, NodeType::Person, person_axis_center_position_in_parent);
+    world_controller_.setPersonAxisCenterPositionInParent(4, NodeType::Person, person_axis_center_position_in_parent);
 
     return true;
 }
@@ -164,6 +178,8 @@ bool EasyWorldWidget::createFurniture()
     world_controller_.createFurniture(0, NodeType::Furniture, 0, NodeType::Person);
     world_controller_.createFurniture(1, NodeType::Furniture, 1, NodeType::Person);
     world_controller_.createFurniture(2, NodeType::Furniture, 2, NodeType::Person);
+    world_controller_.createFurniture(3, NodeType::Furniture, 3, NodeType::Person);
+    world_controller_.createFurniture(4, NodeType::Furniture, 4, NodeType::Person);
 
     EasyPolygon2D furniture_boundary_polygon;
     furniture_boundary_polygon.addPoint(0, 0);
@@ -179,6 +195,8 @@ bool EasyWorldWidget::createFurniture()
     world_controller_.setFurnitureBoundaryPolygon(0, NodeType::Furniture, furniture_boundary_polygon);
     world_controller_.setFurnitureBoundaryPolygon(1, NodeType::Furniture, furniture_boundary_polygon);
     world_controller_.setFurnitureBoundaryPolygon(2, NodeType::Furniture, furniture_boundary_polygon);
+    world_controller_.setFurnitureBoundaryPolygon(3, NodeType::Furniture, furniture_boundary_polygon);
+    world_controller_.setFurnitureBoundaryPolygon(4, NodeType::Furniture, furniture_boundary_polygon);
 
     EasyPoint2D furniture_axis_center_position_in_parent;
     furniture_axis_center_position_in_parent.setPosition(0, 50);
@@ -186,6 +204,8 @@ bool EasyWorldWidget::createFurniture()
     world_controller_.setFurnitureAxisCenterPositionInParent(0, NodeType::Furniture, furniture_axis_center_position_in_parent);
     world_controller_.setFurnitureAxisCenterPositionInParent(1, NodeType::Furniture, furniture_axis_center_position_in_parent);
     world_controller_.setFurnitureAxisCenterPositionInParent(2, NodeType::Furniture, furniture_axis_center_position_in_parent);
+    world_controller_.setFurnitureAxisCenterPositionInParent(3, NodeType::Furniture, furniture_axis_center_position_in_parent);
+    world_controller_.setFurnitureAxisCenterPositionInParent(4, NodeType::Furniture, furniture_axis_center_position_in_parent);
 
     return true;
 }

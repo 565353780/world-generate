@@ -1087,7 +1087,10 @@ bool EasyTree::isNodeInParentSpace(
             return false;
         }
 
-        if(!EasyComputation::isPointInPolygon(space_boundary_point_in_parent_space, parent_space_boundary_polygon_in_parent))
+        if(!EasyComputation::isPointInPolygon(
+              space_boundary_point_in_parent_space,
+              parent_space_boundary_polygon_in_parent,
+              true))
         {
             return false;
         }
@@ -1233,7 +1236,8 @@ bool EasyTree::isNodeInParentChildNodeSpace(
 
                 if(EasyComputation::isPointInPolygon(
                       parent_child_space_boundary_point_in_space_node,
-                      space_boundary_polygon_in_parent))
+                      space_boundary_polygon_in_parent,
+                      false))
                 {
                     return true;
                 }

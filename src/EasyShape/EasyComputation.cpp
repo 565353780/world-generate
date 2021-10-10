@@ -387,7 +387,8 @@ bool EasyComputation::isPointOnOpenBoundedLine(
 
 bool EasyComputation::isPointInPolygon(
     const EasyPoint2D &point,
-    const EasyPolygon2D &polygon)
+    const EasyPolygon2D &polygon,
+    const bool &is_contain_boundary)
 {
     float angle_value_sum = 0;
 
@@ -398,7 +399,12 @@ bool EasyComputation::isPointInPolygon(
         if(current_point.x == point.x &&
             current_point.y == point.y)
         {
-            return true;
+            if(is_contain_boundary)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         const EasyPoint2D &next_point = polygon.point_list[
@@ -430,6 +436,11 @@ bool EasyComputation::isPointInPolygon(
         return true;
     }
 
+    if(is_contain_boundary)
+    {
+        return true;
+    }
+
     return true;
 }
 
@@ -455,7 +466,7 @@ bool EasyComputation::isPolygonCross(
     {
         for(const EasyPoint2D &point : polygon_2.point_list)
         {
-            if(isPointInPolygon(point, polygon_1))
+            if(isPointInPolygon(point, polygon_1, false))
             {
                 return true;
             }
@@ -465,7 +476,7 @@ bool EasyComputation::isPolygonCross(
     {
         for(const EasyPoint2D &point : polygon_1.point_list)
         {
-            if(isPointInPolygon(point, polygon_2))
+            if(isPointInPolygon(point, polygon_2, false))
             {
                 return true;
             }
@@ -948,7 +959,7 @@ bool EasyComputation::updatePolygonNotIntersectionPointConnectedState(
 
             const EasyPoint2D &polygon_point = polygon.point_list[j];
 
-            if(isPointInPolygon(polygon_point, union_polygon))
+            if(isPointInPolygon(polygon_point, union_polygon, false))
             {
                 polygon_point_connected_vec_vec[i][j] = true;
             }

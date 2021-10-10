@@ -785,7 +785,9 @@ bool WorldController::setPersonBoundaryPolygonPointPosition(
 
 bool WorldController::createPersonForTeam(
     const size_t &team_id,
-    const size_t &team_type,
+    const NodeType &team_type,
+    const float &person_width,
+    const float &person_height,
     const EasyAxis2D &person_axis_in_parent)
 {
     if(team_type != NodeType::Team)
@@ -800,6 +802,80 @@ bool WorldController::createPersonForTeam(
 
         return false;
     }
+
+    if(!haveThisNode(team_id, team_type))
+    {
+        std::cout << "WorldController::createPersonForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_axis_in_parent :" << std::endl;
+        person_axis_in_parent.outputInfo(1);
+        std::cout << "this team node not exist!" << std::endl;
+
+        return false;
+    }
+
+    size_t new_person_id = 0;
+    if(person_pair_vec_.size() > 0)
+    {
+        new_person_id = person_pair_vec_.back().first + 1;
+    }
+
+    if(!world_tree_.createNode(new_person_id, NodeType::Person, team_id, team_type, 0))
+    {
+        std::cout << "WorldController::createPersonForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_axis_in_parent :" << std::endl;
+        person_axis_in_parent.outputInfo(1);
+        std::cout << "createNode for this person node failed!" << std::endl;
+
+        return false;
+    }
+
+    std::pair<size_t, NodeType> new_person_pair;
+    new_person_pair.first = new_person_id;
+    new_person_pair.second = NodeType::Person;
+
+    person_pair_vec_.emplace_back(new_person_pair);
+
+    EasyPolygon2D person_node_boundary_polygon;
+    person_node_boundary_polygon.point_list.resize(4);
+    person_node_boundary_polygon.point_list[0].setPosition(0, 0);
+    person_node_boundary_polygon.point_list[1].setPosition(person_width, 0);
+    person_node_boundary_polygon.point_list[2].setPosition(person_width, person_height);
+    person_node_boundary_polygon.point_list[3].setPosition(0, person_height);
+    person_node_boundary_polygon.setAntiClockWise();
+
+    if(!world_tree_.setNodeBoundaryPolygon(new_person_id, NodeType::Person, person_node_boundary_polygon))
+    {
+        std::cout << "WorldController::createPersonForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_axis_in_parent :" << std::endl;
+        person_axis_in_parent.outputInfo(1);
+        std::cout << "setNodeBoundaryPolygon for new person failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisInParent(new_person_id, NodeType::Person, person_axis_in_parent))
+    {
+        std::cout << "WorldController::createPersonForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_axis_in_parent :" << std::endl;
+        person_axis_in_parent.outputInfo(1);
+        std::cout << "setNodeAxisInParent for new person failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
 }
 
 bool WorldController::createFurniture(
@@ -988,6 +1064,112 @@ bool WorldController::setFurnitureBoundaryPolygonPointPosition(
     return true;
 }
 
+bool WorldController::createFurnitureForPerson(
+    const size_t &person_id,
+    const NodeType &person_type)
+{
+    if(person_type != NodeType::Person)
+    {
+        std::cout << "WorldController::createFurnitureForPerson : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "this type is not the person type!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* search_node = findNode(person_id, person_type);
+
+    if(search_node == nullptr)
+    {
+        std::cout << "WorldController::createFurnitureForPerson : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "person node not exist!" << std::endl;
+
+        return false;
+    }
+
+    size_t new_furniture_id = 0;
+    if(furniture_pair_vec_.size() > 0)
+    {
+        new_furniture_id = furniture_pair_vec_.back().first + 1;
+    }
+
+    if(!world_tree_.createNode(new_furniture_id, NodeType::Furniture, person_id, person_type, 0))
+    {
+        std::cout << "WorldController::createFurnitureForPerson : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "createNode for this furniture node not exist!" << std::endl;
+
+        return false;
+    }
+
+    std::pair<size_t, NodeType> new_furniture_pair;
+    new_furniture_pair.first = new_furniture_id;
+    new_furniture_pair.second = NodeType::Person;
+
+    furniture_pair_vec_.emplace_back(new_furniture_pair);
+
+    EasyNode* search_space_node = search_node->findChild(0, NodeType::Space);
+
+    if(search_space_node == nullptr)
+    {
+        std::cout << "WorldController::createFurnitureForPerson : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "person space node not exist!" << std::endl;
+
+        return false;
+    }
+
+    const EasyPolygon2D &search_space_boundary_polygon =
+      search_space_node->getBoundaryPolygon();
+
+    const EasyPoint2D &person_size = search_space_boundary_polygon.point_list[2];
+
+    if(person_size.x <= 0 || person_size.y <= 0)
+    {
+        std::cout << "WorldController::createFurnitureForPerson : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "person size is empty!" << std::endl;
+
+        return false;
+    }
+
+    EasyPolygon2D furniture_node_boundary_polygon;
+    furniture_node_boundary_polygon.point_list.resize(8);
+    furniture_node_boundary_polygon.point_list[0].setPosition(0, person_size.y);
+    furniture_node_boundary_polygon.point_list[1].setPosition(person_size.x, person_size.y);
+    furniture_node_boundary_polygon.point_list[2].setPosition(person_size.x, 0.6 * person_size.y);
+    furniture_node_boundary_polygon.point_list[3].setPosition(0.75 * person_size.x, 0.6 * person_size.y);
+    furniture_node_boundary_polygon.point_list[4].setPosition(0.75 * person_size.x, 0.2 * person_size.y);
+    furniture_node_boundary_polygon.point_list[5].setPosition(0.25 * person_size.x, 0.2 * person_size.y);
+    furniture_node_boundary_polygon.point_list[6].setPosition(0.25 * person_size.x, 0.6 * person_size.y);
+    furniture_node_boundary_polygon.point_list[7].setPosition(0, 0.6 * person_size.y);
+    furniture_node_boundary_polygon.setAntiClockWise();
+
+    if(!world_tree_.setNodeBoundaryPolygon(new_furniture_id, NodeType::Furniture, furniture_node_boundary_polygon))
+    {
+        std::cout << "WorldController::createFurnitureForPerson : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "setNodeBoundaryPolygon for new furniture failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 EasyNode* WorldController::findNode(
     const size_t &node_id,
     const NodeType &node_type)
@@ -1006,6 +1188,20 @@ EasyNode* WorldController::findNode(
     }
 
     return search_node;
+}
+
+bool WorldController::haveThisNode(
+    const size_t &node_id,
+    const NodeType &node_type)
+{
+    EasyNode* search_node = findNode(node_id, node_type);
+
+    if(search_node == nullptr)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool WorldController::getWallNodeVec(

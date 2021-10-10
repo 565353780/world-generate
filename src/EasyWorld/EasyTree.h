@@ -6,15 +6,6 @@
 
 #include "EasyNode.h"
 
-// Tree Struct :
-// World
-// Boundary World
-// Boundary Line & Space
-// Room World
-// Room Line & Space
-// Furniture World
-// Furniture Line & Space
-
 class EasyTree
 {
 public:
@@ -53,6 +44,26 @@ public:
         const EasyPoint2D &axis_new_center_position_in_world,
         const bool &is_allow_x_direction_move_in_parent_axis,
         const bool &is_allow_y_direction_move_in_parent_axis);
+
+    bool setNodeAxisXDirectionInParent(
+        const size_t &node_id,
+        const NodeType &node_type,
+        const EasyPoint2D &axis_new_x_direction_in_parent);
+
+    bool setNodeAxisXDirectionInWorld(
+        const size_t &node_id,
+        const NodeType &node_type,
+        const EasyPoint2D &axis_new_x_direction_in_world);
+
+    bool setNodeAxisInParent(
+        const size_t &node_id,
+        const NodeType &node_type,
+        const EasyAxis2D &axis_in_parent);
+
+    bool setNodeAxisInWorld(
+        const size_t &node_id,
+        const NodeType &node_type,
+        const EasyAxis2D &axis_in_world);
 
     bool setNodeBoundaryPolygon(
         const size_t &node_id,

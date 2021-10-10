@@ -126,7 +126,9 @@ public:
 
     bool createPersonForTeam(
         const size_t &team_id,
-        const size_t &team_type,
+        const NodeType &team_type,
+        const float &person_width,
+        const float &person_height,
         const EasyAxis2D &person_axis_in_parent);
 
     bool createFurniture(
@@ -156,7 +158,15 @@ public:
         const size_t &point_idx,
         const EasyPoint2D &point_new_position_in_world);
 
+    bool createFurnitureForPerson(
+        const size_t &person_id,
+        const NodeType &person_type);
+
     EasyNode* findNode(
+        const size_t &node_id,
+        const NodeType &node_type);
+
+    bool haveThisNode(
         const size_t &node_id,
         const NodeType &node_type);
 

@@ -351,10 +351,12 @@ void EasySpaceWidget::mousePressEvent(QMouseEvent *event)
 
 void EasySpaceWidget::mouseMoveEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event);
 }
 
 void EasySpaceWidget::mouseReleaseEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event);
 }
 
 bool EasySpaceWidget::drawBoundary()

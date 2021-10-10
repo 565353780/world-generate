@@ -46,7 +46,7 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
     drawRoomSpaceBoundary();
     // drawRoomBoundaryPolygon();
 
-    drawTeamSpaceBoundary();
+    // drawTeamSpaceBoundary();
     // drawTeamBoundaryPolygon();
 
     drawPersonSpaceBoundary();
@@ -211,88 +211,30 @@ bool EasyWorldWidget::createTeam()
 
 bool EasyWorldWidget::createPerson()
 {
-    world_controller_.createPerson(0, NodeType::Person, 0, NodeType::Team);
-    world_controller_.createPerson(1, NodeType::Person, 1, NodeType::Team);
-    world_controller_.createPerson(2, NodeType::Person, 2, NodeType::Team);
-    world_controller_.createPerson(3, NodeType::Person, 3, NodeType::Team);
-    world_controller_.createPerson(4, NodeType::Person, 4, NodeType::Team);
+    EasyAxis2D person_axis_in_parent;
 
-    world_controller_.createPerson(5, NodeType::Person, 5, NodeType::Team);
-    world_controller_.createPerson(6, NodeType::Person, 5, NodeType::Team);
-    world_controller_.createPerson(7, NodeType::Person, 5, NodeType::Team);
-    world_controller_.createPerson(8, NodeType::Person, 5, NodeType::Team);
-    world_controller_.createPerson(9, NodeType::Person, 5, NodeType::Team);
-    world_controller_.createPerson(10, NodeType::Person, 5, NodeType::Team);
-    world_controller_.createPerson(11, NodeType::Person, 5, NodeType::Team);
-    world_controller_.createPerson(12, NodeType::Person, 5, NodeType::Team);
+    const float person_width = 50;
+    const float person_height = 50;
 
-    world_controller_.createPerson(13, NodeType::Person, 6, NodeType::Team);
-    world_controller_.createPerson(14, NodeType::Person, 6, NodeType::Team);
-    world_controller_.createPerson(15, NodeType::Person, 6, NodeType::Team);
-    world_controller_.createPerson(16, NodeType::Person, 6, NodeType::Team);
-    world_controller_.createPerson(17, NodeType::Person, 6, NodeType::Team);
-    world_controller_.createPerson(18, NodeType::Person, 6, NodeType::Team);
-    world_controller_.createPerson(19, NodeType::Person, 6, NodeType::Team);
-    world_controller_.createPerson(20, NodeType::Person, 6, NodeType::Team);
+    person_axis_in_parent.center_.setPosition(0, 0);
+    person_axis_in_parent.x_direction_.setPosition(1, 0);
 
-    EasyPolygon2D person_boundary_polygon;
-    person_boundary_polygon.addPoint(0, 0);
-    person_boundary_polygon.addPoint(50, 0);
-    person_boundary_polygon.addPoint(50, 50);
-    person_boundary_polygon.addPoint(0, 50);
-    person_boundary_polygon.setAntiClockWise();
-
-    world_controller_.setPersonBoundaryPolygon(0, NodeType::Person, person_boundary_polygon);
-    world_controller_.setPersonBoundaryPolygon(1, NodeType::Person, person_boundary_polygon);
-    world_controller_.setPersonBoundaryPolygon(2, NodeType::Person, person_boundary_polygon);
-    world_controller_.setPersonBoundaryPolygon(3, NodeType::Person, person_boundary_polygon);
-    world_controller_.setPersonBoundaryPolygon(4, NodeType::Person, person_boundary_polygon);
-
-    EasyPoint2D person_axis_center_position_in_parent;
-    person_axis_center_position_in_parent.setPosition(0, 0);
-
-    world_controller_.setPersonAxisCenterPositionInParent(0, NodeType::Person, person_axis_center_position_in_parent);
-    world_controller_.setPersonAxisCenterPositionInParent(1, NodeType::Person, person_axis_center_position_in_parent);
-    world_controller_.setPersonAxisCenterPositionInParent(2, NodeType::Person, person_axis_center_position_in_parent);
-    world_controller_.setPersonAxisCenterPositionInParent(3, NodeType::Person, person_axis_center_position_in_parent);
-    world_controller_.setPersonAxisCenterPositionInParent(4, NodeType::Person, person_axis_center_position_in_parent);
+    world_controller_.createPersonForTeam(0, NodeType::Team, person_width, person_height, person_axis_in_parent);
+    world_controller_.createPersonForTeam(1, NodeType::Team, person_width, person_height, person_axis_in_parent);
+    world_controller_.createPersonForTeam(2, NodeType::Team, person_width, person_height, person_axis_in_parent);
+    world_controller_.createPersonForTeam(3, NodeType::Team, person_width, person_height, person_axis_in_parent);
+    world_controller_.createPersonForTeam(4, NodeType::Team, person_width, person_height, person_axis_in_parent);
 
     return true;
 }
 
 bool EasyWorldWidget::createFurniture()
 {
-    world_controller_.createFurniture(0, NodeType::Furniture, 0, NodeType::Person);
-    world_controller_.createFurniture(1, NodeType::Furniture, 1, NodeType::Person);
-    world_controller_.createFurniture(2, NodeType::Furniture, 2, NodeType::Person);
-    world_controller_.createFurniture(3, NodeType::Furniture, 3, NodeType::Person);
-    world_controller_.createFurniture(4, NodeType::Furniture, 4, NodeType::Person);
-
-    EasyPolygon2D furniture_boundary_polygon;
-    furniture_boundary_polygon.addPoint(0, 0);
-    furniture_boundary_polygon.addPoint(50, 0);
-    furniture_boundary_polygon.addPoint(50, -20);
-    furniture_boundary_polygon.addPoint(35, -20);
-    furniture_boundary_polygon.addPoint(35, -30);
-    furniture_boundary_polygon.addPoint(15, -30);
-    furniture_boundary_polygon.addPoint(15, -20);
-    furniture_boundary_polygon.addPoint(0, -20);
-    furniture_boundary_polygon.setAntiClockWise();
-
-    world_controller_.setFurnitureBoundaryPolygon(0, NodeType::Furniture, furniture_boundary_polygon);
-    world_controller_.setFurnitureBoundaryPolygon(1, NodeType::Furniture, furniture_boundary_polygon);
-    world_controller_.setFurnitureBoundaryPolygon(2, NodeType::Furniture, furniture_boundary_polygon);
-    world_controller_.setFurnitureBoundaryPolygon(3, NodeType::Furniture, furniture_boundary_polygon);
-    world_controller_.setFurnitureBoundaryPolygon(4, NodeType::Furniture, furniture_boundary_polygon);
-
-    EasyPoint2D furniture_axis_center_position_in_parent;
-    furniture_axis_center_position_in_parent.setPosition(0, 50);
-
-    world_controller_.setFurnitureAxisCenterPositionInParent(0, NodeType::Furniture, furniture_axis_center_position_in_parent);
-    world_controller_.setFurnitureAxisCenterPositionInParent(1, NodeType::Furniture, furniture_axis_center_position_in_parent);
-    world_controller_.setFurnitureAxisCenterPositionInParent(2, NodeType::Furniture, furniture_axis_center_position_in_parent);
-    world_controller_.setFurnitureAxisCenterPositionInParent(3, NodeType::Furniture, furniture_axis_center_position_in_parent);
-    world_controller_.setFurnitureAxisCenterPositionInParent(4, NodeType::Furniture, furniture_axis_center_position_in_parent);
+    world_controller_.createFurnitureForPerson(0, NodeType::Person);
+    world_controller_.createFurnitureForPerson(1, NodeType::Person);
+    world_controller_.createFurnitureForPerson(2, NodeType::Person);
+    world_controller_.createFurnitureForPerson(3, NodeType::Person);
+    world_controller_.createFurnitureForPerson(4, NodeType::Person);
 
     return true;
 }

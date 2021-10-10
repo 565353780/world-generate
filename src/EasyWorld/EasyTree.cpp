@@ -486,6 +486,395 @@ bool EasyTree::setNodeAxisCenterPositionInWorld(
     return true;
 }
 
+bool EasyTree::setNodeAxisXDirectionInParent(
+    const size_t &node_id,
+    const NodeType &node_type,
+    const EasyPoint2D &axis_new_x_direction_in_parent)
+{
+    EasyNode* search_node = findNode(node_id, node_type);
+
+    if(search_node == nullptr)
+    {
+        std::cout << "EasyTree::setNodeAxisXDirectionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_x_direction_in_parent = [" << axis_new_x_direction_in_parent.x << "," <<
+          axis_new_x_direction_in_parent.y << "]" << std::endl <<
+          "this node not exist!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* parent_node = search_node->getParent();
+
+    if(parent_node == nullptr)
+    {
+        std::cout << "EasyTree::setNodeAxisXDirectionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_x_direction_in_parent = [" << axis_new_x_direction_in_parent.x << "," <<
+          axis_new_x_direction_in_parent.y << "]" << std::endl <<
+          "parent node not exist!" << std::endl;
+
+        return false;
+    }
+
+    const EasyAxis2D &search_node_axis_in_parent = search_node->getAxisInParent();
+
+    const EasyAxis2D search_node_axis_in_parent_copy = search_node_axis_in_parent;
+    EasyAxis2D new_search_node_axis_in_parent = search_node_axis_in_parent;
+
+    if(!new_search_node_axis_in_parent.setXDirection(
+          axis_new_x_direction_in_parent.x,
+          axis_new_x_direction_in_parent.y))
+    {
+        std::cout << "EasyTree::setNodeAxisXDirectionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_x_direction_in_parent = [" << axis_new_x_direction_in_parent.x << "," <<
+          axis_new_x_direction_in_parent.y << "]" << std::endl <<
+          "setXDirection for axis failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!search_node->setAxisInParent(
+          new_search_node_axis_in_parent.center_.x,
+          new_search_node_axis_in_parent.center_.y,
+          new_search_node_axis_in_parent.x_direction_.x,
+          new_search_node_axis_in_parent.x_direction_.y))
+    {
+        std::cout << "EasyTree::setNodeAxisXDirectionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_x_direction_in_parent = [" << axis_new_x_direction_in_parent.x << "," <<
+          axis_new_x_direction_in_parent.y << "]" << std::endl <<
+          "setAxisInParent for node failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!isNodeSpaceValid(search_node))
+    {
+        if(!search_node->setAxisInParent(
+              search_node_axis_in_parent_copy.center_.x,
+              search_node_axis_in_parent_copy.center_.y,
+              search_node_axis_in_parent_copy.x_direction_.x,
+              search_node_axis_in_parent_copy.x_direction_.y))
+        {
+            std::cout << "EasyTree::setNodeAxisXDirectionInParent : " << std::endl <<
+              "Input :\n" <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl <<
+              "\taxis_new_x_direction_in_parent = [" << axis_new_x_direction_in_parent.x << "," <<
+              axis_new_x_direction_in_parent.y << "]" << std::endl <<
+              "setAxisInParent for node to reset failed!" << std::endl;
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool EasyTree::setNodeAxisXDirectionInWorld(
+    const size_t &node_id,
+    const NodeType &node_type,
+    const EasyPoint2D &axis_new_x_direction_in_world)
+{
+    EasyNode* search_node = findNode(node_id, node_type);
+
+    if(search_node == nullptr)
+    {
+        std::cout << "EasyTree::setNodeAxisXDirectionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_x_direction_in_world = [" << axis_new_x_direction_in_world.x << "," <<
+          axis_new_x_direction_in_world.y << "]" << std::endl <<
+          "this node not exist!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* parent_node = search_node->getParent();
+
+    if(parent_node == nullptr)
+    {
+        std::cout << "EasyTree::setNodeAxisXDirectionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_x_direction_in_world = [" << axis_new_x_direction_in_world.x << "," <<
+          axis_new_x_direction_in_world.y << "]" << std::endl <<
+          "parent node not exist!" << std::endl;
+
+        return false;
+    }
+
+    EasyPoint2D axis_new_x_direction_in_parent;
+
+    if(!parent_node->getPointInNode(
+          axis_new_x_direction_in_world,
+          axis_new_x_direction_in_parent))
+    {
+        std::cout << "EasyTree::setNodeAxisXDirectionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_x_direction_in_world = [" << axis_new_x_direction_in_world.x << "," <<
+          axis_new_x_direction_in_world.y << "]" << std::endl <<
+          "getPointInNode for axis_center in parent failed!" << std::endl;
+
+        return false;
+    }
+
+    const EasyAxis2D &search_node_axis_in_parent = search_node->getAxisInParent();
+
+    const EasyAxis2D search_node_axis_in_parent_copy = search_node_axis_in_parent;
+    EasyAxis2D new_search_node_axis_in_parent = search_node_axis_in_parent;
+
+    if(!new_search_node_axis_in_parent.setXDirection(
+          axis_new_x_direction_in_parent.x,
+          axis_new_x_direction_in_parent.y))
+    {
+        std::cout << "EasyTree::setNodeAxisXDirectionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_x_direction_in_world = [" << axis_new_x_direction_in_world.x << "," <<
+          axis_new_x_direction_in_world.y << "]" << std::endl <<
+          "setXDirection for new axis failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!search_node->setAxisInParent(
+          new_search_node_axis_in_parent.center_.x,
+          new_search_node_axis_in_parent.center_.y,
+          new_search_node_axis_in_parent.x_direction_.x,
+          new_search_node_axis_in_parent.x_direction_.y))
+    {
+        std::cout << "EasyTree::setNodeAxisXDirectionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_new_x_direction_in_world = [" << axis_new_x_direction_in_world.x << "," <<
+          axis_new_x_direction_in_world.y << "]" << std::endl <<
+          "setAxisInParent for node failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!isNodeSpaceValid(search_node))
+    {
+        if(!search_node->setAxisInParent(
+              search_node_axis_in_parent_copy.center_.x,
+              search_node_axis_in_parent_copy.center_.y,
+              search_node_axis_in_parent_copy.x_direction_.x,
+              search_node_axis_in_parent_copy.x_direction_.y))
+        {
+            std::cout << "EasyTree::setNodeAxisXDirectionInWorld : " << std::endl <<
+              "Input :\n" <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl <<
+              "\taxis_new_x_direction_in_world = [" << axis_new_x_direction_in_world.x << "," <<
+              axis_new_x_direction_in_world.y << "]" << std::endl <<
+              "setAxisInParent for node to reset failed!" << std::endl;
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool EasyTree::setNodeAxisInParent(
+    const size_t &node_id,
+    const NodeType &node_type,
+    const EasyAxis2D &axis_in_parent)
+{
+    EasyNode* search_node = findNode(node_id, node_type);
+
+    if(search_node == nullptr)
+    {
+        std::cout << "EasyTree::setNodeAxisInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl <<
+          "\taxis_in_parent :" << std::endl;
+        axis_in_parent.outputInfo(1);
+        std::cout << "this node not exist!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* parent_node = search_node->getParent();
+
+    if(parent_node == nullptr)
+    {
+        std::cout << "EasyTree::setNodeAxisInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl;
+        axis_in_parent.outputInfo(1);
+        std::cout << "parent node not exist!" << std::endl;
+
+        return false;
+    }
+
+    const EasyAxis2D &search_node_axis_in_parent = search_node->getAxisInParent();
+
+    const EasyAxis2D search_node_axis_in_parent_copy = search_node_axis_in_parent;
+
+    if(!search_node->setAxisInParent(
+          axis_in_parent.center_.x,
+          axis_in_parent.center_.y,
+          axis_in_parent.x_direction_.x,
+          axis_in_parent.x_direction_.y))
+    {
+        std::cout << "EasyTree::setNodeAxisInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl;
+        axis_in_parent.outputInfo(1);
+        std::cout << "setAxisInParent for node failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!isNodeSpaceValid(search_node))
+    {
+        if(!search_node->setAxisInParent(
+              search_node_axis_in_parent_copy.center_.x,
+              search_node_axis_in_parent_copy.center_.y,
+              search_node_axis_in_parent_copy.x_direction_.x,
+              search_node_axis_in_parent_copy.x_direction_.y))
+        {
+            std::cout << "EasyTree::setNodeAxisInParent : " << std::endl <<
+              "Input :\n" <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl;
+            axis_in_parent.outputInfo(1);
+            std::cout << "setAxisInParent for node to reset failed!" << std::endl;
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool EasyTree::setNodeAxisInWorld(
+    const size_t &node_id,
+    const NodeType &node_type,
+    const EasyAxis2D &axis_in_world)
+{
+    EasyNode* search_node = findNode(node_id, node_type);
+
+    if(search_node == nullptr)
+    {
+        std::cout << "EasyTree::setNodeAxisInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl;
+        axis_in_world.outputInfo(1);
+        std::cout << "this node not exist!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* parent_node = search_node->getParent();
+
+    if(parent_node == nullptr)
+    {
+        std::cout << "EasyTree::setNodeAxisInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl;
+        axis_in_world.outputInfo(1);
+        std::cout << "parent node not exist!" << std::endl;
+
+        return false;
+    }
+
+    EasyPoint2D axis_center_in_parent;
+    EasyPoint2D axis_x_direction_in_parent;
+
+    if(!parent_node->getPointInNode(
+          axis_in_world.center_,
+          axis_center_in_parent))
+    {
+        std::cout << "EasyTree::setNodeAxisInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl;
+        axis_in_world.outputInfo(1);
+        std::cout << "getPointInNode for axis center in parent failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!parent_node->getPointInNode(
+          axis_in_world.x_direction_,
+          axis_x_direction_in_parent))
+    {
+        std::cout << "EasyTree::setNodeAxisInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl;
+        axis_in_world.outputInfo(1);
+        std::cout << "getPointInNode for axis x direction in parent failed!" << std::endl;
+
+        return false;
+    }
+
+    const EasyAxis2D &search_node_axis_in_parent = search_node->getAxisInParent();
+
+    const EasyAxis2D search_node_axis_in_parent_copy = search_node_axis_in_parent;
+
+    if(!search_node->setAxisInParent(
+          axis_center_in_parent.x,
+          axis_center_in_parent.y,
+          axis_x_direction_in_parent.x,
+          axis_x_direction_in_parent.y))
+    {
+        std::cout << "EasyTree::setNodeAxisInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tnode_id = " << node_id << std::endl <<
+          "\tnode_type = " << node_type << std::endl;
+        axis_in_world.outputInfo(1);
+        std::cout << "setAxisInParent for node failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!isNodeSpaceValid(search_node))
+    {
+        if(!search_node->setAxisInParent(
+              search_node_axis_in_parent_copy.center_.x,
+              search_node_axis_in_parent_copy.center_.y,
+              search_node_axis_in_parent_copy.x_direction_.x,
+              search_node_axis_in_parent_copy.x_direction_.y))
+        {
+            std::cout << "EasyTree::setNodeAxisXDirectionInWorld : " << std::endl <<
+              "Input :\n" <<
+              "\tnode_id = " << node_id << std::endl <<
+              "\tnode_type = " << node_type << std::endl;
+            axis_in_world.outputInfo(1);
+            std::cout << "setAxisInParent for node to reset failed!" << std::endl;
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool EasyTree::setNodeBoundaryPolygon(
     const size_t &node_id,
     const NodeType &node_type,

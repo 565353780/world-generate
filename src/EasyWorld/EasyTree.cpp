@@ -199,17 +199,6 @@ EasyNode* EasyTree::findNode(
 
     EasyNode* search_node = root_->findFromAllChild(id, type);
 
-    if(search_node == nullptr)
-    {
-        std::cout << "EasyTree::findNode : " << std::endl <<
-          "Input :\n" <<
-          "\tid = " << id << std::endl <<
-          "\ttype = " << type << std::endl <<
-          "findFromAllChild start from root failed!" << std::endl;
-
-        return nullptr;
-    }
-
     return search_node;
 }
 

@@ -1111,7 +1111,7 @@ bool WorldController::createFurnitureForPerson(
 
     std::pair<size_t, NodeType> new_furniture_pair;
     new_furniture_pair.first = new_furniture_id;
-    new_furniture_pair.second = NodeType::Person;
+    new_furniture_pair.second = NodeType::Furniture;
 
     furniture_pair_vec_.emplace_back(new_furniture_pair);
 
@@ -1150,8 +1150,8 @@ bool WorldController::createFurnitureForPerson(
     furniture_node_boundary_polygon.point_list[1].setPosition(person_size.x, person_size.y);
     furniture_node_boundary_polygon.point_list[2].setPosition(person_size.x, 0.6 * person_size.y);
     furniture_node_boundary_polygon.point_list[3].setPosition(0.75 * person_size.x, 0.6 * person_size.y);
-    furniture_node_boundary_polygon.point_list[4].setPosition(0.75 * person_size.x, 0.2 * person_size.y);
-    furniture_node_boundary_polygon.point_list[5].setPosition(0.25 * person_size.x, 0.2 * person_size.y);
+    furniture_node_boundary_polygon.point_list[4].setPosition(0.75 * person_size.x, 0.3 * person_size.y);
+    furniture_node_boundary_polygon.point_list[5].setPosition(0.25 * person_size.x, 0.3 * person_size.y);
     furniture_node_boundary_polygon.point_list[6].setPosition(0.25 * person_size.x, 0.6 * person_size.y);
     furniture_node_boundary_polygon.point_list[7].setPosition(0, 0.6 * person_size.y);
     furniture_node_boundary_polygon.setAntiClockWise();

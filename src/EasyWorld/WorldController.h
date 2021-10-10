@@ -124,6 +124,11 @@ public:
         const size_t &point_idx,
         const EasyPoint2D &point_new_position_in_world);
 
+    bool createPersonForTeam(
+        const size_t &team_id,
+        const size_t &team_type,
+        const EasyAxis2D &person_axis_in_parent);
+
     bool createFurniture(
         const size_t &furniture_id,
         const NodeType &furniture_type,

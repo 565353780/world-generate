@@ -224,7 +224,8 @@ bool WorldController::createRoom(
     const NodeType &on_wall_type,
     const size_t &wall_boundary_id)
 {
-    if(room_type != NodeType::Room)
+    if(room_type != NodeType::WallRoom &&
+        room_type != NodeType::FreeRoom)
     {
         std::cout << "WorldController::createRoom : " << std::endl <<
           "Input :\n" <<
@@ -267,7 +268,8 @@ bool WorldController::setRoomAxisCenterPositionInParent(
     const NodeType &room_type,
     const EasyPoint2D &axis_new_center_position_in_parent)
 {
-    if(room_type != NodeType::Room)
+    if(room_type != NodeType::WallRoom &&
+        room_type != NodeType::FreeRoom)
     {
         std::cout << "WorldController::setRoomAxisCenterPositionInParent : " << std::endl <<
           "Input :\n" <<
@@ -285,7 +287,7 @@ bool WorldController::setRoomAxisCenterPositionInParent(
           room_type,
           axis_new_center_position_in_parent,
           true,
-          false))
+          room_type == NodeType::FreeRoom))
     {
         std::cout << "WorldController::setRoomAxisCenterPositionInParent : " << std::endl <<
           "Input :\n" <<
@@ -306,7 +308,8 @@ bool WorldController::setRoomAxisCenterPositionInWorld(
     const NodeType &room_type,
     const EasyPoint2D &axis_new_center_position_in_world)
 {
-    if(room_type != NodeType::Room)
+    if(room_type != NodeType::WallRoom &&
+        room_type != NodeType::FreeRoom)
     {
         std::cout << "WorldController::setRoomAxisCenterPositionInWorld : " << std::endl <<
           "Input :\n" <<
@@ -324,7 +327,7 @@ bool WorldController::setRoomAxisCenterPositionInWorld(
           room_type,
           axis_new_center_position_in_world,
           true,
-          false))
+          room_type == NodeType::FreeRoom))
     {
         std::cout << "WorldController::setRoomAxisCenterPositionInWorld : " << std::endl <<
           "Input :\n" <<
@@ -345,7 +348,8 @@ bool WorldController::setRoomBoundaryPolygon(
     const NodeType &room_type,
     const EasyPolygon2D &room_boundary_polygon)
 {
-    if(room_type != NodeType::Room)
+    if(room_type != NodeType::WallRoom &&
+        room_type != NodeType::FreeRoom)
     {
         std::cout << "WorldController::setRoomBoundaryPolygon : " << std::endl <<
           "Input :\n" <<
@@ -376,7 +380,8 @@ bool WorldController::setRoomBoundaryPolygonPointPosition(
     const size_t &point_idx,
     const EasyPoint2D &point_new_position_in_world)
 {
-    if(room_type != NodeType::Room)
+    if(room_type != NodeType::WallRoom &&
+        room_type != NodeType::FreeRoom)
     {
         std::cout << "WorldController::setRoomBoundaryPolygonPointPosition : " << std::endl <<
           "Input :\n" <<
@@ -776,6 +781,25 @@ bool WorldController::setPersonBoundaryPolygonPointPosition(
     }
 
     return true;
+}
+
+bool WorldController::createPersonForTeam(
+    const size_t &team_id,
+    const size_t &team_type,
+    const EasyAxis2D &person_axis_in_parent)
+{
+    if(team_type != NodeType::Team)
+    {
+        std::cout << "WorldController::createPersonForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_axis_in_parent :" << std::endl;
+        person_axis_in_parent.outputInfo(1);
+        std::cout << "this type is not the team type!" << std::endl;
+
+        return false;
+    }
 }
 
 bool WorldController::createFurniture(

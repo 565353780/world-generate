@@ -70,11 +70,11 @@ void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
     // moveWallInWorld(0, NodeType::OuterWall, event);
 
-    moveRoomInWorld(0, NodeType::Room, event);
+    // moveRoomInWorld(0, NodeType::WallRoom, event);
 
     // movePersonInWorld(0, NodeType::Person, event);
 
-    // moveFurnitureInWorld(0, NodeType::Furniture, event);
+    moveFurnitureInWorld(0, NodeType::Furniture, event);
 }
 
 void EasyWorldWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -96,10 +96,11 @@ bool EasyWorldWidget::createWall()
     world_controller_.createWall(0, NodeType::OuterWall);
 
     EasyPolygon2D wall_boundary_polygon;
-    wall_boundary_polygon.addPoint(0, 0);
-    wall_boundary_polygon.addPoint(300, 0);
-    wall_boundary_polygon.addPoint(300, 300);
-    wall_boundary_polygon.addPoint(0, 300);
+    wall_boundary_polygon.point_list.resize(4);
+    wall_boundary_polygon.point_list[0].setPosition(0, 0);
+    wall_boundary_polygon.point_list[1].setPosition(300, 0);
+    wall_boundary_polygon.point_list[2].setPosition(300, 300);
+    wall_boundary_polygon.point_list[3].setPosition(0, 300);
     wall_boundary_polygon.setAntiClockWise();
 
     world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon);
@@ -109,50 +110,68 @@ bool EasyWorldWidget::createWall()
 
 bool EasyWorldWidget::createRoom()
 {
-    world_controller_.createRoom(0, NodeType::Room, 0, NodeType::OuterWall, 0);
-    world_controller_.createRoom(1, NodeType::Room, 0, NodeType::OuterWall, 0);
-    world_controller_.createRoom(2, NodeType::Room, 0, NodeType::OuterWall, 0);
-    world_controller_.createRoom(3, NodeType::Room, 0, NodeType::OuterWall, 2);
-    world_controller_.createRoom(4, NodeType::Room, 0, NodeType::OuterWall, 2);
+    world_controller_.createRoom(0, NodeType::FreeRoom, 0, NodeType::OuterWall, 0);
+    world_controller_.createRoom(0, NodeType::WallRoom, 0, NodeType::OuterWall, 0);
+    world_controller_.createRoom(1, NodeType::WallRoom, 0, NodeType::OuterWall, 0);
+    world_controller_.createRoom(2, NodeType::WallRoom, 0, NodeType::OuterWall, 0);
+    world_controller_.createRoom(3, NodeType::WallRoom, 0, NodeType::OuterWall, 2);
+    world_controller_.createRoom(4, NodeType::WallRoom, 0, NodeType::OuterWall, 2);
 
     EasyPolygon2D room_boundary_polygon;
-    room_boundary_polygon.addPoint(0, 0);
-    room_boundary_polygon.addPoint(100, 0);
-    room_boundary_polygon.addPoint(100, 100);
-    room_boundary_polygon.addPoint(0, 100);
+    room_boundary_polygon.point_list.resize(4);
+    room_boundary_polygon.point_list[0].setPosition(0, 0);
+    room_boundary_polygon.point_list[1].setPosition(280, 0);
+    room_boundary_polygon.point_list[2].setPosition(280, 80);
+    room_boundary_polygon.point_list[3].setPosition(0, 80);
     room_boundary_polygon.setAntiClockWise();
 
-    world_controller_.setRoomBoundaryPolygon(0, NodeType::Room, room_boundary_polygon);
-    world_controller_.setRoomBoundaryPolygon(1, NodeType::Room, room_boundary_polygon);
-    world_controller_.setRoomBoundaryPolygon(2, NodeType::Room, room_boundary_polygon);
-    world_controller_.setRoomBoundaryPolygon(3, NodeType::Room, room_boundary_polygon);
-    world_controller_.setRoomBoundaryPolygon(4, NodeType::Room, room_boundary_polygon);
+    world_controller_.setRoomBoundaryPolygon(0, NodeType::FreeRoom, room_boundary_polygon);
+
+    room_boundary_polygon.point_list[0].setPosition(0, 0);
+    room_boundary_polygon.point_list[1].setPosition(100, 0);
+    room_boundary_polygon.point_list[2].setPosition(100, 100);
+    room_boundary_polygon.point_list[3].setPosition(0, 100);
+    room_boundary_polygon.setAntiClockWise();
+
+    world_controller_.setRoomBoundaryPolygon(0, NodeType::WallRoom, room_boundary_polygon);
+    world_controller_.setRoomBoundaryPolygon(1, NodeType::WallRoom, room_boundary_polygon);
+    world_controller_.setRoomBoundaryPolygon(2, NodeType::WallRoom, room_boundary_polygon);
+    world_controller_.setRoomBoundaryPolygon(3, NodeType::WallRoom, room_boundary_polygon);
+    world_controller_.setRoomBoundaryPolygon(4, NodeType::WallRoom, room_boundary_polygon);
 
     EasyPoint2D room_axis_center_position_in_parent;
 
+    room_axis_center_position_in_parent.setPosition(10, 110);
+    world_controller_.setRoomAxisCenterPositionInParent(0, NodeType::FreeRoom, room_axis_center_position_in_parent);
+
     room_axis_center_position_in_parent.setPosition(100, 0);
-    world_controller_.setRoomAxisCenterPositionInParent(1, NodeType::Room, room_axis_center_position_in_parent);
+    world_controller_.setRoomAxisCenterPositionInParent(1, NodeType::WallRoom, room_axis_center_position_in_parent);
 
     room_axis_center_position_in_parent.setPosition(200, 0);
-    world_controller_.setRoomAxisCenterPositionInParent(2, NodeType::Room, room_axis_center_position_in_parent);
-    world_controller_.setRoomAxisCenterPositionInParent(4, NodeType::Room, room_axis_center_position_in_parent);
+    world_controller_.setRoomAxisCenterPositionInParent(2, NodeType::WallRoom, room_axis_center_position_in_parent);
+    world_controller_.setRoomAxisCenterPositionInParent(4, NodeType::WallRoom, room_axis_center_position_in_parent);
 
     return true;
 }
 
 bool EasyWorldWidget::createTeam()
 {
-    world_controller_.createTeam(0, NodeType::Team, 0, NodeType::Room);
-    world_controller_.createTeam(1, NodeType::Team, 1, NodeType::Room);
-    world_controller_.createTeam(2, NodeType::Team, 2, NodeType::Room);
-    world_controller_.createTeam(3, NodeType::Team, 3, NodeType::Room);
-    world_controller_.createTeam(4, NodeType::Team, 4, NodeType::Room);
+    world_controller_.createTeam(0, NodeType::Team, 0, NodeType::WallRoom);
+    world_controller_.createTeam(1, NodeType::Team, 1, NodeType::WallRoom);
+    world_controller_.createTeam(2, NodeType::Team, 2, NodeType::WallRoom);
+    world_controller_.createTeam(3, NodeType::Team, 3, NodeType::WallRoom);
+    world_controller_.createTeam(4, NodeType::Team, 4, NodeType::WallRoom);
+
+    world_controller_.createTeam(5, NodeType::Team, 0, NodeType::FreeRoom);
+    world_controller_.createTeam(6, NodeType::Team, 0, NodeType::FreeRoom);
+    world_controller_.createTeam(7, NodeType::Team, 0, NodeType::FreeRoom);
 
     EasyPolygon2D team_boundary_polygon;
-    team_boundary_polygon.addPoint(0, 0);
-    team_boundary_polygon.addPoint(50, 0);
-    team_boundary_polygon.addPoint(50, 50);
-    team_boundary_polygon.addPoint(0, 50);
+    team_boundary_polygon.point_list.resize(4);
+    team_boundary_polygon.point_list[0].setPosition(0, 0);
+    team_boundary_polygon.point_list[1].setPosition(50, 0);
+    team_boundary_polygon.point_list[2].setPosition(50, 50);
+    team_boundary_polygon.point_list[3].setPosition(0, 50);
     team_boundary_polygon.setAntiClockWise();
 
     world_controller_.setTeamBoundaryPolygon(0, NodeType::Team, team_boundary_polygon);
@@ -160,6 +179,16 @@ bool EasyWorldWidget::createTeam()
     world_controller_.setTeamBoundaryPolygon(2, NodeType::Team, team_boundary_polygon);
     world_controller_.setTeamBoundaryPolygon(3, NodeType::Team, team_boundary_polygon);
     world_controller_.setTeamBoundaryPolygon(4, NodeType::Team, team_boundary_polygon);
+
+    team_boundary_polygon.point_list[0].setPosition(0, 0);
+    team_boundary_polygon.point_list[1].setPosition(80, 0);
+    team_boundary_polygon.point_list[2].setPosition(80, 60);
+    team_boundary_polygon.point_list[3].setPosition(0, 60);
+    team_boundary_polygon.setAntiClockWise();
+
+    world_controller_.setTeamBoundaryPolygon(5, NodeType::Team, team_boundary_polygon);
+    world_controller_.setTeamBoundaryPolygon(6, NodeType::Team, team_boundary_polygon);
+    world_controller_.setTeamBoundaryPolygon(7, NodeType::Team, team_boundary_polygon);
 
     EasyPoint2D team_axis_center_position_in_parent;
     team_axis_center_position_in_parent.setPosition(25, 25);
@@ -169,6 +198,13 @@ bool EasyWorldWidget::createTeam()
     world_controller_.setTeamAxisCenterPositionInParent(2, NodeType::Team, team_axis_center_position_in_parent);
     world_controller_.setTeamAxisCenterPositionInParent(3, NodeType::Team, team_axis_center_position_in_parent);
     world_controller_.setTeamAxisCenterPositionInParent(4, NodeType::Team, team_axis_center_position_in_parent);
+
+    team_axis_center_position_in_parent.setPosition(190, 10);
+    world_controller_.setTeamAxisCenterPositionInParent(7, NodeType::Team, team_axis_center_position_in_parent);
+    team_axis_center_position_in_parent.setPosition(100, 10);
+    world_controller_.setTeamAxisCenterPositionInParent(6, NodeType::Team, team_axis_center_position_in_parent);
+    team_axis_center_position_in_parent.setPosition(10, 10);
+    world_controller_.setTeamAxisCenterPositionInParent(5, NodeType::Team, team_axis_center_position_in_parent);
 
     return true;
 }
@@ -180,6 +216,24 @@ bool EasyWorldWidget::createPerson()
     world_controller_.createPerson(2, NodeType::Person, 2, NodeType::Team);
     world_controller_.createPerson(3, NodeType::Person, 3, NodeType::Team);
     world_controller_.createPerson(4, NodeType::Person, 4, NodeType::Team);
+
+    world_controller_.createPerson(5, NodeType::Person, 5, NodeType::Team);
+    world_controller_.createPerson(6, NodeType::Person, 5, NodeType::Team);
+    world_controller_.createPerson(7, NodeType::Person, 5, NodeType::Team);
+    world_controller_.createPerson(8, NodeType::Person, 5, NodeType::Team);
+    world_controller_.createPerson(9, NodeType::Person, 5, NodeType::Team);
+    world_controller_.createPerson(10, NodeType::Person, 5, NodeType::Team);
+    world_controller_.createPerson(11, NodeType::Person, 5, NodeType::Team);
+    world_controller_.createPerson(12, NodeType::Person, 5, NodeType::Team);
+
+    world_controller_.createPerson(13, NodeType::Person, 6, NodeType::Team);
+    world_controller_.createPerson(14, NodeType::Person, 6, NodeType::Team);
+    world_controller_.createPerson(15, NodeType::Person, 6, NodeType::Team);
+    world_controller_.createPerson(16, NodeType::Person, 6, NodeType::Team);
+    world_controller_.createPerson(17, NodeType::Person, 6, NodeType::Team);
+    world_controller_.createPerson(18, NodeType::Person, 6, NodeType::Team);
+    world_controller_.createPerson(19, NodeType::Person, 6, NodeType::Team);
+    world_controller_.createPerson(20, NodeType::Person, 6, NodeType::Team);
 
     EasyPolygon2D person_boundary_polygon;
     person_boundary_polygon.addPoint(0, 0);

@@ -796,6 +796,8 @@ bool WorldController::createPersonForTeam(
           "Input :\n" <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
+          "\tperson_width = " << person_width << std::endl <<
+          "\tperson_height = " << person_height << std::endl <<
           "\tperson_axis_in_parent :" << std::endl;
         person_axis_in_parent.outputInfo(1);
         std::cout << "this type is not the team type!" << std::endl;
@@ -809,6 +811,8 @@ bool WorldController::createPersonForTeam(
           "Input :\n" <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
+          "\tperson_width = " << person_width << std::endl <<
+          "\tperson_height = " << person_height << std::endl <<
           "\tperson_axis_in_parent :" << std::endl;
         person_axis_in_parent.outputInfo(1);
         std::cout << "this team node not exist!" << std::endl;
@@ -828,6 +832,8 @@ bool WorldController::createPersonForTeam(
           "Input :\n" <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
+          "\tperson_width = " << person_width << std::endl <<
+          "\tperson_height = " << person_height << std::endl <<
           "\tperson_axis_in_parent :" << std::endl;
         person_axis_in_parent.outputInfo(1);
         std::cout << "createNode for this person node failed!" << std::endl;
@@ -855,6 +861,8 @@ bool WorldController::createPersonForTeam(
           "Input :\n" <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
+          "\tperson_width = " << person_width << std::endl <<
+          "\tperson_height = " << person_height << std::endl <<
           "\tperson_axis_in_parent :" << std::endl;
         person_axis_in_parent.outputInfo(1);
         std::cout << "setNodeBoundaryPolygon for new person failed!" << std::endl;
@@ -868,11 +876,265 @@ bool WorldController::createPersonForTeam(
           "Input :\n" <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
+          "\tperson_width = " << person_width << std::endl <<
+          "\tperson_height = " << person_height << std::endl <<
           "\tperson_axis_in_parent :" << std::endl;
         person_axis_in_parent.outputInfo(1);
         std::cout << "setNodeAxisInParent for new person failed!" << std::endl;
 
         return false;
+    }
+
+    if(!createFurnitureForPerson(new_person_id, NodeType::Person))
+    {
+        std::cout << "WorldController::createPersonForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_width = " << person_width << std::endl <<
+          "\tperson_height = " << person_height << std::endl <<
+          "\tperson_axis_in_parent :" << std::endl;
+        person_axis_in_parent.outputInfo(1);
+        std::cout << "createFurnitureForPerson for new person failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::createPersonGroupForTeam(
+    const size_t &team_id,
+    const NodeType &team_type,
+    const size_t &person_x_direction_num,
+    const size_t &person_y_direction_num,
+    const bool &is_face_horizontal)
+{
+    if(team_type != NodeType::Team)
+    {
+        std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+          "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+          "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+          "this type is not the team type!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* search_node = findNode(team_id, team_type);
+
+    if(search_node == nullptr)
+    {
+        std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+          "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+          "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+          "this team node not exist!" << std::endl;
+
+        return false;
+    }
+
+    if(person_x_direction_num == 0 || person_y_direction_num == 0)
+    {
+        std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+          "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+          "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+          "this person size not valid!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* search_space_node = search_node->findChild(0, NodeType::Space);
+
+    if(search_space_node == nullptr)
+    {
+        std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+          "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+          "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+          "team space node not exist!" << std::endl;
+
+        return false;
+    }
+
+    const EasyPolygon2D &search_space_boundary_polygon =
+      search_space_node->getBoundaryPolygon();
+
+    if(search_space_boundary_polygon.point_list.size() != 4)
+    {
+        std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+          "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+          "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+          "team space boundary polygon size != 4!" << std::endl;
+
+        return false;
+    }
+
+    const EasyPoint2D &team_size = search_space_boundary_polygon.point_list[2];
+
+    float person_x_length = team_size.x / person_x_direction_num;
+    float person_y_length = team_size.y / person_y_direction_num;
+
+    std::vector<EasyAxis2D> axis_vec;
+    axis_vec.resize(2);
+
+    if(is_face_horizontal)
+    {
+        if(!axis_vec[0].setXDirection(0, -1))
+        {
+            std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+              "Input :\n" <<
+              "\tteam_id = " << team_id << std::endl <<
+              "\tteam_type = " << team_type << std::endl <<
+              "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+              "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+              "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+              "setXDirection for person basic axis failed!" << std::endl;
+
+            return false;
+        }
+
+        if(!axis_vec[1].setXDirection(0, 1))
+        {
+            std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+              "Input :\n" <<
+              "\tteam_id = " << team_id << std::endl <<
+              "\tteam_type = " << team_type << std::endl <<
+              "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+              "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+              "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+              "setXDirection for person opposite axis failed!" << std::endl;
+
+            return false;
+        }
+    }
+    else
+    {
+        if(!axis_vec[0].setXDirection(1, 0))
+        {
+            std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+              "Input :\n" <<
+              "\tteam_id = " << team_id << std::endl <<
+              "\tteam_type = " << team_type << std::endl <<
+              "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+              "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+              "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+              "setXDirection for person first axis failed!" << std::endl;
+
+            return false;
+        }
+
+        if(!axis_vec[1].setXDirection(-1, 0))
+        {
+            std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+              "Input :\n" <<
+              "\tteam_id = " << team_id << std::endl <<
+              "\tteam_type = " << team_type << std::endl <<
+              "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+              "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+              "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+              "setXDirection for person second axis failed!" << std::endl;
+
+            return false;
+        }
+    }
+
+    if(is_face_horizontal)
+    {
+        for(size_t i = 0; i < person_x_direction_num; ++i)
+        {
+            const size_t use_axis_idx = i % 2;
+            for(size_t j = 0; j < person_y_direction_num; ++j)
+            {
+                if(!axis_vec[use_axis_idx].setCenter(
+                      (i + use_axis_idx) * person_x_length,
+                      (j + ((use_axis_idx + 1) % 2)) * person_y_length))
+                {
+                    std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+                      "Input :\n" <<
+                      "\tteam_id = " << team_id << std::endl <<
+                      "\tteam_type = " << team_type << std::endl <<
+                      "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+                      "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+                      "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+                      "setCenter for current person axis failed!" << std::endl;
+
+                    return false;
+                }
+
+                if(!createPersonForTeam(
+                      team_id, team_type, person_y_length, person_x_length, axis_vec[use_axis_idx]))
+                {
+                    std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+                      "Input :\n" <<
+                      "\tteam_id = " << team_id << std::endl <<
+                      "\tteam_type = " << team_type << std::endl <<
+                      "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+                      "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+                      "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+                      "createPersonForTeam for new person failed!" << std::endl;
+
+                    return false;
+                }
+            }
+        }
+    }
+    else
+    {
+        for(size_t j = 0; j < person_y_direction_num; ++j)
+        {
+            const size_t use_axis_idx = j % 2;
+            for(size_t i = 0; i < person_x_direction_num; ++i)
+            {
+                if(!axis_vec[use_axis_idx].setCenter(
+                      (i + use_axis_idx) * person_x_length,
+                      (j + use_axis_idx) * person_y_length))
+                {
+                    std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+                      "Input :\n" <<
+                      "\tteam_id = " << team_id << std::endl <<
+                      "\tteam_type = " << team_type << std::endl <<
+                      "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+                      "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+                      "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+                      "setCenter for current person axis failed!" << std::endl;
+
+                    return false;
+                }
+
+                if(!createPersonForTeam(
+                      team_id, team_type, person_x_length, person_y_length, axis_vec[use_axis_idx]))
+                {
+                    std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+                      "Input :\n" <<
+                      "\tteam_id = " << team_id << std::endl <<
+                      "\tteam_type = " << team_type << std::endl <<
+                      "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+                      "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+                      "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+                      "createPersonForTeam for new person failed!" << std::endl;
+
+                    return false;
+                }
+            }
+        }
     }
 
     return true;

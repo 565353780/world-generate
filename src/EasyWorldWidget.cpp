@@ -29,7 +29,6 @@ void EasyWorldWidget::run_example()
     createRoom();
     createTeam();
     createPerson();
-    createFurniture();
 
     // world_controller_.outputInfo();
 
@@ -41,22 +40,14 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
 
     drawWallSpaceBoundary();
-    // drawWallBoundaryPolygon();
-
     drawRoomSpaceBoundary();
-    // drawRoomBoundaryPolygon();
-
-    // drawTeamSpaceBoundary();
-    // drawTeamBoundaryPolygon();
-
-    drawPersonSpaceBoundary();
-    // drawPersonBoundaryPolygon();
-
+    drawTeamSpaceBoundary();
+    // drawPersonSpaceBoundary();
     drawFurnitureSpaceBoundary();
-    // drawFurnitureBoundaryPolygon();
 
     // drawWallBoundaryAxis();
     // drawRoomBoundaryAxis();
+    // drawTeamBoundaryAxis();
     // drawPersonBoundaryAxis();
     // drawFurnitureBoundaryAxis();
 }
@@ -72,9 +63,7 @@ void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
 
     // moveRoomInWorld(0, NodeType::WallRoom, event);
 
-    // movePersonInWorld(0, NodeType::Person, event);
-
-    moveFurnitureInWorld(0, NodeType::Furniture, event);
+    moveTeamInWorld(0, NodeType::Team, event);
 }
 
 void EasyWorldWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -225,16 +214,9 @@ bool EasyWorldWidget::createPerson()
     world_controller_.createPersonForTeam(3, NodeType::Team, person_width, person_height, person_axis_in_parent);
     world_controller_.createPersonForTeam(4, NodeType::Team, person_width, person_height, person_axis_in_parent);
 
-    return true;
-}
-
-bool EasyWorldWidget::createFurniture()
-{
-    world_controller_.createFurnitureForPerson(0, NodeType::Person);
-    world_controller_.createFurnitureForPerson(1, NodeType::Person);
-    world_controller_.createFurnitureForPerson(2, NodeType::Person);
-    world_controller_.createFurnitureForPerson(3, NodeType::Person);
-    world_controller_.createFurnitureForPerson(4, NodeType::Person);
+    world_controller_.createPersonGroupForTeam(5, NodeType::Team, 4, 4, true);
+    world_controller_.createPersonGroupForTeam(6, NodeType::Team, 4, 4, true);
+    world_controller_.createPersonGroupForTeam(7, NodeType::Team, 4, 4, true);
 
     return true;
 }

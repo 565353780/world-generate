@@ -131,6 +131,13 @@ public:
         const float &person_height,
         const EasyAxis2D &person_axis_in_parent);
 
+    bool createPersonGroupForTeam(
+        const size_t &team_id,
+        const NodeType &team_type,
+        const size_t &person_x_direction_num,
+        const size_t &person_y_direction_num,
+        const bool &is_face_horizontal);
+
     bool createFurniture(
         const size_t &furniture_id,
         const NodeType &furniture_type,

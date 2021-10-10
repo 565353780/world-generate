@@ -34,9 +34,21 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
 
+private:
+    bool createWorld();
+    bool createWall();
+    bool createRoom();
+    bool createPerson();
+    bool createFurniture();
+
     bool moveRoomInWorld(
         const size_t &room_id,
         const NodeType &room_type,
+        QMouseEvent *event);
+
+    bool movePersonInWorld(
+        const size_t &person_id,
+        const NodeType &person_type,
         QMouseEvent *event);
 
     bool moveFurnitureInWorld(
@@ -52,11 +64,14 @@ protected:
     bool drawRoomBoundaryPolygon();
     bool drawRoomSpaceBoundary();
 
+    bool drawPersonBoundaryAxis();
+    bool drawPersonBoundaryPolygon();
+    bool drawPersonSpaceBoundary();
+
     bool drawFurnitureBoundaryAxis();
     bool drawFurnitureBoundaryPolygon();
     bool drawFurnitureSpaceBoundary();
 
-private:
     bool setStartTime();
 
     bool getFPS(

@@ -60,11 +60,38 @@ public:
         const size_t &point_idx,
         const EasyPoint2D &point_new_position_in_world);
 
+    bool createPerson(
+        const size_t &person_id,
+        const NodeType &person_type,
+        const size_t &on_room_id,
+        const NodeType &on_room_type);
+
+    bool setPersonAxisCenterPositionInParent(
+        const size_t &person_id,
+        const NodeType &person_type,
+        const EasyPoint2D &axis_new_center_position_in_parent);
+
+    bool setPersonAxisCenterPositionInWorld(
+        const size_t &person_id,
+        const NodeType &person_type,
+        const EasyPoint2D &axis_new_center_position_in_world);
+
+    bool setPersonBoundaryPolygon(
+        const size_t &person_id,
+        const NodeType &person_type,
+        const EasyPolygon2D &person_boundary_polygon);
+
+    bool setPersonBoundaryPolygonPointPosition(
+        const size_t &person_id,
+        const NodeType &person_type,
+        const size_t &point_idx,
+        const EasyPoint2D &point_new_position_in_world);
+
     bool createFurniture(
         const size_t &furniture_id,
         const NodeType &furniture_type,
-        const size_t &on_room_id,
-        const NodeType &on_room_type);
+        const size_t &on_person_id,
+        const NodeType &on_person_type);
 
     bool setFurnitureAxisCenterPositionInParent(
         const size_t &furniture_id,
@@ -109,6 +136,15 @@ public:
     bool getRoomSpaceNodeVec(
         std::vector<EasyNode*> &room_space_node_vec);
 
+    bool getPersonNodeVec(
+        std::vector<EasyNode*> &person_node_vec);
+
+    bool getPersonBoundaryNodeVecVec(
+        std::vector<std::vector<EasyNode*>> &person_boundary_node_vec_vec);
+
+    bool getPersonSpaceNodeVec(
+        std::vector<EasyNode*> &person_space_node_vec);
+
     bool getFurnitureNodeVec(
         std::vector<EasyNode*> &furniture_node_vec);
 
@@ -125,6 +161,7 @@ private:
 
     std::vector<std::pair<size_t, NodeType>> wall_pair_vec_;
     std::vector<std::pair<size_t, NodeType>> room_pair_vec_;
+    std::vector<std::pair<size_t, NodeType>> person_pair_vec_;
     std::vector<std::pair<size_t, NodeType>> furniture_pair_vec_;
 };
 

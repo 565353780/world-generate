@@ -24,10 +24,73 @@ EasyWorldWidget::~EasyWorldWidget()
 
 void EasyWorldWidget::run_example()
 {
+    createWorld();
+
+    createWall();
+
+    createRoom();
+
+    createPerson();
+
+    createFurniture();
+
+    // world_controller_.outputInfo();
+
+    std::cout << "finish run_example!" << std::endl;
+}
+
+void EasyWorldWidget::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event);
+
+    drawWallSpaceBoundary();
+    // drawWallBoundaryPolygon();
+
+    drawRoomSpaceBoundary();
+    // drawRoomBoundaryPolygon();
+
+    drawPersonSpaceBoundary();
+    // drawPersonBoundaryPolygon();
+
+    drawFurnitureSpaceBoundary();
+    // drawFurnitureBoundaryPolygon();
+
+    // drawWallBoundaryAxis();
+    // drawRoomBoundaryAxis();
+    // drawPersonBoundaryAxis();
+    // drawFurnitureBoundaryAxis();
+}
+
+void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+}
+
+void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    moveRoomInWorld(0, NodeType::Room, event);
+
+    // movePersonInWorld(0, NodeType::Person, event);
+
+    // moveFurnitureInWorld(0, NodeType::Furniture, event);
+}
+
+void EasyWorldWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+}
+
+bool EasyWorldWidget::createWorld()
+{
     world_controller_.reset();
 
     world_controller_.createWorld(400, 400);
 
+    return true;
+}
+
+bool EasyWorldWidget::createWall()
+{
     world_controller_.createWall(0, NodeType::OuterWall);
 
     EasyPolygon2D wall_boundary_polygon;
@@ -39,6 +102,11 @@ void EasyWorldWidget::run_example()
 
     world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon);
 
+    return true;
+}
+
+bool EasyWorldWidget::createRoom()
+{
     world_controller_.createRoom(0, NodeType::Room, 0, NodeType::OuterWall, 0);
     world_controller_.createRoom(1, NodeType::Room, 0, NodeType::OuterWall, 0);
     world_controller_.createRoom(2, NodeType::Room, 0, NodeType::OuterWall, 2);
@@ -59,15 +127,51 @@ void EasyWorldWidget::run_example()
 
     world_controller_.setRoomAxisCenterPositionInParent(1, NodeType::Room, room_axis_center_position_in_parent);
 
-    world_controller_.createFurniture(0, NodeType::Furniture, 0, NodeType::Room);
-    world_controller_.createFurniture(1, NodeType::Furniture, 1, NodeType::Room);
-    world_controller_.createFurniture(2, NodeType::Furniture, 2, NodeType::Room);
+    return true;
+}
+
+bool EasyWorldWidget::createPerson()
+{
+    world_controller_.createPerson(0, NodeType::Person, 0, NodeType::Room);
+    world_controller_.createPerson(1, NodeType::Person, 1, NodeType::Room);
+    world_controller_.createPerson(2, NodeType::Person, 2, NodeType::Room);
+
+    EasyPolygon2D person_boundary_polygon;
+    person_boundary_polygon.addPoint(0, 0);
+    person_boundary_polygon.addPoint(50, 0);
+    person_boundary_polygon.addPoint(50, 50);
+    person_boundary_polygon.addPoint(0, 50);
+    person_boundary_polygon.setAntiClockWise();
+
+    world_controller_.setPersonBoundaryPolygon(0, NodeType::Person, person_boundary_polygon);
+    world_controller_.setPersonBoundaryPolygon(1, NodeType::Person, person_boundary_polygon);
+    world_controller_.setPersonBoundaryPolygon(2, NodeType::Person, person_boundary_polygon);
+
+    EasyPoint2D person_axis_center_position_in_parent;
+    person_axis_center_position_in_parent.setPosition(25, 25);
+
+    world_controller_.setPersonAxisCenterPositionInParent(0, NodeType::Person, person_axis_center_position_in_parent);
+    world_controller_.setPersonAxisCenterPositionInParent(1, NodeType::Person, person_axis_center_position_in_parent);
+    world_controller_.setPersonAxisCenterPositionInParent(2, NodeType::Person, person_axis_center_position_in_parent);
+
+    return true;
+}
+
+bool EasyWorldWidget::createFurniture()
+{
+    world_controller_.createFurniture(0, NodeType::Furniture, 0, NodeType::Person);
+    world_controller_.createFurniture(1, NodeType::Furniture, 1, NodeType::Person);
+    world_controller_.createFurniture(2, NodeType::Furniture, 2, NodeType::Person);
 
     EasyPolygon2D furniture_boundary_polygon;
     furniture_boundary_polygon.addPoint(0, 0);
-    furniture_boundary_polygon.addPoint(20, 0);
-    furniture_boundary_polygon.addPoint(20, 10);
-    furniture_boundary_polygon.addPoint(0, 10);
+    furniture_boundary_polygon.addPoint(50, 0);
+    furniture_boundary_polygon.addPoint(50, -20);
+    furniture_boundary_polygon.addPoint(35, -20);
+    furniture_boundary_polygon.addPoint(35, -30);
+    furniture_boundary_polygon.addPoint(15, -30);
+    furniture_boundary_polygon.addPoint(15, -20);
+    furniture_boundary_polygon.addPoint(0, -20);
     furniture_boundary_polygon.setAntiClockWise();
 
     world_controller_.setFurnitureBoundaryPolygon(0, NodeType::Furniture, furniture_boundary_polygon);
@@ -75,50 +179,13 @@ void EasyWorldWidget::run_example()
     world_controller_.setFurnitureBoundaryPolygon(2, NodeType::Furniture, furniture_boundary_polygon);
 
     EasyPoint2D furniture_axis_center_position_in_parent;
-    furniture_axis_center_position_in_parent.setPosition(40, 45);
+    furniture_axis_center_position_in_parent.setPosition(0, 50);
 
     world_controller_.setFurnitureAxisCenterPositionInParent(0, NodeType::Furniture, furniture_axis_center_position_in_parent);
     world_controller_.setFurnitureAxisCenterPositionInParent(1, NodeType::Furniture, furniture_axis_center_position_in_parent);
     world_controller_.setFurnitureAxisCenterPositionInParent(2, NodeType::Furniture, furniture_axis_center_position_in_parent);
 
-    // world_controller_.outputInfo();
-
-    std::cout << "finish run_example!" << std::endl;
-}
-
-void EasyWorldWidget::paintEvent(QPaintEvent *event)
-{
-    Q_UNUSED(event);
-
-    drawWallSpaceBoundary();
-    // drawWallBoundaryPolygon();
-
-    drawRoomSpaceBoundary();
-    // drawRoomBoundaryPolygon();
-
-    drawFurnitureSpaceBoundary();
-    // drawFurnitureBoundaryPolygon();
-
-    drawWallBoundaryAxis();
-    drawRoomBoundaryAxis();
-    drawFurnitureBoundaryAxis();
-}
-
-void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
-{
-    Q_UNUSED(event);
-}
-
-void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
-{
-    // moveRoomInWorld(0, NodeType::Room, event);
-
-    moveFurnitureInWorld(0, NodeType::Furniture, event);
-}
-
-void EasyWorldWidget::mouseReleaseEvent(QMouseEvent *event)
-{
-    Q_UNUSED(event);
+    return true;
 }
 
 bool EasyWorldWidget::moveRoomInWorld(
@@ -136,6 +203,28 @@ bool EasyWorldWidget::moveRoomInWorld(
 
         world_controller_.setRoomAxisCenterPositionInWorld(
             room_id, room_type, new_room_pos);
+
+        update();
+    }
+
+    return true;
+}
+
+bool EasyWorldWidget::movePersonInWorld(
+    const size_t &person_id,
+    const NodeType &person_type,
+    QMouseEvent *event)
+{
+    if(event->buttons() == Qt::LeftButton)
+    {
+        const QPoint &mouse_pos = event->pos();
+
+        EasyPoint2D new_room_pos;
+
+        new_room_pos.setPosition(mouse_pos.x(), mouse_pos.y());
+
+        world_controller_.setPersonAxisCenterPositionInWorld(
+            person_id, person_type, new_room_pos);
 
         update();
     }
@@ -441,6 +530,146 @@ bool EasyWorldWidget::drawRoomSpaceBoundary()
 
     return true;
 }
+
+bool EasyWorldWidget::drawPersonBoundaryAxis()
+{
+    QPainter painter(this);
+
+    QPen pen_red(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_green(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    // QFont font_song("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song);
+
+    std::vector<std::vector<EasyNode*>> person_boundary_node_vec_vec;
+
+    world_controller_.getPersonBoundaryNodeVecVec(person_boundary_node_vec_vec);
+
+    for(const std::vector<EasyNode*>& person_boundary_node_vec: person_boundary_node_vec_vec)
+    {
+        for(const EasyNode* person_boundary_node : person_boundary_node_vec)
+        {
+            if(person_boundary_node == nullptr)
+            {
+                continue;
+            }
+
+            EasyAxis2D person_boundary_axis = person_boundary_node->getAxisInWorld();
+
+            painter.setPen(pen_red);
+
+            painter.drawLine(
+                person_boundary_axis.center_.x, person_boundary_axis.center_.y,
+                person_boundary_axis.center_.x + axis_length_ * person_boundary_axis.x_direction_.x,
+                person_boundary_axis.center_.y + axis_length_ * person_boundary_axis.x_direction_.y);
+
+            painter.setPen(pen_green);
+
+            painter.drawLine(
+                person_boundary_axis.center_.x, person_boundary_axis.center_.y,
+                person_boundary_axis.center_.x + axis_length_ * person_boundary_axis.y_direction_.x,
+                person_boundary_axis.center_.y + axis_length_ * person_boundary_axis.y_direction_.y);
+        }
+        
+    }
+    return true;
+}
+
+bool EasyWorldWidget::drawPersonBoundaryPolygon()
+{
+    QPainter painter(this);
+
+    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    // QFont font_song("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song);
+
+    painter.setPen(pen_black);
+
+    std::vector<std::vector<EasyNode*>> person_boundary_node_vec_vec;
+
+    world_controller_.getPersonBoundaryNodeVecVec(person_boundary_node_vec_vec);
+
+    for(const std::vector<EasyNode*> &person_boundary_node_vec :
+        person_boundary_node_vec_vec)
+    {
+        for(EasyNode* person_boundary_node : person_boundary_node_vec)
+        {
+            const EasyPolygon2D &person_boundary_polygon =
+              person_boundary_node->getBoundaryPolygon();
+
+            for(size_t i = 0; i < person_boundary_polygon.point_list.size(); ++i)
+            {
+                const EasyPoint2D &current_point =
+                  person_boundary_polygon.point_list[i];
+                const EasyPoint2D &next_point =
+                  person_boundary_polygon.point_list[
+                  (i + 1) % person_boundary_polygon.point_list.size()];
+
+                EasyPoint2D current_point_in_world;
+                EasyPoint2D next_point_in_world;
+                person_boundary_node->getPointInWorld(
+                    current_point, current_point_in_world);
+                person_boundary_node->getPointInWorld(
+                    next_point, next_point_in_world);
+
+                painter.drawLine(
+                    current_point_in_world.x, current_point_in_world.y,
+                    next_point_in_world.x, next_point_in_world.y);
+            }
+        }
+    }
+
+    return true;
+}
+
+bool EasyWorldWidget::drawPersonSpaceBoundary()
+{
+    QPainter painter(this);
+
+    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    // QFont font_song("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song);
+
+    painter.setPen(pen_black);
+
+    std::vector<EasyNode*> person_space_node_vec;
+
+    world_controller_.getPersonSpaceNodeVec(person_space_node_vec);
+
+    for(EasyNode* person_space_node : person_space_node_vec)
+    {
+        if(person_space_node == nullptr)
+        {
+            continue;
+        }
+
+        const EasyPolygon2D &person_space_polygon =
+          person_space_node->getBoundaryPolygon();
+
+        for(size_t i = 0; i < person_space_polygon.point_list.size(); ++i)
+        {
+            const EasyPoint2D &current_point = person_space_polygon.point_list[i];
+            const EasyPoint2D &next_point = person_space_polygon.point_list[
+              (i + 1) % person_space_polygon.point_list.size()];
+
+            EasyPoint2D current_point_in_world;
+            EasyPoint2D next_point_in_world;
+            person_space_node->getPointInWorld(
+                current_point, current_point_in_world);
+            person_space_node->getPointInWorld(
+                next_point, next_point_in_world);
+
+            painter.drawLine(
+                current_point_in_world.x, current_point_in_world.y,
+                next_point_in_world.x, next_point_in_world.y);
+        }
+    }
+
+    return true;
+}
+
 
 bool EasyWorldWidget::drawFurnitureBoundaryAxis()
 {

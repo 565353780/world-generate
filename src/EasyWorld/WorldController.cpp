@@ -326,11 +326,197 @@ bool WorldController::setRoomBoundaryPolygonPointPosition(
     return true;
 }
 
+bool WorldController::createPerson(
+    const size_t &person_id,
+    const NodeType &person_type,
+    const size_t &on_room_id,
+    const NodeType &on_room_type)
+{
+    if(person_type != NodeType::Person)
+    {
+        std::cout << "WorldController::createPerson : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "\ton_room_id = " << on_room_id << std::endl <<
+          "\ton_room_type = " << on_room_type << std::endl <<
+          "this type is not the person type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.createNode(
+          person_id, person_type, on_room_id, on_room_type, 0))
+    {
+        std::cout << "WorldController::createPerson : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "\ton_room_id = " << on_room_id << std::endl <<
+          "\ton_room_type = " << on_room_type << std::endl <<
+          "createNode for person failed!" << std::endl;
+
+        return false;
+    }
+
+    std::pair<size_t, NodeType> new_person_pair;
+    new_person_pair.first = person_id;
+    new_person_pair.second = person_type;
+
+    person_pair_vec_.emplace_back(new_person_pair);
+
+    return true;
+}
+
+bool WorldController::setPersonAxisCenterPositionInParent(
+    const size_t &person_id,
+    const NodeType &person_type,
+    const EasyPoint2D &axis_new_center_position_in_parent)
+{
+    if(person_type != NodeType::Person)
+    {
+        std::cout << "WorldController::setPersonAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "this type is not the person type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInParent(
+          person_id,
+          person_type,
+          axis_new_center_position_in_parent,
+          true,
+          true))
+    {
+        std::cout << "WorldController::setPersonAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this person node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setPersonAxisCenterPositionInWorld(
+    const size_t &person_id,
+    const NodeType &person_type,
+    const EasyPoint2D &axis_new_center_position_in_world)
+{
+    if(person_type != NodeType::Person)
+    {
+        std::cout << "WorldController::setPersonAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "this type is not the person type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInWorld(
+          person_id,
+          person_type,
+          axis_new_center_position_in_world,
+          true,
+          true))
+    {
+        std::cout << "WorldController::setPersonAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this person node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setPersonBoundaryPolygon(
+    const size_t &person_id,
+    const NodeType &person_type,
+    const EasyPolygon2D &person_boundary_polygon)
+{
+    if(person_type != NodeType::Person)
+    {
+        std::cout << "WorldController::setPersonBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "this type is not the person type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygon(person_id, person_type, person_boundary_polygon))
+    {
+        std::cout << "WorldController::setPersonBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "setNodeBoundaryPolygon for person failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setPersonBoundaryPolygonPointPosition(
+    const size_t &person_id,
+    const NodeType &person_type,
+    const size_t &point_idx,
+    const EasyPoint2D &point_new_position_in_world)
+{
+    if(person_type != NodeType::Person)
+    {
+        std::cout << "WorldController::setPersonBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "this type is not the person type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygonPointPosition(
+          person_id, person_type, point_idx, point_new_position_in_world))
+    {
+        std::cout << "WorldController::setPersonBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\tperson_id = " << person_id << std::endl <<
+          "\tperson_type = " << person_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setNodeBoundaryPolygonPointPosition for person failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 bool WorldController::createFurniture(
     const size_t &furniture_id,
     const NodeType &furniture_type,
-    const size_t &on_room_id,
-    const NodeType &on_room_type)
+    const size_t &on_person_id,
+    const NodeType &on_person_type)
 {
     if(furniture_type != NodeType::Furniture)
     {
@@ -338,22 +524,22 @@ bool WorldController::createFurniture(
           "Input :\n" <<
           "\tfurniture_id = " << furniture_id << std::endl <<
           "\tfurniture_type = " << furniture_type << std::endl <<
-          "\ton_room_id = " << on_room_id << std::endl <<
-          "\ton_room_type = " << on_room_type << std::endl <<
+          "\ton_person_id = " << on_person_id << std::endl <<
+          "\ton_person_type = " << on_person_type << std::endl <<
           "this type is not the furniture type!" << std::endl;
 
         return false;
     }
 
     if(!world_tree_.createNode(
-          furniture_id, furniture_type, on_room_id, on_room_type, 0))
+          furniture_id, furniture_type, on_person_id, on_person_type, 0))
     {
         std::cout << "WorldController::createFurniture : " << std::endl <<
           "Input :\n" <<
           "\tfurniture_id = " << furniture_id << std::endl <<
           "\tfurniture_type = " << furniture_type << std::endl <<
-          "\ton_room_id = " << on_room_id << std::endl <<
-          "\ton_room_type = " << on_room_type << std::endl <<
+          "\ton_person_id = " << on_person_id << std::endl <<
+          "\ton_person_type = " << on_person_type << std::endl <<
           "createNode for furniture failed!" << std::endl;
 
         return false;
@@ -739,6 +925,112 @@ bool WorldController::getRoomSpaceNodeVec(
         }
 
         room_space_node_vec.emplace_back(room_space_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getPersonNodeVec(
+    std::vector<EasyNode*> &person_node_vec)
+{
+    person_node_vec.clear();
+
+    if(person_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    for(const std::pair<size_t, NodeType> &person_pair : person_pair_vec_)
+    {
+        EasyNode* person_node = findNode(person_pair.first, person_pair.second);
+
+        if(person_node == nullptr)
+        {
+            std::cout << "WorldController::getPersonNodeVec : " << std::endl <<
+              "get person : id = " << person_pair.first <<
+              ", type = " << person_pair.second <<
+              " failed!" << std::endl;
+
+            return false;
+        }
+
+        person_node_vec.emplace_back(person_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getPersonBoundaryNodeVecVec(
+    std::vector<std::vector<EasyNode*>> &person_boundary_node_vec_vec)
+{
+    person_boundary_node_vec_vec.clear();
+
+    if(person_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> person_node_vec;
+
+    if(!getPersonNodeVec(person_node_vec))
+    {
+        std::cout << "WorldController::getPersonBoundaryNodeVec : " << std::endl <<
+          "getPersonNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* person_node : person_node_vec)
+    {
+        std::vector<EasyNode*> person_boundary_node_vec;
+        std::vector<EasyNode*> person_child_node_vec = person_node->getChildNodeVec();
+
+        for(EasyNode* person_child_node : person_child_node_vec)
+        {
+            if(person_child_node->getNodeType() == NodeType::Boundary)
+            {
+                person_boundary_node_vec.emplace_back(person_child_node);
+            }
+        }
+
+        person_boundary_node_vec_vec.emplace_back(person_boundary_node_vec);
+    }
+    return true;
+}
+
+bool WorldController::getPersonSpaceNodeVec(
+    std::vector<EasyNode*> &person_space_node_vec)
+{
+    person_space_node_vec.clear();
+
+    if(person_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> person_node_vec;
+
+    if(!getPersonNodeVec(person_node_vec))
+    {
+        std::cout << "WorldController::getPersonSpaceNodeVec : " << std::endl <<
+          "getPersonNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* person_node : person_node_vec)
+    {
+        EasyNode* person_space_node = person_node->findChild(0, NodeType::Space);
+
+        if(person_space_node == nullptr)
+        {
+            std::cout << "WorldController::getPersonNodeVec : " << std::endl <<
+              "get person space node failed!" << std::endl;
+
+            return false;
+        }
+
+        person_space_node_vec.emplace_back(person_space_node);
     }
 
     return true;

@@ -281,22 +281,22 @@ bool EasyComputation::isRectCross(
     const EasyRect2D &rect_1,
     const EasyRect2D &rect_2)
 {
-    if(rect_1.x_max < rect_2.x_min)
+    if(rect_1.x_max <= rect_2.x_min)
     {
         return false;
     }
 
-    if(rect_1.x_min > rect_2.x_max)
+    if(rect_1.x_min >= rect_2.x_max)
     {
         return false;
     }
 
-    if(rect_1.y_max < rect_2.y_min)
+    if(rect_1.y_max <= rect_2.y_min)
     {
         return false;
     }
 
-    if(rect_1.y_min > rect_2.y_max)
+    if(rect_1.y_min >= rect_2.y_max)
     {
         return false;
     }
@@ -385,10 +385,9 @@ bool EasyComputation::isPointOnOpenBoundedLine(
     return false;
 }
 
-bool EasyComputation::isPointInPolygon(
+int EasyComputation::isPointInPolygon(
     const EasyPoint2D &point,
-    const EasyPolygon2D &polygon,
-    const bool &is_contain_boundary)
+    const EasyPolygon2D &polygon)
 {
     float angle_value_sum = 0;
 
@@ -399,12 +398,7 @@ bool EasyComputation::isPointInPolygon(
         if(current_point.x == point.x &&
             current_point.y == point.y)
         {
-            if(is_contain_boundary)
-            {
-                return true;
-            }
-
-            return false;
+            return 2;
         }
 
         const EasyPoint2D &next_point = polygon.point_list[
@@ -428,20 +422,15 @@ bool EasyComputation::isPointInPolygon(
 
     if(angle_value_sum_to_0 < angle_value_sum_to_pi)
     {
-        return false;
+        return 0;
     }
 
     if(angle_value_sum_to_2pi < angle_value_sum_to_pi)
     {
-        return true;
+        return 1;
     }
 
-    if(is_contain_boundary)
-    {
-        return true;
-    }
-
-    return true;
+    return 2;
 }
 
 bool EasyComputation::isPolygonCross(
@@ -459,28 +448,49 @@ bool EasyComputation::isPolygonCross(
         return false;
     }
 
-    const float polygon_1_area = polygon_1.getPolygonArea();
-    const float polygon_2_area = polygon_2.getPolygonArea();
+    std::vector<size_t> polygon_2_point_on_polygon_1_boundary_idx_vec;
+    std::vector<size_t> polygon_1_point_on_polygon_2_boundary_idx_vec;
 
-    if(fabs(polygon_1_area) > fabs(polygon_2_area))
+    for(size_t i = 0; i < polygon_2.point_list.size(); ++i)
     {
-        for(const EasyPoint2D &point : polygon_2.point_list)
+        const EasyPoint2D &point = polygon_2.point_list[i];
+
+        int point_state = isPointInPolygon(point, polygon_1);
+
+        if(point_state == 1)
         {
-            if(isPointInPolygon(point, polygon_1, false))
-            {
-                return true;
-            }
+            return true;
+        }
+        else if(point_state == 2)
+        {
+            polygon_2_point_on_polygon_1_boundary_idx_vec.emplace_back(i);
         }
     }
-    else
+
+    for(size_t i = 0; i < polygon_1.point_list.size(); ++i)
     {
-        for(const EasyPoint2D &point : polygon_1.point_list)
+        const EasyPoint2D &point = polygon_1.point_list[i];
+
+        int point_state = isPointInPolygon(point, polygon_2);
+
+        if(point_state == 1)
         {
-            if(isPointInPolygon(point, polygon_2, false))
-            {
-                return true;
-            }
+            return true;
         }
+        else if(point_state == 2)
+        {
+            polygon_1_point_on_polygon_2_boundary_idx_vec.emplace_back(i);
+        }
+    }
+
+    if(polygon_2_point_on_polygon_1_boundary_idx_vec.size() == 0 &&
+        polygon_1_point_on_polygon_2_boundary_idx_vec.size() == 0)
+    {
+        return false;
+    }
+
+    if(polygon_2_point_on_polygon_1_boundary_idx_vec.size() > 0)
+    {
     }
 
     return false;
@@ -959,7 +969,7 @@ bool EasyComputation::updatePolygonNotIntersectionPointConnectedState(
 
             const EasyPoint2D &polygon_point = polygon.point_list[j];
 
-            if(isPointInPolygon(polygon_point, union_polygon, false))
+            if(isPointInPolygon(polygon_point, union_polygon))
             {
                 polygon_point_connected_vec_vec[i][j] = true;
             }

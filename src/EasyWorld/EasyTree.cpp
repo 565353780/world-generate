@@ -1465,10 +1465,12 @@ bool EasyTree::isNodeInParentSpace(
             return false;
         }
 
-        if(!EasyComputation::isPointInPolygon(
-              space_boundary_point_in_parent_space,
-              parent_space_boundary_polygon_in_parent,
-              true))
+        // 0 : not in 1 : inside 2 : on boundary
+        const int point_state = EasyComputation::isPointInPolygon(
+            space_boundary_point_in_parent_space,
+            parent_space_boundary_polygon_in_parent);
+
+        if(point_state == 0)
         {
             return false;
         }
@@ -1612,10 +1614,13 @@ bool EasyTree::isNodeInParentChildNodeSpace(
                     return false;
                 }
 
-                if(EasyComputation::isPointInPolygon(
-                      parent_child_space_boundary_point_in_space_node,
-                      space_boundary_polygon_in_parent,
-                      false))
+                // TODO : judge whether polygon cross need to finish
+                // 0 : not in 1 : inside 2 : on boundary
+                const int point_state = EasyComputation::isPointInPolygon(
+                    parent_child_space_boundary_point_in_space_node,
+                    space_boundary_polygon_in_parent);
+
+                if(point_state == 1)
                 {
                     return true;
                 }

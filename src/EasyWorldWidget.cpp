@@ -200,25 +200,15 @@ bool EasyWorldWidget::createTeam()
 
 bool EasyWorldWidget::createPerson()
 {
-    EasyAxis2D person_axis_in_parent;
+    world_controller_.createPersonGroupForTeam(0, NodeType::Team, 1, 1, false);
+    world_controller_.createPersonGroupForTeam(1, NodeType::Team, 1, 1, false);
+    world_controller_.createPersonGroupForTeam(2, NodeType::Team, 1, 1, false);
+    world_controller_.createPersonGroupForTeam(3, NodeType::Team, 1, 1, false);
+    world_controller_.createPersonGroupForTeam(4, NodeType::Team, 1, 1, false);
 
-    const float person_width = 50;
-    const float person_height = 50;
-
-    person_axis_in_parent.center_.setPosition(0, 0);
-    person_axis_in_parent.x_direction_.setPosition(1, 0);
-
-    world_controller_.createPersonForTeam(0, NodeType::Team, person_width, person_height, person_axis_in_parent);
-    world_controller_.createPersonForTeam(1, NodeType::Team, person_width, person_height, person_axis_in_parent);
-    world_controller_.createPersonForTeam(2, NodeType::Team, person_width, person_height, person_axis_in_parent);
-    world_controller_.createPersonForTeam(3, NodeType::Team, person_width, person_height, person_axis_in_parent);
-    world_controller_.createPersonForTeam(4, NodeType::Team, person_width, person_height, person_axis_in_parent);
-
-    const bool is_face_horizontal = true;
-
-    world_controller_.createPersonGroupForTeam(5, NodeType::Team, 4, 4, is_face_horizontal);
-    world_controller_.createPersonGroupForTeam(6, NodeType::Team, 4, 4, is_face_horizontal);
-    world_controller_.createPersonGroupForTeam(7, NodeType::Team, 4, 4, is_face_horizontal);
+    world_controller_.createPersonGroupForTeam(5, NodeType::Team, 4, 4, true);
+    world_controller_.createPersonGroupForTeam(6, NodeType::Team, 4, 4, true);
+    world_controller_.createPersonGroupForTeam(7, NodeType::Team, 4, 4, true);
 
     return true;
 }

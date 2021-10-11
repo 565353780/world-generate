@@ -24,48 +24,56 @@ EasyWorldWidget::~EasyWorldWidget()
 
 void EasyWorldWidget::run_example()
 {
-    world_controller_.reset();
-    world_controller_.createWorld(400, 400);
+    size_t demo_mode = 1;
 
-    world_controller_.createWall(0, NodeType::OuterWall);
-    EasyPolygon2D wall_boundary_polygon;
-    wall_boundary_polygon.point_list.resize(4);
-    wall_boundary_polygon.point_list[0].setPosition(0, 0);
-    wall_boundary_polygon.point_list[1].setPosition(300, 0);
-    wall_boundary_polygon.point_list[2].setPosition(300, 300);
-    wall_boundary_polygon.point_list[3].setPosition(0, 300);
-    wall_boundary_polygon.setAntiClockWise();
-    world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon);
+    switch(demo_mode)
+    {
+    case 0:
+      world_controller_.reset();
+      world_controller_.createWorld(400, 400);
 
-    EasyAxis2D room_axis;
-    room_axis.setXDirection(1, 0);
-    room_axis.setCenter(10, 110);
-    world_controller_.createFreeRoomForWall(0, NodeType::OuterWall, 280, 80, room_axis);
-    room_axis.setCenter(0, 0);
-    world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, room_axis);
-    room_axis.setCenter(100, 0);
-    world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, room_axis);
-    room_axis.setCenter(200, 0);
-    world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, room_axis);
-    room_axis.setCenter(0, 0);
-    world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 2, 100, 100, room_axis);
-    room_axis.setCenter(200, 0);
-    world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 2, 100, 100, room_axis);
+      world_controller_.createWall(0, NodeType::OuterWall);
+      EasyPolygon2D wall_boundary_polygon;
+      wall_boundary_polygon.addPoint(0, 0);
+      wall_boundary_polygon.addPoint(300, 0);
+      wall_boundary_polygon.addPoint(300, 300);
+      wall_boundary_polygon.addPoint(0, 300);
+      wall_boundary_polygon.setAntiClockWise();
+      world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon);
 
-    EasyAxis2D team_axis;
-    team_axis.setXDirection(1, 0);
-    team_axis.setCenter(25, 25);
-    world_controller_.createTeamForRoom(0, NodeType::WallRoom, 50, 50, team_axis, 2, 2, true);
-    world_controller_.createTeamForRoom(1, NodeType::WallRoom, 50, 50, team_axis, 2, 2, false);
-    world_controller_.createTeamForRoom(2, NodeType::WallRoom, 50, 50, team_axis, 2, 2, true);
-    world_controller_.createTeamForRoom(3, NodeType::WallRoom, 50, 50, team_axis, 1, 1, false);
-    world_controller_.createTeamForRoom(4, NodeType::WallRoom, 50, 50, team_axis, 1, 1, false);
-    team_axis.setCenter(10, 10);
-    world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, team_axis, 4, 4, true);
-    team_axis.setCenter(100, 10);
-    world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, team_axis, 4, 4, true);
-    team_axis.setCenter(190, 10);
-    world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, team_axis, 4, 4, true);
+      EasyAxis2D room_axis;
+      room_axis.setXDirection(1, 0);
+      room_axis.setCenter(10, 110);
+      world_controller_.createFreeRoomForWall(0, NodeType::OuterWall, 0, 280, 80, room_axis);
+      room_axis.setCenter(0, 0);
+      world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, room_axis);
+      room_axis.setCenter(100, 0);
+      world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, room_axis);
+      room_axis.setCenter(200, 0);
+      world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, room_axis);
+      room_axis.setCenter(0, 0);
+      world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 2, 100, 100, room_axis);
+      room_axis.setCenter(200, 0);
+      world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 2, 100, 100, room_axis);
+
+      EasyAxis2D team_axis;
+      team_axis.setXDirection(1, 0);
+      team_axis.setCenter(25, 25);
+      world_controller_.createTeamForRoom(0, NodeType::WallRoom, 50, 50, team_axis, 2, 2, true);
+      world_controller_.createTeamForRoom(1, NodeType::WallRoom, 50, 50, team_axis, 2, 2, false);
+      world_controller_.createTeamForRoom(2, NodeType::WallRoom, 50, 50, team_axis, 2, 2, true);
+      world_controller_.createTeamForRoom(3, NodeType::WallRoom, 50, 50, team_axis, 1, 1, false);
+      world_controller_.createTeamForRoom(4, NodeType::WallRoom, 50, 50, team_axis, 1, 1, false);
+      team_axis.setCenter(10, 10);
+      world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, team_axis, 4, 4, true);
+      team_axis.setCenter(100, 10);
+      world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, team_axis, 4, 4, true);
+      team_axis.setCenter(190, 10);
+      world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, team_axis, 4, 4, true);
+      break;
+    // case 1:
+    //   break;
+    }
 
     // world_controller_.outputInfo();
 

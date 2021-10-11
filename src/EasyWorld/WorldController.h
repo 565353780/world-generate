@@ -199,6 +199,7 @@ public:
     bool createFreeRoomForWall(
         const size_t &wall_id,
         const NodeType &wall_type,
+        const size_t &wall_boundary_id,
         const float &room_width,
         const float &room_height,
         const EasyAxis2D &room_axis_in_parent);

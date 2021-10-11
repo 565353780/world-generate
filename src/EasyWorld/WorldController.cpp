@@ -1865,6 +1865,7 @@ bool WorldController::createWallRoomForWall(
 bool WorldController::createFreeRoomForWall(
     const size_t &wall_id,
     const NodeType &wall_type,
+    const size_t &wall_boundary_id,
     const float &room_width,
     const float &room_height,
     const EasyAxis2D &room_axis_in_parent)
@@ -1872,7 +1873,7 @@ bool WorldController::createFreeRoomForWall(
     if(!createRoomForWall(
           wall_id,
           wall_type,
-          0,
+          wall_boundary_id,
           NodeType::FreeRoom,
           room_width,
           room_height,

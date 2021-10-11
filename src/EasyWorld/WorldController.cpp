@@ -93,6 +93,7 @@ bool WorldController::setWallAxisCenterPositionInParent(
           wall_type,
           axis_new_center_position_in_parent,
           true,
+          true,
           true))
     {
         std::cout << "WorldController::setWallAxisCenterPositionInParent : " << std::endl <<
@@ -133,7 +134,8 @@ bool WorldController::setWallAxisCenterPositionInWorld(
           wall_type,
           axis_new_center_position_in_world,
           true,
-          true))
+          true,
+          false))
     {
         std::cout << "WorldController::setWallAxisCenterPositionInWorld : " << std::endl <<
           "Input :\n" <<
@@ -287,7 +289,8 @@ bool WorldController::setRoomAxisCenterPositionInParent(
           room_type,
           axis_new_center_position_in_parent,
           true,
-          room_type == NodeType::FreeRoom))
+          true,
+          true))
     {
         std::cout << "WorldController::setRoomAxisCenterPositionInParent : " << std::endl <<
           "Input :\n" <<
@@ -327,7 +330,8 @@ bool WorldController::setRoomAxisCenterPositionInWorld(
           room_type,
           axis_new_center_position_in_world,
           true,
-          room_type == NodeType::FreeRoom))
+          room_type == NodeType::FreeRoom,
+          false))
     {
         std::cout << "WorldController::setRoomAxisCenterPositionInWorld : " << std::endl <<
           "Input :\n" <<
@@ -476,6 +480,7 @@ bool WorldController::setTeamAxisCenterPositionInParent(
           team_type,
           axis_new_center_position_in_parent,
           true,
+          true,
           true))
     {
         std::cout << "WorldController::setTeamAxisCenterPositionInParent : " << std::endl <<
@@ -515,7 +520,8 @@ bool WorldController::setTeamAxisCenterPositionInWorld(
           team_type,
           axis_new_center_position_in_world,
           true,
-          true))
+          true,
+          false))
     {
         std::cout << "WorldController::setTeamAxisCenterPositionInWorld : " << std::endl <<
           "Input :\n" <<
@@ -662,7 +668,8 @@ bool WorldController::setPersonAxisCenterPositionInParent(
           person_type,
           axis_new_center_position_in_parent,
           true,
-          true))
+          true,
+          false))
     {
         std::cout << "WorldController::setPersonAxisCenterPositionInParent : " << std::endl <<
           "Input :\n" <<
@@ -701,7 +708,8 @@ bool WorldController::setPersonAxisCenterPositionInWorld(
           person_type,
           axis_new_center_position_in_world,
           true,
-          true))
+          true,
+          false))
     {
         std::cout << "WorldController::setPersonAxisCenterPositionInWorld : " << std::endl <<
           "Input :\n" <<
@@ -848,7 +856,8 @@ bool WorldController::setFurnitureAxisCenterPositionInParent(
           furniture_type,
           axis_new_center_position_in_parent,
           true,
-          true))
+          true,
+          false))
     {
         std::cout << "WorldController::setFurnitureAxisCenterPositionInParent : " << std::endl <<
           "Input :\n" <<
@@ -887,7 +896,8 @@ bool WorldController::setFurnitureAxisCenterPositionInWorld(
           furniture_type,
           axis_new_center_position_in_world,
           true,
-          true))
+          true,
+          false))
     {
         std::cout << "WorldController::setFurnitureAxisCenterPositionInWorld : " << std::endl <<
           "Input :\n" <<
@@ -1199,7 +1209,7 @@ bool WorldController::createPersonForTeam(
         return false;
     }
 
-    if(!world_tree_.setNodeAxisInParent(new_person_id, NodeType::Person, person_axis_in_parent))
+    if(!world_tree_.setNodeAxisInParent(new_person_id, NodeType::Person, person_axis_in_parent, true))
     {
         std::cout << "WorldController::createPersonForTeam : " << std::endl <<
           "Input :\n" <<
@@ -1619,7 +1629,7 @@ bool WorldController::createTeamForRoom(
         return false;
     }
 
-    if(!world_tree_.setNodeAxisInParent(new_team_id, NodeType::Team, team_axis_in_parent))
+    if(!world_tree_.setNodeAxisInParent(new_team_id, NodeType::Team, team_axis_in_parent, true))
     {
         std::cout << "WorldController::createTeamForRoom : " << std::endl <<
           "Input :\n" <<
@@ -1808,7 +1818,7 @@ bool WorldController::createRoomForWall(
         return false;
     }
 
-    if(!world_tree_.setNodeAxisInParent(new_room_id, room_type, room_axis_in_parent))
+    if(!world_tree_.setNodeAxisInParent(new_room_id, room_type, room_axis_in_parent, true))
     {
         std::cout << "WorldController::createRoomForWall : " << std::endl <<
           "Input :\n" <<

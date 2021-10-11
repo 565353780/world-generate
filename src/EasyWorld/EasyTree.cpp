@@ -207,7 +207,8 @@ bool EasyTree::setNodeAxisCenterPositionInParent(
     const NodeType &node_type,
     const EasyPoint2D &axis_new_center_position_in_parent,
     const bool &is_allow_x_direction_move_in_parent_axis,
-    const bool &is_allow_y_direction_move_in_parent_axis)
+    const bool &is_allow_y_direction_move_in_parent_axis,
+    const bool &is_force_move)
 {
     if(!is_allow_x_direction_move_in_parent_axis &&
         !is_allow_y_direction_move_in_parent_axis)
@@ -222,6 +223,7 @@ bool EasyTree::setNodeAxisCenterPositionInParent(
           is_allow_x_direction_move_in_parent_axis << std::endl <<
           "\tis_allow_y_direction_move_in_parent_axis = " <<
           is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "can't move this axis in any direction!" << std::endl;
 
         return false;
@@ -241,6 +243,7 @@ bool EasyTree::setNodeAxisCenterPositionInParent(
           is_allow_x_direction_move_in_parent_axis << std::endl <<
           "\tis_allow_y_direction_move_in_parent_axis = " <<
           is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "this node not exist!" << std::endl;
 
         return false;
@@ -260,6 +263,7 @@ bool EasyTree::setNodeAxisCenterPositionInParent(
           is_allow_x_direction_move_in_parent_axis << std::endl <<
           "\tis_allow_y_direction_move_in_parent_axis = " <<
           is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "parent node not exist!" << std::endl;
 
         return false;
@@ -296,9 +300,15 @@ bool EasyTree::setNodeAxisCenterPositionInParent(
           is_allow_x_direction_move_in_parent_axis << std::endl <<
           "\tis_allow_y_direction_move_in_parent_axis = " <<
           is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "setAxisInParent for node failed!" << std::endl;
 
         return false;
+    }
+
+    if(is_force_move)
+    {
+        return true;
     }
 
     if(!isNodeSpaceValid(search_node))
@@ -319,6 +329,7 @@ bool EasyTree::setNodeAxisCenterPositionInParent(
               is_allow_x_direction_move_in_parent_axis << std::endl <<
               "\tis_allow_y_direction_move_in_parent_axis = " <<
               is_allow_y_direction_move_in_parent_axis << std::endl <<
+              "\tis_force_move = " << is_force_move << std::endl <<
               "setAxisInParent for node to reset failed!" << std::endl;
 
             return false;
@@ -333,7 +344,8 @@ bool EasyTree::setNodeAxisCenterPositionInWorld(
     const NodeType &node_type,
     const EasyPoint2D &axis_new_center_position_in_world,
     const bool &is_allow_x_direction_move_in_parent_axis,
-    const bool &is_allow_y_direction_move_in_parent_axis)
+    const bool &is_allow_y_direction_move_in_parent_axis,
+    const bool &is_force_move)
 {
     if(!is_allow_x_direction_move_in_parent_axis &&
         !is_allow_y_direction_move_in_parent_axis)
@@ -348,6 +360,7 @@ bool EasyTree::setNodeAxisCenterPositionInWorld(
           is_allow_x_direction_move_in_parent_axis << std::endl <<
           "\tis_allow_y_direction_move_in_parent_axis = " <<
           is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "can't move this axis in any direction!" << std::endl;
 
         return false;
@@ -367,6 +380,7 @@ bool EasyTree::setNodeAxisCenterPositionInWorld(
           is_allow_x_direction_move_in_parent_axis << std::endl <<
           "\tis_allow_y_direction_move_in_parent_axis = " <<
           is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "this node not exist!" << std::endl;
 
         return false;
@@ -386,6 +400,7 @@ bool EasyTree::setNodeAxisCenterPositionInWorld(
           is_allow_x_direction_move_in_parent_axis << std::endl <<
           "\tis_allow_y_direction_move_in_parent_axis = " <<
           is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "parent node not exist!" << std::endl;
 
         return false;
@@ -407,6 +422,7 @@ bool EasyTree::setNodeAxisCenterPositionInWorld(
           is_allow_x_direction_move_in_parent_axis << std::endl <<
           "\tis_allow_y_direction_move_in_parent_axis = " <<
           is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "getPointInNode for axis_center in parent failed!" << std::endl;
 
         return false;
@@ -443,9 +459,15 @@ bool EasyTree::setNodeAxisCenterPositionInWorld(
           is_allow_x_direction_move_in_parent_axis << std::endl <<
           "\tis_allow_y_direction_move_in_parent_axis = " <<
           is_allow_y_direction_move_in_parent_axis << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "setAxisInParent for node failed!" << std::endl;
 
         return false;
+    }
+
+    if(is_force_move)
+    {
+        return true;
     }
 
     if(!isNodeSpaceValid(search_node))
@@ -466,6 +488,7 @@ bool EasyTree::setNodeAxisCenterPositionInWorld(
               is_allow_x_direction_move_in_parent_axis << std::endl <<
               "\tis_allow_y_direction_move_in_parent_axis = " <<
               is_allow_y_direction_move_in_parent_axis << std::endl <<
+              "\tis_force_move = " << is_force_move << std::endl <<
               "setAxisInParent for node to reset failed!" << std::endl;
 
             return false;
@@ -478,7 +501,8 @@ bool EasyTree::setNodeAxisCenterPositionInWorld(
 bool EasyTree::setNodeAxisXDirectionInParent(
     const size_t &node_id,
     const NodeType &node_type,
-    const EasyPoint2D &axis_new_x_direction_in_parent)
+    const EasyPoint2D &axis_new_x_direction_in_parent,
+    const bool &is_force_move)
 {
     EasyNode* search_node = findNode(node_id, node_type);
 
@@ -490,6 +514,7 @@ bool EasyTree::setNodeAxisXDirectionInParent(
           "\tnode_type = " << node_type << std::endl <<
           "\taxis_new_x_direction_in_parent = [" << axis_new_x_direction_in_parent.x << "," <<
           axis_new_x_direction_in_parent.y << "]" << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "this node not exist!" << std::endl;
 
         return false;
@@ -505,6 +530,7 @@ bool EasyTree::setNodeAxisXDirectionInParent(
           "\tnode_type = " << node_type << std::endl <<
           "\taxis_new_x_direction_in_parent = [" << axis_new_x_direction_in_parent.x << "," <<
           axis_new_x_direction_in_parent.y << "]" << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "parent node not exist!" << std::endl;
 
         return false;
@@ -525,6 +551,7 @@ bool EasyTree::setNodeAxisXDirectionInParent(
           "\tnode_type = " << node_type << std::endl <<
           "\taxis_new_x_direction_in_parent = [" << axis_new_x_direction_in_parent.x << "," <<
           axis_new_x_direction_in_parent.y << "]" << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "setXDirection for axis failed!" << std::endl;
 
         return false;
@@ -542,9 +569,15 @@ bool EasyTree::setNodeAxisXDirectionInParent(
           "\tnode_type = " << node_type << std::endl <<
           "\taxis_new_x_direction_in_parent = [" << axis_new_x_direction_in_parent.x << "," <<
           axis_new_x_direction_in_parent.y << "]" << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "setAxisInParent for node failed!" << std::endl;
 
         return false;
+    }
+
+    if(is_force_move)
+    {
+        return true;
     }
 
     if(!isNodeSpaceValid(search_node))
@@ -561,6 +594,7 @@ bool EasyTree::setNodeAxisXDirectionInParent(
               "\tnode_type = " << node_type << std::endl <<
               "\taxis_new_x_direction_in_parent = [" << axis_new_x_direction_in_parent.x << "," <<
               axis_new_x_direction_in_parent.y << "]" << std::endl <<
+              "\tis_force_move = " << is_force_move << std::endl <<
               "setAxisInParent for node to reset failed!" << std::endl;
 
             return false;
@@ -573,7 +607,8 @@ bool EasyTree::setNodeAxisXDirectionInParent(
 bool EasyTree::setNodeAxisXDirectionInWorld(
     const size_t &node_id,
     const NodeType &node_type,
-    const EasyPoint2D &axis_new_x_direction_in_world)
+    const EasyPoint2D &axis_new_x_direction_in_world,
+    const bool &is_force_move)
 {
     EasyNode* search_node = findNode(node_id, node_type);
 
@@ -585,6 +620,7 @@ bool EasyTree::setNodeAxisXDirectionInWorld(
           "\tnode_type = " << node_type << std::endl <<
           "\taxis_new_x_direction_in_world = [" << axis_new_x_direction_in_world.x << "," <<
           axis_new_x_direction_in_world.y << "]" << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "this node not exist!" << std::endl;
 
         return false;
@@ -600,6 +636,7 @@ bool EasyTree::setNodeAxisXDirectionInWorld(
           "\tnode_type = " << node_type << std::endl <<
           "\taxis_new_x_direction_in_world = [" << axis_new_x_direction_in_world.x << "," <<
           axis_new_x_direction_in_world.y << "]" << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "parent node not exist!" << std::endl;
 
         return false;
@@ -617,6 +654,7 @@ bool EasyTree::setNodeAxisXDirectionInWorld(
           "\tnode_type = " << node_type << std::endl <<
           "\taxis_new_x_direction_in_world = [" << axis_new_x_direction_in_world.x << "," <<
           axis_new_x_direction_in_world.y << "]" << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "getPointInNode for axis_center in parent failed!" << std::endl;
 
         return false;
@@ -637,6 +675,7 @@ bool EasyTree::setNodeAxisXDirectionInWorld(
           "\tnode_type = " << node_type << std::endl <<
           "\taxis_new_x_direction_in_world = [" << axis_new_x_direction_in_world.x << "," <<
           axis_new_x_direction_in_world.y << "]" << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "setXDirection for new axis failed!" << std::endl;
 
         return false;
@@ -654,9 +693,15 @@ bool EasyTree::setNodeAxisXDirectionInWorld(
           "\tnode_type = " << node_type << std::endl <<
           "\taxis_new_x_direction_in_world = [" << axis_new_x_direction_in_world.x << "," <<
           axis_new_x_direction_in_world.y << "]" << std::endl <<
+          "\tis_force_move = " << is_force_move << std::endl <<
           "setAxisInParent for node failed!" << std::endl;
 
         return false;
+    }
+
+    if(is_force_move)
+    {
+        return true;
     }
 
     if(!isNodeSpaceValid(search_node))
@@ -673,6 +718,7 @@ bool EasyTree::setNodeAxisXDirectionInWorld(
               "\tnode_type = " << node_type << std::endl <<
               "\taxis_new_x_direction_in_world = [" << axis_new_x_direction_in_world.x << "," <<
               axis_new_x_direction_in_world.y << "]" << std::endl <<
+              "\tis_force_move = " << is_force_move << std::endl <<
               "setAxisInParent for node to reset failed!" << std::endl;
 
             return false;
@@ -685,7 +731,8 @@ bool EasyTree::setNodeAxisXDirectionInWorld(
 bool EasyTree::setNodeAxisInParent(
     const size_t &node_id,
     const NodeType &node_type,
-    const EasyAxis2D &axis_in_parent)
+    const EasyAxis2D &axis_in_parent,
+    const bool &is_force_move)
 {
     EasyNode* search_node = findNode(node_id, node_type);
 
@@ -697,7 +744,8 @@ bool EasyTree::setNodeAxisInParent(
           "\tnode_type = " << node_type << std::endl <<
           "\taxis_in_parent :" << std::endl;
         axis_in_parent.outputInfo(1);
-        std::cout << "this node not exist!" << std::endl;
+        std::cout << "\tis_force_move = " << is_force_move << std::endl <<
+          "this node not exist!" << std::endl;
 
         return false;
     }
@@ -711,7 +759,8 @@ bool EasyTree::setNodeAxisInParent(
           "\tnode_id = " << node_id << std::endl <<
           "\tnode_type = " << node_type << std::endl;
         axis_in_parent.outputInfo(1);
-        std::cout << "parent node not exist!" << std::endl;
+        std::cout << "\tis_force_move = " << is_force_move << std::endl <<
+          "parent node not exist!" << std::endl;
 
         return false;
     }
@@ -731,9 +780,15 @@ bool EasyTree::setNodeAxisInParent(
           "\tnode_id = " << node_id << std::endl <<
           "\tnode_type = " << node_type << std::endl;
         axis_in_parent.outputInfo(1);
-        std::cout << "setAxisInParent for node failed!" << std::endl;
+        std::cout << "\tis_force_move = " << is_force_move << std::endl <<
+          "setAxisInParent for node failed!" << std::endl;
 
         return false;
+    }
+
+    if(is_force_move)
+    {
+        return true;
     }
 
     if(!isNodeSpaceValid(search_node))
@@ -749,7 +804,8 @@ bool EasyTree::setNodeAxisInParent(
               "\tnode_id = " << node_id << std::endl <<
               "\tnode_type = " << node_type << std::endl;
             axis_in_parent.outputInfo(1);
-            std::cout << "setAxisInParent for node to reset failed!" << std::endl;
+            std::cout << "\tis_force_move = " << is_force_move << std::endl <<
+              "setAxisInParent for node to reset failed!" << std::endl;
 
             return false;
         }
@@ -761,7 +817,8 @@ bool EasyTree::setNodeAxisInParent(
 bool EasyTree::setNodeAxisInWorld(
     const size_t &node_id,
     const NodeType &node_type,
-    const EasyAxis2D &axis_in_world)
+    const EasyAxis2D &axis_in_world,
+    const bool &is_force_move)
 {
     EasyNode* search_node = findNode(node_id, node_type);
 
@@ -772,7 +829,8 @@ bool EasyTree::setNodeAxisInWorld(
           "\tnode_id = " << node_id << std::endl <<
           "\tnode_type = " << node_type << std::endl;
         axis_in_world.outputInfo(1);
-        std::cout << "this node not exist!" << std::endl;
+        std::cout << "\tis_force_move = " << is_force_move << std::endl <<
+          "this node not exist!" << std::endl;
 
         return false;
     }
@@ -786,7 +844,8 @@ bool EasyTree::setNodeAxisInWorld(
           "\tnode_id = " << node_id << std::endl <<
           "\tnode_type = " << node_type << std::endl;
         axis_in_world.outputInfo(1);
-        std::cout << "parent node not exist!" << std::endl;
+        std::cout << "\tis_force_move = " << is_force_move << std::endl <<
+          "parent node not exist!" << std::endl;
 
         return false;
     }
@@ -803,7 +862,8 @@ bool EasyTree::setNodeAxisInWorld(
           "\tnode_id = " << node_id << std::endl <<
           "\tnode_type = " << node_type << std::endl;
         axis_in_world.outputInfo(1);
-        std::cout << "getPointInNode for axis center in parent failed!" << std::endl;
+        std::cout << "\tis_force_move = " << is_force_move << std::endl <<
+          "getPointInNode for axis center in parent failed!" << std::endl;
 
         return false;
     }
@@ -817,7 +877,8 @@ bool EasyTree::setNodeAxisInWorld(
           "\tnode_id = " << node_id << std::endl <<
           "\tnode_type = " << node_type << std::endl;
         axis_in_world.outputInfo(1);
-        std::cout << "getPointInNode for axis x direction in parent failed!" << std::endl;
+        std::cout << "\tis_force_move = " << is_force_move << std::endl <<
+          "getPointInNode for axis x direction in parent failed!" << std::endl;
 
         return false;
     }
@@ -837,9 +898,15 @@ bool EasyTree::setNodeAxisInWorld(
           "\tnode_id = " << node_id << std::endl <<
           "\tnode_type = " << node_type << std::endl;
         axis_in_world.outputInfo(1);
-        std::cout << "setAxisInParent for node failed!" << std::endl;
+        std::cout << "\tis_force_move = " << is_force_move << std::endl <<
+          "setAxisInParent for node failed!" << std::endl;
 
         return false;
+    }
+
+    if(is_force_move)
+    {
+        return true;
     }
 
     if(!isNodeSpaceValid(search_node))
@@ -855,7 +922,8 @@ bool EasyTree::setNodeAxisInWorld(
               "\tnode_id = " << node_id << std::endl <<
               "\tnode_type = " << node_type << std::endl;
             axis_in_world.outputInfo(1);
-            std::cout << "setAxisInParent for node to reset failed!" << std::endl;
+            std::cout << "\tis_force_move = " << is_force_move << std::endl <<
+              "setAxisInParent for node to reset failed!" << std::endl;
 
             return false;
         }

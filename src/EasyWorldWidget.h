@@ -92,6 +92,7 @@ private:
     WorldController world_controller_;
 
     float axis_length_;
+    float zoom_;
 
     timespec t_spc_;
     long t_start_;

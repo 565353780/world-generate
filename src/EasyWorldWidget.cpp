@@ -29,50 +29,93 @@ void EasyWorldWidget::run_example()
     switch(demo_mode)
     {
     case 0:
-      world_controller_.reset();
-      world_controller_.createWorld(400, 400);
+        {
+            zoom_ = 1;
 
-      world_controller_.createWall(0, NodeType::OuterWall);
-      EasyPolygon2D wall_boundary_polygon;
-      wall_boundary_polygon.addPoint(0, 0);
-      wall_boundary_polygon.addPoint(300, 0);
-      wall_boundary_polygon.addPoint(300, 300);
-      wall_boundary_polygon.addPoint(0, 300);
-      wall_boundary_polygon.setAntiClockWise();
-      world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon);
+            world_controller_.reset();
+            world_controller_.createWorld(400, 400);
 
-      EasyAxis2D room_axis;
-      room_axis.setXDirection(1, 0);
-      room_axis.setCenter(10, 110);
-      world_controller_.createFreeRoomForWall(0, NodeType::OuterWall, 0, 280, 80, room_axis);
-      room_axis.setCenter(0, 0);
-      world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, room_axis);
-      room_axis.setCenter(100, 0);
-      world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, room_axis);
-      room_axis.setCenter(200, 0);
-      world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, room_axis);
-      room_axis.setCenter(0, 0);
-      world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 2, 100, 100, room_axis);
-      room_axis.setCenter(200, 0);
-      world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 2, 100, 100, room_axis);
+            world_controller_.createWall(0, NodeType::OuterWall);
+            EasyPolygon2D wall_boundary_polygon;
+            wall_boundary_polygon.addPoint(0, 0);
+            wall_boundary_polygon.addPoint(300, 0);
+            wall_boundary_polygon.addPoint(300, 300);
+            wall_boundary_polygon.addPoint(0, 300);
+            wall_boundary_polygon.setAntiClockWise();
+            world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon);
 
-      EasyAxis2D team_axis;
-      team_axis.setXDirection(1, 0);
-      team_axis.setCenter(25, 25);
-      world_controller_.createTeamForRoom(0, NodeType::WallRoom, 50, 50, team_axis, 2, 2, true);
-      world_controller_.createTeamForRoom(1, NodeType::WallRoom, 50, 50, team_axis, 2, 2, false);
-      world_controller_.createTeamForRoom(2, NodeType::WallRoom, 50, 50, team_axis, 2, 2, true);
-      world_controller_.createTeamForRoom(3, NodeType::WallRoom, 50, 50, team_axis, 1, 1, false);
-      world_controller_.createTeamForRoom(4, NodeType::WallRoom, 50, 50, team_axis, 1, 1, false);
-      team_axis.setCenter(10, 10);
-      world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, team_axis, 4, 4, true);
-      team_axis.setCenter(100, 10);
-      world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, team_axis, 4, 4, true);
-      team_axis.setCenter(190, 10);
-      world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, team_axis, 4, 4, true);
-      break;
-    // case 1:
-    //   break;
+            EasyAxis2D axis;
+            axis.setXDirection(1, 0);
+            axis.setCenter(10, 110);
+            world_controller_.createFreeRoomForWall(0, NodeType::OuterWall, 0, 280, 80, axis);
+            axis.setCenter(0, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, axis);
+            axis.setCenter(100, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, axis);
+            axis.setCenter(200, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, axis);
+            axis.setCenter(0, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 2, 100, 100, axis);
+            axis.setCenter(200, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 2, 100, 100, axis);
+
+            axis.setCenter(25, 25);
+            world_controller_.createTeamForRoom(0, NodeType::WallRoom, 50, 50, axis, 2, 2, true);
+            world_controller_.createTeamForRoom(1, NodeType::WallRoom, 50, 50, axis, 2, 2, false);
+            world_controller_.createTeamForRoom(2, NodeType::WallRoom, 50, 50, axis, 2, 2, true);
+            world_controller_.createTeamForRoom(3, NodeType::WallRoom, 50, 50, axis, 1, 1, false);
+            world_controller_.createTeamForRoom(4, NodeType::WallRoom, 50, 50, axis, 1, 1, false);
+            axis.setCenter(10, 10);
+            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, axis, 4, 4, true);
+            axis.setCenter(100, 10);
+            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, axis, 4, 4, true);
+            axis.setCenter(190, 10);
+            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, axis, 4, 4, true);
+            break;
+        }
+    case 1:
+        {
+            zoom_ = 22;
+
+            world_controller_.reset();
+            world_controller_.createWorld(1, 1);
+
+            world_controller_.createWall(0, NodeType::OuterWall);
+            EasyPolygon2D wall_boundary_polygon;
+            wall_boundary_polygon.addPoint(0, 0);
+            wall_boundary_polygon.addPoint(20, 0);
+            wall_boundary_polygon.addPoint(20, 40);
+            wall_boundary_polygon.addPoint(0, 40);
+            wall_boundary_polygon.setAntiClockWise();
+            world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon);
+
+            EasyAxis2D axis;
+            axis.setXDirection(1, 0);
+            axis.setCenter(32, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 8, 8, axis);
+            axis.setCenter(24, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 8, 8, axis);
+            axis.setCenter(16, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 8, 4, axis);
+            axis.setCenter(12, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 8, 2, axis);
+            axis.setCenter(2, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 1, 4, 4, axis);
+            axis.setCenter(6, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 1, 4, 8, axis);
+            axis.setCenter(16, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 1, 4, 8, axis);
+            axis.setCenter(20, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 1, 4, 8, axis);
+            axis.setCenter(0, 0);
+            world_controller_.createFreeRoomForWall(0, NodeType::OuterWall, 2, 20, 16, axis);
+
+            axis.setCenter(1, 2);
+            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 8, 12, axis, 5, 10, false);
+            axis.setCenter(11, 2);
+            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 8, 12, axis, 5, 10, false);
+            break;
+        }
     }
 
     // world_controller_.outputInfo();
@@ -108,7 +151,7 @@ void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
 
     // moveRoomInWorld(0, NodeType::WallRoom, event);
 
-    moveTeamInWorld(6, NodeType::Team, event);
+    moveTeamInWorld(0, NodeType::Team, event);
 }
 
 void EasyWorldWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -254,16 +297,16 @@ bool EasyWorldWidget::drawWallBoundaryAxis()
             painter.setPen(pen_red);
 
             painter.drawLine(
-                wall_boundary_axis.center_.x, wall_boundary_axis.center_.y,
-                wall_boundary_axis.center_.x + axis_length_ * wall_boundary_axis.x_direction_.x,
-                wall_boundary_axis.center_.y + axis_length_ * wall_boundary_axis.x_direction_.y);
+                zoom_ * wall_boundary_axis.center_.x, zoom_ * wall_boundary_axis.center_.y,
+                zoom_ * (wall_boundary_axis.center_.x + axis_length_ * wall_boundary_axis.x_direction_.x),
+                zoom_ * (wall_boundary_axis.center_.y + axis_length_ * wall_boundary_axis.x_direction_.y));
 
             painter.setPen(pen_green);
 
             painter.drawLine(
-                wall_boundary_axis.center_.x, wall_boundary_axis.center_.y,
-                wall_boundary_axis.center_.x + axis_length_ * wall_boundary_axis.y_direction_.x,
-                wall_boundary_axis.center_.y + axis_length_ * wall_boundary_axis.y_direction_.y);
+                zoom_ * wall_boundary_axis.center_.x, zoom_ * wall_boundary_axis.center_.y,
+                zoom_ * (wall_boundary_axis.center_.x + axis_length_ * wall_boundary_axis.y_direction_.x),
+                zoom_ * (wall_boundary_axis.center_.y + axis_length_ * wall_boundary_axis.y_direction_.y));
         }
         
     }
@@ -308,8 +351,8 @@ bool EasyWorldWidget::drawWallBoundaryPolygon()
                     next_point, next_point_in_world);
 
             painter.drawLine(
-                current_point_in_world.x, current_point_in_world.y,
-                next_point_in_world.x, next_point_in_world.y);
+                zoom_ * current_point_in_world.x, zoom_ * current_point_in_world.y,
+                zoom_ * next_point_in_world.x, zoom_ * next_point_in_world.y);
             }
         }
     }
@@ -356,8 +399,8 @@ bool EasyWorldWidget::drawWallSpaceBoundary()
                 next_point, next_point_in_world);
 
             painter.drawLine(
-                current_point_in_world.x, current_point_in_world.y,
-                next_point_in_world.x, next_point_in_world.y);
+                zoom_ * current_point_in_world.x, zoom_ * current_point_in_world.y,
+                zoom_ * next_point_in_world.x, zoom_ * next_point_in_world.y);
         }
     }
 
@@ -392,16 +435,16 @@ bool EasyWorldWidget::drawRoomBoundaryAxis()
             painter.setPen(pen_red);
 
             painter.drawLine(
-                room_boundary_axis.center_.x, room_boundary_axis.center_.y,
-                room_boundary_axis.center_.x + axis_length_ * room_boundary_axis.x_direction_.x,
-                room_boundary_axis.center_.y + axis_length_ * room_boundary_axis.x_direction_.y);
+                zoom_ * room_boundary_axis.center_.x, zoom_ * room_boundary_axis.center_.y,
+                zoom_ * (room_boundary_axis.center_.x + axis_length_ * room_boundary_axis.x_direction_.x),
+                zoom_ * (room_boundary_axis.center_.y + axis_length_ * room_boundary_axis.x_direction_.y));
 
             painter.setPen(pen_green);
 
             painter.drawLine(
-                room_boundary_axis.center_.x, room_boundary_axis.center_.y,
-                room_boundary_axis.center_.x + axis_length_ * room_boundary_axis.y_direction_.x,
-                room_boundary_axis.center_.y + axis_length_ * room_boundary_axis.y_direction_.y);
+                zoom_ * room_boundary_axis.center_.x, zoom_ * room_boundary_axis.center_.y,
+                zoom_ * (room_boundary_axis.center_.x + axis_length_ * room_boundary_axis.y_direction_.x),
+                zoom_ * (room_boundary_axis.center_.y + axis_length_ * room_boundary_axis.y_direction_.y));
         }
         
     }
@@ -447,8 +490,8 @@ bool EasyWorldWidget::drawRoomBoundaryPolygon()
                     next_point, next_point_in_world);
 
                 painter.drawLine(
-                    current_point_in_world.x, current_point_in_world.y,
-                    next_point_in_world.x, next_point_in_world.y);
+                    zoom_ * current_point_in_world.x, zoom_ * current_point_in_world.y,
+                    zoom_ * next_point_in_world.x, zoom_ * next_point_in_world.y);
             }
         }
     }
@@ -495,8 +538,8 @@ bool EasyWorldWidget::drawRoomSpaceBoundary()
                 next_point, next_point_in_world);
 
             painter.drawLine(
-                current_point_in_world.x, current_point_in_world.y,
-                next_point_in_world.x, next_point_in_world.y);
+                zoom_ * current_point_in_world.x, zoom_ * current_point_in_world.y,
+                zoom_ * next_point_in_world.x, zoom_ * next_point_in_world.y);
         }
     }
 
@@ -531,16 +574,16 @@ bool EasyWorldWidget::drawTeamBoundaryAxis()
             painter.setPen(pen_red);
 
             painter.drawLine(
-                team_boundary_axis.center_.x, team_boundary_axis.center_.y,
-                team_boundary_axis.center_.x + axis_length_ * team_boundary_axis.x_direction_.x,
-                team_boundary_axis.center_.y + axis_length_ * team_boundary_axis.x_direction_.y);
+                zoom_ * team_boundary_axis.center_.x, zoom_ * team_boundary_axis.center_.y,
+                zoom_ * (team_boundary_axis.center_.x + axis_length_ * team_boundary_axis.x_direction_.x),
+                zoom_ * (team_boundary_axis.center_.y + axis_length_ * team_boundary_axis.x_direction_.y));
 
             painter.setPen(pen_green);
 
             painter.drawLine(
-                team_boundary_axis.center_.x, team_boundary_axis.center_.y,
-                team_boundary_axis.center_.x + axis_length_ * team_boundary_axis.y_direction_.x,
-                team_boundary_axis.center_.y + axis_length_ * team_boundary_axis.y_direction_.y);
+                zoom_ * team_boundary_axis.center_.x, zoom_ * team_boundary_axis.center_.y,
+                zoom_ * (team_boundary_axis.center_.x + axis_length_ * team_boundary_axis.y_direction_.x),
+                zoom_ * (team_boundary_axis.center_.y + axis_length_ * team_boundary_axis.y_direction_.y));
         }
         
     }
@@ -586,8 +629,8 @@ bool EasyWorldWidget::drawTeamBoundaryPolygon()
                     next_point, next_point_in_world);
 
                 painter.drawLine(
-                    current_point_in_world.x, current_point_in_world.y,
-                    next_point_in_world.x, next_point_in_world.y);
+                    zoom_ * current_point_in_world.x, zoom_ * current_point_in_world.y,
+                    zoom_ * next_point_in_world.x, zoom_ * next_point_in_world.y);
             }
         }
     }
@@ -634,8 +677,8 @@ bool EasyWorldWidget::drawTeamSpaceBoundary()
                 next_point, next_point_in_world);
 
             painter.drawLine(
-                current_point_in_world.x, current_point_in_world.y,
-                next_point_in_world.x, next_point_in_world.y);
+                zoom_ * current_point_in_world.x, zoom_ * current_point_in_world.y,
+                zoom_ * next_point_in_world.x, zoom_ * next_point_in_world.y);
         }
     }
 
@@ -670,16 +713,16 @@ bool EasyWorldWidget::drawPersonBoundaryAxis()
             painter.setPen(pen_red);
 
             painter.drawLine(
-                person_boundary_axis.center_.x, person_boundary_axis.center_.y,
-                person_boundary_axis.center_.x + axis_length_ * person_boundary_axis.x_direction_.x,
-                person_boundary_axis.center_.y + axis_length_ * person_boundary_axis.x_direction_.y);
+                zoom_ * person_boundary_axis.center_.x, zoom_ * person_boundary_axis.center_.y,
+                zoom_ * (person_boundary_axis.center_.x + axis_length_ * person_boundary_axis.x_direction_.x),
+                zoom_ * (person_boundary_axis.center_.y + axis_length_ * person_boundary_axis.x_direction_.y));
 
             painter.setPen(pen_green);
 
             painter.drawLine(
-                person_boundary_axis.center_.x, person_boundary_axis.center_.y,
-                person_boundary_axis.center_.x + axis_length_ * person_boundary_axis.y_direction_.x,
-                person_boundary_axis.center_.y + axis_length_ * person_boundary_axis.y_direction_.y);
+                zoom_ * person_boundary_axis.center_.x, zoom_ * person_boundary_axis.center_.y,
+                zoom_ * (person_boundary_axis.center_.x + axis_length_ * person_boundary_axis.y_direction_.x),
+                zoom_ * (person_boundary_axis.center_.y + axis_length_ * person_boundary_axis.y_direction_.y));
         }
         
     }
@@ -725,8 +768,8 @@ bool EasyWorldWidget::drawPersonBoundaryPolygon()
                     next_point, next_point_in_world);
 
                 painter.drawLine(
-                    current_point_in_world.x, current_point_in_world.y,
-                    next_point_in_world.x, next_point_in_world.y);
+                    zoom_ * current_point_in_world.x, zoom_ * current_point_in_world.y,
+                    zoom_ * next_point_in_world.x, zoom_ * next_point_in_world.y);
             }
         }
     }
@@ -773,8 +816,8 @@ bool EasyWorldWidget::drawPersonSpaceBoundary()
                 next_point, next_point_in_world);
 
             painter.drawLine(
-                current_point_in_world.x, current_point_in_world.y,
-                next_point_in_world.x, next_point_in_world.y);
+                zoom_ * current_point_in_world.x, zoom_ * current_point_in_world.y,
+                zoom_ * next_point_in_world.x, zoom_ * next_point_in_world.y);
         }
     }
 
@@ -810,16 +853,16 @@ bool EasyWorldWidget::drawFurnitureBoundaryAxis()
             painter.setPen(pen_red);
 
             painter.drawLine(
-                furniture_boundary_axis.center_.x, furniture_boundary_axis.center_.y,
-                furniture_boundary_axis.center_.x + axis_length_ * furniture_boundary_axis.x_direction_.x,
-                furniture_boundary_axis.center_.y + axis_length_ * furniture_boundary_axis.x_direction_.y);
+                zoom_ * furniture_boundary_axis.center_.x, zoom_ * furniture_boundary_axis.center_.y,
+                zoom_ * (furniture_boundary_axis.center_.x + axis_length_ * furniture_boundary_axis.x_direction_.x),
+                zoom_ * (furniture_boundary_axis.center_.y + axis_length_ * furniture_boundary_axis.x_direction_.y));
 
             painter.setPen(pen_green);
 
             painter.drawLine(
-                furniture_boundary_axis.center_.x, furniture_boundary_axis.center_.y,
-                furniture_boundary_axis.center_.x + axis_length_ * furniture_boundary_axis.y_direction_.x,
-                furniture_boundary_axis.center_.y + axis_length_ * furniture_boundary_axis.y_direction_.y);
+                zoom_ * furniture_boundary_axis.center_.x, zoom_ * furniture_boundary_axis.center_.y,
+                zoom_ * (furniture_boundary_axis.center_.x + axis_length_ * furniture_boundary_axis.y_direction_.x),
+                zoom_ * (furniture_boundary_axis.center_.y + axis_length_ * furniture_boundary_axis.y_direction_.y));
         }
         
     }
@@ -865,8 +908,8 @@ bool EasyWorldWidget::drawFurnitureBoundaryPolygon()
                     next_point, next_point_in_world);
 
                 painter.drawLine(
-                    current_point_in_world.x, current_point_in_world.y,
-                    next_point_in_world.x, next_point_in_world.y);
+                    zoom_ * current_point_in_world.x, zoom_ * current_point_in_world.y,
+                    zoom_ * next_point_in_world.x, zoom_ * next_point_in_world.y);
             }
         }
     }
@@ -913,8 +956,8 @@ bool EasyWorldWidget::drawFurnitureSpaceBoundary()
                 next_point, next_point_in_world);
 
             painter.drawLine(
-                current_point_in_world.x, current_point_in_world.y,
-                next_point_in_world.x, next_point_in_world.y);
+                zoom_ * current_point_in_world.x, zoom_ * current_point_in_world.y,
+                zoom_ * next_point_in_world.x, zoom_ * next_point_in_world.y);
         }
     }
 

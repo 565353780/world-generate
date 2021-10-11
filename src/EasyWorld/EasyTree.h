@@ -36,34 +36,40 @@ public:
         const NodeType &node_type,
         const EasyPoint2D &axis_new_center_position_in_parent,
         const bool &is_allow_x_direction_move_in_parent_axis,
-        const bool &is_allow_y_direction_move_in_parent_axis);
+        const bool &is_allow_y_direction_move_in_parent_axis,
+        const bool &is_force_move);
 
     bool setNodeAxisCenterPositionInWorld(
         const size_t &node_id,
         const NodeType &node_type,
         const EasyPoint2D &axis_new_center_position_in_world,
         const bool &is_allow_x_direction_move_in_parent_axis,
-        const bool &is_allow_y_direction_move_in_parent_axis);
+        const bool &is_allow_y_direction_move_in_parent_axis,
+        const bool &is_force_move);
 
     bool setNodeAxisXDirectionInParent(
         const size_t &node_id,
         const NodeType &node_type,
-        const EasyPoint2D &axis_new_x_direction_in_parent);
+        const EasyPoint2D &axis_new_x_direction_in_parent,
+        const bool &is_force_move);
 
     bool setNodeAxisXDirectionInWorld(
         const size_t &node_id,
         const NodeType &node_type,
-        const EasyPoint2D &axis_new_x_direction_in_world);
+        const EasyPoint2D &axis_new_x_direction_in_world,
+        const bool &is_force_move);
 
     bool setNodeAxisInParent(
         const size_t &node_id,
         const NodeType &node_type,
-        const EasyAxis2D &axis_in_parent);
+        const EasyAxis2D &axis_in_parent,
+        const bool &is_force_move);
 
     bool setNodeAxisInWorld(
         const size_t &node_id,
         const NodeType &node_type,
-        const EasyAxis2D &axis_in_world);
+        const EasyAxis2D &axis_in_world,
+        const bool &is_force_move);
 
     bool setNodeBoundaryPolygon(
         const size_t &node_id,

@@ -93,6 +93,11 @@ private:
 
     float axis_length_;
     float zoom_;
+    QColor wall_color_;
+    QColor room_color_;
+    QColor team_color_;
+    QColor person_color_;
+    QColor furniture_color_;
 
     timespec t_spc_;
     long t_start_;

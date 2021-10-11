@@ -9,6 +9,12 @@ EasyWorldWidget::EasyWorldWidget(QWidget *parent) :
     ui->setupUi(this);
 
     axis_length_ = 10;
+    zoom_ = 1;
+    wall_color_ = QColor(0, 0, 0);
+    room_color_ = QColor(0, 0, 0);
+    team_color_ = QColor(0, 0, 0);
+    person_color_ = QColor(0, 0, 0);
+    furniture_color_ = QColor(0, 0, 0);
 
     run_example();
     
@@ -95,8 +101,12 @@ void EasyWorldWidget::run_example()
             world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 8, 8, axis);
             axis.setCenter(24, 0);
             world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 8, 8, axis);
-            axis.setCenter(16, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 8, 4, axis);
+            axis.setCenter(18, 0);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 6, 4, axis);
+            axis.setCenter(18, 4);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 1, 3, axis);
+            axis.setCenter(18, 7);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 4, 1, axis);
             axis.setCenter(12, 0);
             world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 8, 2, axis);
             axis.setCenter(2, 0);
@@ -105,15 +115,21 @@ void EasyWorldWidget::run_example()
             world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 1, 4, 8, axis);
             axis.setCenter(16, 0);
             world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 1, 4, 8, axis);
-            axis.setCenter(20, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 1, 4, 8, axis);
+            axis.setCenter(20, 2);
+            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 1, 2, 6, axis);
             axis.setCenter(0, 0);
             world_controller_.createFreeRoomForWall(0, NodeType::OuterWall, 2, 20, 16, axis);
 
             axis.setCenter(1, 2);
-            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 8, 12, axis, 5, 10, false);
+            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 8, 14, axis, 5, 10, false);
             axis.setCenter(11, 2);
-            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 8, 12, axis, 5, 10, false);
+            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 8, 14, axis, 5, 10, false);
+            axis.setCenter(3, 1);
+            world_controller_.createTeamForRoom(0, NodeType::WallRoom, 2, 2, axis, 1, 1, false);
+            axis.setCenter(3, 1);
+            world_controller_.createTeamForRoom(1, NodeType::WallRoom, 2, 6, axis, 2, 6, true);
+            axis.setCenter(2.5, 0.5);
+            world_controller_.createTeamForRoom(2, NodeType::WallRoom, 1, 1, axis, 1, 1, false);
             break;
         }
     }
@@ -318,12 +334,12 @@ bool EasyWorldWidget::drawWallBoundaryPolygon()
 {
     QPainter painter(this);
 
-    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(wall_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     // QFont font_song("宋体", 15, QFont::Bold, true);
     // painter.setFont(font_song);
 
-    painter.setPen(pen_black);
+    painter.setPen(pen);
 
     std::vector<std::vector<EasyNode*>> wall_boundary_node_vec_vec;
 
@@ -364,12 +380,12 @@ bool EasyWorldWidget::drawWallSpaceBoundary()
 {
     QPainter painter(this);
 
-    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(wall_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     // QFont font_song("宋体", 15, QFont::Bold, true);
     // painter.setFont(font_song);
 
-    painter.setPen(pen_black);
+    painter.setPen(pen);
 
     std::vector<EasyNode*> wall_space_node_vec;
 
@@ -455,12 +471,12 @@ bool EasyWorldWidget::drawRoomBoundaryPolygon()
 {
     QPainter painter(this);
 
-    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(room_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     // QFont font_song("宋体", 15, QFont::Bold, true);
     // painter.setFont(font_song);
 
-    painter.setPen(pen_black);
+    painter.setPen(pen);
 
     std::vector<std::vector<EasyNode*>> room_boundary_node_vec_vec;
 
@@ -503,12 +519,12 @@ bool EasyWorldWidget::drawRoomSpaceBoundary()
 {
     QPainter painter(this);
 
-    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(room_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     // QFont font_song("宋体", 15, QFont::Bold, true);
     // painter.setFont(font_song);
 
-    painter.setPen(pen_black);
+    painter.setPen(pen);
 
     std::vector<EasyNode*> room_space_node_vec;
 
@@ -594,12 +610,12 @@ bool EasyWorldWidget::drawTeamBoundaryPolygon()
 {
     QPainter painter(this);
 
-    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(team_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     // QFont font_song("宋体", 15, QFont::Bold, true);
     // painter.setFont(font_song);
 
-    painter.setPen(pen_black);
+    painter.setPen(pen);
 
     std::vector<std::vector<EasyNode*>> team_boundary_node_vec_vec;
 
@@ -642,12 +658,12 @@ bool EasyWorldWidget::drawTeamSpaceBoundary()
 {
     QPainter painter(this);
 
-    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(team_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     // QFont font_song("宋体", 15, QFont::Bold, true);
     // painter.setFont(font_song);
 
-    painter.setPen(pen_black);
+    painter.setPen(pen);
 
     std::vector<EasyNode*> team_space_node_vec;
 
@@ -733,12 +749,12 @@ bool EasyWorldWidget::drawPersonBoundaryPolygon()
 {
     QPainter painter(this);
 
-    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(person_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     // QFont font_song("宋体", 15, QFont::Bold, true);
     // painter.setFont(font_song);
 
-    painter.setPen(pen_black);
+    painter.setPen(pen);
 
     std::vector<std::vector<EasyNode*>> person_boundary_node_vec_vec;
 
@@ -781,12 +797,12 @@ bool EasyWorldWidget::drawPersonSpaceBoundary()
 {
     QPainter painter(this);
 
-    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(person_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     // QFont font_song("宋体", 15, QFont::Bold, true);
     // painter.setFont(font_song);
 
-    painter.setPen(pen_black);
+    painter.setPen(pen);
 
     std::vector<EasyNode*> person_space_node_vec;
 
@@ -873,12 +889,12 @@ bool EasyWorldWidget::drawFurnitureBoundaryPolygon()
 {
     QPainter painter(this);
 
-    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(furniture_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     // QFont font_song("宋体", 15, QFont::Bold, true);
     // painter.setFont(font_song);
 
-    painter.setPen(pen_black);
+    painter.setPen(pen);
 
     std::vector<std::vector<EasyNode*>> furniture_boundary_node_vec_vec;
 
@@ -921,12 +937,12 @@ bool EasyWorldWidget::drawFurnitureSpaceBoundary()
 {
     QPainter painter(this);
 
-    QPen pen_black(Qt::black, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(furniture_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     // QFont font_song("宋体", 15, QFont::Bold, true);
     // painter.setFont(font_song);
 
-    painter.setPen(pen_black);
+    painter.setPen(pen);
 
     std::vector<EasyNode*> furniture_space_node_vec;
 

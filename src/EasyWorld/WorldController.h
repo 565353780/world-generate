@@ -179,6 +179,29 @@ public:
         const size_t &person_y_direction_num,
         const bool &is_face_horizontal);
 
+    bool createRoomForWall(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const size_t &wall_boundary_id,
+        const NodeType &room_type,
+        const float &room_width,
+        const float &room_height,
+        const EasyAxis2D &room_axis_in_parent);
+
+    bool createWallRoomForWall(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const size_t &wall_boundary_id,
+        const float &room_width,
+        const float &room_height,
+        const EasyAxis2D &room_axis_in_parent);
+
+    bool createFreeRoomForWall(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const float &room_width,
+        const float &room_height,
+        const EasyAxis2D &room_axis_in_parent);
 
     EasyNode* findNode(
         const size_t &node_id,

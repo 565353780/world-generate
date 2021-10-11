@@ -35,11 +35,6 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event);
 
 private:
-    bool createWorld();
-    bool createWall();
-    bool createRoom();
-    bool createTeam();
-
     bool moveWallInWorld(
         const size_t &wall_id,
         const NodeType &wall_type,

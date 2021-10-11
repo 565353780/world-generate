@@ -28,7 +28,6 @@ void EasyWorldWidget::run_example()
     createWall();
     createRoom();
     createTeam();
-    createPerson();
 
     // world_controller_.outputInfo();
 
@@ -145,70 +144,22 @@ bool EasyWorldWidget::createRoom()
 
 bool EasyWorldWidget::createTeam()
 {
-    world_controller_.createTeam(0, NodeType::Team, 0, NodeType::WallRoom);
-    world_controller_.createTeam(1, NodeType::Team, 1, NodeType::WallRoom);
-    world_controller_.createTeam(2, NodeType::Team, 2, NodeType::WallRoom);
-    world_controller_.createTeam(3, NodeType::Team, 3, NodeType::WallRoom);
-    world_controller_.createTeam(4, NodeType::Team, 4, NodeType::WallRoom);
+    EasyAxis2D team_axis;
+    team_axis.setXDirection(1, 0);
 
-    world_controller_.createTeam(5, NodeType::Team, 0, NodeType::FreeRoom);
-    world_controller_.createTeam(6, NodeType::Team, 0, NodeType::FreeRoom);
-    world_controller_.createTeam(7, NodeType::Team, 0, NodeType::FreeRoom);
+    team_axis.setCenter(25, 25);
+    world_controller_.createTeamForRoom(0, NodeType::WallRoom, 50, 50, team_axis, 1, 1, false);
+    world_controller_.createTeamForRoom(1, NodeType::WallRoom, 50, 50, team_axis, 1, 1, false);
+    world_controller_.createTeamForRoom(2, NodeType::WallRoom, 50, 50, team_axis, 1, 1, false);
+    world_controller_.createTeamForRoom(3, NodeType::WallRoom, 50, 50, team_axis, 1, 1, false);
+    world_controller_.createTeamForRoom(4, NodeType::WallRoom, 50, 50, team_axis, 1, 1, false);
 
-    EasyPolygon2D team_boundary_polygon;
-    team_boundary_polygon.point_list.resize(4);
-    team_boundary_polygon.point_list[0].setPosition(0, 0);
-    team_boundary_polygon.point_list[1].setPosition(50, 0);
-    team_boundary_polygon.point_list[2].setPosition(50, 50);
-    team_boundary_polygon.point_list[3].setPosition(0, 50);
-    team_boundary_polygon.setAntiClockWise();
-
-    world_controller_.setTeamBoundaryPolygon(0, NodeType::Team, team_boundary_polygon);
-    world_controller_.setTeamBoundaryPolygon(1, NodeType::Team, team_boundary_polygon);
-    world_controller_.setTeamBoundaryPolygon(2, NodeType::Team, team_boundary_polygon);
-    world_controller_.setTeamBoundaryPolygon(3, NodeType::Team, team_boundary_polygon);
-    world_controller_.setTeamBoundaryPolygon(4, NodeType::Team, team_boundary_polygon);
-
-    team_boundary_polygon.point_list[0].setPosition(0, 0);
-    team_boundary_polygon.point_list[1].setPosition(80, 0);
-    team_boundary_polygon.point_list[2].setPosition(80, 60);
-    team_boundary_polygon.point_list[3].setPosition(0, 60);
-    team_boundary_polygon.setAntiClockWise();
-
-    world_controller_.setTeamBoundaryPolygon(5, NodeType::Team, team_boundary_polygon);
-    world_controller_.setTeamBoundaryPolygon(6, NodeType::Team, team_boundary_polygon);
-    world_controller_.setTeamBoundaryPolygon(7, NodeType::Team, team_boundary_polygon);
-
-    EasyPoint2D team_axis_center_position_in_parent;
-    team_axis_center_position_in_parent.setPosition(25, 25);
-
-    world_controller_.setTeamAxisCenterPositionInParent(0, NodeType::Team, team_axis_center_position_in_parent);
-    world_controller_.setTeamAxisCenterPositionInParent(1, NodeType::Team, team_axis_center_position_in_parent);
-    world_controller_.setTeamAxisCenterPositionInParent(2, NodeType::Team, team_axis_center_position_in_parent);
-    world_controller_.setTeamAxisCenterPositionInParent(3, NodeType::Team, team_axis_center_position_in_parent);
-    world_controller_.setTeamAxisCenterPositionInParent(4, NodeType::Team, team_axis_center_position_in_parent);
-
-    team_axis_center_position_in_parent.setPosition(190, 10);
-    world_controller_.setTeamAxisCenterPositionInParent(7, NodeType::Team, team_axis_center_position_in_parent);
-    team_axis_center_position_in_parent.setPosition(100, 10);
-    world_controller_.setTeamAxisCenterPositionInParent(6, NodeType::Team, team_axis_center_position_in_parent);
-    team_axis_center_position_in_parent.setPosition(10, 10);
-    world_controller_.setTeamAxisCenterPositionInParent(5, NodeType::Team, team_axis_center_position_in_parent);
-
-    return true;
-}
-
-bool EasyWorldWidget::createPerson()
-{
-    world_controller_.createPersonGroupForTeam(0, NodeType::Team, 1, 1, false);
-    world_controller_.createPersonGroupForTeam(1, NodeType::Team, 1, 1, false);
-    world_controller_.createPersonGroupForTeam(2, NodeType::Team, 1, 1, false);
-    world_controller_.createPersonGroupForTeam(3, NodeType::Team, 1, 1, false);
-    world_controller_.createPersonGroupForTeam(4, NodeType::Team, 1, 1, false);
-
-    world_controller_.createPersonGroupForTeam(5, NodeType::Team, 4, 4, true);
-    world_controller_.createPersonGroupForTeam(6, NodeType::Team, 4, 4, true);
-    world_controller_.createPersonGroupForTeam(7, NodeType::Team, 4, 4, true);
+    team_axis.setCenter(10, 10);
+    world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, team_axis, 4, 4, true);
+    team_axis.setCenter(100, 10);
+    world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, team_axis, 4, 4, true);
+    team_axis.setCenter(190, 10);
+    world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, team_axis, 4, 4, true);
 
     return true;
 }

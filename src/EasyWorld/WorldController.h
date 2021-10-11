@@ -124,20 +124,6 @@ public:
         const size_t &point_idx,
         const EasyPoint2D &point_new_position_in_world);
 
-    bool createPersonForTeam(
-        const size_t &team_id,
-        const NodeType &team_type,
-        const float &person_width,
-        const float &person_height,
-        const EasyAxis2D &person_axis_in_parent);
-
-    bool createPersonGroupForTeam(
-        const size_t &team_id,
-        const NodeType &team_type,
-        const size_t &person_x_direction_num,
-        const size_t &person_y_direction_num,
-        const bool &is_face_horizontal);
-
     bool createFurniture(
         const size_t &furniture_id,
         const NodeType &furniture_type,
@@ -168,6 +154,31 @@ public:
     bool createFurnitureForPerson(
         const size_t &person_id,
         const NodeType &person_type);
+
+    bool createPersonForTeam(
+        const size_t &team_id,
+        const NodeType &team_type,
+        const float &person_width,
+        const float &person_height,
+        const EasyAxis2D &person_axis_in_parent);
+
+    bool createPersonGroupForTeam(
+        const size_t &team_id,
+        const NodeType &team_type,
+        const size_t &person_x_direction_num,
+        const size_t &person_y_direction_num,
+        const bool &is_face_horizontal);
+
+    bool createTeamForRoom(
+        const size_t &room_id,
+        const NodeType &room_type,
+        const float &team_width,
+        const float &team_height,
+        const EasyAxis2D &team_axis_in_parent,
+        const size_t &person_x_direction_num,
+        const size_t &person_y_direction_num,
+        const bool &is_face_horizontal);
+
 
     EasyNode* findNode(
         const size_t &node_id,

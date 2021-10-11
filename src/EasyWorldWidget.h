@@ -39,7 +39,6 @@ private:
     bool createWall();
     bool createRoom();
     bool createTeam();
-    bool createPerson();
 
     bool moveWallInWorld(
         const size_t &wall_id,

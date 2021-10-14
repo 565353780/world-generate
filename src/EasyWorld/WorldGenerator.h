@@ -13,6 +13,7 @@ public:
     {
         is_wall_boundary_polygon_set_ = false;
         is_person_num_set_ = false;
+        is_room_num_set_ = false;
     }
 
     bool reset();

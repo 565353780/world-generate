@@ -180,29 +180,38 @@ bool WorldGenerator::generateWall()
 
 bool WorldGenerator::generateRoom()
 {
-    const float person_width_min = 2;
-    const float person_height_min = 2;
-
-    const float room_width_min = 8;
-    const float room_height_min = 8;
+    const float person_width = 2;
+    const float person_height = 2;
 
     const float wall_boundary_polygon_area = wall_boundary_polygon_.getPolygonArea();
 
-    float person_area_min = person_width_min * person_height_min;
-    float person_area_min_sum = person_area_min * person_num_;
+    float person_area = person_width * person_height;
+    float person_area_sum = person_area * person_num_;
 
-    float room_area_min = room_width_min * room_height_min;
+    float room_area_sum_max = wall_boundary_polygon_area - person_area_sum;
 
-    float room_num_max = (wall_boundary_polygon_area - person_area_min_sum) / (room_area_min - person_area_min);
+    float room_area_max = room_area_sum_max / room_num_;
+
+    const size_t room_width_max = size_t(std::sqrt(room_area_max));
+    const size_t room_height_max = size_t(room_width_max);
 
     std::cout << "WorldGenerator::generateRoom : " << std::endl <<
       "world area = " << wall_boundary_polygon_area << std::endl <<
       "person num = " << person_num_ << std::endl <<
-      "person num = " << room_num_ << std::endl <<
-      "person size min = [" << person_width_min << "," << person_height_min << "]" << std::endl <<
-      "room size min = [" << room_width_min << "," << room_height_min << "]" << std::endl;
-    std::cout << "can generate 1 meeting room, 1 bathing room, " <<
-      size_t(room_num_max) - 2 << " office room" << std::endl;
+      "room num = " << room_num_ << std::endl <<
+      "person size = [" << person_width << "," << person_height << "]" << std::endl <<
+      "room size max = [" << room_width_max << "," << room_height_max << "]" << std::endl;
+
+    size_t roomcontainer_num = 1 + std::rand() % room_num_;
+    std::vector<size_t> room_num_in_roomcontainer_vec;
+    room_num_in_roomcontainer_vec.resize(roomcontainer_num, 0);
+
+    size_t current_used_room_num = 0;
+
+    for(size_t i = 0; i < roomcontainer_num; ++i)
+    {
+        // room_num_in_roomcontainer_vec[i] = 1 + std::rand() % ();
+    }
 
     return true;
 }

@@ -123,7 +123,8 @@ void EasyWorldWidget::run_example()
             world_controller_.createTeamForRoom(2, NodeType::WallRoom, 1, 1, axis, 1, 1, false);
 
             world_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
-            world_generator_.setPersonNum(100);
+            world_generator_.setPersonNum(80);
+            world_generator_.setRoomNum(6);
             world_generator_.generateWorld();
             break;
         }

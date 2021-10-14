@@ -11,7 +11,7 @@
 #include <QPoint>
 
 #include <time.h>
-#include "EasyWorld/WorldController.h"
+#include "EasyWorld/WorldGenerator.h"
 
 namespace Ui {
 class EasyWorldWidget;
@@ -99,6 +99,7 @@ private:
     Ui::EasyWorldWidget *ui;
 
     WorldController world_controller_;
+    WorldGenerator world_generator_;
 
     float axis_length_;
     float zoom_;

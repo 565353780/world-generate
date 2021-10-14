@@ -79,13 +79,15 @@ SOURCES += \
     EasyWorld/EasyAxis2D.cpp \
     EasyWorld/EasyNode.cpp \
     EasyWorld/EasyTree.cpp \
-    EasyWorld/WorldController.cpp
+    EasyWorld/WorldController.cpp \
+    EasyWorld/WorldGenerator.cpp
 
 HEADERS += \
     EasyWorld/EasyAxis2D.h \
     EasyWorld/EasyNode.h \
     EasyWorld/EasyTree.h \
-    EasyWorld/WorldController.h
+    EasyWorld/WorldController.h \
+    EasyWorld/WorldGenerator.h
 
 HEADERS += \
     EasyWorld/EasyWorld.h

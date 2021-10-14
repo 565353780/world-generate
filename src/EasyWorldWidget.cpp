@@ -104,7 +104,9 @@ void EasyWorldWidget::run_example()
             axis.setCenter(2, 0);
             world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 1, 4, 4, axis, 1);
             axis.setCenter(6, 0);
-            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 1, 14, 8, axis, 3);
+            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 1, 4, 8, axis, 1);
+            axis.setCenter(16, 0);
+            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 1, 4, 8, axis, 1);
             axis.setCenter(20, 2);
             world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 1, 2, 6, axis, 1);
             axis.setCenter(0, 0);
@@ -119,6 +121,10 @@ void EasyWorldWidget::run_example()
             world_controller_.createTeamForRoom(0, NodeType::WallRoom, 2, 6, axis, 2, 6, true);
             axis.setCenter(2.5, 0.5);
             world_controller_.createTeamForRoom(2, NodeType::WallRoom, 1, 1, axis, 1, 1, false);
+
+            world_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
+            world_generator_.setPersonNum(100);
+            world_generator_.generateWorld();
             break;
         }
     }

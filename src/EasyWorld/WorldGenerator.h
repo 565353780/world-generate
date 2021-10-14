@@ -21,7 +21,10 @@ public:
         const EasyPolygon2D &wall_boundary_polygon);
     
     bool setPersonNum(
-        const size_t &target_person_num);
+        const size_t &person_num);
+
+    bool setRoomNum(
+        const size_t &room_num);
 
     bool generateWorld();
 
@@ -39,6 +42,9 @@ private:
 
     bool is_person_num_set_;
     size_t person_num_;
+
+    bool is_room_num_set_;
+    size_t room_num_;
 };
 
 #endif //WORLD_GENERATOR_H

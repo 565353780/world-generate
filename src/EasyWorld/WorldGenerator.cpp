@@ -62,6 +62,28 @@ bool WorldGenerator::setPersonNum(
     return true;
 }
 
+bool WorldGenerator::setRoomNum(
+    const size_t &room_num)
+{
+    room_num_ = 0;
+    is_room_num_set_ = false;
+
+    if(room_num == 0)
+    {
+        std::cout << "WorldGenerator::setPersonNum : " << std::endl <<
+          "Input :\n" <<
+          "\troom_num = " << room_num << std::endl <<
+          "perosn num not valid!" << std::endl;
+
+        return false;
+    }
+
+    room_num_ = room_num;
+    is_room_num_set_ = true;
+
+    return true;
+}
+
 bool WorldGenerator::generateWorld()
 {
     if(!isReadyToGenerate())
@@ -74,8 +96,16 @@ bool WorldGenerator::generateWorld()
             return false;
         }
         
+        if(!is_person_num_set_)
+        {
+            std::cout << "WorldGenerator::generateWorld : " << std::endl <<
+              "person_num not set!" << std::endl;
+
+            return false;
+        }
+
         std::cout << "WorldGenerator::generateWorld : " << std::endl <<
-          "person_num not set!" << std::endl;
+          "room_num not set!" << std::endl;
 
         return false;
     }
@@ -109,7 +139,9 @@ bool WorldGenerator::generateWorld()
 
 bool WorldGenerator::isReadyToGenerate()
 {
-    if(is_wall_boundary_polygon_set_ && is_person_num_set_)
+    if(is_wall_boundary_polygon_set_ &&
+        is_person_num_set_ &&
+        is_room_num_set_)
     {
         return true;
     }
@@ -164,8 +196,9 @@ bool WorldGenerator::generateRoom()
     float room_num_max = (wall_boundary_polygon_area - person_area_min_sum) / (room_area_min - person_area_min);
 
     std::cout << "WorldGenerator::generateRoom : " << std::endl <<
-      "person num = " << person_num_ << std::endl <<
       "world area = " << wall_boundary_polygon_area << std::endl <<
+      "person num = " << person_num_ << std::endl <<
+      "person num = " << room_num_ << std::endl <<
       "person size min = [" << person_width_min << "," << person_height_min << "]" << std::endl <<
       "room size min = [" << room_width_min << "," << room_height_min << "]" << std::endl;
     std::cout << "can generate 1 meeting room, 1 bathing room, " <<

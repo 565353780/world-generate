@@ -219,12 +219,202 @@ bool WorldController::setWallBoundaryPolygonPointPosition(
     return true;
 }
 
-bool WorldController::createRoom(
-    const size_t &room_id,
-    const NodeType &room_type,
+bool WorldController::createRoomContainer(
+    const size_t &roomcontainer_id,
+    const NodeType &roomcontainer_type,
     const size_t &on_wall_id,
     const NodeType &on_wall_type,
     const size_t &wall_boundary_id)
+{
+    if(roomcontainer_type != NodeType::RoomContainer)
+    {
+        std::cout << "WorldController::createRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\ton_wall_id = " << on_wall_id << std::endl <<
+          "\ton_wall_type = " << on_wall_type << std::endl <<
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "this type is not the roomcontainer type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.createNode(
+          roomcontainer_id, roomcontainer_type, on_wall_id, on_wall_type, wall_boundary_id))
+    {
+        std::cout << "WorldController::createRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\ton_wall_id = " << on_wall_id << std::endl <<
+          "\ton_wall_type = " << on_wall_type << std::endl <<
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "createNode for roomcontainer failed!" << std::endl;
+
+        return false;
+    }
+
+    std::pair<size_t, NodeType> new_roomcontainer_pair;
+    new_roomcontainer_pair.first = roomcontainer_id;
+    new_roomcontainer_pair.second = roomcontainer_type;
+
+    roomcontainer_pair_vec_.emplace_back(new_roomcontainer_pair);
+
+    return true;
+}
+
+bool WorldController::setRoomContainerAxisCenterPositionInParent(
+    const size_t &roomcontainer_id,
+    const NodeType &roomcontainer_type,
+    const EasyPoint2D &axis_new_center_position_in_parent)
+{
+    if(roomcontainer_type != NodeType::RoomContainer)
+    {
+        std::cout << "WorldController::setRoomContainerAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "this type is not the roomcontainer type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInParent(
+          roomcontainer_id,
+          roomcontainer_type,
+          axis_new_center_position_in_parent,
+          true,
+          true,
+          true))
+    {
+        std::cout << "WorldController::setRoomContainerAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this roomcontainer node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setRoomContainerAxisCenterPositionInWorld(
+    const size_t &roomcontainer_id,
+    const NodeType &roomcontainer_type,
+    const EasyPoint2D &axis_new_center_position_in_world)
+{
+    if(roomcontainer_type != NodeType::RoomContainer)
+    {
+        std::cout << "WorldController::setRoomContainerAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "this type is not the roomcontainer type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInWorld(
+          roomcontainer_id,
+          roomcontainer_type,
+          axis_new_center_position_in_world,
+          true,
+          false,
+          false))
+    {
+        std::cout << "WorldController::setRoomContainerAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this roomcontainer node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setRoomContainerBoundaryPolygon(
+    const size_t &roomcontainer_id,
+    const NodeType &roomcontainer_type,
+    const EasyPolygon2D &roomcontainer_boundary_polygon)
+{
+    if(roomcontainer_type != NodeType::RoomContainer)
+    {
+        std::cout << "WorldController::setRoomContainerBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "this type is not the roomcontainer type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygon(roomcontainer_id, roomcontainer_type, roomcontainer_boundary_polygon))
+    {
+        std::cout << "WorldController::setRoomContainerBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "setNodeBoundaryPolygon for roomcontainer failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setRoomContainerBoundaryPolygonPointPosition(
+    const size_t &roomcontainer_id,
+    const NodeType &roomcontainer_type,
+    const size_t &point_idx,
+    const EasyPoint2D &point_new_position_in_world)
+{
+    if(roomcontainer_type != NodeType::RoomContainer)
+    {
+        std::cout << "WorldController::setRoomContainerBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "this type is not the roomcontainer type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygonPointPosition(
+          roomcontainer_id, roomcontainer_type, point_idx, point_new_position_in_world))
+    {
+        std::cout << "WorldController::setRoomContainerBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setNodeBoundaryPolygonPointPosition for roomcontainer failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::createRoom(
+    const size_t &room_id,
+    const NodeType &room_type,
+    const size_t &on_roomcontainer_id,
+    const NodeType &on_roomcontainer_type)
 {
     if(room_type != NodeType::WallRoom &&
         room_type != NodeType::FreeRoom)
@@ -233,24 +423,22 @@ bool WorldController::createRoom(
           "Input :\n" <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
-          "\ton_wall_id = " << on_wall_id << std::endl <<
-          "\ton_wall_type = " << on_wall_type << std::endl <<
-          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\ton_roomcontainer_id = " << on_roomcontainer_id << std::endl <<
+          "\ton_roomcontainer_type = " << on_roomcontainer_type << std::endl <<
           "this type is not the room type!" << std::endl;
 
         return false;
     }
 
     if(!world_tree_.createNode(
-          room_id, room_type, on_wall_id, on_wall_type, wall_boundary_id))
+          room_id, room_type, on_roomcontainer_id, on_roomcontainer_type, 0))
     {
         std::cout << "WorldController::createRoom : " << std::endl <<
           "Input :\n" <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
-          "\ton_wall_id = " << on_wall_id << std::endl <<
-          "\ton_wall_type = " << on_wall_type << std::endl <<
-          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\ton_roomcontainer_id = " << on_roomcontainer_id << std::endl <<
+          "\ton_roomcontainer_type = " << on_roomcontainer_type << std::endl <<
           "createNode for room failed!" << std::endl;
 
         return false;
@@ -1065,7 +1253,7 @@ bool WorldController::createFurnitureForPerson(
           "Input :\n" <<
           "\tperson_id = " << person_id << std::endl <<
           "\tperson_type = " << person_type << std::endl <<
-          "person size is empty!" << std::endl;
+          "this person size not valid!" << std::endl;
 
         return false;
     }
@@ -1673,46 +1861,42 @@ bool WorldController::createTeamForRoom(
     return true;
 }
 
-bool WorldController::createRoomForWall(
-    const size_t &wall_id,
-    const NodeType &wall_type,
-    const size_t &wall_boundary_id,
+bool WorldController::createRoomForRoomContainer(
+    const size_t &roomcontainer_id,
+    const NodeType &roomcontainer_type,
     const NodeType &room_type,
     const float &room_width,
     const float &room_height,
     const EasyAxis2D &room_axis_in_parent)
 {
-    if(wall_type != NodeType::OuterWall &&
-        wall_type != NodeType::InnerWall)
+    if(roomcontainer_type != NodeType::RoomContainer)
     {
-        std::cout << "WorldController::createRoomForWall : " << std::endl <<
+        std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\troom_width = " << room_width << std::endl <<
           "\troom_height = " << room_height << std::endl <<
           "\troom_axis_in_parent : " << std::endl;
         room_axis_in_parent.outputInfo(1);
-        std::cout << "this type is not the wall type!" << std::endl;
+        std::cout << "this type is not the roomcontainer type!" << std::endl;
 
         return false;
     }
 
-    if(!haveThisNode(wall_id, wall_type))
+    if(!haveThisNode(roomcontainer_id, roomcontainer_type))
     {
-        std::cout << "WorldController::createRoomForWall : " << std::endl <<
+        std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\troom_width = " << room_width << std::endl <<
           "\troom_height = " << room_height << std::endl <<
           "\troom_axis_in_parent : " << std::endl;
         room_axis_in_parent.outputInfo(1);
-        std::cout << "wall node not exist!" << std::endl;
+        std::cout << "roomcontainer node not exist!" << std::endl;
 
         return false;
     }
@@ -1720,11 +1904,10 @@ bool WorldController::createRoomForWall(
     if(room_type != NodeType::WallRoom &&
         room_type != NodeType::FreeRoom)
     {
-        std::cout << "WorldController::createRoomForWall : " << std::endl <<
+        std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\troom_width = " << room_width << std::endl <<
           "\troom_height = " << room_height << std::endl <<
@@ -1737,17 +1920,16 @@ bool WorldController::createRoomForWall(
 
     if(room_width <= 0 || room_height <= 0)
     {
-        std::cout << "WorldController::createRoomForWall : " << std::endl <<
+        std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\troom_width = " << room_width << std::endl <<
           "\troom_height = " << room_height << std::endl <<
           "\troom_axis_in_parent : " << std::endl;
         room_axis_in_parent.outputInfo(1);
-        std::cout << "this type is not the room type!" << std::endl;
+        std::cout << "this room size not valid!" << std::endl;
 
         return false;
     }
@@ -1770,13 +1952,12 @@ bool WorldController::createRoomForWall(
     }
 
     if(!world_tree_.createNode(
-          new_room_id, room_type, wall_id, wall_type, wall_boundary_id))
+          new_room_id, room_type, roomcontainer_id, roomcontainer_type, 0))
     {
-        std::cout << "WorldController::createRoomForWall : " << std::endl <<
+        std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\troom_width = " << room_width << std::endl <<
           "\troom_height = " << room_height << std::endl <<
@@ -1803,11 +1984,10 @@ bool WorldController::createRoomForWall(
 
     if(!world_tree_.setNodeBoundaryPolygon(new_room_id, room_type, room_node_boundary_polygon))
     {
-        std::cout << "WorldController::createRoomForWall : " << std::endl <<
+        std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\troom_width = " << room_width << std::endl <<
           "\troom_height = " << room_height << std::endl <<
@@ -1820,11 +2000,10 @@ bool WorldController::createRoomForWall(
 
     if(!world_tree_.setNodeAxisInParent(new_room_id, room_type, room_axis_in_parent, true))
     {
-        std::cout << "WorldController::createRoomForWall : " << std::endl <<
+        std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\troom_width = " << room_width << std::endl <<
           "\troom_height = " << room_height << std::endl <<
@@ -1838,33 +2017,338 @@ bool WorldController::createRoomForWall(
     return true;
 }
 
-bool WorldController::createWallRoomForWall(
+bool WorldController::createRoomGroupForRoomContainer(
+    const size_t &roomcontainer_id,
+    const NodeType &roomcontainer_type,
+    const NodeType &room_type,
+    const size_t &room_x_direction_num)
+{
+    if(roomcontainer_type != NodeType::RoomContainer)
+    {
+        std::cout << "WorldController::createRoomGroupForRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "this type is not the roomcontainer type!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* search_node = findNode(roomcontainer_id, roomcontainer_type);
+
+    if(search_node == nullptr)
+    {
+        std::cout << "WorldController::createRoomGroupForRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "this roomcontainer node not exist!" << std::endl;
+
+        return false;
+    }
+
+    if(room_type != NodeType::WallRoom &&
+        room_type != NodeType::FreeRoom)
+    {
+        std::cout << "WorldController::createRoomGroupForRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "this type is not the room type!" << std::endl;
+
+        return false;
+    }
+
+    if(room_x_direction_num == 0)
+    {
+        std::cout << "WorldController::createRoomGroupForRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "this room size not valid!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* search_space_node = search_node->findChild(0, NodeType::Space);
+
+    if(search_space_node == nullptr)
+    {
+        std::cout << "WorldController::createRoomGroupForRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "roomcontainer space node not exist!" << std::endl;
+
+        return false;
+    }
+
+    const EasyPolygon2D &search_space_boundary_polygon =
+      search_space_node->getBoundaryPolygon();
+
+    if(search_space_boundary_polygon.point_list.size() != 4)
+    {
+        std::cout << "WorldController::createRoomGroupForRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "roomcontainer space boundary polygon size != 4!" << std::endl;
+
+        return false;
+    }
+
+    const EasyPoint2D &roomcontainer_size = search_space_boundary_polygon.point_list[2];
+
+    float room_x_length = roomcontainer_size.x / room_x_direction_num;
+    float room_y_length = roomcontainer_size.y;
+
+    EasyAxis2D room_axis;
+
+    if(!room_axis.setXDirection(1, 0))
+    {
+        std::cout << "WorldController::createRoomGroupForRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "setXDirection for room axis failed!" << std::endl;
+
+        return false;
+    }
+
+    for(size_t i = 0; i < room_x_direction_num; ++i)
+    {
+        if(!room_axis.setCenter(i * room_x_length, 0))
+        {
+            std::cout << "WorldController::createRoomGroupForRoomContainer : " << std::endl <<
+              "Input :\n" <<
+              "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+              "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+              "\troom_type = " << room_type << std::endl <<
+              "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+              "setCenter for room axis failed!" << std::endl;
+
+            return false;
+        }
+
+        if(!createRoomForRoomContainer(
+              roomcontainer_id, roomcontainer_type, room_type, room_x_length, room_y_length, room_axis))
+        {
+            std::cout << "WorldController::createRoomGroupForRoomContainer : " << std::endl <<
+              "Input :\n" <<
+              "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+              "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+              "\troom_type = " << room_type << std::endl <<
+              "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+              "createRoomForRoomContainer for new room failed!" << std::endl;
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool WorldController::createRoomContainerForWall(
     const size_t &wall_id,
     const NodeType &wall_type,
     const size_t &wall_boundary_id,
-    const float &room_width,
-    const float &room_height,
-    const EasyAxis2D &room_axis_in_parent)
+    const float &roomcontainer_width,
+    const float &roomcontainer_height,
+    const EasyAxis2D &roomcontainer_axis_in_parent,
+    const NodeType &room_type,
+    const size_t &room_x_direction_num)
 {
-    if(!createRoomForWall(
-          wall_id,
-          wall_type,
-          wall_boundary_id,
-          NodeType::WallRoom,
-          room_width,
-          room_height,
-          room_axis_in_parent))
+    if(wall_type != NodeType::OuterWall &&
+        wall_type != NodeType::InnerWall)
     {
-        std::cout << "WorldController::createWallRoomForWall : " << std::endl <<
+        std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
           "Input :\n" <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
           "\twall_boundary_id = " << wall_boundary_id << std::endl <<
-          "\troom_width = " << room_width << std::endl <<
-          "\troom_height = " << room_height << std::endl <<
-          "\troom_axis_in_parent : " << std::endl;
-        room_axis_in_parent.outputInfo(1);
-        std::cout << "createRoomForWall for new wall room failed!" << std::endl;
+          "\troomcontainer_width = " << roomcontainer_width << std::endl <<
+          "\troomcontainer_height = " << roomcontainer_height << std::endl <<
+          "\troomcontainer_axis_in_parent : " << std::endl;
+        roomcontainer_axis_in_parent.outputInfo(1);
+        std::cout << "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "this type is not the wall type!" << std::endl;
+
+        return false;
+    }
+
+    if(!haveThisNode(wall_id, wall_type))
+    {
+        std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_width = " << roomcontainer_width << std::endl <<
+          "\troomcontainer_height = " << roomcontainer_height << std::endl <<
+          "\troomcontainer_axis_in_parent : " << std::endl;
+        roomcontainer_axis_in_parent.outputInfo(1);
+        std::cout << "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "wall node not exist!" << std::endl;
+
+        return false;
+    }
+
+    if(roomcontainer_width <= 0 || roomcontainer_height <= 0)
+    {
+        std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_width = " << roomcontainer_width << std::endl <<
+          "\troomcontainer_height = " << roomcontainer_height << std::endl <<
+          "\troomcontainer_axis_in_parent : " << std::endl;
+        roomcontainer_axis_in_parent.outputInfo(1);
+        std::cout << "\troom_type = " << room_type << std::endl <<
+          "this roomcontainer size not valid!" << std::endl;
+
+        return false;
+    }
+
+    if(room_type != NodeType::WallRoom &&
+        room_type != NodeType::FreeRoom)
+    {
+        std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_width = " << roomcontainer_width << std::endl <<
+          "\troomcontainer_height = " << roomcontainer_height << std::endl <<
+          "\troomcontainer_axis_in_parent : " << std::endl;
+        roomcontainer_axis_in_parent.outputInfo(1);
+        std::cout << "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "this type is not the room type!" << std::endl;
+
+        return false;
+    }
+
+    bool find_exist_roomcontainer = false;
+    size_t new_roomcontainer_id = 0;
+    for(const std::pair<size_t, NodeType> &roomcontainer_pair : roomcontainer_pair_vec_)
+    {
+        if(roomcontainer_pair.second != NodeType::RoomContainer)
+        {
+            continue;
+        }
+
+        new_roomcontainer_id = std::max(new_roomcontainer_id, roomcontainer_pair.first);
+        find_exist_roomcontainer = true;
+    }
+    if(find_exist_roomcontainer)
+    {
+        ++new_roomcontainer_id;
+    }
+
+    if(!world_tree_.createNode(
+          new_roomcontainer_id, NodeType::RoomContainer, wall_id, wall_type, wall_boundary_id))
+    {
+        std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_width = " << roomcontainer_width << std::endl <<
+          "\troomcontainer_height = " << roomcontainer_height << std::endl <<
+          "\troomcontainer_axis_in_parent : " << std::endl;
+        roomcontainer_axis_in_parent.outputInfo(1);
+        std::cout << "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "createNode for new roomcontainer failed!" << std::endl;
+
+        return false;
+    }
+
+    std::pair<size_t, NodeType> new_roomcontainer_pair;
+    new_roomcontainer_pair.first = new_roomcontainer_id;
+    new_roomcontainer_pair.second = NodeType::RoomContainer;
+
+    roomcontainer_pair_vec_.emplace_back(new_roomcontainer_pair);
+
+    EasyPolygon2D roomcontainer_node_boundary_polygon;
+    roomcontainer_node_boundary_polygon.point_list.resize(4);
+    roomcontainer_node_boundary_polygon.point_list[0].setPosition(0, 0);
+    roomcontainer_node_boundary_polygon.point_list[1].setPosition(roomcontainer_width, 0);
+    roomcontainer_node_boundary_polygon.point_list[2].setPosition(roomcontainer_width, roomcontainer_height);
+    roomcontainer_node_boundary_polygon.point_list[3].setPosition(0, roomcontainer_height);
+    roomcontainer_node_boundary_polygon.setAntiClockWise();
+
+    if(!world_tree_.setNodeBoundaryPolygon(new_roomcontainer_id, NodeType::RoomContainer, roomcontainer_node_boundary_polygon))
+    {
+        std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_width = " << roomcontainer_width << std::endl <<
+          "\troomcontainer_height = " << roomcontainer_height << std::endl <<
+          "\troomcontainer_axis_in_parent : " << std::endl;
+        roomcontainer_axis_in_parent.outputInfo(1);
+        std::cout << "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "setNodeBoundaryPolygon for new roomcontainer failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisInParent(new_roomcontainer_id, NodeType::RoomContainer, roomcontainer_axis_in_parent, true))
+    {
+        std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_width = " << roomcontainer_width << std::endl <<
+          "\troomcontainer_height = " << roomcontainer_height << std::endl <<
+          "\troomcontainer_axis_in_parent : " << std::endl;
+        roomcontainer_axis_in_parent.outputInfo(1);
+        std::cout << "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "setNodeAxisInParent for new roomcontainer failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!createRoomGroupForRoomContainer(
+          new_roomcontainer_id,
+          NodeType::RoomContainer,
+          room_type,
+          room_x_direction_num))
+    {
+        std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_width = " << roomcontainer_width << std::endl <<
+          "\troomcontainer_height = " << roomcontainer_height << std::endl <<
+          "\troomcontainer_axis_in_parent : " << std::endl;
+        roomcontainer_axis_in_parent.outputInfo(1);
+        std::cout << "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "createRoomGroupForRoomContainer for new roomcontainer failed!" << std::endl;
 
         return false;
     }
@@ -1872,32 +2356,72 @@ bool WorldController::createWallRoomForWall(
     return true;
 }
 
-bool WorldController::createFreeRoomForWall(
+bool WorldController::createWallRoomContainerForWall(
     const size_t &wall_id,
     const NodeType &wall_type,
     const size_t &wall_boundary_id,
-    const float &room_width,
-    const float &room_height,
-    const EasyAxis2D &room_axis_in_parent)
+    const float &roomcontainer_width,
+    const float &roomcontainer_height,
+    const EasyAxis2D &roomcontainer_axis_in_parent,
+    const size_t &room_x_direction_num)
 {
-    if(!createRoomForWall(
+    if(!createRoomContainerForWall(
           wall_id,
           wall_type,
           wall_boundary_id,
-          NodeType::FreeRoom,
-          room_width,
-          room_height,
-          room_axis_in_parent))
+          roomcontainer_width,
+          roomcontainer_height,
+          roomcontainer_axis_in_parent,
+          NodeType::WallRoom,
+          room_x_direction_num))
     {
-        std::cout << "WorldController::createWallRoomForWall : " << std::endl <<
+        std::cout << "WorldController::createWallRoomContainerForWall : " << std::endl <<
           "Input :\n" <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
-          "\troom_width = " << room_width << std::endl <<
-          "\troom_height = " << room_height << std::endl <<
-          "\troom_axis_in_parent : " << std::endl;
-        room_axis_in_parent.outputInfo(1);
-        std::cout << "createRoomForWall for new free room failed!" << std::endl;
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_width = " << roomcontainer_width << std::endl <<
+          "\troomcontainer_height = " << roomcontainer_height << std::endl <<
+          "\troomcontainer_axis_in_parent : " << std::endl;
+        roomcontainer_axis_in_parent.outputInfo(1);
+        std::cout << "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "createRoomGroupForRoomContainer for new roomcontainer failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::createFreeRoomContainerForWall(
+    const size_t &wall_id,
+    const NodeType &wall_type,
+    const size_t &wall_boundary_id,
+    const float &roomcontainer_width,
+    const float &roomcontainer_height,
+    const EasyAxis2D &roomcontainer_axis_in_parent,
+    const size_t &room_x_direction_num)
+{
+    if(!createRoomContainerForWall(
+          wall_id,
+          wall_type,
+          wall_boundary_id,
+          roomcontainer_width,
+          roomcontainer_height,
+          roomcontainer_axis_in_parent,
+          NodeType::FreeRoom,
+          room_x_direction_num))
+    {
+        std::cout << "WorldController::createFreeRoomContainerForWall : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_width = " << roomcontainer_width << std::endl <<
+          "\troomcontainer_height = " << roomcontainer_height << std::endl <<
+          "\troomcontainer_axis_in_parent : " << std::endl;
+        roomcontainer_axis_in_parent.outputInfo(1);
+        std::cout << "createRoomGroupForRoomContainer for new roomcontainer failed!" << std::endl;
 
         return false;
     }
@@ -2040,6 +2564,112 @@ bool WorldController::getWallSpaceNodeVec(
         }
 
         wall_space_node_vec.emplace_back(wall_space_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getRoomContainerNodeVec(
+    std::vector<EasyNode*> &roomcontainer_node_vec)
+{
+    roomcontainer_node_vec.clear();
+
+    if(roomcontainer_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    for(const std::pair<size_t, NodeType> &roomcontainer_pair : roomcontainer_pair_vec_)
+    {
+        EasyNode* roomcontainer_node = findNode(roomcontainer_pair.first, roomcontainer_pair.second);
+
+        if(roomcontainer_node == nullptr)
+        {
+            std::cout << "WorldController::getRoomContainerNodeVec : " << std::endl <<
+              "get roomcontainer : id = " << roomcontainer_pair.first <<
+              ", type = " << roomcontainer_pair.second <<
+              " failed!" << std::endl;
+
+            return false;
+        }
+
+        roomcontainer_node_vec.emplace_back(roomcontainer_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getRoomContainerBoundaryNodeVecVec(
+    std::vector<std::vector<EasyNode*>> &roomcontainer_boundary_node_vec_vec)
+{
+    roomcontainer_boundary_node_vec_vec.clear();
+
+    if(roomcontainer_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> roomcontainer_node_vec;
+
+    if(!getRoomContainerNodeVec(roomcontainer_node_vec))
+    {
+        std::cout << "WorldController::getRoomContainerBoundaryNodeVec : " << std::endl <<
+          "getRoomContainerNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* roomcontainer_node : roomcontainer_node_vec)
+    {
+        std::vector<EasyNode*> roomcontainer_boundary_node_vec;
+        std::vector<EasyNode*> roomcontainer_child_node_vec = roomcontainer_node->getChildNodeVec();
+
+        for(EasyNode* roomcontainer_child_node : roomcontainer_child_node_vec)
+        {
+            if(roomcontainer_child_node->getNodeType() == NodeType::Boundary)
+            {
+                roomcontainer_boundary_node_vec.emplace_back(roomcontainer_child_node);
+            }
+        }
+
+        roomcontainer_boundary_node_vec_vec.emplace_back(roomcontainer_boundary_node_vec);
+    }
+    return true;
+}
+
+bool WorldController::getRoomContainerSpaceNodeVec(
+    std::vector<EasyNode*> &roomcontainer_space_node_vec)
+{
+    roomcontainer_space_node_vec.clear();
+
+    if(roomcontainer_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> roomcontainer_node_vec;
+
+    if(!getRoomContainerNodeVec(roomcontainer_node_vec))
+    {
+        std::cout << "WorldController::getRoomContainerSpaceNodeVec : " << std::endl <<
+          "getRoomContainerNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* roomcontainer_node : roomcontainer_node_vec)
+    {
+        EasyNode* roomcontainer_space_node = roomcontainer_node->findChild(0, NodeType::Space);
+
+        if(roomcontainer_space_node == nullptr)
+        {
+            std::cout << "WorldController::getRoomContainerNodeVec : " << std::endl <<
+              "get roomcontainer space node failed!" << std::endl;
+
+            return false;
+        }
+
+        roomcontainer_space_node_vec.emplace_back(roomcontainer_space_node);
     }
 
     return true;

@@ -14,14 +14,15 @@ enum NodeType
     World = 1,
     OuterWall = 2,
     InnerWall = 3,
-    WallRoom = 4,
-    FreeRoom = 5,
-    Team = 6,
-    Person = 7,
-    Furniture = 8,
-    Boundary = 9,
-    Door = 10,
-    Space = 11
+    RoomContainer = 4,
+    WallRoom = 5,
+    FreeRoom = 6,
+    Team = 7,
+    Person = 8,
+    Furniture = 9,
+    Boundary = 10,
+    Door = 11,
+    Space = 12
 };
 
 class EasyNode

@@ -11,6 +11,7 @@ EasyWorldWidget::EasyWorldWidget(QWidget *parent) :
     axis_length_ = 10;
     zoom_ = 1;
     wall_color_ = QColor(0, 0, 0);
+    roomcontainer_color_ = QColor(0, 0, 0);
     room_color_ = QColor(0, 0, 0);
     team_color_ = QColor(0, 0, 0);
     person_color_ = QColor(0, 0, 0);
@@ -53,17 +54,12 @@ void EasyWorldWidget::run_example()
             EasyAxis2D axis;
             axis.setXDirection(1, 0);
             axis.setCenter(10, 110);
-            world_controller_.createFreeRoomForWall(0, NodeType::OuterWall, 0, 280, 80, axis);
+            world_controller_.createFreeRoomContainerForWall(0, NodeType::OuterWall, 0, 280, 80, axis, 3);
             axis.setCenter(0, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, axis);
-            axis.setCenter(100, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, axis);
+            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 0, 300, 100, axis, 3);
+            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 2, 100, 100, axis, 1);
             axis.setCenter(200, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 100, 100, axis);
-            axis.setCenter(0, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 2, 100, 100, axis);
-            axis.setCenter(200, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 2, 100, 100, axis);
+            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 2, 100, 100, axis, 1);
 
             axis.setCenter(25, 25);
             world_controller_.createTeamForRoom(0, NodeType::WallRoom, 50, 50, axis, 2, 2, true);
@@ -73,10 +69,8 @@ void EasyWorldWidget::run_example()
             world_controller_.createTeamForRoom(4, NodeType::WallRoom, 50, 50, axis, 1, 1, false);
             axis.setCenter(10, 10);
             world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, axis, 4, 4, true);
-            axis.setCenter(100, 10);
-            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, axis, 4, 4, true);
-            axis.setCenter(190, 10);
-            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, axis, 4, 4, true);
+            world_controller_.createTeamForRoom(1, NodeType::FreeRoom, 80, 60, axis, 4, 4, true);
+            world_controller_.createTeamForRoom(2, NodeType::FreeRoom, 80, 60, axis, 4, 4, true);
             break;
         }
     case 1:
@@ -97,37 +91,32 @@ void EasyWorldWidget::run_example()
 
             EasyAxis2D axis;
             axis.setXDirection(1, 0);
-            axis.setCenter(32, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 8, 8, axis);
             axis.setCenter(24, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 8, 8, axis);
+            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 3, 16, 8, axis, 2);
             axis.setCenter(18, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 6, 4, axis);
+            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 3, 6, 4, axis, 1);
             axis.setCenter(18, 4);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 1, 3, axis);
+            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 3, 1, 3, axis, 1);
             axis.setCenter(18, 7);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 3, 4, 1, axis);
+            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 3, 4, 1, axis, 1);
             axis.setCenter(12, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 0, 8, 2, axis);
+            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 0, 8, 2, axis, 1);
             axis.setCenter(2, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 1, 4, 4, axis);
+            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 1, 4, 4, axis, 1);
             axis.setCenter(6, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 1, 4, 8, axis);
-            axis.setCenter(16, 0);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 1, 4, 8, axis);
+            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 1, 14, 8, axis, 3);
             axis.setCenter(20, 2);
-            world_controller_.createWallRoomForWall(0, NodeType::OuterWall, 1, 2, 6, axis);
+            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 1, 2, 6, axis, 1);
             axis.setCenter(0, 0);
-            world_controller_.createFreeRoomForWall(0, NodeType::OuterWall, 2, 20, 16, axis);
+            world_controller_.createFreeRoomContainerForWall(0, NodeType::OuterWall, 2, 20, 18, axis, 2);
 
             axis.setCenter(1, 2);
             world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 8, 14, axis, 5, 10, false);
-            axis.setCenter(11, 2);
-            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 8, 14, axis, 5, 10, false);
+            world_controller_.createTeamForRoom(1, NodeType::FreeRoom, 8, 14, axis, 5, 10, false);
             axis.setCenter(3, 1);
-            world_controller_.createTeamForRoom(0, NodeType::WallRoom, 2, 2, axis, 1, 1, false);
+            world_controller_.createTeamForRoom(1, NodeType::WallRoom, 2, 2, axis, 1, 1, false);
             axis.setCenter(3, 1);
-            world_controller_.createTeamForRoom(1, NodeType::WallRoom, 2, 6, axis, 2, 6, true);
+            world_controller_.createTeamForRoom(0, NodeType::WallRoom, 2, 6, axis, 2, 6, true);
             axis.setCenter(2.5, 0.5);
             world_controller_.createTeamForRoom(2, NodeType::WallRoom, 1, 1, axis, 1, 1, false);
             break;
@@ -144,12 +133,14 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
 
     drawWallSpaceBoundary();
+    // drawRoomContainerSpaceBoundary();
     drawRoomSpaceBoundary();
     // drawTeamSpaceBoundary();
     // drawPersonSpaceBoundary();
     drawFurnitureSpaceBoundary();
 
     // drawWallBoundaryAxis();
+    // drawRoomContainerBoundaryAxis();
     // drawRoomBoundaryAxis();
     // drawTeamBoundaryAxis();
     // drawPersonBoundaryAxis();
@@ -165,9 +156,11 @@ void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
     // moveWallInWorld(0, NodeType::OuterWall, event);
 
+    moveRoomContainerInWorld(0, NodeType::RoomContainer, event);
+
     // moveRoomInWorld(0, NodeType::WallRoom, event);
 
-    moveTeamInWorld(0, NodeType::Team, event);
+    // moveTeamInWorld(0, NodeType::Team, event);
 }
 
 void EasyWorldWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -190,6 +183,28 @@ bool EasyWorldWidget::moveWallInWorld(
 
         world_controller_.setWallAxisCenterPositionInWorld(
             wall_id, wall_type, new_wall_pos);
+
+        update();
+    }
+
+    return true;
+}
+
+bool EasyWorldWidget::moveRoomContainerInWorld(
+    const size_t &roomcontainer_id,
+    const NodeType &roomcontainer_type,
+    QMouseEvent *event)
+{
+    if(event->buttons() == Qt::LeftButton)
+    {
+        const QPoint &mouse_pos = event->pos();
+
+        EasyPoint2D new_roomcontainer_pos;
+
+        new_roomcontainer_pos.setPosition(mouse_pos.x(), mouse_pos.y());
+
+        world_controller_.setRoomContainerAxisCenterPositionInWorld(
+            roomcontainer_id, roomcontainer_type, new_roomcontainer_pos);
 
         update();
     }
@@ -412,6 +427,145 @@ bool EasyWorldWidget::drawWallSpaceBoundary()
             wall_space_node->getPointInWorld(
                 current_point, current_point_in_world);
             wall_space_node->getPointInWorld(
+                next_point, next_point_in_world);
+
+            painter.drawLine(
+                zoom_ * current_point_in_world.x, zoom_ * current_point_in_world.y,
+                zoom_ * next_point_in_world.x, zoom_ * next_point_in_world.y);
+        }
+    }
+
+    return true;
+}
+
+bool EasyWorldWidget::drawRoomContainerBoundaryAxis()
+{
+    QPainter painter(this);
+
+    QPen pen_red(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_green(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    // QFont font_song("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song);
+
+    std::vector<std::vector<EasyNode*>> roomcontainer_boundary_node_vec_vec;
+
+    world_controller_.getRoomContainerBoundaryNodeVecVec(roomcontainer_boundary_node_vec_vec);
+
+    for(const std::vector<EasyNode*>& roomcontainer_boundary_node_vec: roomcontainer_boundary_node_vec_vec)
+    {
+        for(const EasyNode* roomcontainer_boundary_node : roomcontainer_boundary_node_vec)
+        {
+            if(roomcontainer_boundary_node == nullptr)
+            {
+                continue;
+            }
+
+            EasyAxis2D roomcontainer_boundary_axis = roomcontainer_boundary_node->getAxisInWorld();
+
+            painter.setPen(pen_red);
+
+            painter.drawLine(
+                zoom_ * roomcontainer_boundary_axis.center_.x, zoom_ * roomcontainer_boundary_axis.center_.y,
+                zoom_ * (roomcontainer_boundary_axis.center_.x + axis_length_ * roomcontainer_boundary_axis.x_direction_.x),
+                zoom_ * (roomcontainer_boundary_axis.center_.y + axis_length_ * roomcontainer_boundary_axis.x_direction_.y));
+
+            painter.setPen(pen_green);
+
+            painter.drawLine(
+                zoom_ * roomcontainer_boundary_axis.center_.x, zoom_ * roomcontainer_boundary_axis.center_.y,
+                zoom_ * (roomcontainer_boundary_axis.center_.x + axis_length_ * roomcontainer_boundary_axis.y_direction_.x),
+                zoom_ * (roomcontainer_boundary_axis.center_.y + axis_length_ * roomcontainer_boundary_axis.y_direction_.y));
+        }
+        
+    }
+    return true;
+}
+
+bool EasyWorldWidget::drawRoomContainerBoundaryPolygon()
+{
+    QPainter painter(this);
+
+    QPen pen(roomcontainer_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    // QFont font_song("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song);
+
+    painter.setPen(pen);
+
+    std::vector<std::vector<EasyNode*>> roomcontainer_boundary_node_vec_vec;
+
+    world_controller_.getRoomContainerBoundaryNodeVecVec(roomcontainer_boundary_node_vec_vec);
+
+    for(const std::vector<EasyNode*> &roomcontainer_boundary_node_vec :
+        roomcontainer_boundary_node_vec_vec)
+    {
+        for(EasyNode* roomcontainer_boundary_node : roomcontainer_boundary_node_vec)
+        {
+            const EasyPolygon2D &roomcontainer_boundary_polygon =
+              roomcontainer_boundary_node->getBoundaryPolygon();
+
+            for(size_t i = 0; i < roomcontainer_boundary_polygon.point_list.size(); ++i)
+            {
+                const EasyPoint2D &current_point =
+                  roomcontainer_boundary_polygon.point_list[i];
+                const EasyPoint2D &next_point =
+                  roomcontainer_boundary_polygon.point_list[
+                  (i + 1) % roomcontainer_boundary_polygon.point_list.size()];
+
+                EasyPoint2D current_point_in_world;
+                EasyPoint2D next_point_in_world;
+                roomcontainer_boundary_node->getPointInWorld(
+                    current_point, current_point_in_world);
+                roomcontainer_boundary_node->getPointInWorld(
+                    next_point, next_point_in_world);
+
+                painter.drawLine(
+                    zoom_ * current_point_in_world.x, zoom_ * current_point_in_world.y,
+                    zoom_ * next_point_in_world.x, zoom_ * next_point_in_world.y);
+            }
+        }
+    }
+
+    return true;
+}
+
+bool EasyWorldWidget::drawRoomContainerSpaceBoundary()
+{
+    QPainter painter(this);
+
+    QPen pen(roomcontainer_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    // QFont font_song("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song);
+
+    painter.setPen(pen);
+
+    std::vector<EasyNode*> roomcontainer_space_node_vec;
+
+    world_controller_.getRoomContainerSpaceNodeVec(roomcontainer_space_node_vec);
+
+    for(EasyNode* roomcontainer_space_node : roomcontainer_space_node_vec)
+    {
+        if(roomcontainer_space_node == nullptr)
+        {
+            continue;
+        }
+
+        const EasyPolygon2D &roomcontainer_space_polygon =
+          roomcontainer_space_node->getBoundaryPolygon();
+
+        for(size_t i = 0; i < roomcontainer_space_polygon.point_list.size(); ++i)
+        {
+            const EasyPoint2D &current_point = roomcontainer_space_polygon.point_list[i];
+            const EasyPoint2D &next_point = roomcontainer_space_polygon.point_list[
+              (i + 1) % roomcontainer_space_polygon.point_list.size()];
+
+            EasyPoint2D current_point_in_world;
+            EasyPoint2D next_point_in_world;
+            roomcontainer_space_node->getPointInWorld(
+                current_point, current_point_in_world);
+            roomcontainer_space_node->getPointInWorld(
                 next_point, next_point_in_world);
 
             painter.drawLine(

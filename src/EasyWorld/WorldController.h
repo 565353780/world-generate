@@ -42,12 +42,39 @@ public:
         const size_t &point_idx,
         const EasyPoint2D &point_new_position_in_world);
 
-    bool createRoom(
-        const size_t &room_id,
-        const NodeType &room_type,
+    bool createRoomContainer(
+        const size_t &roomcontainer_id,
+        const NodeType &roomcontainer_type,
         const size_t &on_wall_id,
         const NodeType &on_wall_type,
         const size_t &wall_boundary_id);
+
+    bool setRoomContainerAxisCenterPositionInParent(
+        const size_t &roomcontainer_id,
+        const NodeType &roomcontainer_type,
+        const EasyPoint2D &axis_new_center_position_in_parent);
+
+    bool setRoomContainerAxisCenterPositionInWorld(
+        const size_t &roomcontainer_id,
+        const NodeType &roomcontainer_type,
+        const EasyPoint2D &axis_new_center_position_in_world);
+
+    bool setRoomContainerBoundaryPolygon(
+        const size_t &roomcontainer_id,
+        const NodeType &roomcontainer_type,
+        const EasyPolygon2D &roomcontainer_boundary_polygon);
+
+    bool setRoomContainerBoundaryPolygonPointPosition(
+        const size_t &roomcontainer_id,
+        const NodeType &roomcontainer_type,
+        const size_t &point_idx,
+        const EasyPoint2D &point_new_position_in_world);
+
+    bool createRoom(
+        const size_t &room_id,
+        const NodeType &room_type,
+        const size_t &on_roomcontainer_id,
+        const NodeType &on_roomcontainer_type);
 
     bool setRoomAxisCenterPositionInParent(
         const size_t &room_id,
@@ -179,30 +206,47 @@ public:
         const size_t &person_y_direction_num,
         const bool &is_face_horizontal);
 
-    bool createRoomForWall(
-        const size_t &wall_id,
-        const NodeType &wall_type,
-        const size_t &wall_boundary_id,
+    bool createRoomForRoomContainer(
+        const size_t &roomcontainer_id,
+        const NodeType &roomcontainer_type,
         const NodeType &room_type,
         const float &room_width,
         const float &room_height,
         const EasyAxis2D &room_axis_in_parent);
 
-    bool createWallRoomForWall(
-        const size_t &wall_id,
-        const NodeType &wall_type,
-        const size_t &wall_boundary_id,
-        const float &room_width,
-        const float &room_height,
-        const EasyAxis2D &room_axis_in_parent);
+    bool createRoomGroupForRoomContainer(
+        const size_t &roomcontainer_id,
+        const NodeType &roomcontainer_type,
+        const NodeType &room_type,
+        const size_t &room_x_direction_num);
 
-    bool createFreeRoomForWall(
+    bool createRoomContainerForWall(
         const size_t &wall_id,
         const NodeType &wall_type,
         const size_t &wall_boundary_id,
-        const float &room_width,
-        const float &room_height,
-        const EasyAxis2D &room_axis_in_parent);
+        const float &roomcontainer_width,
+        const float &roomcontainer_height,
+        const EasyAxis2D &roomcontainer_axis_in_parent,
+        const NodeType &room_type,
+        const size_t &room_x_direction_num);
+
+    bool createWallRoomContainerForWall(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const size_t &wall_boundary_id,
+        const float &roomcontainer_width,
+        const float &roomcontainer_height,
+        const EasyAxis2D &roomcontainer_axis_in_parent,
+        const size_t &room_x_direction_num);
+
+    bool createFreeRoomContainerForWall(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const size_t &wall_boundary_id,
+        const float &roomcontainer_width,
+        const float &roomcontainer_height,
+        const EasyAxis2D &roomcontainer_axis_in_parent,
+        const size_t &room_x_direction_num);
 
     EasyNode* findNode(
         const size_t &node_id,
@@ -220,6 +264,15 @@ public:
 
     bool getWallSpaceNodeVec(
         std::vector<EasyNode*> &wall_space_node_vec);
+
+    bool getRoomContainerNodeVec(
+        std::vector<EasyNode*> &roomcontainer_node_vec);
+
+    bool getRoomContainerBoundaryNodeVecVec(
+        std::vector<std::vector<EasyNode*>> &roomcontainer_boundary_node_vec_vec);
+
+    bool getRoomContainerSpaceNodeVec(
+        std::vector<EasyNode*> &roomcontainer_space_node_vec);
 
     bool getRoomNodeVec(
         std::vector<EasyNode*> &room_node_vec);
@@ -263,6 +316,7 @@ private:
     EasyTree world_tree_;
 
     std::vector<std::pair<size_t, NodeType>> wall_pair_vec_;
+    std::vector<std::pair<size_t, NodeType>> roomcontainer_pair_vec_;
     std::vector<std::pair<size_t, NodeType>> room_pair_vec_;
     std::vector<std::pair<size_t, NodeType>> team_pair_vec_;
     std::vector<std::pair<size_t, NodeType>> person_pair_vec_;

@@ -40,6 +40,11 @@ private:
         const NodeType &wall_type,
         QMouseEvent *event);
 
+    bool moveRoomContainerInWorld(
+        const size_t &roomcontainer_id,
+        const NodeType &roomcontainer_type,
+        QMouseEvent *event);
+
     bool moveRoomInWorld(
         const size_t &room_id,
         const NodeType &room_type,
@@ -63,6 +68,10 @@ private:
     bool drawWallBoundaryAxis();
     bool drawWallBoundaryPolygon();
     bool drawWallSpaceBoundary();
+
+    bool drawRoomContainerBoundaryAxis();
+    bool drawRoomContainerBoundaryPolygon();
+    bool drawRoomContainerSpaceBoundary();
 
     bool drawRoomBoundaryAxis();
     bool drawRoomBoundaryPolygon();
@@ -94,6 +103,7 @@ private:
     float axis_length_;
     float zoom_;
     QColor wall_color_;
+    QColor roomcontainer_color_;
     QColor room_color_;
     QColor team_color_;
     QColor person_color_;

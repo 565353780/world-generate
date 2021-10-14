@@ -37,8 +37,8 @@ float EasyComputation::pointDist2(
     const EasyPoint2D &point_2)
 {
     float dist_2 =
-      pow(point_1.x - point_2.x, 2) +
-      pow(point_1.y - point_2.y, 2);
+      (point_1.x - point_2.x) * (point_1.x - point_2.x) +
+      (point_1.y - point_2.y) * (point_1.y - point_2.y);
 
     return dist_2;
 }

@@ -32,6 +32,17 @@ public:
 private:
     bool isReadyToGenerate();
 
+    bool isWallBoundaryStartPositionValid(
+        const size_t &wall_boundary_idx,
+        const float &wall_boundary_start_position,
+        float &max_line_width,
+        float &max_line_height);
+
+    bool isWallBoundaryLineValid(
+        const size_t &wall_boundary_idx,
+        const std::vector<float> &wall_boundary_line,
+        float &max_line_height);
+
     bool generateWall();
     bool generateRoom();
 
@@ -40,6 +51,9 @@ private:
 
     bool is_wall_boundary_polygon_set_;
     EasyPolygon2D wall_boundary_polygon_;
+    std::vector<float> wall_boundary_length_vec_;
+    //line_start, line_end, room_height
+    std::vector<std::vector<std::vector<float>>> wall_boundary_used_line_vec_vec_;
 
     bool is_person_num_set_;
     size_t person_num_;

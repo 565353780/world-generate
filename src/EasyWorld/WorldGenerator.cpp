@@ -434,15 +434,17 @@ bool WorldGenerator::generateWall()
 
 bool WorldGenerator::splitWallSpace()
 {
+    split_room_tree_->reset();
+
     const size_t wall_room_edge_max = 8;
 
-    const size_t split_time = room_num_;
+    const size_t split_time = 1 + std::rand() % room_num_;
 
     for(size_t i = 0; i < split_time; ++i)
     {
         SplitNode* random_child_node = split_room_tree_->getRandomLeafNode();
         bool is_x_direction_split = (std::rand() % 2) == 1;
-        float random_split_percent = 1.0 * (std::rand() % 100) / 100.0;
+        float random_split_percent = 1.0 * (1 + (std::rand() % 100)) / 101.0;
 
         const size_t try_time = 100;
         size_t current_try_time = 0;
@@ -451,7 +453,7 @@ bool WorldGenerator::splitWallSpace()
             ++current_try_time;
             random_child_node = split_room_tree_->getRandomLeafNode();
             is_x_direction_split = (std::rand() % 2) == 1;
-            random_split_percent = 1.0 * (std::rand() % 100) / 100.0;
+            random_split_percent = 1.0 * (1 + (std::rand() % 100)) / 101.0;
             if(current_try_time > try_time)
             {
                 // std::cout << "WorldGenerator::splitWallSpace : " << std::endl <<
@@ -473,7 +475,6 @@ bool WorldGenerator::generateRoom()
     std::vector<SplitNode*> leaf_node_vec;
 
     split_room_tree_->getAllLeafNode(leaf_node_vec);
-    std::cout << "leaf_node_vec.size() = " << leaf_node_vec.size() << std::endl;
 
     size_t current_wallroom_idx = 0;
     size_t current_freeroom_idx = 0;

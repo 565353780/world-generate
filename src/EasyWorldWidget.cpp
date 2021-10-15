@@ -138,6 +138,18 @@ void EasyWorldWidget::run_example()
             world_generator_.setPersonNum(80);
             world_generator_.setRoomNum(6);
             world_generator_.generateWorld();
+
+            // long cycle_num = 0;
+            // float avg_fps = -1;
+            // setStartTime();
+            // while(true)
+            // {
+            //     world_generator_.generateWorld();
+            //     ++cycle_num;
+            //     getFPS(cycle_num, avg_fps);
+            //
+            //     std::cout << "fps = " << avg_fps << std::endl;
+            // }
             break;
         }
     }

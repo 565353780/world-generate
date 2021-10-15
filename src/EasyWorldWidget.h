@@ -65,29 +65,47 @@ private:
         const NodeType &furniture_type,
         QMouseEvent *event);
 
-    bool drawWallBoundaryAxis();
-    bool drawWallBoundaryPolygon();
-    bool drawWallSpaceBoundary();
+    bool drawWallBoundaryAxis(
+        WorldController &world_controller);
+    bool drawWallBoundaryPolygon(
+        WorldController &world_controller);
+    bool drawWallSpaceBoundary(
+        WorldController &world_controller);
 
-    bool drawRoomContainerBoundaryAxis();
-    bool drawRoomContainerBoundaryPolygon();
-    bool drawRoomContainerSpaceBoundary();
+    bool drawRoomContainerBoundaryAxis(
+        WorldController &world_controller);
+    bool drawRoomContainerBoundaryPolygon(
+        WorldController &world_controller);
+    bool drawRoomContainerSpaceBoundary(
+        WorldController &world_controller);
 
-    bool drawRoomBoundaryAxis();
-    bool drawRoomBoundaryPolygon();
-    bool drawRoomSpaceBoundary();
+    bool drawRoomBoundaryAxis(
+        WorldController &world_controller);
+    bool drawRoomBoundaryPolygon(
+        WorldController &world_controller);
+    bool drawRoomSpaceBoundary(
+        WorldController &world_controller);
 
-    bool drawTeamBoundaryAxis();
-    bool drawTeamBoundaryPolygon();
-    bool drawTeamSpaceBoundary();
+    bool drawTeamBoundaryAxis(
+        WorldController &world_controller);
+    bool drawTeamBoundaryPolygon(
+        WorldController &world_controller);
+    bool drawTeamSpaceBoundary(
+        WorldController &world_controller);
 
-    bool drawPersonBoundaryAxis();
-    bool drawPersonBoundaryPolygon();
-    bool drawPersonSpaceBoundary();
+    bool drawPersonBoundaryAxis(
+        WorldController &world_controller);
+    bool drawPersonBoundaryPolygon(
+        WorldController &world_controller);
+    bool drawPersonSpaceBoundary(
+        WorldController &world_controller);
 
-    bool drawFurnitureBoundaryAxis();
-    bool drawFurnitureBoundaryPolygon();
-    bool drawFurnitureSpaceBoundary();
+    bool drawFurnitureBoundaryAxis(
+        WorldController &world_controller);
+    bool drawFurnitureBoundaryPolygon(
+        WorldController &world_controller);
+    bool drawFurnitureSpaceBoundary(
+        WorldController &world_controller);
 
     bool setStartTime();
 

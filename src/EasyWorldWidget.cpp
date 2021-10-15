@@ -31,7 +31,7 @@ EasyWorldWidget::~EasyWorldWidget()
 
 void EasyWorldWidget::run_example()
 {
-    size_t demo_mode = 1;
+    size_t demo_mode = 2;
 
     switch(demo_mode)
     {
@@ -121,6 +121,18 @@ void EasyWorldWidget::run_example()
             world_controller_.createTeamForRoom(0, NodeType::WallRoom, 2, 6, axis, 2, 6, true);
             axis.setCenter(2.5, 0.5);
             world_controller_.createTeamForRoom(2, NodeType::WallRoom, 1, 1, axis, 1, 1, false);
+            break;
+        }
+    case 2:
+        {
+            zoom_ = 20;
+
+            EasyPolygon2D wall_boundary_polygon;
+            wall_boundary_polygon.addPoint(0, 0);
+            wall_boundary_polygon.addPoint(20, 0);
+            wall_boundary_polygon.addPoint(20, 40);
+            wall_boundary_polygon.addPoint(0, 40);
+            wall_boundary_polygon.setAntiClockWise();
 
             world_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
             world_generator_.setPersonNum(80);
@@ -139,31 +151,37 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
-    drawWallSpaceBoundary();
-    // drawRoomContainerSpaceBoundary();
-    drawRoomSpaceBoundary();
-    // drawTeamSpaceBoundary();
-    // drawPersonSpaceBoundary();
-    drawFurnitureSpaceBoundary();
+    drawWallSpaceBoundary(world_generator_.world_controller_);
+    // drawRoomContainerSpaceBoundary(world_generator_.world_controller_);
+    drawRoomSpaceBoundary(world_generator_.world_controller_);
+    // drawTeamSpaceBoundary(world_generator_.world_controller_);
+    // drawPersonSpaceBoundary(world_generator_.world_controller_);
+    drawFurnitureSpaceBoundary(world_generator_.world_controller_);
 
-    // drawWallBoundaryAxis();
-    // drawRoomContainerBoundaryAxis();
-    // drawRoomBoundaryAxis();
-    // drawTeamBoundaryAxis();
-    // drawPersonBoundaryAxis();
-    // drawFurnitureBoundaryAxis();
+    // drawWallBoundaryAxis(world_generator_.world_controller_);
+    // drawRoomContainerBoundaryAxis(world_generator_.world_controller_);
+    // drawRoomBoundaryAxis(world_generator_.world_controller_);
+    // drawTeamBoundaryAxis(world_generator_.world_controller_);
+    // drawPersonBoundaryAxis(world_generator_.world_controller_);
+    // drawFurnitureBoundaryAxis(world_generator_.world_controller_);
 }
 
 void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
+
+    world_generator_.generateWorld();
+
+    update();
 }
 
 void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event);
+
     // moveWallInWorld(0, NodeType::OuterWall, event);
 
-    moveRoomContainerInWorld(0, NodeType::RoomContainer, event);
+    // moveRoomContainerInWorld(0, NodeType::RoomContainer, event);
 
     // moveRoomInWorld(0, NodeType::WallRoom, event);
 
@@ -307,7 +325,8 @@ bool EasyWorldWidget::moveFurnitureInWorld(
     return true;
 }
 
-bool EasyWorldWidget::drawWallBoundaryAxis()
+bool EasyWorldWidget::drawWallBoundaryAxis(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -319,7 +338,7 @@ bool EasyWorldWidget::drawWallBoundaryAxis()
 
     std::vector<std::vector<EasyNode*>> wall_boundary_node_vec_vec;
 
-    world_controller_.getWallBoundaryNodeVecVec(wall_boundary_node_vec_vec);
+    world_controller.getWallBoundaryNodeVecVec(wall_boundary_node_vec_vec);
 
     for(const std::vector<EasyNode*>& wall_boundary_node_vec: wall_boundary_node_vec_vec)
     {
@@ -352,7 +371,8 @@ bool EasyWorldWidget::drawWallBoundaryAxis()
     return true;
 }
 
-bool EasyWorldWidget::drawWallBoundaryPolygon()
+bool EasyWorldWidget::drawWallBoundaryPolygon(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -365,7 +385,7 @@ bool EasyWorldWidget::drawWallBoundaryPolygon()
 
     std::vector<std::vector<EasyNode*>> wall_boundary_node_vec_vec;
 
-    world_controller_.getWallBoundaryNodeVecVec(wall_boundary_node_vec_vec);
+    world_controller.getWallBoundaryNodeVecVec(wall_boundary_node_vec_vec);
 
     for(const std::vector<EasyNode*> &wall_boundary_node_vec :
         wall_boundary_node_vec_vec)
@@ -398,7 +418,8 @@ bool EasyWorldWidget::drawWallBoundaryPolygon()
     return true;
 }
 
-bool EasyWorldWidget::drawWallSpaceBoundary()
+bool EasyWorldWidget::drawWallSpaceBoundary(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -411,7 +432,7 @@ bool EasyWorldWidget::drawWallSpaceBoundary()
 
     std::vector<EasyNode*> wall_space_node_vec;
 
-    world_controller_.getWallSpaceNodeVec(wall_space_node_vec);
+    world_controller.getWallSpaceNodeVec(wall_space_node_vec);
 
     for(EasyNode* wall_space_node : wall_space_node_vec)
     {
@@ -445,7 +466,8 @@ bool EasyWorldWidget::drawWallSpaceBoundary()
     return true;
 }
 
-bool EasyWorldWidget::drawRoomContainerBoundaryAxis()
+bool EasyWorldWidget::drawRoomContainerBoundaryAxis(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -457,7 +479,7 @@ bool EasyWorldWidget::drawRoomContainerBoundaryAxis()
 
     std::vector<std::vector<EasyNode*>> roomcontainer_boundary_node_vec_vec;
 
-    world_controller_.getRoomContainerBoundaryNodeVecVec(roomcontainer_boundary_node_vec_vec);
+    world_controller.getRoomContainerBoundaryNodeVecVec(roomcontainer_boundary_node_vec_vec);
 
     for(const std::vector<EasyNode*>& roomcontainer_boundary_node_vec: roomcontainer_boundary_node_vec_vec)
     {
@@ -489,7 +511,8 @@ bool EasyWorldWidget::drawRoomContainerBoundaryAxis()
     return true;
 }
 
-bool EasyWorldWidget::drawRoomContainerBoundaryPolygon()
+bool EasyWorldWidget::drawRoomContainerBoundaryPolygon(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -502,7 +525,7 @@ bool EasyWorldWidget::drawRoomContainerBoundaryPolygon()
 
     std::vector<std::vector<EasyNode*>> roomcontainer_boundary_node_vec_vec;
 
-    world_controller_.getRoomContainerBoundaryNodeVecVec(roomcontainer_boundary_node_vec_vec);
+    world_controller.getRoomContainerBoundaryNodeVecVec(roomcontainer_boundary_node_vec_vec);
 
     for(const std::vector<EasyNode*> &roomcontainer_boundary_node_vec :
         roomcontainer_boundary_node_vec_vec)
@@ -537,7 +560,8 @@ bool EasyWorldWidget::drawRoomContainerBoundaryPolygon()
     return true;
 }
 
-bool EasyWorldWidget::drawRoomContainerSpaceBoundary()
+bool EasyWorldWidget::drawRoomContainerSpaceBoundary(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -550,7 +574,7 @@ bool EasyWorldWidget::drawRoomContainerSpaceBoundary()
 
     std::vector<EasyNode*> roomcontainer_space_node_vec;
 
-    world_controller_.getRoomContainerSpaceNodeVec(roomcontainer_space_node_vec);
+    world_controller.getRoomContainerSpaceNodeVec(roomcontainer_space_node_vec);
 
     for(EasyNode* roomcontainer_space_node : roomcontainer_space_node_vec)
     {
@@ -584,7 +608,8 @@ bool EasyWorldWidget::drawRoomContainerSpaceBoundary()
     return true;
 }
 
-bool EasyWorldWidget::drawRoomBoundaryAxis()
+bool EasyWorldWidget::drawRoomBoundaryAxis(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -596,7 +621,7 @@ bool EasyWorldWidget::drawRoomBoundaryAxis()
 
     std::vector<std::vector<EasyNode*>> room_boundary_node_vec_vec;
 
-    world_controller_.getRoomBoundaryNodeVecVec(room_boundary_node_vec_vec);
+    world_controller.getRoomBoundaryNodeVecVec(room_boundary_node_vec_vec);
 
     for(const std::vector<EasyNode*>& room_boundary_node_vec: room_boundary_node_vec_vec)
     {
@@ -628,7 +653,8 @@ bool EasyWorldWidget::drawRoomBoundaryAxis()
     return true;
 }
 
-bool EasyWorldWidget::drawRoomBoundaryPolygon()
+bool EasyWorldWidget::drawRoomBoundaryPolygon(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -641,7 +667,7 @@ bool EasyWorldWidget::drawRoomBoundaryPolygon()
 
     std::vector<std::vector<EasyNode*>> room_boundary_node_vec_vec;
 
-    world_controller_.getRoomBoundaryNodeVecVec(room_boundary_node_vec_vec);
+    world_controller.getRoomBoundaryNodeVecVec(room_boundary_node_vec_vec);
 
     for(const std::vector<EasyNode*> &room_boundary_node_vec :
         room_boundary_node_vec_vec)
@@ -676,7 +702,8 @@ bool EasyWorldWidget::drawRoomBoundaryPolygon()
     return true;
 }
 
-bool EasyWorldWidget::drawRoomSpaceBoundary()
+bool EasyWorldWidget::drawRoomSpaceBoundary(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -689,7 +716,7 @@ bool EasyWorldWidget::drawRoomSpaceBoundary()
 
     std::vector<EasyNode*> room_space_node_vec;
 
-    world_controller_.getRoomSpaceNodeVec(room_space_node_vec);
+    world_controller.getRoomSpaceNodeVec(room_space_node_vec);
 
     for(EasyNode* room_space_node : room_space_node_vec)
     {
@@ -723,7 +750,8 @@ bool EasyWorldWidget::drawRoomSpaceBoundary()
     return true;
 }
 
-bool EasyWorldWidget::drawTeamBoundaryAxis()
+bool EasyWorldWidget::drawTeamBoundaryAxis(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -735,7 +763,7 @@ bool EasyWorldWidget::drawTeamBoundaryAxis()
 
     std::vector<std::vector<EasyNode*>> team_boundary_node_vec_vec;
 
-    world_controller_.getTeamBoundaryNodeVecVec(team_boundary_node_vec_vec);
+    world_controller.getTeamBoundaryNodeVecVec(team_boundary_node_vec_vec);
 
     for(const std::vector<EasyNode*>& team_boundary_node_vec: team_boundary_node_vec_vec)
     {
@@ -767,7 +795,8 @@ bool EasyWorldWidget::drawTeamBoundaryAxis()
     return true;
 }
 
-bool EasyWorldWidget::drawTeamBoundaryPolygon()
+bool EasyWorldWidget::drawTeamBoundaryPolygon(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -780,7 +809,7 @@ bool EasyWorldWidget::drawTeamBoundaryPolygon()
 
     std::vector<std::vector<EasyNode*>> team_boundary_node_vec_vec;
 
-    world_controller_.getTeamBoundaryNodeVecVec(team_boundary_node_vec_vec);
+    world_controller.getTeamBoundaryNodeVecVec(team_boundary_node_vec_vec);
 
     for(const std::vector<EasyNode*> &team_boundary_node_vec :
         team_boundary_node_vec_vec)
@@ -815,7 +844,8 @@ bool EasyWorldWidget::drawTeamBoundaryPolygon()
     return true;
 }
 
-bool EasyWorldWidget::drawTeamSpaceBoundary()
+bool EasyWorldWidget::drawTeamSpaceBoundary(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -828,7 +858,7 @@ bool EasyWorldWidget::drawTeamSpaceBoundary()
 
     std::vector<EasyNode*> team_space_node_vec;
 
-    world_controller_.getTeamSpaceNodeVec(team_space_node_vec);
+    world_controller.getTeamSpaceNodeVec(team_space_node_vec);
 
     for(EasyNode* team_space_node : team_space_node_vec)
     {
@@ -862,7 +892,8 @@ bool EasyWorldWidget::drawTeamSpaceBoundary()
     return true;
 }
 
-bool EasyWorldWidget::drawPersonBoundaryAxis()
+bool EasyWorldWidget::drawPersonBoundaryAxis(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -874,7 +905,7 @@ bool EasyWorldWidget::drawPersonBoundaryAxis()
 
     std::vector<std::vector<EasyNode*>> person_boundary_node_vec_vec;
 
-    world_controller_.getPersonBoundaryNodeVecVec(person_boundary_node_vec_vec);
+    world_controller.getPersonBoundaryNodeVecVec(person_boundary_node_vec_vec);
 
     for(const std::vector<EasyNode*>& person_boundary_node_vec: person_boundary_node_vec_vec)
     {
@@ -906,7 +937,8 @@ bool EasyWorldWidget::drawPersonBoundaryAxis()
     return true;
 }
 
-bool EasyWorldWidget::drawPersonBoundaryPolygon()
+bool EasyWorldWidget::drawPersonBoundaryPolygon(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -919,7 +951,7 @@ bool EasyWorldWidget::drawPersonBoundaryPolygon()
 
     std::vector<std::vector<EasyNode*>> person_boundary_node_vec_vec;
 
-    world_controller_.getPersonBoundaryNodeVecVec(person_boundary_node_vec_vec);
+    world_controller.getPersonBoundaryNodeVecVec(person_boundary_node_vec_vec);
 
     for(const std::vector<EasyNode*> &person_boundary_node_vec :
         person_boundary_node_vec_vec)
@@ -954,7 +986,8 @@ bool EasyWorldWidget::drawPersonBoundaryPolygon()
     return true;
 }
 
-bool EasyWorldWidget::drawPersonSpaceBoundary()
+bool EasyWorldWidget::drawPersonSpaceBoundary(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -967,7 +1000,7 @@ bool EasyWorldWidget::drawPersonSpaceBoundary()
 
     std::vector<EasyNode*> person_space_node_vec;
 
-    world_controller_.getPersonSpaceNodeVec(person_space_node_vec);
+    world_controller.getPersonSpaceNodeVec(person_space_node_vec);
 
     for(EasyNode* person_space_node : person_space_node_vec)
     {
@@ -1002,7 +1035,8 @@ bool EasyWorldWidget::drawPersonSpaceBoundary()
 }
 
 
-bool EasyWorldWidget::drawFurnitureBoundaryAxis()
+bool EasyWorldWidget::drawFurnitureBoundaryAxis(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -1014,7 +1048,7 @@ bool EasyWorldWidget::drawFurnitureBoundaryAxis()
 
     std::vector<std::vector<EasyNode*>> furniture_boundary_node_vec_vec;
 
-    world_controller_.getFurnitureBoundaryNodeVecVec(furniture_boundary_node_vec_vec);
+    world_controller.getFurnitureBoundaryNodeVecVec(furniture_boundary_node_vec_vec);
 
     for(const std::vector<EasyNode*>& furniture_boundary_node_vec: furniture_boundary_node_vec_vec)
     {
@@ -1046,7 +1080,8 @@ bool EasyWorldWidget::drawFurnitureBoundaryAxis()
     return true;
 }
 
-bool EasyWorldWidget::drawFurnitureBoundaryPolygon()
+bool EasyWorldWidget::drawFurnitureBoundaryPolygon(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -1059,7 +1094,7 @@ bool EasyWorldWidget::drawFurnitureBoundaryPolygon()
 
     std::vector<std::vector<EasyNode*>> furniture_boundary_node_vec_vec;
 
-    world_controller_.getFurnitureBoundaryNodeVecVec(furniture_boundary_node_vec_vec);
+    world_controller.getFurnitureBoundaryNodeVecVec(furniture_boundary_node_vec_vec);
 
     for(const std::vector<EasyNode*> &furniture_boundary_node_vec :
         furniture_boundary_node_vec_vec)
@@ -1094,7 +1129,8 @@ bool EasyWorldWidget::drawFurnitureBoundaryPolygon()
     return true;
 }
 
-bool EasyWorldWidget::drawFurnitureSpaceBoundary()
+bool EasyWorldWidget::drawFurnitureSpaceBoundary(
+    WorldController &world_controller)
 {
     QPainter painter(this);
 
@@ -1107,7 +1143,7 @@ bool EasyWorldWidget::drawFurnitureSpaceBoundary()
 
     std::vector<EasyNode*> furniture_space_node_vec;
 
-    world_controller_.getFurnitureSpaceNodeVec(furniture_space_node_vec);
+    world_controller.getFurnitureSpaceNodeVec(furniture_space_node_vec);
 
     for(EasyNode* furniture_space_node : furniture_space_node_vec)
     {

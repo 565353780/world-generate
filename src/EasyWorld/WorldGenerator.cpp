@@ -1,5 +1,230 @@
 #include "WorldGenerator.h"
 
+SplitNode::~SplitNode()
+{
+    reset();
+}
+
+bool SplitNode::reset()
+{
+    if(first_child != nullptr)
+    {
+        first_child->reset();
+        delete(first_child);
+        first_child = nullptr;
+    }
+
+    if(second_child != nullptr)
+    {
+        second_child->reset();
+        delete(second_child);
+        second_child = nullptr;
+    }
+
+    return true;
+}
+
+bool SplitNode::createChild(
+    const bool &is_x_direction_split,
+    const float &split_percent,
+    const float &child_node_length_min)
+{
+    if(split_percent <= 0 || split_percent >= 1)
+    {
+        std::cout << "SplitNode::createChild : " << std::endl <<
+          "Input :\n" <<
+          "\tis_x_direction_split = " << is_x_direction_split << std::endl <<
+          "\tsplit_percent = " << split_percent << std::endl <<
+          "\tchild_node_length_min = " << child_node_length_min << std::endl <<
+          "split percent not valid!" << std::endl;
+
+        return false;
+    }
+
+    if(first_child != nullptr)
+    {
+        std::cout << "SplitNode::createChild : " << std::endl <<
+          "Input :\n" <<
+          "\tis_x_direction_split = " << is_x_direction_split << std::endl <<
+          "\tsplit_percent = " << split_percent << std::endl <<
+          "\tchild_node_length_min = " << child_node_length_min << std::endl <<
+          "first child is already exist!" << std::endl;
+
+        return false;
+    }
+
+    if(second_child != nullptr)
+    {
+        std::cout << "SplitNode::createChild : " << std::endl <<
+          "Input :\n" <<
+          "\tis_x_direction_split = " << is_x_direction_split << std::endl <<
+          "\tsplit_percent = " << split_percent << std::endl <<
+          "\tchild_node_length_min = " << child_node_length_min << std::endl <<
+          "second child is already exist!" << std::endl;
+
+        return false;
+    }
+
+    SplitNode* new_first_child = new SplitNode();
+    new_first_child->parent = this;
+    new_first_child->start_position = start_position;
+
+    SplitNode* new_second_child = new SplitNode();
+    new_second_child->parent = this;
+    new_second_child->end_position = end_position;
+
+    if(is_x_direction_split)
+    {
+        float valid_split_percent_min = 1.0 * child_node_length_min / (end_position.x - start_position.x);
+        float valid_split_percent_max = 1.0 - valid_split_percent_min;
+        float new_split_percent = split_percent;
+
+        if(new_split_percent < valid_split_percent_min)
+        {
+            new_split_percent = valid_split_percent_min;
+        }
+        if(new_split_percent > valid_split_percent_max)
+        {
+            new_split_percent = valid_split_percent_max;
+        }
+        if(new_split_percent < valid_split_percent_min)
+        {
+            // std::cout << "SplitNode::createChild : " << std::endl <<
+            //   "Input :\n" <<
+            //   "\tis_x_direction_split = " << is_x_direction_split << std::endl <<
+            //   "\tsplit_percent = " << split_percent << std::endl <<
+            //   "\tchild_node_length_min = " << child_node_length_min << std::endl <<
+            //   "can not keep child noe length min valid!" << std::endl;
+
+            new_first_child->reset();
+            delete(new_first_child);
+            new_second_child->reset();
+            delete(new_second_child);
+            return false;
+        }
+
+        float valid_split_x_position =
+          new_split_percent * start_position.x + (1.0 - new_split_percent) * end_position.x;
+
+        new_first_child->end_position.setPosition(valid_split_x_position, end_position.y);
+
+        new_second_child->start_position.setPosition(valid_split_x_position, start_position.y);
+    }
+    else
+    {
+        float valid_split_percent_min = 1.0 * child_node_length_min / (end_position.y - start_position.y);
+        float valid_split_percent_max = 1.0 - valid_split_percent_min;
+        float new_split_percent = split_percent;
+
+        if(new_split_percent < valid_split_percent_min)
+        {
+            new_split_percent = valid_split_percent_min;
+        }
+        if(new_split_percent > valid_split_percent_max)
+        {
+            new_split_percent = valid_split_percent_max;
+        }
+        if(new_split_percent < valid_split_percent_min)
+        {
+            // std::cout << "SplitNode::createChild : " << std::endl <<
+            //   "Input :\n" <<
+            //   "\tis_x_direction_split = " << is_x_direction_split << std::endl <<
+            //   "\tsplit_percent = " << split_percent << std::endl <<
+            //   "\tchild_node_length_min = " << child_node_length_min << std::endl <<
+            //   "can not keep child noe length min valid!" << std::endl;
+
+            new_first_child->reset();
+            delete(new_first_child);
+            new_second_child->reset();
+            delete(new_second_child);
+            return false;
+        }
+
+        float valid_split_y_position =
+          new_split_percent * start_position.y + (1.0 - new_split_percent) * end_position.y;
+
+        new_first_child->end_position.setPosition(end_position.x, valid_split_y_position);
+
+        new_second_child->start_position.setPosition(start_position.x, valid_split_y_position);
+    }
+
+    first_child = new_first_child;
+    second_child = new_second_child;
+
+    return true;
+}
+
+SplitNode* SplitNode::getRandomLeafNode()
+{
+    if(first_child == nullptr && second_child == nullptr)
+    {
+        return this;
+    }
+
+    if(first_child == nullptr || second_child == nullptr)
+    {
+        std::cout << "SplitNode::getRandomLeafNode : " << std::endl <<
+          "this node only have one child!" << std::endl;
+
+        return nullptr;
+    }
+
+    const size_t random_child_idx = std::rand() % 2;
+
+    if(random_child_idx == 0)
+    {
+        if(first_child != nullptr)
+        {
+            return first_child->getRandomLeafNode();
+        }
+
+        std::cout << "SplitNode::getRandomLeafNode : " << std::endl <<
+          "the first child is nullptr!" << std::endl;
+
+        return this;
+    }
+
+    if(second_child != nullptr)
+    {
+        return second_child->getRandomLeafNode();
+    }
+
+    std::cout << "SplitNode::getRandomLeafNode : " << std::endl <<
+      "the second child is nullptr!" << std::endl;
+
+    return this;
+}
+
+bool SplitNode::getAllLeafNode(
+    std::vector<SplitNode*> &leaf_node_vec)
+{
+    if(first_child == nullptr && second_child == nullptr)
+    {
+        leaf_node_vec.emplace_back(this);
+
+        return true;
+    }
+
+    if(first_child != nullptr)
+    {
+        first_child->getAllLeafNode(leaf_node_vec);
+    }
+
+    if(second_child != nullptr)
+    {
+        second_child->getAllLeafNode(leaf_node_vec);
+    }
+
+    return true;
+}
+
+WorldGenerator::~WorldGenerator()
+{
+    split_room_tree_->reset();
+
+    delete(split_room_tree_);
+}
+
 bool WorldGenerator::reset()
 {
     if(!world_controller_.reset())
@@ -12,7 +237,7 @@ bool WorldGenerator::reset()
 
     wall_boundary_polygon_.point_list.clear();
     wall_boundary_length_vec_.clear();
-    wall_boundary_used_line_vec_vec_.clear();
+    split_room_tree_->reset();
     is_wall_boundary_polygon_set_ = false;
 
     person_num_ = 0;
@@ -26,7 +251,7 @@ bool WorldGenerator::setWallBoundaryPolygon(
 {
     wall_boundary_polygon_.point_list.clear();
     wall_boundary_length_vec_.clear();
-    wall_boundary_used_line_vec_vec_.clear();
+    split_room_tree_->reset();
 
     is_wall_boundary_polygon_set_ = false;
 
@@ -41,7 +266,6 @@ bool WorldGenerator::setWallBoundaryPolygon(
     wall_boundary_polygon_ = wall_boundary_polygon;
 
     wall_boundary_length_vec_.resize(wall_boundary_polygon_.point_list.size(), -1);
-    wall_boundary_used_line_vec_vec_.resize(wall_boundary_polygon_.point_list.size());
 
     for(size_t i = 0; i < wall_boundary_polygon_.point_list.size(); ++i)
     {
@@ -55,6 +279,9 @@ bool WorldGenerator::setWallBoundaryPolygon(
     }
 
     is_wall_boundary_polygon_set_ = true;
+
+    split_room_tree_->start_position.setPosition(0, 0);
+    split_room_tree_->end_position = wall_boundary_polygon_.point_list[2];
 
     return true;
 }
@@ -145,10 +372,18 @@ bool WorldGenerator::generateWorld()
         return false;
     }
 
+    if(!splitWallSpace())
+    {
+        std::cout << "WorldGenerator::generateWorld : " << std::endl <<
+          "splitWallSpace failed!" << std::endl;
+
+        return false;
+    }
+
     if(!generateRoom())
     {
         std::cout << "WorldGenerator::generateWorld : " << std::endl <<
-          "generateRoom failed!" << std::endl;
+          "generateWallRoom failed!" << std::endl;
 
         return false;
     }
@@ -166,201 +401,6 @@ bool WorldGenerator::isReadyToGenerate()
     }
 
     return false;
-}
-
-bool WorldGenerator::isWallBoundaryStartPositionValid(
-    const size_t &wall_boundary_idx,
-    const float &wall_boundary_start_position,
-    float &max_line_width,
-    float &max_line_height)
-{
-    max_line_width = -1;
-    max_line_height = -1;
-
-    if(wall_boundary_idx >= wall_boundary_polygon_.point_list.size())
-    {
-        std::cout << "WorldGenerator::isWallBoundaryStartPositionValid : " << std::endl <<
-          "Input :\n" <<
-          "\twall_boundary_idx = " << wall_boundary_idx << std::endl <<
-          "\twall_boundary_start_position = " << wall_boundary_start_position << std::endl <<
-          "wall boundary idx out of range!" << std::endl;
-
-        return false;
-    }
-
-    const float &wall_boundary_length = wall_boundary_length_vec_[wall_boundary_idx];
-
-    if(wall_boundary_start_position < 0 || wall_boundary_start_position > wall_boundary_length)
-    {
-        std::cout << "WorldGenerator::isWallBoundaryStartPositionValid : " << std::endl <<
-          "Input :\n" <<
-          "\twall_boundary_idx = " << wall_boundary_idx << std::endl <<
-          "\twall_boundary_start_position = " << wall_boundary_start_position << std::endl <<
-          "wall boundary start position out of range!" << std::endl;
-
-        return false;
-    }
-
-    max_line_width = wall_boundary_length;
-
-    for(const std::vector<float> &wall_boundary_used_line :
-        wall_boundary_used_line_vec_vec_[wall_boundary_idx])
-    {
-        if(wall_boundary_used_line[0] < wall_boundary_start_position &&
-            wall_boundary_start_position < wall_boundary_used_line[1])
-        {
-            std::cout << "WorldGenerator::isWallBoundaryStartPositionValid : " << std::endl <<
-              "Input :\n" <<
-              "\twall_boundary_idx = " << wall_boundary_idx << std::endl <<
-              "\twall_boundary_start_position = " << wall_boundary_start_position << std::endl <<
-              "wall boundary line intersect with another line!" << std::endl;
-
-            return false;
-        }
-
-        if(wall_boundary_used_line[0] < max_line_width)
-        {
-            max_line_width = wall_boundary_used_line[0];
-        }
-    }
-
-    const float &last_wall_boundary_length = wall_boundary_length_vec_[
-      (wall_boundary_idx - 1 + wall_boundary_polygon_.point_list.size()) %
-        wall_boundary_polygon_.point_list.size()];
-
-    max_line_height = last_wall_boundary_length;
-
-    for(const std::vector<float> &last_wall_boundary_used_line : wall_boundary_used_line_vec_vec_[
-      (wall_boundary_idx - 1 + wall_boundary_polygon_.point_list.size()) %
-        wall_boundary_polygon_.point_list.size()])
-    {
-        if(last_wall_boundary_length - last_wall_boundary_used_line[1] >
-            max_line_height)
-        {
-            max_line_height = last_wall_boundary_length - last_wall_boundary_used_line[1];
-        }
-    }
-
-    return true;
-}
-
-bool WorldGenerator::isWallBoundaryLineValid(
-    const size_t &wall_boundary_idx,
-    const std::vector<float> &wall_boundary_line,
-    float &max_line_height)
-{
-    max_line_height = -1;
-
-    if(wall_boundary_idx >= wall_boundary_polygon_.point_list.size())
-    {
-        std::cout << "WorldGenerator::isWallBoundaryLineValid : " << std::endl <<
-          "Input :\n" <<
-          "\twall_boundary_idx = " << wall_boundary_idx << std::endl <<
-          "\twall_boundary_line = [" << wall_boundary_line[0] << "," <<
-          wall_boundary_line[1] << "," <<
-          wall_boundary_line[2] << "]" << std::endl <<
-          "wall boundary idx out of range!" << std::endl;
-
-        return false;
-    }
-
-    const float &wall_boundary_length = wall_boundary_length_vec_[wall_boundary_idx];
-
-    if(wall_boundary_line[0] < 0 || wall_boundary_line[1] > wall_boundary_length)
-    {
-        std::cout << "WorldGenerator::isWallBoundaryLineValid : " << std::endl <<
-          "Input :\n" <<
-          "\twall_boundary_idx = " << wall_boundary_idx << std::endl <<
-          "\twall_boundary_line = [" << wall_boundary_line[0] << "," <<
-          wall_boundary_line[1] << "," <<
-          wall_boundary_line[2] << "]" << std::endl <<
-          "wall boundary line out of range!" << std::endl;
-
-        return false;
-    }
-
-    for(const std::vector<float> &wall_boundary_used_line :
-        wall_boundary_used_line_vec_vec_[wall_boundary_idx])
-    {
-        if(wall_boundary_used_line[0] < wall_boundary_line[1] &&
-            wall_boundary_line[0] < wall_boundary_used_line[1])
-        {
-            std::cout << "WorldGenerator::isWallBoundaryLineValid : " << std::endl <<
-              "Input :\n" <<
-              "\twall_boundary_idx = " << wall_boundary_idx << std::endl <<
-              "\twall_boundary_line = [" << wall_boundary_line[0] << "," <<
-              wall_boundary_line[1] << "," <<
-              wall_boundary_line[2] << "]" << std::endl <<
-              "wall boundary line intersect with another line!" << std::endl;
-
-            return false;
-        }
-    }
-
-    const float &last_wall_boundary_length = wall_boundary_length_vec_[
-      (wall_boundary_idx - 1 + wall_boundary_polygon_.point_list.size()) %
-        wall_boundary_polygon_.point_list.size()];
-
-    float last_wall_boundary_used_line_max_position = 0;
-    float last_wall_boundary_used_line_max_position_height = 0;
-
-    for(const std::vector<float> &last_wall_boundary_used_line : wall_boundary_used_line_vec_vec_[
-      (wall_boundary_idx - 1 + wall_boundary_polygon_.point_list.size()) %
-        wall_boundary_polygon_.point_list.size()])
-    {
-        if(last_wall_boundary_used_line[1] > last_wall_boundary_used_line_max_position)
-        {
-            last_wall_boundary_used_line_max_position = last_wall_boundary_used_line[1];
-            last_wall_boundary_used_line_max_position_height = last_wall_boundary_used_line[2];
-        }
-    }
-
-    if(last_wall_boundary_used_line_max_position_height > wall_boundary_line[0] &&
-        last_wall_boundary_length - last_wall_boundary_used_line_max_position < wall_boundary_line[2])
-    {
-        max_line_height = last_wall_boundary_length - last_wall_boundary_used_line_max_position;
-
-        std::cout << "WorldGenerator::isWallBoundaryLineValid : " << std::endl <<
-          "Input :\n" <<
-          "\twall_boundary_idx = " << wall_boundary_idx << std::endl <<
-          "\twall_boundary_line = [" << wall_boundary_line[0] << "," <<
-          wall_boundary_line[1] << "," <<
-          wall_boundary_line[2] << "]" << std::endl <<
-          "wall boundary line's current height intersect with last boundary room!" << std::endl;
-
-        return false;
-    }
-
-    float next_wall_boundary_used_line_min_position = 0;
-    float next_wall_boundary_used_line_min_position_height = 0;
-
-    for(const std::vector<float> &next_wall_boundary_used_line : wall_boundary_used_line_vec_vec_[
-      (wall_boundary_idx + 1) % wall_boundary_polygon_.point_list.size()])
-    {
-        if(next_wall_boundary_used_line[0] < next_wall_boundary_used_line_min_position)
-        {
-            next_wall_boundary_used_line_min_position = next_wall_boundary_used_line[0];
-            next_wall_boundary_used_line_min_position_height = next_wall_boundary_used_line[2];
-        }
-    }
-
-    if(next_wall_boundary_used_line_min_position_height > wall_boundary_length - wall_boundary_line[1] &&
-        next_wall_boundary_used_line_min_position < wall_boundary_line[2])
-    {
-        max_line_height = next_wall_boundary_used_line_min_position;
-
-        std::cout << "WorldGenerator::isWallBoundaryLineValid : " << std::endl <<
-          "Input :\n" <<
-          "\twall_boundary_idx = " << wall_boundary_idx << std::endl <<
-          "\twall_boundary_line = [" << wall_boundary_line[0] << "," <<
-          wall_boundary_line[1] << "," <<
-          wall_boundary_line[2] << "]" << std::endl <<
-          "wall boundary line's current height intersect with next boundary room!" << std::endl;
-
-        return false;
-    }
-
-    return true;
 }
 
 bool WorldGenerator::generateWall()
@@ -392,165 +432,176 @@ bool WorldGenerator::generateWall()
     return true;
 }
 
-bool WorldGenerator::generateRoom()
+bool WorldGenerator::splitWallSpace()
 {
-    const float person_width_min = 2;
-    const float person_height_min = 2;
+    const size_t wall_room_edge_max = 8;
 
-    const float room_width_min = 4;
-    const float room_height_min = 4;
+    const size_t split_time = room_num_;
 
-    const float wall_boundary_polygon_area = wall_boundary_polygon_.getPolygonArea();
-
-    float person_area_min = person_width_min * person_height_min;
-    float person_area_min_sum = person_area_min * person_num_;
-
-    if(person_area_min_sum >= wall_boundary_polygon_area)
+    for(size_t i = 0; i < split_time; ++i)
     {
-        std::cout << "WorldGenerator::generateRoom : " << std::endl <<
-          "person area min sum >= wall boundary polygon area!" << std::endl;
-
-        return false;
-    }
-
-    float room_area_sum_max = wall_boundary_polygon_area - person_area_min_sum;
-
-    float room_area_max = room_area_sum_max / room_num_;
-
-    if(room_area_max < room_width_min * room_height_min)
-    {
-        std::cout << "WorldGenerator::generateRoom : " << std::endl <<
-          "room area max < target min room area!" << std::endl;
-
-        return false;
-    }
-
-    const size_t room_width_max = size_t(std::sqrt(room_area_max));
-    const size_t room_height_max = room_width_max;
-
-    std::cout << "WorldGenerator::generateRoom : " << std::endl <<
-      "world area = " << wall_boundary_polygon_area << std::endl <<
-      "person num = " << person_num_ << std::endl <<
-      "room num = " << room_num_ << std::endl <<
-      "person size min = [" << person_width_min << "," << person_height_min << "]" << std::endl <<
-      "room size max = [" << room_width_max << "," << room_height_max << "]" << std::endl;
-
-    size_t roomcontainer_num = 1 + std::rand() % room_num_;
-    std::vector<size_t> room_num_in_roomcontainer_vec;
-    room_num_in_roomcontainer_vec.resize(roomcontainer_num, 0);
-
-    size_t current_unused_room_num = room_num_;
-
-    std::cout << "roomcontainer = " << roomcontainer_num << std::endl;
-    for(size_t i = 0; i < roomcontainer_num; ++i)
-    {
-        const size_t must_unused_room_num = roomcontainer_num - i - 1;
-        const size_t current_random_room_num =
-          1 + std::rand() % (current_unused_room_num - must_unused_room_num);
-
-        room_num_in_roomcontainer_vec[i] = current_random_room_num;
-
-        current_unused_room_num -= current_random_room_num;
-    }
-
-    if(current_unused_room_num > 0)
-    {
-        room_num_in_roomcontainer_vec.back() += current_unused_room_num;
-    }
-
-    for(size_t i = 0; i < roomcontainer_num; ++i)
-    {
-        const size_t &current_room_num = room_num_in_roomcontainer_vec[i];
-        float current_roomcontainer_width_max = current_room_num * room_width_max;
-        float current_roomcontainer_height_max = room_height_max;
-
-        size_t current_random_boundary_idx = std::rand() % wall_boundary_polygon_.point_list.size();
-        float current_random_boundary_start_position =
-          std::rand() % size_t(wall_boundary_length_vec_[current_random_boundary_idx]);
-
-        float max_line_width;
-        float max_line_height;
+        SplitNode* random_child_node = split_room_tree_->getRandomLeafNode();
+        bool is_x_direction_split = (std::rand() % 2) == 1;
+        float random_split_percent = 1.0 * (std::rand() % 100) / 100.0;
 
         const size_t try_time = 100;
         size_t current_try_time = 0;
-        while(!isWallBoundaryStartPositionValid(
-              current_random_boundary_idx,
-              current_random_boundary_start_position,
-              max_line_width,
-              max_line_height))
+        while(!random_child_node->createChild(is_x_direction_split, random_split_percent, wall_room_edge_max))
         {
             ++current_try_time;
-
-            current_random_boundary_idx = std::rand() % wall_boundary_polygon_.point_list.size();
-            current_random_boundary_start_position =
-              std::rand() % size_t(wall_boundary_length_vec_[current_random_boundary_idx]);
-
+            random_child_node = split_room_tree_->getRandomLeafNode();
+            is_x_direction_split = (std::rand() % 2) == 1;
+            random_split_percent = 1.0 * (std::rand() % 100) / 100.0;
             if(current_try_time > try_time)
             {
-                std::cout << "WorldGenerator::generateRoom : " << std::endl <<
-                  "create random roomcontainer failed!" << std::endl;
+                // std::cout << "WorldGenerator::splitWallSpace : " << std::endl <<
+                //   "createChild for random leaf node failed!" << std::endl;
+
+                break;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool WorldGenerator::generateRoom()
+{
+    const float person_edge = 2;
+    const size_t room_edge_min = 4;
+
+    std::vector<SplitNode*> leaf_node_vec;
+
+    split_room_tree_->getAllLeafNode(leaf_node_vec);
+    std::cout << "leaf_node_vec.size() = " << leaf_node_vec.size() << std::endl;
+
+    size_t current_wallroom_idx = 0;
+    size_t current_freeroom_idx = 0;
+
+    for(SplitNode* leaf_node : leaf_node_vec)
+    {
+        const bool is_use_this_node = (std::rand() % 2) == 1;
+        if(!is_use_this_node)
+        {
+            continue;
+        }
+
+        const EasyPoint2D &roomcontainer_start_position = leaf_node->start_position;
+        const EasyPoint2D &roomcontainer_end_position = leaf_node->end_position;
+
+        const float roomcontainer_width = roomcontainer_end_position.x - roomcontainer_start_position.x;
+        const float roomcontainer_height = roomcontainer_end_position.y - roomcontainer_start_position.y;
+
+        const size_t x_direction_wall_room_num = size_t(roomcontainer_width / room_edge_min);
+        const float room_real_width = roomcontainer_width / x_direction_wall_room_num;
+
+        const bool is_room_on_wall =
+          roomcontainer_start_position.x == 0 || roomcontainer_start_position.y == 0 ||
+          roomcontainer_end_position.x == wall_boundary_length_vec_[0] ||
+          roomcontainer_end_position.y == wall_boundary_length_vec_[1];
+
+        EasyAxis2D room_axis;
+        room_axis.setXDirection(1, 0);
+        room_axis.setCenter(roomcontainer_start_position.x, roomcontainer_start_position.y);
+        EasyAxis2D team_axis;
+        team_axis.setXDirection(1, 0);
+
+        const bool is_this_wall_room = (std::rand() % 2) == 1;
+        if(is_room_on_wall && is_this_wall_room)
+        {
+            if(!world_controller_.createWallRoomContainerForWall(
+                  0,
+                  NodeType::OuterWall,
+                  0,
+                  roomcontainer_width,
+                  roomcontainer_height,
+                  room_axis,
+                  x_direction_wall_room_num))
+            {
+                std::cout << "WorldGenerator::splitWallSpace : " << std::endl <<
+                  "createWallRoomContainerForWall for leaf node failed!" << std::endl;
 
                 return false;
             }
-        }
 
-        if(max_line_width < current_roomcontainer_width_max)
+            for(size_t j = 0; j < x_direction_wall_room_num; ++j)
+            {
+                const size_t current_new_wallroom_idx = current_wallroom_idx + j;
+                const size_t current_random_person_x_direction_num = std::rand() % 3;
+                const size_t current_random_person_y_direction_num = std::rand() % 3;
+                const bool is_face_horizontal = (std::rand() % 2) == 1;
+
+                if(current_random_person_x_direction_num == 0 ||
+                    current_random_person_y_direction_num == 0)
+                {
+                    continue;
+                }
+
+                team_axis.setCenter(
+                    (room_real_width - current_random_person_x_direction_num * person_edge) / 2.0,
+                    (roomcontainer_height - current_random_person_x_direction_num * person_edge) / 2.0);
+
+                if(!world_controller_.createTeamForRoom(
+                      current_new_wallroom_idx,
+                      NodeType::WallRoom,
+                      current_random_person_x_direction_num * person_edge,
+                      current_random_person_y_direction_num * person_edge,
+                      team_axis,
+                      current_random_person_x_direction_num,
+                      current_random_person_y_direction_num,
+                      is_face_horizontal))
+                {
+                    std::cout << "WorldGenerator::splitWallSpace : " << std::endl <<
+                      "createTeamForRoom for leaf node failed!" << std::endl;
+
+                    return false;
+                }
+            }
+
+            current_wallroom_idx += x_direction_wall_room_num;
+        }
+        else
         {
-            current_roomcontainer_width_max = max_line_width;
+            if(!world_controller_.createFreeRoomContainerForWall(
+                  0,
+                  NodeType::OuterWall,
+                  0,
+                  roomcontainer_width,
+                  roomcontainer_height,
+                  room_axis,
+                  1))
+            {
+                std::cout << "WorldGenerator::splitWallSpace : " << std::endl <<
+                  "createFreeRoomContainerForWall for leaf node failed!" << std::endl;
+
+                return false;
+            }
+
+            const size_t current_person_x_direction_num = size_t(roomcontainer_width / person_edge) - 2;
+            const size_t current_person_y_direction_num = size_t(roomcontainer_height / person_edge) - 2;
+            const bool is_face_horizontal = (std::rand() % 2) == 1;
+
+            team_axis.setCenter(2, 2);
+
+            if(!world_controller_.createTeamForRoom(
+                  current_freeroom_idx,
+                  NodeType::FreeRoom,
+                  roomcontainer_width - 4,
+                  roomcontainer_height - 4,
+                  team_axis,
+                  current_person_x_direction_num,
+                  current_person_y_direction_num,
+                  is_face_horizontal))
+            {
+                std::cout << "WorldGenerator::splitWallSpace : " << std::endl <<
+                  "createTeamForRoom for leaf node failed!" << std::endl;
+
+                return false;
+            }
+
+            ++current_freeroom_idx;
         }
-
-        if(max_line_height < current_roomcontainer_height_max)
-        {
-            current_roomcontainer_height_max = max_line_height;
-        }
-        std::cout << "current_roomcontainer_width_max = " <<
-          current_roomcontainer_width_max << std::endl;
-        std::cout << "current_roomcontainer_height_max = " <<
-          current_roomcontainer_height_max << std::endl;
-
-        std::vector<float> current_wall_boundary_line;
-        current_wall_boundary_line.resize(3);
-        current_wall_boundary_line[0] = current_random_boundary_start_position;
-        current_wall_boundary_line[1] =
-          current_random_boundary_start_position + current_roomcontainer_width_max;
-        current_wall_boundary_line[2] = current_roomcontainer_height_max;
-        if(!isWallBoundaryLineValid(
-              current_random_boundary_idx,
-              current_wall_boundary_line,
-              max_line_height))
-        {
-            current_roomcontainer_height_max = max_line_height;
-        }
-
-        EasyAxis2D axis;
-        axis.setXDirection(1, 0);
-        axis.setCenter(current_random_boundary_start_position, 0);
-        if(!world_controller_.createWallRoomContainerForWall(
-              0,
-              NodeType::OuterWall,
-              current_random_boundary_idx,
-              current_roomcontainer_width_max,
-              current_roomcontainer_height_max,
-              axis,
-              current_room_num))
-        {
-            std::cout << "WorldGenerator::generateRoom : " << std::endl <<
-              "createWallRoomContainerForWall failed!" << std::endl;
-
-            return false;
-        }
-
-        std::vector<float> current_valid_wall_boundary_line;
-        current_valid_wall_boundary_line.resize(3);
-        current_valid_wall_boundary_line[0] = current_random_boundary_start_position;
-        current_valid_wall_boundary_line[1] =
-          current_random_boundary_start_position + current_roomcontainer_width_max;
-        current_valid_wall_boundary_line[2] = current_roomcontainer_height_max;
-        wall_boundary_used_line_vec_vec_[current_random_boundary_idx].emplace_back(
-            current_valid_wall_boundary_line);
     }
-
-    std::cout << "finish generate WallRoom!" << std::endl;
 
     return true;
 }

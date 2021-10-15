@@ -6,6 +6,36 @@
 
 #include "WorldController.h"
 
+class SplitNode
+{
+public:
+    SplitNode()
+    {
+        parent = nullptr;
+        first_child = nullptr;
+        second_child = nullptr;
+    }
+    ~SplitNode();
+
+    bool reset();
+
+    bool createChild(
+        const bool &is_x_direction_split,
+        const float &split_percent,
+        const float &child_node_length_min);
+
+    SplitNode* getRandomLeafNode();
+
+    bool getAllLeafNode(
+        std::vector<SplitNode*> &leaf_node_vec);
+
+    SplitNode* parent;
+    SplitNode* first_child;
+    SplitNode* second_child;
+    EasyPoint2D start_position;
+    EasyPoint2D end_position;
+};
+
 class WorldGenerator
 {
 public:
@@ -14,7 +44,10 @@ public:
         is_wall_boundary_polygon_set_ = false;
         is_person_num_set_ = false;
         is_room_num_set_ = false;
+
+        split_room_tree_ = new SplitNode();
     }
+    ~WorldGenerator();
 
     bool reset();
 
@@ -32,28 +65,17 @@ public:
 private:
     bool isReadyToGenerate();
 
-    bool isWallBoundaryStartPositionValid(
-        const size_t &wall_boundary_idx,
-        const float &wall_boundary_start_position,
-        float &max_line_width,
-        float &max_line_height);
-
-    bool isWallBoundaryLineValid(
-        const size_t &wall_boundary_idx,
-        const std::vector<float> &wall_boundary_line,
-        float &max_line_height);
-
     bool generateWall();
+    bool splitWallSpace();
     bool generateRoom();
 
-private:
+public:
     WorldController world_controller_;
 
     bool is_wall_boundary_polygon_set_;
     EasyPolygon2D wall_boundary_polygon_;
     std::vector<float> wall_boundary_length_vec_;
-    //line_start, line_end, room_height
-    std::vector<std::vector<std::vector<float>>> wall_boundary_used_line_vec_vec_;
+    SplitNode* split_room_tree_;
 
     bool is_person_num_set_;
     size_t person_num_;

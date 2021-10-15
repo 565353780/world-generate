@@ -11,6 +11,13 @@ bool WorldController::reset()
         return false;
     }
 
+    wall_pair_vec_.clear();
+    roomcontainer_pair_vec_.clear();
+    room_pair_vec_.clear();
+    team_pair_vec_.clear();
+    person_pair_vec_.clear();
+    furniture_pair_vec_.clear();
+
     return true;
 }
 

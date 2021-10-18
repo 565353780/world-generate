@@ -1,5 +1,5 @@
-#ifndef WORLD_GENERATOR_H
-#define WORLD_GENERATOR_H
+#ifndef WORLD_SPLIT_GENERATOR_H
+#define WORLD_SPLIT_GENERATOR_H
 
 #include <iostream>
 #include <string>
@@ -36,10 +36,10 @@ public:
     EasyPoint2D end_position;
 };
 
-class WorldGenerator
+class WorldSplitGenerator
 {
 public:
-    WorldGenerator()
+    WorldSplitGenerator()
     {
         is_wall_boundary_polygon_set_ = false;
         is_person_num_set_ = false;
@@ -47,7 +47,7 @@ public:
 
         split_room_tree_ = new SplitNode();
     }
-    ~WorldGenerator();
+    ~WorldSplitGenerator();
 
     bool reset();
 
@@ -84,4 +84,4 @@ public:
     size_t room_num_;
 };
 
-#endif //WORLD_GENERATOR_H
+#endif //WORLD_SPLIT_GENERATOR_H

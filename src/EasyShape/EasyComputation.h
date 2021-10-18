@@ -10,6 +10,30 @@
 #include "EasyIntersection2D.h"
 #include "EasyPolygon2D.h"
 
+enum PointState
+{
+    PointOutside = 0,
+    PointOnVertex = 1,
+    PointOnEdge = 2,
+    PointInside = 3
+};
+
+enum LineState
+{
+    LineOutside = 0,
+    LineCrossVertex = 1,
+    LineCrossEdge = 2,
+    LineInside = 3
+};
+
+enum CrossState
+{
+    NoCross = 0,
+    SameVertex = 1,
+    SameEdge = 2,
+    Cross = 3
+};
+
 class EasyComputation
 {
 public:
@@ -102,6 +126,22 @@ public:
     static bool isPolygonCross(
         EasyPolygon2D &polygon_1,
         EasyPolygon2D &polygon_2);
+
+    static PointState getPointStateOfLine(
+        const EasyPoint2D &point,
+        const EasyLine2D &line);
+
+    static PointState getPointStateOfPolygon(
+        const EasyPoint2D &point,
+        const EasyPolygon2D &polygon);
+
+    static LineState getLineStateOfLine(
+        const EasyLine2D &line_1,
+        const EasyLine2D &line_2);
+
+    static LineState getLineStateOfPolygon(
+        const EasyLine2D &line,
+        const EasyPolygon2D &polygon);
 
     static bool getLineCrossPoint(
         const EasyLine2D &line_1,

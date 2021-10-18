@@ -13,6 +13,7 @@ public:
     {
         root_ = nullptr;
     }
+    ~EasyTree();
 
     bool reset();
 

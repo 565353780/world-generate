@@ -1,5 +1,16 @@
 #include "EasyTree.h"
 
+EasyTree::~EasyTree()
+{
+    reset();
+
+    if(root_ != nullptr)
+    {
+        delete(root_);
+        root_ = nullptr;
+    }
+}
+
 bool EasyTree::reset()
 {
     if(root_ != nullptr)
@@ -1682,7 +1693,7 @@ bool EasyTree::isNodeInParentChildNodeSpace(
                     return false;
                 }
 
-                // TODO : judge whether polygon cross need to finish
+                // TODO : need to finish : judge whether polygon cross
                 // 0 : not in 1 : inside 2 : on boundary
                 const int point_state = EasyComputation::isPointInPolygon(
                     parent_child_space_boundary_point_in_space_node,

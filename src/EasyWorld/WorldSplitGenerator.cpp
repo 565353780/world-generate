@@ -1,4 +1,4 @@
-#include "WorldGenerator.h"
+#include "WorldSplitGenerator.h"
 
 SplitNode::~SplitNode()
 {
@@ -218,18 +218,18 @@ bool SplitNode::getAllLeafNode(
     return true;
 }
 
-WorldGenerator::~WorldGenerator()
+WorldSplitGenerator::~WorldSplitGenerator()
 {
     split_room_tree_->reset();
 
     delete(split_room_tree_);
 }
 
-bool WorldGenerator::reset()
+bool WorldSplitGenerator::reset()
 {
     if(!world_controller_.reset())
     {
-        std::cout << "WorldGenerator::reset : " <<
+        std::cout << "WorldSplitGenerator::reset : " <<
           "reset for world_controller_ failed!" << std::endl;
 
         return false;
@@ -246,7 +246,7 @@ bool WorldGenerator::reset()
     return true;
 }
 
-bool WorldGenerator::setWallBoundaryPolygon(
+bool WorldSplitGenerator::setWallBoundaryPolygon(
     const EasyPolygon2D &wall_boundary_polygon)
 {
     wall_boundary_polygon_.point_list.clear();
@@ -257,7 +257,7 @@ bool WorldGenerator::setWallBoundaryPolygon(
 
     if(wall_boundary_polygon.point_list.size() == 0)
     {
-        std::cout << "WorldGenerator::setArea : " << std::endl <<
+        std::cout << "WorldSplitGenerator::setWallBoundaryPolygon : " << std::endl <<
           "wall boundary polygon is empty!" << std::endl;
 
         return false;
@@ -286,7 +286,7 @@ bool WorldGenerator::setWallBoundaryPolygon(
     return true;
 }
 
-bool WorldGenerator::setPersonNum(
+bool WorldSplitGenerator::setPersonNum(
     const size_t &person_num)
 {
     person_num_ = 0;
@@ -294,7 +294,7 @@ bool WorldGenerator::setPersonNum(
 
     if(person_num == 0)
     {
-        std::cout << "WorldGenerator::setPersonNum : " << std::endl <<
+        std::cout << "WorldSplitGenerator::setPersonNum : " << std::endl <<
           "Input :\n" <<
           "\tperson_num = " << person_num << std::endl <<
           "perosn num not valid!" << std::endl;
@@ -308,7 +308,7 @@ bool WorldGenerator::setPersonNum(
     return true;
 }
 
-bool WorldGenerator::setRoomNum(
+bool WorldSplitGenerator::setRoomNum(
     const size_t &room_num)
 {
     room_num_ = 0;
@@ -316,7 +316,7 @@ bool WorldGenerator::setRoomNum(
 
     if(room_num == 0)
     {
-        std::cout << "WorldGenerator::setPersonNum : " << std::endl <<
+        std::cout << "WorldSplitGenerator::setPersonNum : " << std::endl <<
           "Input :\n" <<
           "\troom_num = " << room_num << std::endl <<
           "perosn num not valid!" << std::endl;
@@ -330,13 +330,13 @@ bool WorldGenerator::setRoomNum(
     return true;
 }
 
-bool WorldGenerator::generateWorld()
+bool WorldSplitGenerator::generateWorld()
 {
     if(!isReadyToGenerate())
     {
         if(!is_wall_boundary_polygon_set_)
         {
-            std::cout << "WorldGenerator::generateWorld : " << std::endl <<
+            std::cout << "WorldSplitGenerator::generateWorld : " << std::endl <<
               "wall_boundary_polygon not set!" << std::endl;
 
             return false;
@@ -344,13 +344,13 @@ bool WorldGenerator::generateWorld()
         
         if(!is_person_num_set_)
         {
-            std::cout << "WorldGenerator::generateWorld : " << std::endl <<
+            std::cout << "WorldSplitGenerator::generateWorld : " << std::endl <<
               "person_num not set!" << std::endl;
 
             return false;
         }
 
-        std::cout << "WorldGenerator::generateWorld : " << std::endl <<
+        std::cout << "WorldSplitGenerator::generateWorld : " << std::endl <<
           "room_num not set!" << std::endl;
 
         return false;
@@ -358,7 +358,7 @@ bool WorldGenerator::generateWorld()
 
     if(!world_controller_.reset())
     {
-        std::cout << "WorldGenerator::generateWorld : " << std::endl <<
+        std::cout << "WorldSplitGenerator::generateWorld : " << std::endl <<
           "reset for world_controller_ failed!" << std::endl;
 
         return false;
@@ -366,7 +366,7 @@ bool WorldGenerator::generateWorld()
 
     if(!generateWall())
     {
-        std::cout << "WorldGenerator::generateWorld : " << std::endl <<
+        std::cout << "WorldSplitGenerator::generateWorld : " << std::endl <<
           "generateWall failed!" << std::endl;
 
         return false;
@@ -374,7 +374,7 @@ bool WorldGenerator::generateWorld()
 
     if(!splitWallSpace())
     {
-        std::cout << "WorldGenerator::generateWorld : " << std::endl <<
+        std::cout << "WorldSplitGenerator::generateWorld : " << std::endl <<
           "splitWallSpace failed!" << std::endl;
 
         return false;
@@ -382,7 +382,7 @@ bool WorldGenerator::generateWorld()
 
     if(!generateRoom())
     {
-        std::cout << "WorldGenerator::generateWorld : " << std::endl <<
+        std::cout << "WorldSplitGenerator::generateWorld : " << std::endl <<
           "generateWallRoom failed!" << std::endl;
 
         return false;
@@ -391,7 +391,7 @@ bool WorldGenerator::generateWorld()
     return true;
 }
 
-bool WorldGenerator::isReadyToGenerate()
+bool WorldSplitGenerator::isReadyToGenerate()
 {
     if(is_wall_boundary_polygon_set_ &&
         is_person_num_set_ &&
@@ -403,11 +403,11 @@ bool WorldGenerator::isReadyToGenerate()
     return false;
 }
 
-bool WorldGenerator::generateWall()
+bool WorldSplitGenerator::generateWall()
 {
     if(!world_controller_.createWorld(1, 1))
     {
-        std::cout << "WorldGenerator::generateWall : " << std::endl <<
+        std::cout << "WorldSplitGenerator::generateWall : " << std::endl <<
           "createWorld failed!" << std::endl;
 
         return false;
@@ -415,7 +415,7 @@ bool WorldGenerator::generateWall()
 
     if(!world_controller_.createWall(0, NodeType::OuterWall))
     {
-        std::cout << "WorldGenerator::generateWall : " << std::endl <<
+        std::cout << "WorldSplitGenerator::generateWall : " << std::endl <<
           "createWall failed!" << std::endl;
 
         return false;
@@ -423,7 +423,7 @@ bool WorldGenerator::generateWall()
 
     if(!world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon_))
     {
-        std::cout << "WorldGenerator::generateWall : " << std::endl <<
+        std::cout << "WorldSplitGenerator::generateWall : " << std::endl <<
           "setWallBoundaryPolygon failed!" << std::endl;
 
         return false;
@@ -432,9 +432,13 @@ bool WorldGenerator::generateWall()
     return true;
 }
 
-bool WorldGenerator::splitWallSpace()
+bool WorldSplitGenerator::splitWallSpace()
 {
     split_room_tree_->reset();
+
+    // const float wall_boundary_area = wall_boundary_polygon_.getPolygonArea();
+
+    // const size_t init_room_num =
 
     const size_t wall_room_edge_max = 8;
 
@@ -456,7 +460,7 @@ bool WorldGenerator::splitWallSpace()
             random_split_percent = 1.0 * (1 + (std::rand() % 100)) / 101.0;
             if(current_try_time > try_time)
             {
-                // std::cout << "WorldGenerator::splitWallSpace : " << std::endl <<
+                // std::cout << "WorldSplitGenerator::splitWallSpace : " << std::endl <<
                 //   "createChild for random leaf node failed!" << std::endl;
 
                 break;
@@ -467,10 +471,10 @@ bool WorldGenerator::splitWallSpace()
     return true;
 }
 
-bool WorldGenerator::generateRoom()
+bool WorldSplitGenerator::generateRoom()
 {
     const float person_edge = 2;
-    const size_t room_edge_min = 4;
+    const size_t room_edge_min = 8;
 
     std::vector<SplitNode*> leaf_node_vec;
 
@@ -519,7 +523,7 @@ bool WorldGenerator::generateRoom()
                   room_axis,
                   x_direction_wall_room_num))
             {
-                std::cout << "WorldGenerator::splitWallSpace : " << std::endl <<
+                std::cout << "WorldSplitGenerator::splitWallSpace : " << std::endl <<
                   "createWallRoomContainerForWall for leaf node failed!" << std::endl;
 
                 return false;
@@ -552,7 +556,7 @@ bool WorldGenerator::generateRoom()
                       current_random_person_y_direction_num,
                       is_face_horizontal))
                 {
-                    std::cout << "WorldGenerator::splitWallSpace : " << std::endl <<
+                    std::cout << "WorldSplitGenerator::splitWallSpace : " << std::endl <<
                       "createTeamForRoom for leaf node failed!" << std::endl;
 
                     return false;
@@ -572,7 +576,7 @@ bool WorldGenerator::generateRoom()
                   room_axis,
                   1))
             {
-                std::cout << "WorldGenerator::splitWallSpace : " << std::endl <<
+                std::cout << "WorldSplitGenerator::splitWallSpace : " << std::endl <<
                   "createFreeRoomContainerForWall for leaf node failed!" << std::endl;
 
                 return false;
@@ -594,7 +598,7 @@ bool WorldGenerator::generateRoom()
                   current_person_y_direction_num,
                   is_face_horizontal))
             {
-                std::cout << "WorldGenerator::splitWallSpace : " << std::endl <<
+                std::cout << "WorldSplitGenerator::splitWallSpace : " << std::endl <<
                   "createTeamForRoom for leaf node failed!" << std::endl;
 
                 return false;

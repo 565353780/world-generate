@@ -281,22 +281,22 @@ bool EasyComputation::isRectCross(
     const EasyRect2D &rect_1,
     const EasyRect2D &rect_2)
 {
-    if(rect_1.x_max <= rect_2.x_min)
+    if(rect_1.x_max < rect_2.x_min)
     {
         return false;
     }
 
-    if(rect_1.x_min >= rect_2.x_max)
+    if(rect_1.x_min > rect_2.x_max)
     {
         return false;
     }
 
-    if(rect_1.y_max <= rect_2.y_min)
+    if(rect_1.y_max < rect_2.y_min)
     {
         return false;
     }
 
-    if(rect_1.y_min >= rect_2.y_max)
+    if(rect_1.y_min > rect_2.y_max)
     {
         return false;
     }
@@ -494,6 +494,173 @@ bool EasyComputation::isPolygonCross(
     }
 
     return false;
+}
+
+PointState EasyComputation::getPointStateOfLine(
+    const EasyPoint2D &point,
+    const EasyLine2D &line)
+{
+    const EasyPoint2D &line_point_1 = line.point_1;
+
+    if(point.x == line_point_1.x &&
+        point.y == line_point_1.y)
+    {
+        return PointState::PointOnVertex;
+    }
+
+    const EasyPoint2D &line_point_2 = line.point_2;
+
+    if(point.x == line_point_2.x &&
+        point.y == line_point_2.y)
+    {
+        return PointState::PointOnVertex;
+    }
+
+    if(line_point_1.x == line_point_2.x)
+    {
+        if(line_point_1.y == line_point_2.y)
+        {
+            return PointState::PointOutside;
+        }
+
+        if(point.x != line_point_1.x)
+        {
+            return PointState::PointOutside;
+        }
+
+        if(point.y == line_point_1.y ||
+            point.y == line_point_2.y)
+        {
+            return PointState::PointOutside;
+        }
+
+        if((line_point_1.y < point.y && point.y < line_point_2.y) ||
+            (line_point_2.y < point.y && point.y < line_point_1.y))
+        {
+            return PointState::PointOnEdge;
+        }
+
+        return PointState::PointOutside;
+    }
+
+    if(line_point_1.y == line_point_2.y)
+    {
+        if(point.y != line_point_1.y)
+        {
+            return PointState::PointOutside;
+        }
+
+        if(point.x == line_point_1.x ||
+            point.x == line_point_2.x)
+        {
+            return PointState::PointOutside;
+        }
+
+        if((line_point_1.x < point.x && point.x < line_point_2.x) ||
+            (line_point_2.x < point.x && point.x < line_point_1.x))
+        {
+            return PointState::PointOnEdge;
+        }
+
+        return PointState::PointOutside;
+    }
+
+    if((point.y - line_point_1.y) / (point.x - line_point_1.x) !=
+        (line_point_2.y - line_point_1.y) / (line_point_2.x - line_point_1.x))
+    {
+        return PointState::PointOutside;
+    }
+
+    if((line_point_1.x < point.x && point.x < line_point_2.x) ||
+        (line_point_2.x < point.x && point.x < line_point_1.x))
+    {
+        return PointState::PointOnEdge;
+    }
+
+    return PointState::PointOutside;
+}
+
+PointState EasyComputation::getPointStateOfPolygon(
+    const EasyPoint2D &point,
+    const EasyPolygon2D &polygon)
+{
+    float angle_value_sum = 0;
+
+    for(size_t i = 0; i < polygon.point_list.size(); ++i)
+    {
+        const EasyPoint2D &current_point = polygon.point_list[i];
+
+        if(current_point.x == point.x &&
+            current_point.y == point.y)
+        {
+            return PointState::PointOnVertex;
+        }
+
+        const EasyPoint2D &next_point = polygon.point_list[
+        (i + 1) % polygon.point_list.size()];
+
+        EasyLine2D line_1;
+        EasyLine2D line_2;
+        line_1.setPosition(
+            point,
+            current_point);
+        line_2.setPosition(
+            point,
+            next_point);
+
+        angle_value_sum += angle(line_1, line_2);
+    }
+
+    float angle_value_sum_to_0 = fabs(angle_value_sum);
+    float angle_value_sum_to_pi = fabs(angle_value_sum_to_0 - M_PI);
+    float angle_value_sum_to_2pi = fabs(angle_value_sum - 2.0 * M_PI);
+
+    if(angle_value_sum_to_0 < angle_value_sum_to_pi)
+    {
+        return PointState::PointOutside;
+    }
+
+    if(angle_value_sum_to_2pi < angle_value_sum_to_pi)
+    {
+        return PointState::PointInside;
+    }
+
+    return PointState::PointOnEdge;
+}
+
+LineState EasyComputation::getLineStateOfLine(
+    const EasyLine2D &line_1,
+    const EasyLine2D &line_2)
+{
+}
+
+LineState EasyComputation::getLineStateOfPolygon(
+    const EasyLine2D &line,
+    const EasyPolygon2D &polygon)
+{
+    const PointState line_point_1_state =
+      getPointStateOfPolygon(line.point_1, polygon);
+
+    const PointState line_point_2_state =
+      getPointStateOfPolygon(line.point_2, polygon);
+
+    if(line_point_1_state == PointState::PointInside)
+    {
+        if(line_point_2_state == PointState::PointInside)
+        {
+            return LineState::LineInside;
+        }
+
+        if(line_point_2_state == PointState::PointOnVertex)
+        {
+            return LineState::LineCrossVertex;
+        }
+
+        if(line_point_2_state == PointState::PointOnEdge)
+        {
+            return LineState::LineCrossEdge;
+        }
+    }
 }
 
 bool EasyComputation::getLineCrossPoint(

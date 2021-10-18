@@ -50,6 +50,54 @@ float EasyComputation::pointDist(
     return sqrt(pointDist2(point_1, point_2));
 }
 
+float EasyComputation::getPointDistToRect(
+    const EasyPoint2D &point,
+    const EasyRect2D &rect)
+{
+    if(isPointInRect(point, rect))
+    {
+        return 0;
+    }
+
+    float point_dist2_to_rect = 0;
+
+    if(point.x < rect.x_min)
+    {
+        point_dist2_to_rect += (point.x - rect.x_min) * (point.x - rect.x_min);
+    }
+    else if(point.x > rect.x_max)
+    {
+        point_dist2_to_rect += (point.x - rect.x_max) * (point.x - rect.x_max);
+    }
+    else
+    {
+        float point_dist_min_to_rect =
+          std::fmin(fabs(point.y - rect.y_min), fabs(point.y - rect.y_max));
+
+        return point_dist_min_to_rect;
+    }
+
+    if(point.y < rect.y_min)
+    {
+        point_dist2_to_rect += (point.y - rect.y_min) * (point.y - rect.y_min);
+    }
+    else if(point.y > rect.y_max)
+    {
+        point_dist2_to_rect += (point.y - rect.y_max) * (point.y - rect.y_max);
+    }
+    else
+    {
+        float point_dist_min_to_rect =
+          std::fmin(fabs(point.x - rect.x_min), fabs(point.x - rect.x_max));
+
+        return point_dist_min_to_rect;
+    }
+
+    float point_dist_min_to_rect = sqrt(point_dist2_to_rect);
+
+    return point_dist_min_to_rect;
+}
+
 float EasyComputation::lineLength2(
     const EasyLine2D &line)
 {

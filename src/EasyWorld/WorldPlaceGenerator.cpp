@@ -1,5 +1,207 @@
 #include "WorldPlaceGenerator.h"
 
+bool BoundaryUnUsedLine::setBoundaryLength(
+    const float &boundary_length)
+{
+    if(boundary_length <= 0)
+    {
+        std::cout << "BoundaryUnUsedLine::setBoundaryLength : " << std::endl <<
+          "Input :\n" <<
+          "\tboundary_length = " << boundary_length << std::endl <<
+          "boundary length not valid!" << std::endl;
+
+        return false;
+    }
+
+    boundary_length_ = boundary_length;
+
+    boundary_unused_line_vec.resize(1);
+    BoundaryLine boundary_unused_line;
+    boundary_unused_line.line_start_position = 0;
+    boundary_unused_line.line_end_position = boundary_length_;
+    boundary_unused_line_vec[0] = boundary_unused_line;
+
+    return true;
+}
+
+bool BoundaryUnUsedLine::haveThisUnusedPosition(
+    const float &boundary_position,
+    size_t &position_on_unused_line_idx)
+{
+    position_on_unused_line_idx = 0;
+
+    for(size_t i = 0; i < boundary_unused_line_vec.size(); ++i)
+    {
+        const BoundaryLine &boundary_unused_line = boundary_unused_line_vec[i];
+
+        if(boundary_unused_line.line_start_position <= boundary_position &&
+            boundary_position <= boundary_unused_line.line_end_position)
+        {
+            position_on_unused_line_idx = i;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool BoundaryUnUsedLine::isThisPositionUnused(
+    const float &boundary_position)
+{
+    size_t position_on_unused_line_idx;
+
+    if(haveThisUnusedPosition(boundary_position, position_on_unused_line_idx))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool BoundaryUnUsedLine::getNearestUnusedLine(
+    const BoundaryLine &new_boundary_line,
+    BoundaryLine &nearest_unused_boundary_line,
+    size_t &nearest_unused_boundary_line_idx)
+{
+    nearest_unused_boundary_line.line_start_position = -1;
+    nearest_unused_boundary_line.line_end_position = -1;
+
+    if(boundary_unused_line_vec.size() == 0)
+    {
+        std::cout << "BoundaryUnUsedLine::getNearestUnusedLine : " << std::endl <<
+          "Input :\n" <<
+          "\tnew_boundary_line = [" << new_boundary_line.line_start_position << "," <<
+          new_boundary_line.line_end_position << "]" << std::endl <<
+          "boundary unused line vec is empty!" << std::endl;
+
+        return false;
+    }
+
+    size_t start_position_on_unused_line_idx;
+    if(haveThisUnusedPosition(new_boundary_line.line_start_position, start_position_on_unused_line_idx))
+    {
+        nearest_unused_boundary_line_idx = start_position_on_unused_line_idx;
+
+        const BoundaryLine &start_position_on_unused_line =
+          boundary_unused_line_vec[start_position_on_unused_line_idx];
+
+        if(start_position_on_unused_line.line_end_position -
+            start_position_on_unused_line.line_start_position <
+            new_boundary_line.line_end_position - new_boundary_line.line_start_position)
+        {
+            nearest_unused_boundary_line = start_position_on_unused_line;
+
+            return true;
+        }
+
+        if(new_boundary_line.line_end_position > start_position_on_unused_line.line_end_position)
+        {
+            nearest_unused_boundary_line.line_start_position = start_position_on_unused_line.line_end_position -
+              (new_boundary_line.line_end_position - new_boundary_line.line_start_position);
+            nearest_unused_boundary_line.line_end_position = start_position_on_unused_line.line_end_position;
+
+            return true;
+        }
+
+        nearest_unused_boundary_line = new_boundary_line;
+
+        return true;
+    }
+
+    float min_dist_to_unused_line = std::numeric_limits<float>::max();
+    size_t min_dist_unused_line_idx = boundary_unused_line_vec.size();
+
+    for(size_t i = 0; i < boundary_unused_line_vec.size(); ++i)
+    {
+        const BoundaryLine &search_unused_boundary_line = boundary_unused_line_vec[i];
+
+        if(search_unused_boundary_line.line_start_position > new_boundary_line.line_start_position)
+        {
+            float current_dist =
+              fabs(search_unused_boundary_line.line_start_position - new_boundary_line.line_start_position);
+
+            if(current_dist < min_dist_to_unused_line)
+            {
+                min_dist_to_unused_line = current_dist;
+                min_dist_unused_line_idx = i;
+            }
+        }
+        else
+        {
+            float current_dist =
+              fabs(search_unused_boundary_line.line_end_position - new_boundary_line.line_start_position);
+
+            if(current_dist < min_dist_to_unused_line)
+            {
+                min_dist_to_unused_line = current_dist;
+                min_dist_unused_line_idx = i;
+            }
+        }
+    }
+
+    nearest_unused_boundary_line_idx = min_dist_unused_line_idx;
+
+    const BoundaryLine &search_nearest_unused_boundary_line =
+      boundary_unused_line_vec[min_dist_unused_line_idx];
+
+    if(search_nearest_unused_boundary_line.line_end_position - search_nearest_unused_boundary_line.line_start_position <
+        new_boundary_line.line_end_position - new_boundary_line.line_start_position)
+    {
+        nearest_unused_boundary_line = search_nearest_unused_boundary_line;
+
+        return true;
+    }
+
+    if(new_boundary_line.line_start_position < search_nearest_unused_boundary_line.line_start_position)
+    {
+        nearest_unused_boundary_line.line_start_position = search_nearest_unused_boundary_line.line_start_position;
+        nearest_unused_boundary_line.line_end_position = search_nearest_unused_boundary_line.line_start_position +
+          (new_boundary_line.line_end_position - new_boundary_line.line_start_position);
+
+        return true;
+    }
+
+    nearest_unused_boundary_line.line_end_position = search_nearest_unused_boundary_line.line_end_position;
+    nearest_unused_boundary_line.line_start_position = search_nearest_unused_boundary_line.line_end_position -
+      (nearest_unused_boundary_line.line_end_position - nearest_unused_boundary_line.line_start_position);
+
+    return true;
+}
+
+bool BoundaryUnUsedLine::splitBoundaryLine(
+    const BoundaryLine &new_boundary_line)
+{
+    BoundaryLine nearest_unused_boundary_line;
+    size_t nearest_unused_boundary_line_idx;
+
+    if(!getNearestUnusedLine(
+          new_boundary_line,
+          nearest_unused_boundary_line,
+          nearest_unused_boundary_line_idx))
+    {
+        std::cout << "BoundaryUnUsedLine::splitBoundaryLine : " << std::endl <<
+          "Input :\n" <<
+          "\tnew_boundary_line = [" << new_boundary_line.line_start_position << "," <<
+          new_boundary_line.line_end_position << "]" << std::endl <<
+          "getNearestUnusedLine for new boundary line failed!" << std::endl;
+
+        return false;
+    }
+
+    BoundaryLine &on_unused_boundary_line =
+      boundary_unused_line_vec[nearest_unused_boundary_line_idx];
+
+    if(nearest_unused_boundary_line.line_start_position ==
+        on_unused_boundary_line.line_start_position)
+    {
+        if(nearest_unused_boundary_line.line_end_position ==
+            on_unused_boundary_line.line_end_position)
+        {
+            boundary_unused_line_vec.erase(boundary_unused_line_vec.begin() + nearest_unused_boundary_line_idx);
+        }
+    }
+}
+
 bool WorldPlaceGenerator::reset()
 {
     if(!world_controller_.reset())

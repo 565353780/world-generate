@@ -69,6 +69,10 @@ public:
         const EasyPoint2D &point_1,
         const EasyPoint2D &point_2);
 
+    static float getPointDistToRect(
+        const EasyPoint2D &point,
+        const EasyRect2D &rect);
+
     static float lineLength2(
         const EasyLine2D &line);
 

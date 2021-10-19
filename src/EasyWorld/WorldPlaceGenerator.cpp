@@ -18,6 +18,24 @@ bool BoundaryLine::reset()
     return true;
 }
 
+bool BoundaryLine::outputInfo(
+    const size_t &info_level)
+{
+    std::string line_start = "";
+    for(size_t i = 0; i < info_level; ++i)
+    {
+        line_start += "\t";
+    }
+
+    std::cout << line_start << "BoundaryLine :" << std::endl <<
+      line_start << "\tline_position = [" << line_start_position << "," <<
+      line_end_position << "]" << std::endl <<
+      line_start << "\tline_height = " << line_height << std::endl <<
+      line_start << "\tline_real_height = " << line_real_height << std::endl;
+
+    return true;
+}
+
 BoundaryLineList::~BoundaryLineList()
 {
     reset();
@@ -131,8 +149,9 @@ bool BoundaryLineList::findNearestUnusedBoundaryLine(
     return true;
 }
 
-bool BoundaryLineList::insertUsedBoundaryLine(
-    const BoundaryLine &new_boundary_line)
+bool BoundaryLineList::findNearestValidBoundaryLine(
+    const BoundaryLine &new_boundary_line,
+    BoundaryLine &valid_boundary_line)
 {
     float nearest_unused_start_position;
     float nearest_unused_end_position;
@@ -142,7 +161,7 @@ bool BoundaryLineList::insertUsedBoundaryLine(
           nearest_unused_start_position,
           nearest_unused_end_position))
     {
-        std::cout << "BoundaryLineList::insertUsedBoundaryLine : " << std::endl <<
+        std::cout << "BoundaryLineList::findNearestValidBoundaryLine : " << std::endl <<
           "Input :\n" <<
           "new_boundary_line = [" << new_boundary_line.line_start_position << "," <<
           new_boundary_line.line_end_position << "]" << std::endl <<
@@ -151,7 +170,7 @@ bool BoundaryLineList::insertUsedBoundaryLine(
         return false;
     }
 
-    BoundaryLine valid_boundary_line = new_boundary_line;
+    valid_boundary_line = new_boundary_line;
 
     if(nearest_unused_end_position - nearest_unused_start_position <
         new_boundary_line.line_end_position - new_boundary_line.line_start_position)
@@ -172,6 +191,12 @@ bool BoundaryLineList::insertUsedBoundaryLine(
           (valid_boundary_line.line_end_position - valid_boundary_line.line_start_position);
     }
 
+    return true;
+}
+
+bool BoundaryLineList::insertValidBoundaryLine(
+    const BoundaryLine &valid_boundary_line)
+{
     BoundaryLine* insert_boundary_line = new BoundaryLine();
     insert_boundary_line->line_start_position = valid_boundary_line.line_start_position;
     insert_boundary_line->line_end_position = valid_boundary_line.line_end_position;
@@ -214,6 +239,29 @@ bool BoundaryLineList::insertUsedBoundaryLine(
 
     prev_search_boundary_line->next_line = insert_boundary_line;
     insert_boundary_line->prev_line = prev_search_boundary_line;
+
+    return true;
+}
+
+bool BoundaryLineList::outputInfo(
+    const size_t &info_level)
+{
+    std::string line_start = "";
+    for(size_t i = 0; i < info_level; ++i)
+    {
+        line_start += "\t";
+    }
+
+    std::cout << line_start << "BoundaryLineList :" << std::endl;
+    BoundaryLine* search_boundary_line = boundary_line_list_;
+    while(search_boundary_line != nullptr)
+    {
+        std::cout << line_start << "BoundaryLine " << ":" << std::endl <<
+          line_start << "\tboundary_length = " << boundary_length_ << std::endl;
+        search_boundary_line->outputInfo(info_level + 1);
+
+        search_boundary_line = search_boundary_line->next_line;
+    }
 
     return true;
 }
@@ -268,6 +316,7 @@ bool BoundaryLineListManager::getMaxHeight(
     const BoundaryLine &boundary_line,
     float &max_height)
 {
+    max_height = -1;
     if(boundary_idx >= boundary_line_list_vec_.size())
     {
         std::cout << "BoundaryLineListManager::getMaxHeight : " << std::endl <<
@@ -283,6 +332,20 @@ bool BoundaryLineListManager::getMaxHeight(
     EasyLine2D base_line;
     base_line.setPosition(boundary_line.line_start_position, 0, boundary_line.line_end_position, 0);
 
+    const float current_line_length = boundary_line_list_vec_[boundary_idx].boundary_length_;
+
+    if(current_line_length < 0)
+    {
+        std::cout << "BoundaryLineListManager::getMaxHeight : " << std::endl <<
+          "Input :\n" <<
+          "boundary_idx = " << boundary_idx << std::endl <<
+          "boundary_line = [" << boundary_line.line_start_position << "," <<
+          boundary_line.line_end_position << "], height = " << boundary_line.line_height << std::endl <<
+          "current line length is 0!" << std::endl;
+
+        return false;
+    }
+
     BoundaryLineList &next_boundary_line_list = boundary_line_list_vec_[
       (boundary_idx + 1) % boundary_line_list_vec_.size()];
     BoundaryLineList &prev_boundary_line_list = boundary_line_list_vec_[
@@ -291,6 +354,17 @@ bool BoundaryLineListManager::getMaxHeight(
     BoundaryLine* next_first_boundary_line = next_boundary_line_list.boundary_line_list_;
     if(next_first_boundary_line != nullptr)
     {
+        EasyLine2D next_first_target_line;
+        next_first_target_line.setPosition(
+            current_line_length - next_first_boundary_line->line_real_height,
+            next_first_boundary_line->line_start_position,
+            current_line_length,
+            next_first_boundary_line->line_real_height);
+
+        const float next_first_target_line_dist = EasyComputation::getLineDistToLine(
+            base_line, next_first_target_line);
+
+        max_height = std::fmax(max_height, next_first_target_line_dist);
     }
 
     BoundaryLine* prev_last_boundary_line = prev_boundary_line_list.boundary_line_list_;
@@ -300,10 +374,20 @@ bool BoundaryLineListManager::getMaxHeight(
     }
     if(prev_last_boundary_line != nullptr)
     {
+        const float prev_line_length = prev_boundary_line_list.boundary_length_;
+        EasyLine2D prev_last_target_line;
+        prev_last_target_line.setPosition(
+            0,
+            prev_line_length - prev_last_boundary_line->line_end_position,
+            prev_last_boundary_line->line_real_height,
+            prev_line_length - prev_last_boundary_line->line_end_position);
+
+        const float prev_last_target_line_dist = EasyComputation::getLineDistToLine(
+            base_line, prev_last_target_line);
+
+        max_height = std::fmax(max_height, prev_last_target_line_dist);
     }
 
-
-    EasyLine2D target_line;
     return true;
 }
 
@@ -323,18 +407,56 @@ bool BoundaryLineListManager::insertBoundaryLine(
         return false;
     }
 
-    if(!boundary_line_list_vec_[boundary_idx].insertUsedBoundaryLine(new_boundary_line))
+    BoundaryLine valid_boundary_line;
+
+    if(!boundary_line_list_vec_[boundary_idx].findNearestValidBoundaryLine(
+          new_boundary_line,
+          valid_boundary_line))
     {
         std::cout << "BoundaryLineListManager::insertBoundaryLine : " << std::endl <<
           "Input :\n" <<
           "boundary_idx = " << boundary_idx << std::endl <<
           "new_boundary_line = [" << new_boundary_line.line_start_position << "," <<
           new_boundary_line.line_end_position << "]" << std::endl <<
-          "insertUsedBoundaryLine failed!" << std::endl;
+          "findNearestUnusedBoundaryLine failed!" << std::endl;
 
         return false;
     }
 
+    float max_height;
+    if(!getMaxHeight(boundary_idx, valid_boundary_line, max_height))
+    {
+        std::cout << "BoundaryLineListManager::insertBoundaryLine : " << std::endl <<
+          "Input :\n" <<
+          "boundary_idx = " << boundary_idx << std::endl <<
+          "new_boundary_line = [" << new_boundary_line.line_start_position << "," <<
+          new_boundary_line.line_end_position << "]" << std::endl <<
+          "getMaxHeight failed!" << std::endl;
+
+        return false;
+    }
+
+    valid_boundary_line.line_real_height =
+      std::max(max_height, valid_boundary_line.line_height);
+
+    if(!boundary_line_list_vec_[boundary_idx].insertValidBoundaryLine(valid_boundary_line))
+    {
+        std::cout << "BoundaryLineListManager::insertBoundaryLine : " << std::endl <<
+          "Input :\n" <<
+          "boundary_idx = " << boundary_idx << std::endl <<
+          "new_boundary_line = [" << new_boundary_line.line_start_position << "," <<
+          new_boundary_line.line_end_position << "]" << std::endl <<
+          "insertValidBoundaryLine failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool BoundaryLineListManager::outputInfo(
+    const size_t &info_level)
+{
     return true;
 }
 
@@ -837,6 +959,8 @@ bool WorldPlaceGenerator::generateRoom()
               "insertBoundaryLine for new boundary line failed!" << std::endl;
         }
     }
+
+    // for(BoundaryLineList boundary_line_list)
 
     return true;
 }

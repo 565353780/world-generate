@@ -19,6 +19,9 @@ public:
 
     bool reset();
 
+    bool outputInfo(
+        const size_t &info_level);
+
     float line_start_position;
     float line_end_position;
     float line_height;
@@ -47,8 +50,15 @@ public:
         float &nearest_unused_start_position,
         float &nearest_unused_end_position);
 
-    bool insertUsedBoundaryLine(
-        const BoundaryLine &new_boundary_line);
+    bool findNearestValidBoundaryLine(
+        const BoundaryLine &new_boundary_line,
+        BoundaryLine &valid_boundary_line);
+
+    bool insertValidBoundaryLine(
+        const BoundaryLine &valid_boundary_line);
+
+    bool outputInfo(
+        const size_t &info_level);
 
     float boundary_length_;
     BoundaryLine* boundary_line_list_;
@@ -74,6 +84,9 @@ public:
     bool insertBoundaryLine(
         const size_t &boundary_idx,
         const BoundaryLine &new_boundary_line);
+
+    bool outputInfo(
+        const size_t &info_level);
 
     std::vector<BoundaryLineList> boundary_line_list_vec_;
 };

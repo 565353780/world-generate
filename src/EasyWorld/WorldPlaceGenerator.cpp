@@ -650,7 +650,10 @@ bool PointMatrix::setAllPointOccupancyState(
 
     for(std::vector<PointOccupancyState> &point_row : point_matrix_)
     {
-        point_row.resize(y_direction_point_num_, point_occupancy_state);
+        for(PointOccupancyState &point_state : point_row)
+        {
+            point_state = point_occupancy_state;
+        }
     }
 
     return true;
@@ -1528,6 +1531,10 @@ bool WorldPlaceGenerator::generateFreeRoom()
             return false;
         }
 
+        std::cout << "current max room : " << max_free_room_start_position_x << "," <<
+          max_free_room_start_position_y << ";" <<
+          max_free_room_width << "," << max_free_room_height << std::endl;
+
         size_t person_x_direction_num = 0;
         size_t person_y_direction_num = 0;
 
@@ -1551,6 +1558,9 @@ bool WorldPlaceGenerator::generateFreeRoom()
                 ++person_y_direction_num;
             }
         }
+
+        std::cout << "current free room person size :" << person_x_direction_num << "," <<
+          person_y_direction_num << std::endl;
 
         if(person_x_direction_num < 2 || person_y_direction_num < 2)
         {

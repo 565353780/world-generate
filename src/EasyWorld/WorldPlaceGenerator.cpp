@@ -252,12 +252,12 @@ bool BoundaryLineList::outputInfo(
         line_start += "\t";
     }
 
-    std::cout << line_start << "BoundaryLineList :" << std::endl;
+    std::cout << line_start << "BoundaryLineList :" << std::endl <<
+      line_start << "\tboundary_length = " << boundary_length_ << std::endl;
+
     BoundaryLine* search_boundary_line = boundary_line_list_;
     while(search_boundary_line != nullptr)
     {
-        std::cout << line_start << "BoundaryLine " << ":" << std::endl <<
-          line_start << "\tboundary_length = " << boundary_length_ << std::endl;
         search_boundary_line->outputInfo(info_level + 1);
 
         search_boundary_line = search_boundary_line->next_line;
@@ -316,7 +316,8 @@ bool BoundaryLineListManager::getMaxHeight(
     const BoundaryLine &boundary_line,
     float &max_height)
 {
-    max_height = -1;
+    max_height = std::numeric_limits<float>::max();
+
     if(boundary_idx >= boundary_line_list_vec_.size())
     {
         std::cout << "BoundaryLineListManager::getMaxHeight : " << std::endl <<
@@ -364,16 +365,20 @@ bool BoundaryLineListManager::getMaxHeight(
         const float next_first_target_line_dist = EasyComputation::getLineDistToLine(
             base_line, next_first_target_line);
 
-        max_height = std::fmax(max_height, next_first_target_line_dist);
+        if(next_first_target_line_dist >= 0)
+        {
+            max_height = std::fmin(max_height, next_first_target_line_dist);
+        }
     }
 
     BoundaryLine* prev_last_boundary_line = prev_boundary_line_list.boundary_line_list_;
-    while(prev_last_boundary_line->next_line != nullptr)
-    {
-        prev_last_boundary_line = prev_last_boundary_line->next_line;
-    }
     if(prev_last_boundary_line != nullptr)
     {
+        while(prev_last_boundary_line->next_line != nullptr)
+        {
+            prev_last_boundary_line = prev_last_boundary_line->next_line;
+        }
+
         const float prev_line_length = prev_boundary_line_list.boundary_length_;
         EasyLine2D prev_last_target_line;
         prev_last_target_line.setPosition(
@@ -385,7 +390,10 @@ bool BoundaryLineListManager::getMaxHeight(
         const float prev_last_target_line_dist = EasyComputation::getLineDistToLine(
             base_line, prev_last_target_line);
 
-        max_height = std::fmax(max_height, prev_last_target_line_dist);
+        if(prev_last_target_line_dist >= 0)
+        {
+            max_height = std::fmin(max_height, prev_last_target_line_dist);
+        }
     }
 
     return true;
@@ -437,7 +445,7 @@ bool BoundaryLineListManager::insertBoundaryLine(
     }
 
     valid_boundary_line.line_real_height =
-      std::max(max_height, valid_boundary_line.line_height);
+      std::fmin(max_height, valid_boundary_line.line_height);
 
     if(!boundary_line_list_vec_[boundary_idx].insertValidBoundaryLine(valid_boundary_line))
     {
@@ -457,6 +465,18 @@ bool BoundaryLineListManager::insertBoundaryLine(
 bool BoundaryLineListManager::outputInfo(
     const size_t &info_level)
 {
+    std::string line_start = "";
+    for(size_t i = 0; i < info_level; ++i)
+    {
+        line_start += "\t";
+    }
+
+    std::cout << line_start << "BoundaryLineListVec:" << std::endl;
+    for(BoundaryLineList &boundary_line_list : boundary_line_list_vec_)
+    {
+        boundary_line_list.outputInfo(info_level + 1);
+    }
+
     return true;
 }
 
@@ -960,7 +980,7 @@ bool WorldPlaceGenerator::generateRoom()
         }
     }
 
-    // for(BoundaryLineList boundary_line_list)
+    boundary_line_list_manager_.outputInfo(0);
 
     return true;
 }

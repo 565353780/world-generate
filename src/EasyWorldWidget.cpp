@@ -158,9 +158,9 @@ void EasyWorldWidget::run_example()
 
             EasyPolygon2D wall_boundary_polygon;
             wall_boundary_polygon.addPoint(0, 0);
-            wall_boundary_polygon.addPoint(20, 0);
-            wall_boundary_polygon.addPoint(20, 40);
-            wall_boundary_polygon.addPoint(0, 40);
+            wall_boundary_polygon.addPoint(10, 0);
+            wall_boundary_polygon.addPoint(10, 10);
+            wall_boundary_polygon.addPoint(0, 10);
             wall_boundary_polygon.setAntiClockWise();
 
             world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);

@@ -959,14 +959,24 @@ bool WorldPlaceGenerator::generateWall()
 
 bool WorldPlaceGenerator::generateRoom()
 {
+    const float roomcontainer_width_min = 4;
+    const float roomcontainer_width_max = 20;
+
+    const float roomcontainer_height_min = 4;
+    const float roomcontainer_height_max = 8;
+
+    const float person_edge = 2;
+
     for(size_t i = 0; i < room_num_; ++i)
     {
         const size_t random_boundary_idx = std::rand() % wall_boundary_polygon_.point_list.size();
         const float random_boundary_start_position = 1.0 * (std::rand() %
             size_t(boundary_line_list_manager_.boundary_line_list_vec_[random_boundary_idx].boundary_length_));
 
-        const float random_width = 1.0 * (std::rand() % 4) + 4;
-        const float random_height = 1.0 * (std::rand() % 4) + 4;
+        const float random_width =
+          1.0 * (std::rand() % size_t(roomcontainer_width_max - roomcontainer_width_min)) + roomcontainer_width_min;
+        const float random_height =
+          1.0 * (std::rand() % size_t(roomcontainer_height_max - roomcontainer_height_min)) + roomcontainer_height_min;
 
         BoundaryLine new_boundary_line;
         new_boundary_line.line_start_position = random_boundary_start_position;
@@ -977,10 +987,110 @@ bool WorldPlaceGenerator::generateRoom()
         {
             std::cout << "WorldPlaceGenerator::generateRoom : " << std::endl <<
               "insertBoundaryLine for new boundary line failed!" << std::endl;
+
+            return false;
         }
     }
 
-    boundary_line_list_manager_.outputInfo(0);
+    size_t current_room_id_start = 0;
+
+    for(size_t i = 0; i < boundary_line_list_manager_.boundary_line_list_vec_.size(); ++i)
+    {
+        const BoundaryLineList &boundary_line_list = boundary_line_list_manager_.boundary_line_list_vec_[i];
+
+        BoundaryLine* boundary_line = boundary_line_list.boundary_line_list_;
+
+        while(boundary_line != nullptr)
+        {
+            const size_t boundary_idx = i;
+            const float &roomcontainer_start_position = boundary_line->line_start_position;
+            const float &roomcontainer_width = boundary_line->line_end_position - boundary_line->line_start_position;
+            const float &roomcontainer_height = boundary_line->line_real_height;
+
+            EasyAxis2D axis;
+            axis.setXDirection(1, 0);
+            axis.setCenter(roomcontainer_start_position, 0);
+
+            if(roomcontainer_width == 0 || roomcontainer_height == 0)
+            {
+                continue;
+            }
+
+            size_t room_num = size_t(1.0 * roomcontainer_width / roomcontainer_height);
+            if(room_num == 0)
+            {
+                ++room_num;
+            }
+
+            world_controller_.createWallRoomContainerForWall(
+                0,
+                NodeType::OuterWall,
+                boundary_idx,
+                roomcontainer_width,
+                roomcontainer_height,
+                axis,
+                room_num);
+
+            const float room_width = 1.0 * roomcontainer_width / room_num;
+            const float room_height = roomcontainer_height;
+
+            size_t person_x_direction_num = 0;
+            size_t person_y_direction_num = 0;
+
+            const float team_dist = 1.0 * person_edge;
+
+            if(room_width >= team_dist)
+            {
+                person_x_direction_num = size_t((room_width - 0.5 * team_dist) / person_edge);
+
+                if(person_x_direction_num == 0)
+                {
+                    ++person_x_direction_num;
+                }
+            }
+            if(room_height >= team_dist)
+            {
+                person_y_direction_num = size_t((room_height - 0.5 * team_dist) / person_edge);
+
+                if(person_y_direction_num == 0)
+                {
+                    ++person_y_direction_num;
+                }
+            }
+
+            if(person_x_direction_num > 0 && person_y_direction_num > 0)
+            {
+                const float team_width = 1.0 * person_x_direction_num * person_edge;
+                const float team_height = 1.0 * person_y_direction_num * person_edge;
+
+                const float team_center_x = (room_width - team_width) / 2.0;
+                const float team_center_y = (room_height - team_height) / 2.0;
+
+                const bool is_face_horizontal = (std::rand() % 2) == 1;
+
+                axis.setCenter(team_center_x, team_center_y);
+
+                for(size_t j = 0; j < room_num; ++j)
+                {
+                    size_t current_room_id = current_room_id_start + j;
+
+                    world_controller_.createTeamForRoom(
+                        current_room_id,
+                        NodeType::WallRoom,
+                        team_width,
+                        team_height,
+                        axis,
+                        person_x_direction_num,
+                        person_y_direction_num,
+                        is_face_horizontal);
+                }
+            }
+
+            current_room_id_start += room_num;
+
+            boundary_line = boundary_line->next_line;
+        }
+    }
 
     return true;
 }

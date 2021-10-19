@@ -1398,6 +1398,8 @@ bool WorldPlaceGenerator::generateWallRoom()
 
 bool WorldPlaceGenerator::generateFreeRoom()
 {
+    const float person_edge = 2;
+
     if(!point_matrix_.setAllPointOccupancyState(PointOccupancyState::PointFree))
     {
         std::cout << "WorldPlaceGenerator::generateFreeRoom : " << std::endl <<
@@ -1501,28 +1503,119 @@ bool WorldPlaceGenerator::generateFreeRoom()
         polygon_vec_in_wall_node.emplace_back(new_boundary_line_polygon);
     }
 
-    float max_free_rect_start_position_x;
-    float max_free_rect_start_position_y;
-    float max_free_rect_width;
-    float max_free_rect_height;
+    size_t current_room_id = 0;
+    bool is_new_room_valid = true;
 
-    if(!point_matrix_.getMaxFreeRect(
-          polygon_vec_in_wall_node,
-          max_free_rect_start_position_x,
-          max_free_rect_start_position_y,
-          max_free_rect_width,
-          max_free_rect_height))
+    while(is_new_room_valid)
     {
-        std::cout << "WorldPlaceGenerator::generateFreeRoom : " << std::endl <<
-          "getMaxFreeRect failed!" << std::endl;
+        is_new_room_valid = false;
 
-        return false;
+        float max_free_room_start_position_x;
+        float max_free_room_start_position_y;
+        float max_free_room_width;
+        float max_free_room_height;
+
+        if(!point_matrix_.getMaxFreeRect(
+              polygon_vec_in_wall_node,
+              max_free_room_start_position_x,
+              max_free_room_start_position_y,
+              max_free_room_width,
+              max_free_room_height))
+        {
+            std::cout << "WorldPlaceGenerator::generateFreeRoom : " << std::endl <<
+              "getMaxFreeRect failed!" << std::endl;
+
+            return false;
+        }
+
+        size_t person_x_direction_num = 0;
+        size_t person_y_direction_num = 0;
+
+        const float team_dist = 1.0 * person_edge;
+
+        if(max_free_room_width >= team_dist)
+        {
+            person_x_direction_num = size_t((max_free_room_width - 0.5 * team_dist) / person_edge);
+
+            if(person_x_direction_num == 0)
+            {
+                ++person_x_direction_num;
+            }
+        }
+        if(max_free_room_height >= team_dist)
+        {
+            person_y_direction_num = size_t((max_free_room_height - 0.5 * team_dist) / person_edge);
+
+            if(person_y_direction_num == 0)
+            {
+                ++person_y_direction_num;
+            }
+        }
+
+        if(person_x_direction_num < 2 || person_y_direction_num < 2)
+        {
+            continue;
+        }
+
+        is_new_room_valid = true;
+
+        EasyAxis2D axis;
+        axis.setXDirection(1, 0);
+        axis.setCenter(max_free_room_start_position_x, max_free_room_start_position_y);
+
+        world_controller_.createFreeRoomContainerForWall(
+            0,
+            NodeType::OuterWall,
+            0,
+            max_free_room_width,
+            max_free_room_height,
+            axis,
+            1);
+
+        const float team_width = 1.0 * person_x_direction_num * person_edge;
+        const float team_height = 1.0 * person_y_direction_num * person_edge;
+
+        const float team_center_x = (max_free_room_width - team_width) / 2.0;
+        const float team_center_y = (max_free_room_height - team_height) / 2.0;
+
+        const bool is_face_horizontal = (std::rand() % 2) == 1;
+
+        axis.setCenter(team_center_x, team_center_y);
+
+        world_controller_.createTeamForRoom(
+            current_room_id,
+            NodeType::FreeRoom,
+            team_width,
+            team_height,
+            axis,
+            person_x_direction_num,
+            person_y_direction_num,
+            is_face_horizontal);
+
+        ++current_room_id;
+
+        EasyPolygon2D new_room_polygon;
+        new_room_polygon.addPoint(max_free_room_start_position_x, max_free_room_start_position_y);
+        new_room_polygon.addPoint(max_free_room_start_position_x + max_free_room_width, max_free_room_start_position_y);
+        new_room_polygon.addPoint(
+            max_free_room_start_position_x + max_free_room_width, max_free_room_start_position_y + max_free_room_height);
+        new_room_polygon.addPoint(max_free_room_start_position_x, max_free_room_start_position_y + max_free_room_height);
+        new_room_polygon.setAntiClockWise();
+        polygon_vec_in_wall_node.emplace_back(new_room_polygon);
+
+        if(!point_matrix_.setRectPointOccupancyState(
+              max_free_room_start_position_x,
+              max_free_room_start_position_y,
+              max_free_room_start_position_x + max_free_room_width,
+              max_free_room_start_position_y + max_free_room_height,
+              PointOccupancyState::PointUsed))
+        {
+            std::cout << "WorldPlaceGenerator::generateFreeRoom : " << std::endl <<
+              "setRectPointOccupancyState failed!" << std::endl;
+
+            return false;
+        }
     }
-
-    std::cout << "free roomcontainer start position = [" << max_free_rect_start_position_x << "," <<
-      max_free_rect_start_position_y << "]" << std::endl;
-    std::cout << "free roomcontainer size = [" << max_free_rect_width << "," <<
-      max_free_rect_height << "]" << std::endl;
 
     return true;
 }

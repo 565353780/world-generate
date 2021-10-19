@@ -263,6 +263,50 @@ bool BoundaryLineListManager::setBoundaryPolygon(
     return true;
 }
 
+bool BoundaryLineListManager::getMaxHeight(
+    const size_t &boundary_idx,
+    const BoundaryLine &boundary_line,
+    float &max_height)
+{
+    if(boundary_idx >= boundary_line_list_vec_.size())
+    {
+        std::cout << "BoundaryLineListManager::getMaxHeight : " << std::endl <<
+          "Input :\n" <<
+          "boundary_idx = " << boundary_idx << std::endl <<
+          "boundary_line = [" << boundary_line.line_start_position << "," <<
+          boundary_line.line_end_position << "], height = " << boundary_line.line_height << std::endl <<
+          "boundary idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    EasyLine2D base_line;
+    base_line.setPosition(boundary_line.line_start_position, 0, boundary_line.line_end_position, 0);
+
+    BoundaryLineList &next_boundary_line_list = boundary_line_list_vec_[
+      (boundary_idx + 1) % boundary_line_list_vec_.size()];
+    BoundaryLineList &prev_boundary_line_list = boundary_line_list_vec_[
+      (boundary_idx - 1 + boundary_line_list_vec_.size()) % boundary_line_list_vec_.size()];
+
+    BoundaryLine* next_first_boundary_line = next_boundary_line_list.boundary_line_list_;
+    if(next_first_boundary_line != nullptr)
+    {
+    }
+
+    BoundaryLine* prev_last_boundary_line = prev_boundary_line_list.boundary_line_list_;
+    while(prev_last_boundary_line->next_line != nullptr)
+    {
+        prev_last_boundary_line = prev_last_boundary_line->next_line;
+    }
+    if(prev_last_boundary_line != nullptr)
+    {
+    }
+
+
+    EasyLine2D target_line;
+    return true;
+}
+
 bool BoundaryLineListManager::insertBoundaryLine(
     const size_t &boundary_idx,
     const BoundaryLine &new_boundary_line)

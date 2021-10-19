@@ -66,6 +66,11 @@ public:
     bool setBoundaryPolygon(
         const EasyPolygon2D &boundary_polygon);
 
+    bool getMaxHeight(
+        const size_t &boundary_idx,
+        const BoundaryLine &boundary_line,
+        float &max_height);
+
     bool insertBoundaryLine(
         const size_t &boundary_idx,
         const BoundaryLine &new_boundary_line);

@@ -7,6 +7,287 @@ bool BoundaryLine::reset()
     line_height = -1;
     line_real_height = -1;
 
+    if(next_line != nullptr)
+    {
+        next_line->reset();
+
+        delete(next_line);
+        next_line = nullptr;
+    }
+
+    return true;
+}
+
+BoundaryLineList::~BoundaryLineList()
+{
+    reset();
+}
+
+bool BoundaryLineList::reset()
+{
+    if(boundary_line_list_ != nullptr)
+    {
+        boundary_line_list_->reset();
+
+        delete(boundary_line_list_);
+        boundary_line_list_ = nullptr;
+    }
+
+    return true;
+}
+
+bool BoundaryLineList::setBoundaryLength(
+    const float &boundary_length)
+{
+    if(boundary_length <= 0)
+    {
+        std::cout << "BoundaryLineList::setBoundaryLength : " << std::endl <<
+          "Input :\n" <<
+          "\tboundary_length = " << boundary_length << std::endl <<
+          "boundary length not valid!" << std::endl;
+
+        return false;
+    }
+
+    boundary_length_ = boundary_length;
+
+    return true;
+}
+
+bool BoundaryLineList::findNearestUnusedBoundaryLine(
+    const BoundaryLine &new_boundary_line,
+    float &nearest_unused_start_position,
+    float &nearest_unused_end_position)
+{
+    // if(new_boundary_line.line_start_position > boundary_length_ ||
+    //     new_boundary_line.line_end_position < 0)
+    // {
+    //     std::cout << "BoundaryLineList::isBoundaryLineValid : " << std::endl <<
+    //       "Input :\n" <<
+    //       "\t new_boundary_line = [" << new_boundary_line.line_start_position << "," <<
+    //       new_boundary_line.line_end_position << "]" << std::endl <<
+    //       "new boundary line out of range!" << std::endl;
+    //
+    //     return false;
+    // }
+
+    if(boundary_line_list_ == nullptr)
+    {
+        nearest_unused_start_position = 0;
+        nearest_unused_end_position = boundary_length_;
+
+        return true;
+    }
+
+    BoundaryLine* search_boundary_line = boundary_line_list_;
+    float current_unused_start_position = 0;
+    float current_unused_end_position;
+    float min_dist_to_unused_line = std::numeric_limits<float>::max();
+
+    while(search_boundary_line != nullptr)
+    {
+        current_unused_end_position = search_boundary_line->line_start_position;
+
+        if(current_unused_end_position > current_unused_start_position)
+        {
+            float current_min_dist_to_unused_line_start =
+              std::fabs(current_unused_start_position - new_boundary_line.line_start_position);
+
+            if(current_min_dist_to_unused_line_start < min_dist_to_unused_line)
+            {
+                min_dist_to_unused_line = current_min_dist_to_unused_line_start;
+
+                nearest_unused_start_position = current_unused_start_position;
+                nearest_unused_end_position = current_unused_end_position;
+            }
+
+            float current_min_dist_to_unused_line_end =
+              std::fabs(current_unused_end_position - new_boundary_line.line_start_position);
+
+            if(current_min_dist_to_unused_line_end < min_dist_to_unused_line)
+            {
+                min_dist_to_unused_line = current_min_dist_to_unused_line_end;
+
+                nearest_unused_start_position = current_unused_start_position;
+                nearest_unused_end_position = current_unused_end_position;
+            }
+        }
+
+        if(new_boundary_line.line_start_position < current_unused_end_position)
+        {
+            return true;
+        }
+
+        current_unused_start_position = search_boundary_line->line_end_position;
+
+        search_boundary_line = search_boundary_line->next_line;
+    }
+
+    current_unused_end_position = boundary_length_;
+
+    nearest_unused_start_position = current_unused_start_position;
+    nearest_unused_end_position = current_unused_end_position;
+
+    return true;
+}
+
+bool BoundaryLineList::insertUsedBoundaryLine(
+    const BoundaryLine &new_boundary_line)
+{
+    float nearest_unused_start_position;
+    float nearest_unused_end_position;
+
+    if(!findNearestUnusedBoundaryLine(
+          new_boundary_line,
+          nearest_unused_start_position,
+          nearest_unused_end_position))
+    {
+        std::cout << "BoundaryLineList::insertUsedBoundaryLine : " << std::endl <<
+          "Input :\n" <<
+          "new_boundary_line = [" << new_boundary_line.line_start_position << "," <<
+          new_boundary_line.line_end_position << "]" << std::endl <<
+          "findNearestUnusedBoundaryLine for new boundary line failed!" << std::endl;
+
+        return false;
+    }
+
+    BoundaryLine valid_boundary_line = new_boundary_line;
+
+    if(nearest_unused_end_position - nearest_unused_start_position <
+        new_boundary_line.line_end_position - new_boundary_line.line_start_position)
+    {
+        valid_boundary_line.line_start_position = nearest_unused_start_position;
+        valid_boundary_line.line_end_position = nearest_unused_end_position;
+    }
+    else if(new_boundary_line.line_end_position > nearest_unused_end_position)
+    {
+        valid_boundary_line.line_end_position = nearest_unused_end_position;
+        valid_boundary_line.line_start_position = nearest_unused_end_position -
+          (valid_boundary_line.line_end_position - valid_boundary_line.line_start_position);
+    }
+    else if(new_boundary_line.line_start_position < nearest_unused_start_position)
+    {
+        valid_boundary_line.line_start_position = nearest_unused_start_position;
+        valid_boundary_line.line_end_position = nearest_unused_start_position +
+          (valid_boundary_line.line_end_position - valid_boundary_line.line_start_position);
+    }
+
+    BoundaryLine* insert_boundary_line = new BoundaryLine();
+    insert_boundary_line->line_start_position = valid_boundary_line.line_start_position;
+    insert_boundary_line->line_end_position = valid_boundary_line.line_end_position;
+    insert_boundary_line->line_height = valid_boundary_line.line_height;
+    insert_boundary_line->line_real_height = valid_boundary_line.line_real_height;
+
+    if(boundary_line_list_ == nullptr)
+    {
+        boundary_line_list_ = insert_boundary_line;
+
+        return true;
+    }
+
+    BoundaryLine* search_boundary_line = boundary_line_list_;
+    BoundaryLine* prev_search_boundary_line = search_boundary_line->prev_line;
+
+    while(search_boundary_line != nullptr)
+    {
+        if(valid_boundary_line.line_end_position <= search_boundary_line->line_start_position)
+        {
+            insert_boundary_line->next_line = search_boundary_line;
+            search_boundary_line->prev_line = insert_boundary_line;
+
+            if(prev_search_boundary_line == nullptr)
+            {
+                boundary_line_list_ = insert_boundary_line;
+
+                return true;
+            }
+
+            prev_search_boundary_line->next_line = insert_boundary_line;
+            insert_boundary_line->prev_line = prev_search_boundary_line;
+
+            return true;
+        }
+
+        prev_search_boundary_line = search_boundary_line;
+        search_boundary_line = search_boundary_line->next_line;
+    }
+
+    prev_search_boundary_line->next_line = insert_boundary_line;
+    insert_boundary_line->prev_line = prev_search_boundary_line;
+
+    return true;
+}
+
+bool BoundaryLineListManager::reset()
+{
+    boundary_line_list_vec_.clear();
+
+    return true;
+}
+
+bool BoundaryLineListManager::setBoundaryPolygon(
+    const EasyPolygon2D &boundary_polygon)
+{
+    reset();
+
+    if(boundary_polygon.point_list.size() == 0)
+    {
+        std::cout << "BoundaryLineListManager::setBoundaryPolygon : " << std::endl <<
+          "boundary polygon is empty!" << std::endl;
+
+        return false;
+    }
+
+    boundary_line_list_vec_.resize(boundary_polygon.point_list.size());
+
+    for(size_t i = 0; i < boundary_polygon.point_list.size(); ++i)
+    {
+        const EasyPoint2D &current_point = boundary_polygon.point_list[i];
+        const EasyPoint2D &next_point = boundary_polygon.point_list[
+        (i + 1) % boundary_polygon.point_list.size()];
+
+        const float current_line_length = EasyComputation::pointDist(current_point, next_point);
+
+        if(!boundary_line_list_vec_[i].setBoundaryLength(current_line_length))
+        {
+            std::cout << "BoundaryLineListManager::setBoundaryPolygon : " << std::endl <<
+              "setBoundaryLength for line-" << i << " failed!" << std::endl;
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool BoundaryLineListManager::insertBoundaryLine(
+    const size_t &boundary_idx,
+    const BoundaryLine &new_boundary_line)
+{
+    if(boundary_idx >= boundary_line_list_vec_.size())
+    {
+        std::cout << "BoundaryLineListManager::insertBoundaryLine : " << std::endl <<
+          "Input :\n" <<
+          "boundary_idx = " << boundary_idx << std::endl <<
+          "new_boundary_line = [" << new_boundary_line.line_start_position << "," <<
+          new_boundary_line.line_end_position << "]" << std::endl <<
+          "boundary idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    if(!boundary_line_list_vec_[boundary_idx].insertUsedBoundaryLine(new_boundary_line))
+    {
+        std::cout << "BoundaryLineListManager::insertBoundaryLine : " << std::endl <<
+          "Input :\n" <<
+          "boundary_idx = " << boundary_idx << std::endl <<
+          "new_boundary_line = [" << new_boundary_line.line_start_position << "," <<
+          new_boundary_line.line_end_position << "]" << std::endl <<
+          "insertUsedBoundaryLine failed!" << std::endl;
+
+        return false;
+    }
+
     return true;
 }
 

@@ -12,6 +12,8 @@ public:
     BoundaryLine()
     {
         reset();
+
+        prev_line = nullptr;
     }
 
     bool reset();
@@ -20,6 +22,53 @@ public:
     float line_end_position;
     float line_height;
     float line_real_height;
+
+    BoundaryLine* prev_line;
+    BoundaryLine* next_line;
+};
+
+class BoundaryLineList
+{
+public:
+    BoundaryLineList()
+    {
+    }
+    ~BoundaryLineList();
+
+    bool reset();
+
+    bool setBoundaryLength(
+        const float &boundary_length);
+
+    bool findNearestUnusedBoundaryLine(
+        const BoundaryLine &new_boundary_line,
+        float &nearest_unused_start_position,
+        float &nearest_unused_end_position);
+
+    bool insertUsedBoundaryLine(
+        const BoundaryLine &new_boundary_line);
+
+    float boundary_length_;
+    BoundaryLine* boundary_line_list_;
+};
+
+class BoundaryLineListManager
+{
+public:
+    BoundaryLineListManager()
+    {
+    }
+
+    bool reset();
+
+    bool setBoundaryPolygon(
+        const EasyPolygon2D &boundary_polygon);
+
+    bool insertBoundaryLine(
+        const size_t &boundary_idx,
+        const BoundaryLine &new_boundary_line);
+
+    std::vector<BoundaryLineList> boundary_line_list_vec_;
 };
 
 class BoundaryUnusedLine

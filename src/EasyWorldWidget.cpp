@@ -192,26 +192,28 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
-    drawWallSpaceBoundary(world_split_generator_.world_controller_);
-    // drawRoomContainerSpaceBoundary(world_split_generator_.world_controller_);
-    drawRoomSpaceBoundary(world_split_generator_.world_controller_);
-    // drawTeamSpaceBoundary(world_split_generator_.world_controller_);
-    // drawPersonSpaceBoundary(world_split_generator_.world_controller_);
-    drawFurnitureSpaceBoundary(world_split_generator_.world_controller_);
+    WorldController &world_controller = world_place_generator_.world_controller_;
 
-    // drawWallBoundaryAxis(world_split_generator_.world_controller_);
-    // drawRoomContainerBoundaryAxis(world_split_generator_.world_controller_);
-    // drawRoomBoundaryAxis(world_split_generator_.world_controller_);
-    // drawTeamBoundaryAxis(world_split_generator_.world_controller_);
-    // drawPersonBoundaryAxis(world_split_generator_.world_controller_);
-    // drawFurnitureBoundaryAxis(world_split_generator_.world_controller_);
+    drawWallSpaceBoundary(world_controller);
+    // drawRoomContainerSpaceBoundary(world_controller);
+    drawRoomSpaceBoundary(world_controller);
+    // drawTeamSpaceBoundary(world_controller);
+    // drawPersonSpaceBoundary(world_controller);
+    drawFurnitureSpaceBoundary(world_controller);
+
+    // drawWallBoundaryAxis(world_controller);
+    // drawRoomContainerBoundaryAxis(world_controller);
+    // drawRoomBoundaryAxis(world_controller);
+    // drawTeamBoundaryAxis(world_controller);
+    // drawPersonBoundaryAxis(world_controller);
+    // drawFurnitureBoundaryAxis(world_controller);
 }
 
 void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
 
-    world_split_generator_.generateWorld();
+    world_place_generator_.generateWorld();
 
     update();
 }

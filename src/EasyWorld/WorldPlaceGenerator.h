@@ -11,9 +11,10 @@ class BoundaryLine
 public:
     BoundaryLine()
     {
-        reset();
-
+        next_line = nullptr;
         prev_line = nullptr;
+
+        reset();
     }
 
     bool reset();
@@ -32,6 +33,7 @@ class BoundaryLineList
 public:
     BoundaryLineList()
     {
+        boundary_line_list_ = nullptr;
     }
     ~BoundaryLineList();
 
@@ -133,11 +135,10 @@ private:
 
 public:
     WorldController world_controller_;
+    BoundaryLineListManager boundary_line_list_manager_;
 
     bool is_wall_boundary_polygon_set_;
     EasyPolygon2D wall_boundary_polygon_;
-    std::vector<float> wall_boundary_length_vec_;
-    std::vector<BoundaryUnusedLine> wall_boundary_unused_line_vec_;
 
     bool is_person_num_set_;
     size_t person_num_;

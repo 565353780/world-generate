@@ -220,7 +220,10 @@ bool BoundaryLineList::insertUsedBoundaryLine(
 
 bool BoundaryLineListManager::reset()
 {
-    boundary_line_list_vec_.clear();
+    for(BoundaryLineList &boundary_line_list : boundary_line_list_vec_)
+    {
+        boundary_line_list.reset();
+    }
 
     return true;
 }
@@ -575,8 +578,15 @@ bool WorldPlaceGenerator::reset()
         return false;
     }
 
+    if(!boundary_line_list_manager_.reset())
+    {
+        std::cout << "WorldPlaceGenerator::reset : " <<
+          "reset for boundary_line_list_manager_ failed!" << std::endl;
+
+        return false;
+    }
+
     wall_boundary_polygon_.point_list.clear();
-    wall_boundary_length_vec_.clear();
     is_wall_boundary_polygon_set_ = false;
 
     person_num_ = 0;
@@ -589,7 +599,6 @@ bool WorldPlaceGenerator::setWallBoundaryPolygon(
     const EasyPolygon2D &wall_boundary_polygon)
 {
     wall_boundary_polygon_.point_list.clear();
-    wall_boundary_length_vec_.clear();
 
     is_wall_boundary_polygon_set_ = false;
 
@@ -603,20 +612,15 @@ bool WorldPlaceGenerator::setWallBoundaryPolygon(
 
     wall_boundary_polygon_ = wall_boundary_polygon;
 
-    wall_boundary_length_vec_.resize(wall_boundary_polygon_.point_list.size(), -1);
-
-    for(size_t i = 0; i < wall_boundary_polygon_.point_list.size(); ++i)
-    {
-        const EasyPoint2D &current_point = wall_boundary_polygon_.point_list[i];
-        const EasyPoint2D &next_point = wall_boundary_polygon_.point_list[
-          (i + 1) % wall_boundary_polygon_.point_list.size()];
-
-        const float wall_boundary_length = EasyComputation::pointDist(current_point, next_point);
-
-        wall_boundary_length_vec_[i] = wall_boundary_length;
-    }
-
     is_wall_boundary_polygon_set_ = true;
+
+    if(!boundary_line_list_manager_.setBoundaryPolygon(wall_boundary_polygon_))
+    {
+        std::cout << "WorldPlaceGenerator::setWallBoundaryPolygon : " << std::endl <<
+          "setBoundaryPolygon for boundary line list manager failed!" << std::endl;
+
+        return false;
+    }
 
     return true;
 }
@@ -699,6 +703,14 @@ bool WorldPlaceGenerator::generateWorld()
         return false;
     }
 
+    if(!boundary_line_list_manager_.reset())
+    {
+        std::cout << "WorldSplitGenerator::generateWorld : " << std::endl <<
+          "reset for boundary_line_list_manager_ failed!" << std::endl;
+
+        return false;
+    }
+
     if(!generateWall())
     {
         std::cout << "WorldSplitGenerator::generateWorld : " << std::endl <<
@@ -761,6 +773,27 @@ bool WorldPlaceGenerator::generateWall()
 
 bool WorldPlaceGenerator::generateRoom()
 {
+    for(size_t i = 0; i < room_num_; ++i)
+    {
+        const size_t random_boundary_idx = std::rand() % wall_boundary_polygon_.point_list.size();
+        const float random_boundary_start_position = 1.0 * (std::rand() %
+            size_t(boundary_line_list_manager_.boundary_line_list_vec_[random_boundary_idx].boundary_length_));
+
+        const float random_width = 1.0 * (std::rand() % 4) + 4;
+        const float random_height = 1.0 * (std::rand() % 4) + 4;
+
+        BoundaryLine new_boundary_line;
+        new_boundary_line.line_start_position = random_boundary_start_position;
+        new_boundary_line.line_end_position = random_boundary_start_position + random_width;
+        new_boundary_line.line_height = random_height;
+
+        if(!boundary_line_list_manager_.insertBoundaryLine(random_boundary_idx, new_boundary_line))
+        {
+            std::cout << "WorldPlaceGenerator::generateRoom : " << std::endl <<
+              "insertBoundaryLine for new boundary line failed!" << std::endl;
+        }
+    }
+
     return true;
 }
 

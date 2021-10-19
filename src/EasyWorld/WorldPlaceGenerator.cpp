@@ -1013,6 +1013,7 @@ bool WorldPlaceGenerator::generateRoom()
 
             if(roomcontainer_width == 0 || roomcontainer_height == 0)
             {
+                boundary_line = boundary_line->next_line;
                 continue;
             }
 
@@ -1058,32 +1059,36 @@ bool WorldPlaceGenerator::generateRoom()
                 }
             }
 
-            if(person_x_direction_num > 0 && person_y_direction_num > 0)
+            if(person_x_direction_num == 0 || person_y_direction_num == 0)
             {
-                const float team_width = 1.0 * person_x_direction_num * person_edge;
-                const float team_height = 1.0 * person_y_direction_num * person_edge;
+                current_room_id_start += room_num;
+                boundary_line = boundary_line->next_line;
+                continue;
+            }
 
-                const float team_center_x = (room_width - team_width) / 2.0;
-                const float team_center_y = (room_height - team_height) / 2.0;
+            const float team_width = 1.0 * person_x_direction_num * person_edge;
+            const float team_height = 1.0 * person_y_direction_num * person_edge;
 
-                const bool is_face_horizontal = (std::rand() % 2) == 1;
+            const float team_center_x = (room_width - team_width) / 2.0;
+            const float team_center_y = (room_height - team_height) / 2.0;
 
-                axis.setCenter(team_center_x, team_center_y);
+            const bool is_face_horizontal = (std::rand() % 2) == 1;
 
-                for(size_t j = 0; j < room_num; ++j)
-                {
-                    size_t current_room_id = current_room_id_start + j;
+            axis.setCenter(team_center_x, team_center_y);
 
-                    world_controller_.createTeamForRoom(
-                        current_room_id,
-                        NodeType::WallRoom,
-                        team_width,
-                        team_height,
-                        axis,
-                        person_x_direction_num,
-                        person_y_direction_num,
-                        is_face_horizontal);
-                }
+            for(size_t j = 0; j < room_num; ++j)
+            {
+                size_t current_room_id = current_room_id_start + j;
+
+                world_controller_.createTeamForRoom(
+                    current_room_id,
+                    NodeType::WallRoom,
+                    team_width,
+                    team_height,
+                    axis,
+                    person_x_direction_num,
+                    person_y_direction_num,
+                    is_face_horizontal);
             }
 
             current_room_id_start += room_num;
@@ -1091,6 +1096,8 @@ bool WorldPlaceGenerator::generateRoom()
             boundary_line = boundary_line->next_line;
         }
     }
+
+    boundary_line_list_manager_.outputInfo(0);
 
     return true;
 }

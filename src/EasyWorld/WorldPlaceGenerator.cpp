@@ -182,13 +182,13 @@ bool BoundaryLineList::findNearestValidBoundaryLine(
     {
         valid_boundary_line.line_end_position = nearest_unused_end_position;
         valid_boundary_line.line_start_position = nearest_unused_end_position -
-          (valid_boundary_line.line_end_position - valid_boundary_line.line_start_position);
+          (new_boundary_line.line_end_position - new_boundary_line.line_start_position);
     }
     else if(new_boundary_line.line_start_position < nearest_unused_start_position)
     {
         valid_boundary_line.line_start_position = nearest_unused_start_position;
         valid_boundary_line.line_end_position = nearest_unused_start_position +
-          (valid_boundary_line.line_end_position - valid_boundary_line.line_start_position);
+          (new_boundary_line.line_end_position - new_boundary_line.line_start_position);
     }
 
     return true;
@@ -1096,8 +1096,6 @@ bool WorldPlaceGenerator::generateRoom()
             boundary_line = boundary_line->next_line;
         }
     }
-
-    boundary_line_list_manager_.outputInfo(0);
 
     return true;
 }

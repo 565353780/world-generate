@@ -12,6 +12,7 @@
 
 #include <time.h>
 #include "EasyWorld/WorldSplitGenerator.h"
+#include "EasyWorld/WorldPlaceGenerator.h"
 
 namespace Ui {
 class EasyWorldWidget;
@@ -117,7 +118,8 @@ private:
     Ui::EasyWorldWidget *ui;
 
     WorldController world_controller_;
-    WorldSplitGenerator world_generator_;
+    WorldSplitGenerator world_split_generator_;
+    WorldPlaceGenerator world_place_generator_;
 
     float axis_length_;
     float zoom_;

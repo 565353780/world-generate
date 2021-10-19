@@ -1,11 +1,21 @@
 #include "WorldPlaceGenerator.h"
 
-bool BoundaryUnUsedLine::setBoundaryLength(
+bool BoundaryLine::reset()
+{
+    line_start_position = -1;
+    line_end_position = -1;
+    line_height = -1;
+    line_real_height = -1;
+
+    return true;
+}
+
+bool BoundaryUnusedLine::setBoundaryLength(
     const float &boundary_length)
 {
     if(boundary_length <= 0)
     {
-        std::cout << "BoundaryUnUsedLine::setBoundaryLength : " << std::endl <<
+        std::cout << "BoundaryUnusedLine::setBoundaryLength : " << std::endl <<
           "Input :\n" <<
           "\tboundary_length = " << boundary_length << std::endl <<
           "boundary length not valid!" << std::endl;
@@ -24,7 +34,7 @@ bool BoundaryUnUsedLine::setBoundaryLength(
     return true;
 }
 
-bool BoundaryUnUsedLine::haveThisUnusedPosition(
+bool BoundaryUnusedLine::haveThisUnusedPosition(
     const float &boundary_position,
     size_t &position_on_unused_line_idx)
 {
@@ -45,7 +55,7 @@ bool BoundaryUnUsedLine::haveThisUnusedPosition(
     return false;
 }
 
-bool BoundaryUnUsedLine::isThisPositionUnused(
+bool BoundaryUnusedLine::isThisPositionUnused(
     const float &boundary_position)
 {
     size_t position_on_unused_line_idx;
@@ -58,17 +68,17 @@ bool BoundaryUnUsedLine::isThisPositionUnused(
     return false;
 }
 
-bool BoundaryUnUsedLine::getNearestUnusedLine(
+bool BoundaryUnusedLine::getNearestUnusedLine(
     const BoundaryLine &new_boundary_line,
     BoundaryLine &nearest_unused_boundary_line,
     size_t &nearest_unused_boundary_line_idx)
 {
-    nearest_unused_boundary_line.line_start_position = -1;
-    nearest_unused_boundary_line.line_end_position = -1;
+    nearest_unused_boundary_line.reset();
+    nearest_unused_boundary_line.line_height = new_boundary_line.line_height;
 
     if(boundary_unused_line_vec.size() == 0)
     {
-        std::cout << "BoundaryUnUsedLine::getNearestUnusedLine : " << std::endl <<
+        std::cout << "BoundaryUnusedLine::getNearestUnusedLine : " << std::endl <<
           "Input :\n" <<
           "\tnew_boundary_line = [" << new_boundary_line.line_start_position << "," <<
           new_boundary_line.line_end_position << "]" << std::endl <<
@@ -168,7 +178,7 @@ bool BoundaryUnUsedLine::getNearestUnusedLine(
     return true;
 }
 
-bool BoundaryUnUsedLine::splitBoundaryLine(
+bool BoundaryUnusedLine::splitBoundaryLine(
     const BoundaryLine &new_boundary_line)
 {
     BoundaryLine nearest_unused_boundary_line;
@@ -179,11 +189,23 @@ bool BoundaryUnUsedLine::splitBoundaryLine(
           nearest_unused_boundary_line,
           nearest_unused_boundary_line_idx))
     {
-        std::cout << "BoundaryUnUsedLine::splitBoundaryLine : " << std::endl <<
+        std::cout << "BoundaryUnusedLine::splitBoundaryLine : " << std::endl <<
           "Input :\n" <<
           "\tnew_boundary_line = [" << new_boundary_line.line_start_position << "," <<
           new_boundary_line.line_end_position << "]" << std::endl <<
           "getNearestUnusedLine for new boundary line failed!" << std::endl;
+
+        return false;
+    }
+
+    if(nearest_unused_boundary_line.line_start_position != new_boundary_line.line_start_position ||
+        nearest_unused_boundary_line.line_end_position != new_boundary_line.line_end_position)
+    {
+        std::cout << "BoundaryUnusedLine::splitBoundaryLine : " << std::endl <<
+          "Input :\n" <<
+          "\tnew_boundary_line = [" << new_boundary_line.line_start_position << "," <<
+          new_boundary_line.line_end_position << "]" << std::endl <<
+          "this boundary line not total unused!" << std::endl;
 
         return false;
     }
@@ -198,8 +220,68 @@ bool BoundaryUnUsedLine::splitBoundaryLine(
             on_unused_boundary_line.line_end_position)
         {
             boundary_unused_line_vec.erase(boundary_unused_line_vec.begin() + nearest_unused_boundary_line_idx);
+
+            return true;
         }
+
+        BoundaryLine new_sub_unused_boundary_line;
+        new_sub_unused_boundary_line.line_start_position = nearest_unused_boundary_line.line_end_position;
+        new_sub_unused_boundary_line.line_end_position = on_unused_boundary_line.line_end_position;
+        boundary_unused_line_vec.emplace_back(new_sub_unused_boundary_line);
+
+        on_unused_boundary_line.line_start_position = nearest_unused_boundary_line.line_end_position;
+
+        return true;
     }
+
+    if(nearest_unused_boundary_line.line_end_position == on_unused_boundary_line.line_end_position)
+    {
+        BoundaryLine new_sub_unused_boundary_line;
+        new_sub_unused_boundary_line.line_start_position = on_unused_boundary_line.line_start_position;
+        new_sub_unused_boundary_line.line_end_position = nearest_unused_boundary_line.line_start_position;
+        boundary_unused_line_vec.emplace_back(new_sub_unused_boundary_line);
+
+        on_unused_boundary_line.line_end_position = nearest_unused_boundary_line.line_start_position;
+
+        return true;
+    }
+
+    BoundaryLine new_sub_unused_boundary_line;
+    new_sub_unused_boundary_line.line_start_position = nearest_unused_boundary_line.line_end_position;
+    new_sub_unused_boundary_line.line_end_position = on_unused_boundary_line.line_end_position;
+    boundary_unused_line_vec.emplace_back(new_sub_unused_boundary_line);
+
+    on_unused_boundary_line.line_end_position = nearest_unused_boundary_line.line_start_position;
+
+    return true;
+}
+
+bool BoundaryUnusedLine::generateWallRoomContainer(
+    const float &roomcontainer_start_position,
+    const float &roomcontainer_width,
+    const float &roomcontainer_height)
+{
+    BoundaryLine new_boundary_line;
+    new_boundary_line.line_start_position = roomcontainer_start_position;
+    new_boundary_line.line_end_position = roomcontainer_start_position + roomcontainer_width;
+    new_boundary_line.line_height = roomcontainer_height;
+
+    BoundaryLine nearest_unused_boundary_line;
+    size_t nearest_unused_boundary_line_idx;
+
+    if(!getNearestUnusedLine(new_boundary_line, nearest_unused_boundary_line, nearest_unused_boundary_line_idx))
+    {
+        std::cout << "BoundaryUnusedLine::generateWallRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_start_position = " << roomcontainer_start_position << std::endl <<
+          "\troomcontainer_width = " << roomcontainer_width << std::endl <<
+          "\troomcontainer_height = " << roomcontainer_height << std::endl <<
+          "getNearestUnusedLine for new boundary line failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
 }
 
 bool WorldPlaceGenerator::reset()

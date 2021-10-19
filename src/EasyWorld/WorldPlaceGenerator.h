@@ -11,16 +11,21 @@ class BoundaryLine
 public:
     BoundaryLine()
     {
+        reset();
     }
+
+    bool reset();
 
     float line_start_position;
     float line_end_position;
+    float line_height;
+    float line_real_height;
 };
 
-class BoundaryUnUsedLine
+class BoundaryUnusedLine
 {
 public:
-    BoundaryUnUsedLine()
+    BoundaryUnusedLine()
     {
     }
 
@@ -39,11 +44,13 @@ public:
         BoundaryLine &nearest_unused_boundary_line,
         size_t &nearest_unused_boundary_line_idx);
 
-    bool isBoundaryLineUnused(
-        const BoundaryLine &new_boundary_line);
-
     bool splitBoundaryLine(
         const BoundaryLine &new_boundary_line);
+
+    bool generateWallRoomContainer(
+        const float &roomcontainer_start_position,
+        const float &roomcontainer_width,
+        const float &roomcontainer_height);
 
     float boundary_length_;
     std::vector<BoundaryLine> boundary_unused_line_vec;
@@ -81,7 +88,7 @@ public:
     bool is_wall_boundary_polygon_set_;
     EasyPolygon2D wall_boundary_polygon_;
     std::vector<float> wall_boundary_length_vec_;
-    std::vector<BoundaryUnUsedLine> wall_boundary_unused_line_vec_;
+    std::vector<BoundaryUnusedLine> wall_boundary_unused_line_vec_;
 
     bool is_person_num_set_;
     size_t person_num_;

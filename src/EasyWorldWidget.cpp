@@ -31,7 +31,7 @@ EasyWorldWidget::~EasyWorldWidget()
 
 void EasyWorldWidget::run_example()
 {
-    size_t demo_mode = 2;
+    size_t demo_mode = 3;
 
     switch(demo_mode)
     {
@@ -134,17 +134,46 @@ void EasyWorldWidget::run_example()
             wall_boundary_polygon.addPoint(0, 40);
             wall_boundary_polygon.setAntiClockWise();
 
-            world_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
-            world_generator_.setPersonNum(80);
-            world_generator_.setRoomNum(6);
-            world_generator_.generateWorld();
+            world_split_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
+            world_split_generator_.setPersonNum(80);
+            world_split_generator_.setRoomNum(6);
+            world_split_generator_.generateWorld();
 
             // long cycle_num = 0;
             // float avg_fps = -1;
             // setStartTime();
             // while(true)
             // {
-            //     world_generator_.generateWorld();
+            //     world_split_generator_.generateWorld();
+            //     ++cycle_num;
+            //     getFPS(cycle_num, avg_fps);
+            //
+            //     std::cout << "fps = " << avg_fps << std::endl;
+            // }
+            break;
+        }
+    case 3:
+        {
+            zoom_ = 20;
+
+            EasyPolygon2D wall_boundary_polygon;
+            wall_boundary_polygon.addPoint(0, 0);
+            wall_boundary_polygon.addPoint(20, 0);
+            wall_boundary_polygon.addPoint(20, 40);
+            wall_boundary_polygon.addPoint(0, 40);
+            wall_boundary_polygon.setAntiClockWise();
+
+            world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
+            world_place_generator_.setPersonNum(80);
+            world_place_generator_.setRoomNum(6);
+            world_place_generator_.generateWorld();
+
+            // long cycle_num = 0;
+            // float avg_fps = -1;
+            // setStartTime();
+            // while(true)
+            // {
+            //     world_place_generator_.generateWorld();
             //     ++cycle_num;
             //     getFPS(cycle_num, avg_fps);
             //
@@ -163,26 +192,26 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
-    drawWallSpaceBoundary(world_generator_.world_controller_);
-    // drawRoomContainerSpaceBoundary(world_generator_.world_controller_);
-    drawRoomSpaceBoundary(world_generator_.world_controller_);
-    // drawTeamSpaceBoundary(world_generator_.world_controller_);
-    // drawPersonSpaceBoundary(world_generator_.world_controller_);
-    drawFurnitureSpaceBoundary(world_generator_.world_controller_);
+    drawWallSpaceBoundary(world_split_generator_.world_controller_);
+    // drawRoomContainerSpaceBoundary(world_split_generator_.world_controller_);
+    drawRoomSpaceBoundary(world_split_generator_.world_controller_);
+    // drawTeamSpaceBoundary(world_split_generator_.world_controller_);
+    // drawPersonSpaceBoundary(world_split_generator_.world_controller_);
+    drawFurnitureSpaceBoundary(world_split_generator_.world_controller_);
 
-    // drawWallBoundaryAxis(world_generator_.world_controller_);
-    // drawRoomContainerBoundaryAxis(world_generator_.world_controller_);
-    // drawRoomBoundaryAxis(world_generator_.world_controller_);
-    // drawTeamBoundaryAxis(world_generator_.world_controller_);
-    // drawPersonBoundaryAxis(world_generator_.world_controller_);
-    // drawFurnitureBoundaryAxis(world_generator_.world_controller_);
+    // drawWallBoundaryAxis(world_split_generator_.world_controller_);
+    // drawRoomContainerBoundaryAxis(world_split_generator_.world_controller_);
+    // drawRoomBoundaryAxis(world_split_generator_.world_controller_);
+    // drawTeamBoundaryAxis(world_split_generator_.world_controller_);
+    // drawPersonBoundaryAxis(world_split_generator_.world_controller_);
+    // drawFurnitureBoundaryAxis(world_split_generator_.world_controller_);
 }
 
 void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
 
-    world_generator_.generateWorld();
+    world_split_generator_.generateWorld();
 
     update();
 }

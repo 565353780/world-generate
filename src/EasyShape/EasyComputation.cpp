@@ -101,7 +101,7 @@ float EasyComputation::getPointDistToRect(
 float EasyComputation::lineLength2(
     const EasyLine2D &line)
 {
-    float length_2 = pow(line.x_diff, 2) + pow(line.y_diff, 2);
+    float length_2 = (line.x_diff * line.x_diff) + (line.y_diff * line.y_diff);
 
     return length_2;
 }
@@ -230,6 +230,169 @@ float EasyComputation::getAntiClockWiseAngle(
     }
 
     return anti_clock_small_angle;
+}
+
+float EasyComputation::getLineDistToLine(
+    const EasyLine2D &base_line,
+    const EasyLine2D &target_line)
+{
+    const float base_line_length = lineLength(base_line);
+
+    if(base_line_length == 0)
+    {
+        std::cout << "EasyComputation::getLineDistToLine : " << std::endl <<
+          "Input :\n" <<
+          "\tbase_line = [" << base_line.point_1.x << "," << base_line.point_1.y << "]->[" <<
+          base_line.point_2.x << "," << base_line.point_2.y << "]" << std::endl <<
+          "\ttarget_line = [" << target_line.point_1.x << "," << target_line.point_1.y << "]->[" <<
+          target_line.point_2.x << "," << target_line.point_2.y << "]" << std::endl <<
+          "base_line length is 0!" << std::endl;
+
+        return -1;
+    }
+
+    if(isLineCross(base_line, target_line))
+    {
+        return 0;
+    }
+
+    EasyLine2D unit_base_line;
+    unit_base_line.setPosition(
+        base_line.point_1.x,
+        base_line.point_1.y,
+        base_line.point_1.x + base_line.x_diff / base_line_length,
+        base_line.point_1.y + base_line.y_diff / base_line_length);
+
+    EasyLine2D unit_base_line_point_1_to_target_line_point_1_line;
+    unit_base_line_point_1_to_target_line_point_1_line.setPosition(
+        unit_base_line.point_1, target_line.point_1);
+
+    EasyLine2D unit_base_line_point_1_to_target_line_point_2_line;
+    unit_base_line_point_1_to_target_line_point_2_line.setPosition(
+        unit_base_line.point_1, target_line.point_2);
+
+    float target_line_point_1_position = dot(
+        unit_base_line, unit_base_line_point_1_to_target_line_point_1_line);
+
+    float target_line_point_2_position = dot(
+        unit_base_line, unit_base_line_point_1_to_target_line_point_2_line);
+
+    float target_line_point_1_dist = cross(
+        unit_base_line, unit_base_line_point_1_to_target_line_point_1_line);
+
+    float target_line_point_2_dist = cross(
+        unit_base_line, unit_base_line_point_1_to_target_line_point_2_line);
+
+    if(target_line_point_1_position > target_line_point_2_position)
+    {
+        float temp_exchange_data = target_line_point_1_position;
+        target_line_point_1_position = target_line_point_2_position;
+        target_line_point_2_position = temp_exchange_data;
+        temp_exchange_data = target_line_point_1_dist;
+        target_line_point_1_dist = target_line_point_2_dist;
+        target_line_point_2_dist = temp_exchange_data;
+    }
+
+    if(target_line_point_2_position < 0 || target_line_point_1_position > base_line_length)
+    {
+        return std::numeric_limits<float>::max();
+    }
+
+    if(target_line_point_1_dist < 0 && target_line_point_2_dist < 0)
+    {
+        return std::numeric_limits<float>::max();
+    }
+
+    float min_dist = std::numeric_limits<float>::max();
+
+    if(target_line_point_1_dist >= 0)
+    {
+        if(0 <= target_line_point_1_position && target_line_point_1_position <= base_line_length)
+        {
+            min_dist = std::fmin(min_dist, target_line_point_1_dist);
+
+            if(target_line_point_2_dist >= 0)
+            {
+                if(0 <= target_line_point_2_position && target_line_point_2_position <= base_line_length)
+                {
+                    min_dist = std::fmin(min_dist, target_line_point_2_dist);
+                    return min_dist;
+                }
+            }
+
+            if(target_line_point_2_position < 0)
+            {
+                min_dist = std::fmin(min_dist, target_line_point_1_dist - target_line_point_1_position *
+                    (target_line_point_1_dist - target_line_point_2_dist) /
+                    (target_line_point_1_position - target_line_point_2_position));
+
+                return min_dist;
+            }
+
+            min_dist = std::fmin(min_dist, target_line_point_1_dist +
+                (base_line_length - target_line_point_1_position) *
+                (target_line_point_1_dist - target_line_point_2_dist) /
+                (target_line_point_1_position - target_line_point_2_position));
+
+            return min_dist;
+        }
+
+        if(target_line_point_2_dist >= 0)
+        {
+            if(0 <= target_line_point_2_position && target_line_point_2_position <= base_line_length)
+            {
+                min_dist = std::fmin(min_dist, target_line_point_2_dist);
+
+                if(target_line_point_1_position < 0)
+                {
+                    min_dist = std::fmin(min_dist, target_line_point_1_dist - target_line_point_1_position *
+                        (target_line_point_1_dist - target_line_point_2_dist) /
+                        (target_line_point_1_position - target_line_point_2_position));
+
+                    return min_dist;
+                }
+
+                min_dist = std::fmin(min_dist, target_line_point_1_dist +
+                    (base_line_length - target_line_point_1_position) *
+                    (target_line_point_1_dist - target_line_point_2_dist) /
+                    (target_line_point_1_position - target_line_point_2_position));
+
+                return min_dist;
+            }
+        }
+    }
+
+    if(0 <= target_line_point_2_position && target_line_point_2_position <= base_line_length)
+    {
+        min_dist = std::fmin(min_dist, target_line_point_2_dist);
+
+        if(target_line_point_1_position < 0)
+        {
+            min_dist = std::fmin(min_dist, target_line_point_1_dist - target_line_point_1_position *
+                (target_line_point_1_dist - target_line_point_2_dist) /
+                (target_line_point_1_position - target_line_point_2_position));
+
+            return min_dist;
+        }
+
+        min_dist = std::fmin(min_dist, target_line_point_1_dist +
+            (base_line_length - target_line_point_1_position) *
+            (target_line_point_1_dist - target_line_point_2_dist) /
+            (target_line_point_1_position - target_line_point_2_position));
+
+        return min_dist;
+    }
+
+    min_dist = std::fmin(min_dist, target_line_point_1_dist - target_line_point_1_position *
+        (target_line_point_1_dist - target_line_point_2_dist) /
+        (target_line_point_1_position - target_line_point_2_position));
+
+    min_dist = std::fmin(min_dist, target_line_point_1_dist +
+        (base_line_length - target_line_point_1_position) *
+        (target_line_point_1_dist - target_line_point_2_dist) /
+        (target_line_point_1_position - target_line_point_2_position));
+
+    return min_dist;
 }
 
 bool EasyComputation::isSamePoint(

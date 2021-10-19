@@ -480,6 +480,335 @@ bool BoundaryLineListManager::outputInfo(
     return true;
 }
 
+bool PointMatrix::reset()
+{
+    boundary_start_x_ = -1;
+    boundary_start_y_ = -1;
+    boundary_width_ = -1;
+    boundary_height_ = -1;
+    is_boundary_position_set_ = false;
+
+    split_edge_length_ = -1;
+    is_split_edge_length_set_ = false;
+
+    x_direction_point_num_ = 0;
+    y_direction_point_num_ = 0;
+
+    point_matrix_.clear();
+
+    return true;
+}
+
+bool PointMatrix::setBoundaryPosition(
+    const float &boundary_start_x,
+    const float &boundary_start_y,
+    const float &boundary_width,
+    const float &boundary_height)
+{
+    boundary_start_x_ = -1;
+    boundary_start_y_ = -1;
+    boundary_width_ = -1;
+    boundary_height_ = -1;
+    is_boundary_position_set_ = false;
+
+    if(boundary_width < 0 || boundary_height < 0)
+    {
+        std::cout << "PointMatrix::setBoundarySize : " << std::endl <<
+          "Input :\n" <<
+          "\tboundary_start_position = [" << boundary_start_x << "," <<
+          boundary_start_y << "]" << std::endl <<
+          "\tboundary_size = [" << boundary_width << "," <<
+          boundary_height << "]" << std::endl <<
+          "boundary size not valid!" << std::endl;
+
+        return false;
+    }
+
+    boundary_start_x_ = boundary_start_x;
+    boundary_start_y_ = boundary_start_y;
+    boundary_width_ = boundary_width;
+    boundary_height_ = boundary_height;
+    is_boundary_position_set_ = true;
+
+    if(isValid())
+    {
+        x_direction_point_num_ = size_t(boundary_width_ / split_edge_length_) + 1;
+        y_direction_point_num_ = size_t(boundary_height_ / split_edge_length_) + 1;
+
+        point_matrix_.resize(x_direction_point_num_);
+        for(std::vector<PointOccupancyState> &point_row : point_matrix_)
+        {
+            point_row.resize(y_direction_point_num_, PointOccupancyState::Free);
+        }
+    }
+
+    return true;
+}
+
+bool PointMatrix::setSplitEdgeLength(
+    const float &split_edge_length)
+{
+    split_edge_length_ = -1;
+    is_split_edge_length_set_ = false;
+
+    if(split_edge_length == 0)
+    {
+        std::cout << "PointMatrix::setSplitEdgeLength : " << std::endl <<
+          "Input :\n" <<
+          "\tsplit_edge_num = " << split_edge_length << std::endl <<
+          "split edge num is 0!" << std::endl;
+
+        return false;
+    }
+
+    split_edge_length_ = split_edge_length;
+    is_split_edge_length_set_ = true;
+
+    if(isValid())
+    {
+        x_direction_point_num_ = size_t(boundary_width_ / split_edge_length_) + 1;
+        y_direction_point_num_ = size_t(boundary_height_ / split_edge_length_) + 1;
+
+        point_matrix_.resize(x_direction_point_num_);
+        for(std::vector<PointOccupancyState> &point_row : point_matrix_)
+        {
+            point_row.resize(y_direction_point_num_, PointOccupancyState::Free);
+        }
+    }
+
+    return true;
+}
+
+bool PointMatrix::getPointPosition(
+    const size_t &point_x_idx,
+    const size_t &point_y_idx,
+    EasyPoint2D &point_position)
+{
+    point_position.setPosition(-1, -1);
+
+    if(!isValid())
+    {
+        std::cout << "PointMatrix::getPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\tpoint_idx = [" << point_x_idx << "," << point_y_idx << "]" << std::endl <<
+          "point matrix not valid!" << std::endl;
+
+        return false;
+    }
+
+    if(point_x_idx >= x_direction_point_num_ || point_y_idx >= y_direction_point_num_)
+    {
+        std::cout << "PointMatrix::getPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\tpoint_idx = [" << point_x_idx << "," << point_y_idx << "]" << std::endl <<
+          "point idx out of range!" << std::endl;
+
+        return false;
+    }
+
+    point_position.setPosition(
+        boundary_start_x_ + point_x_idx * split_edge_length_,
+        boundary_start_y_ + point_y_idx * split_edge_length_);
+
+    return true;
+}
+
+bool PointMatrix::setAllPointOccupancyState(
+    const PointOccupancyState &point_occupancy_state)
+{
+    if(!isValid())
+    {
+        std::cout << "PointMatrix::setAllPointOccupancyState : " << std::endl <<
+          "\tpoint_occupancy_state = " << point_occupancy_state << std::endl <<
+          "point matrix not valid!" << std::endl;
+
+        return false;
+    }
+
+    for(std::vector<PointOccupancyState> &point_row : point_matrix_)
+    {
+        point_row.resize(y_direction_point_num_, point_occupancy_state);
+    }
+
+    return true;
+}
+
+bool PointMatrix::setPartPointOccupancyState(
+    const size_t &point_x_idx_start,
+    const size_t &point_x_idx_end,
+    const size_t &point_y_idx_start,
+    const size_t &point_y_idx_end,
+    const PointOccupancyState &point_occupancy_state)
+{
+    if(!isValid())
+    {
+        std::cout << "PointMatrix::setAllPointOccupancyState : " << std::endl <<
+          "point matrix not valid!" << std::endl;
+
+        return false;
+    }
+
+    if(point_x_idx_start >= x_direction_point_num_ ||
+        point_x_idx_end < point_x_idx_start ||
+        point_y_idx_start >= y_direction_point_num_ ||
+        point_y_idx_end < point_y_idx_start)
+    {
+        std::cout << "PointMatrix::setPartPointOccupancyState : " << std::endl <<
+          "Input :\n" <<
+          "\tpoint_x_idx_range = [" << point_x_idx_start << "," <<
+          point_x_idx_end << "]" << std::endl <<
+          "\tpoint_y_idx_range = [" << point_y_idx_start << "," <<
+          point_y_idx_end << "]" << std::endl <<
+          "\tpoint_occupancy_state = " << point_occupancy_state << std::endl <<
+          "point range not valid!" << std::endl;
+
+        return false;
+    }
+
+    for(size_t i = point_x_idx_start; i <= point_x_idx_end; ++i)
+    {
+        std::vector<PointOccupancyState> &point_row = point_matrix_[i];
+
+        for(size_t j = point_y_idx_start; j <= point_y_idx_end; ++j)
+        {
+            point_row[j] = point_occupancy_state;
+        }
+    }
+
+    return true;
+}
+
+bool PointMatrix::getPointIdxRangeFromRect(
+    const float &rect_start_position_x,
+    const float &rect_start_position_y,
+    const float &rect_width,
+    const float &rect_height,
+    size_t &point_x_idx_start,
+    size_t &point_x_idx_end,
+    size_t &point_y_idx_start,
+    size_t &point_y_idx_end)
+{
+    point_x_idx_start = 1;
+    point_x_idx_end = 0;
+    point_y_idx_start = 1;
+    point_y_idx_end = 0;
+
+    if(!isValid())
+    {
+        std::cout << "PointMatrix::getPointIdxRangeFromRect : " << std::endl <<
+          "Input :\n" <<
+          "\trect_start_position = [" << rect_start_position_x << "," <<
+          rect_start_position_y << "]" << std::endl <<
+          "\trect_size = [" << rect_width << "," <<
+          rect_height << "]" << std::endl <<
+          "point matrix not valid!" << std::endl;
+
+        return false;
+    }
+
+    point_x_idx_start = size_t((rect_start_position_x - boundary_start_x_) / split_edge_length_);
+    point_x_idx_end = size_t((rect_start_position_x + rect_width - boundary_start_x_) / split_edge_length_) + 1;
+    point_y_idx_start = size_t((rect_start_position_y - boundary_start_y_) / split_edge_length_);
+    point_y_idx_end = size_t((rect_start_position_y + rect_height - boundary_start_y_) / split_edge_length_) + 1;
+
+    point_x_idx_start = std::fmax(point_x_idx_start, 0);
+    point_x_idx_end = std::fmin(point_x_idx_end, x_direction_point_num_ - 1);
+    point_y_idx_start = std::fmax(point_y_idx_start, 0);
+    point_y_idx_end = std::fmin(point_y_idx_end, y_direction_point_num_ - 1);
+
+    if(point_x_idx_start > point_x_idx_end || point_y_idx_start > point_y_idx_end)
+    {
+        std::cout << "PointMatrix::getPointIdxRangeFromRect : " << std::endl <<
+          "Input :\n" <<
+          "\trect_start_position = [" << rect_start_position_x << "," <<
+          rect_start_position_y << "]" << std::endl <<
+          "\trect_size = [" << rect_width << "," <<
+          rect_height << "]" << std::endl <<
+          "rect out of range!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool PointMatrix::setRectPointOccupancyState(
+    const float &rect_start_position_x,
+    const float &rect_start_position_y,
+    const float &rect_width,
+    const float &rect_height,
+    const PointOccupancyState &point_occupancy_state)
+{
+    size_t point_x_idx_start;
+    size_t point_x_idx_end;
+    size_t point_y_idx_start;
+    size_t point_y_idx_end;
+
+    if(!getPointIdxRangeFromRect(
+          rect_start_position_x,
+          rect_start_position_y,
+          rect_width,
+          rect_height,
+          point_x_idx_start,
+          point_x_idx_end,
+          point_y_idx_start,
+          point_y_idx_end))
+    {
+        std::cout << "PointMatrix::setRectPointOccupancyState : " << std::endl <<
+          "Input :\n" <<
+          "\trect_start_position = [" << rect_start_position_x << "," <<
+          rect_start_position_y << "]" << std::endl <<
+          "\trect_size = [" << rect_width << "," <<
+          rect_height << "]" << std::endl <<
+          "\tpoint_occupancy_state = " << point_occupancy_state << std::endl <<
+          "getPointIdxRangeFromRect failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!setPartPointOccupancyState(
+          point_x_idx_start,
+          point_x_idx_end,
+          point_y_idx_start,
+          point_y_idx_end,
+          point_occupancy_state))
+    {
+        std::cout << "PointMatrix::setRectPointOccupancyState : " << std::endl <<
+          "Input :\n" <<
+          "\trect_start_position = [" << rect_start_position_x << "," <<
+          rect_start_position_y << "]" << std::endl <<
+          "\trect_size = [" << rect_width << "," <<
+          rect_height << "]" << std::endl <<
+          "\tpoint_occupancy_state = " << point_occupancy_state << std::endl <<
+          "setPartPointOccupancyState failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool PointMatrix::isValid()
+{
+    if(!is_boundary_position_set_)
+    {
+        std::cout << "PointMatrix::isValid : " << std::endl <<
+          "boundary position not valid!" << std::endl;
+
+        return false;
+    }
+
+    if(!is_split_edge_length_set_)
+    {
+        std::cout << "PointMatrix::isValid : " << std::endl <<
+          "split edge length not valid!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 bool WorldPlaceGenerator::reset()
 {
     if(!world_controller_.reset())
@@ -494,6 +823,14 @@ bool WorldPlaceGenerator::reset()
     {
         std::cout << "WorldPlaceGenerator::reset : " <<
           "reset for boundary_line_list_manager_ failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!point_matrix_.reset())
+    {
+        std::cout << "WorldPlaceGenerator::reset : " <<
+          "reset for point_matrix_ failed!" << std::endl;
 
         return false;
     }

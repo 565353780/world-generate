@@ -91,40 +91,6 @@ public:
     std::vector<BoundaryLineList> boundary_line_list_vec_;
 };
 
-class BoundaryUnusedLine
-{
-public:
-    BoundaryUnusedLine()
-    {
-    }
-
-    bool setBoundaryLength(
-        const float &boundary_length);
-
-    bool haveThisUnusedPosition(
-        const float &boundary_position,
-        size_t &position_on_unused_line_idx);
-
-    bool isThisPositionUnused(
-        const float &boundary_position);
-
-    bool getNearestUnusedLine(
-        const BoundaryLine &new_boundary_line,
-        BoundaryLine &nearest_unused_boundary_line,
-        size_t &nearest_unused_boundary_line_idx);
-
-    bool splitBoundaryLine(
-        const BoundaryLine &new_boundary_line);
-
-    bool generateWallRoomContainer(
-        const float &roomcontainer_start_position,
-        const float &roomcontainer_width,
-        const float &roomcontainer_height);
-
-    float boundary_length_;
-    std::vector<BoundaryLine> boundary_unused_line_vec;
-};
-
 class WorldPlaceGenerator
 {
 public:

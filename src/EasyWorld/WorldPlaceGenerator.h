@@ -93,8 +93,8 @@ public:
 
 enum PointOccupancyState
 {
-    Free = 0,
-    Used = 1
+    PointFree = 0,
+    PointUsed = 1
 };
 
 class PointMatrix
@@ -112,6 +112,9 @@ public:
         const float &boundary_start_y,
         const float &boundary_width,
         const float &boundary_height);
+
+    bool setBoundaryPolygon(
+        const EasyPolygon2D &boundary_polygon);
 
     bool setSplitEdgeLength(
         const float &split_edge_length);
@@ -148,6 +151,18 @@ public:
         const float &rect_height,
         const PointOccupancyState &point_occupancy_state);
 
+    bool getMaxMinDistPointToPolygonVec(
+        const std::vector<EasyPolygon2D> &polygon_vec,
+        size_t &max_min_dist_point_x_idx,
+        size_t &max_min_dist_point_y_idx);
+
+    bool getMaxFreeRect(
+        const std::vector<EasyPolygon2D> &polygon_vec,
+        float &max_free_rect_start_position_x,
+        float &max_free_rect_start_position_y,
+        float &max_free_rect_width,
+        float &max_free_rect_height);
+
 private:
     bool isValid();
 
@@ -171,6 +186,7 @@ class WorldPlaceGenerator
 public:
     WorldPlaceGenerator()
     {
+        free_room_error_max_ = 1;
     }
 
     bool reset();
@@ -190,6 +206,8 @@ private:
     bool isReadyToGenerate();
 
     bool generateWall();
+    bool generateWallRoom();
+    bool generateFreeRoom();
     bool generateRoom();
 
 public:
@@ -205,6 +223,8 @@ public:
 
     bool is_room_num_set_;
     size_t room_num_;
+
+    float free_room_error_max_;
 };
 
 #endif //WORLD_PLACE_GENERATOR

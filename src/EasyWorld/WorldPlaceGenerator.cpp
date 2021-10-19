@@ -538,8 +538,31 @@ bool PointMatrix::setBoundaryPosition(
         point_matrix_.resize(x_direction_point_num_);
         for(std::vector<PointOccupancyState> &point_row : point_matrix_)
         {
-            point_row.resize(y_direction_point_num_, PointOccupancyState::Free);
+            point_row.resize(y_direction_point_num_, PointOccupancyState::PointFree);
         }
+    }
+
+    return true;
+}
+
+bool PointMatrix::setBoundaryPolygon(
+    const EasyPolygon2D &boundary_polygon)
+{
+    const float &boundary_polygon_x_min = boundary_polygon.rect.x_min;
+    const float &boundary_polygon_y_min = boundary_polygon.rect.y_min;
+    const float &boundary_polygon_width = boundary_polygon.rect.x_diff;
+    const float &boundary_polygon_height = boundary_polygon.rect.y_diff;
+
+    if(!setBoundaryPosition(
+          boundary_polygon_x_min,
+          boundary_polygon_y_min,
+          boundary_polygon_width,
+          boundary_polygon_height))
+    {
+        std::cout << "PointMatrix::setBoundaryPolygon : " << std::endl <<
+          "setBoundaryPosition failed!" << std::endl;
+
+        return false;
     }
 
     return true;
@@ -572,7 +595,7 @@ bool PointMatrix::setSplitEdgeLength(
         point_matrix_.resize(x_direction_point_num_);
         for(std::vector<PointOccupancyState> &point_row : point_matrix_)
         {
-            point_row.resize(y_direction_point_num_, PointOccupancyState::Free);
+            point_row.resize(y_direction_point_num_, PointOccupancyState::PointFree);
         }
     }
 
@@ -788,20 +811,215 @@ bool PointMatrix::setRectPointOccupancyState(
     return true;
 }
 
+bool PointMatrix::getMaxMinDistPointToPolygonVec(
+    const std::vector<EasyPolygon2D> &polygon_vec,
+    size_t &max_min_dist_point_x_idx,
+    size_t &max_min_dist_point_y_idx)
+{
+    if(polygon_vec.size() == 0)
+    {
+        std::cout << "PointMatrix::getMaxMinDistPointToPolygonVec : " << std::endl <<
+          "polygon_vec is empty!" << std::endl;
+
+        return false;
+    }
+
+    float max_min_dist = 0;
+
+    EasyPoint2D current_point_in_matrix;
+
+    for(size_t i = 0; i < x_direction_point_num_; ++i)
+    {
+        current_point_in_matrix.x = boundary_start_x_ + i * split_edge_length_;
+
+        const std::vector<PointOccupancyState> &point_row = point_matrix_[i];
+
+        for(size_t j = 0; j < y_direction_point_num_; ++j)
+        {
+            current_point_in_matrix.y = boundary_start_y_ + j * split_edge_length_;
+
+            const PointOccupancyState &point_state = point_row[j];
+
+            if(point_state == PointOccupancyState::PointUsed)
+            {
+                continue;
+            }
+
+            float current_min_dist_to_polygon = std::numeric_limits<float>::max();
+
+            for(const EasyPolygon2D &polygon : polygon_vec)
+            {
+                const float current_dist_to_polygon =
+                  EasyComputation::getPointDistToRect(current_point_in_matrix, polygon.rect);
+
+                if(current_dist_to_polygon < current_min_dist_to_polygon)
+                {
+                    current_min_dist_to_polygon = current_dist_to_polygon;
+                }
+            }
+
+            if(current_min_dist_to_polygon > max_min_dist)
+            {
+                max_min_dist = current_min_dist_to_polygon;
+                max_min_dist_point_x_idx = i;
+                max_min_dist_point_y_idx = j;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool PointMatrix::getMaxFreeRect(
+    const std::vector<EasyPolygon2D> &polygon_vec,
+    float &max_free_rect_start_position_x,
+    float &max_free_rect_start_position_y,
+    float &max_free_rect_width,
+    float &max_free_rect_height)
+{
+    size_t max_min_dist_point_x_idx;
+    size_t max_min_dist_point_y_idx;
+
+    if(!getMaxMinDistPointToPolygonVec(
+          polygon_vec,
+          max_min_dist_point_x_idx,
+          max_min_dist_point_y_idx))
+    {
+        std::cout << "PointMatrix::getMaxFreeRect : " << std::endl <<
+          "getMaxMinDistPointToPolygonVec failed!" << std::endl;
+
+        return false;
+    }
+
+    bool is_x_left_bigger = true;
+    bool is_x_right_bigger = true;
+    bool is_y_left_bigger = true;
+    bool is_y_right_bigger = true;
+    size_t x_left_search_length = 0;
+    size_t x_right_search_length = 0;
+    size_t y_left_search_length = 0;
+    size_t y_right_search_length = 0;
+    while(is_x_left_bigger || is_x_right_bigger || is_y_left_bigger || is_y_right_bigger)
+    {
+        is_x_left_bigger = false;
+        is_x_right_bigger = false;
+        is_y_left_bigger = false;
+        is_y_right_bigger = false;
+
+        if(max_min_dist_point_x_idx - x_left_search_length > 0)
+        {
+            bool current_bigger_success = true;
+            size_t next_x_left_idx = max_min_dist_point_x_idx - x_left_search_length - 1;
+            for(size_t j = max_min_dist_point_y_idx - y_left_search_length;
+                j <= max_min_dist_point_y_idx + y_right_search_length; ++j)
+            {
+                if(point_matrix_[next_x_left_idx][j] == PointOccupancyState::PointUsed)
+                {
+                    current_bigger_success = false;
+
+                    break;
+                }
+            }
+
+            if(current_bigger_success)
+            {
+                ++x_left_search_length;
+                is_x_left_bigger = true;
+            }
+        }
+
+        if(max_min_dist_point_y_idx - y_left_search_length > 0)
+        {
+            bool current_bigger_success = true;
+            size_t next_y_left_idx = max_min_dist_point_y_idx - y_left_search_length - 1;
+            for(size_t i = max_min_dist_point_x_idx - x_left_search_length;
+                i <= max_min_dist_point_x_idx + x_right_search_length; ++i)
+            {
+                if(point_matrix_[i][next_y_left_idx] == PointOccupancyState::PointUsed)
+                {
+                    current_bigger_success = false;
+
+                    break;
+                }
+            }
+
+            if(current_bigger_success)
+            {
+                ++y_left_search_length;
+                is_y_left_bigger = true;
+            }
+        }
+
+        if(max_min_dist_point_x_idx + x_right_search_length < x_direction_point_num_ - 1)
+        {
+            bool current_bigger_success = true;
+            size_t next_x_right_idx = max_min_dist_point_x_idx + x_right_search_length + 1;
+            for(size_t j = max_min_dist_point_y_idx - y_left_search_length;
+                j <= max_min_dist_point_y_idx + y_right_search_length; ++j)
+            {
+                if(point_matrix_[next_x_right_idx][j] == PointOccupancyState::PointUsed)
+                {
+                    current_bigger_success = false;
+
+                    break;
+                }
+            }
+
+            if(current_bigger_success)
+            {
+                ++x_right_search_length;
+                is_x_right_bigger = true;
+            }
+        }
+
+        if(max_min_dist_point_y_idx + y_right_search_length < y_direction_point_num_ - 1)
+        {
+            bool current_bigger_success = true;
+            size_t next_y_right_idx = max_min_dist_point_y_idx + y_right_search_length + 1;
+            for(size_t i = max_min_dist_point_x_idx - x_left_search_length;
+                i <= max_min_dist_point_x_idx + x_right_search_length; ++i)
+            {
+                if(point_matrix_[i][next_y_right_idx] == PointOccupancyState::PointUsed)
+                {
+                    current_bigger_success = false;
+
+                    break;
+                }
+            }
+
+            if(current_bigger_success)
+            {
+                ++y_right_search_length;
+                is_y_right_bigger = true;
+            }
+        }
+    }
+
+
+    max_free_rect_start_position_x =
+      boundary_start_x_ + (max_min_dist_point_x_idx - x_left_search_length) * split_edge_length_;
+    max_free_rect_start_position_y =
+      boundary_start_y_ + (max_min_dist_point_y_idx - y_left_search_length) * split_edge_length_;
+    max_free_rect_width = (x_left_search_length + x_right_search_length) * split_edge_length_;
+    max_free_rect_height = (y_left_search_length + y_right_search_length) * split_edge_length_;
+
+    return true;
+}
+
 bool PointMatrix::isValid()
 {
     if(!is_boundary_position_set_)
     {
-        std::cout << "PointMatrix::isValid : " << std::endl <<
-          "boundary position not valid!" << std::endl;
+        // std::cout << "PointMatrix::isValid : " << std::endl <<
+        //   "boundary position not valid!" << std::endl;
 
         return false;
     }
 
     if(!is_split_edge_length_set_)
     {
-        std::cout << "PointMatrix::isValid : " << std::endl <<
-          "split edge length not valid!" << std::endl;
+        // std::cout << "PointMatrix::isValid : " << std::endl <<
+        //   "split edge length not valid!" << std::endl;
 
         return false;
     }
@@ -841,6 +1059,11 @@ bool WorldPlaceGenerator::reset()
     person_num_ = 0;
     is_person_num_set_ = false;
 
+    room_num_ = 0;
+    is_room_num_set_ = false;
+
+    free_room_error_max_ = 1;
+
     return true;
 }
 
@@ -867,6 +1090,16 @@ bool WorldPlaceGenerator::setWallBoundaryPolygon(
     {
         std::cout << "WorldPlaceGenerator::setWallBoundaryPolygon : " << std::endl <<
           "setBoundaryPolygon for boundary line list manager failed!" << std::endl;
+
+        return false;
+    }
+
+    point_matrix_.setSplitEdgeLength(free_room_error_max_);
+
+    if(!point_matrix_.setBoundaryPolygon(wall_boundary_polygon_))
+    {
+        std::cout << "WorldPlaceGenerator::setWallBoundaryPolygon : " << std::endl <<
+          "setBoundaryPolygon for point matrix failed!" << std::endl;
 
         return false;
     }
@@ -971,7 +1204,7 @@ bool WorldPlaceGenerator::generateWorld()
     if(!generateRoom())
     {
         std::cout << "WorldSplitGenerator::generateWorld : " << std::endl <<
-          "generateWallRoom failed!" << std::endl;
+          "generateRoom failed!" << std::endl;
 
         return false;
     }
@@ -1020,7 +1253,7 @@ bool WorldPlaceGenerator::generateWall()
     return true;
 }
 
-bool WorldPlaceGenerator::generateRoom()
+bool WorldPlaceGenerator::generateWallRoom()
 {
     const float roomcontainer_width_min = 6;
     const float roomcontainer_width_max = 24;
@@ -1048,7 +1281,7 @@ bool WorldPlaceGenerator::generateRoom()
 
         if(!boundary_line_list_manager_.insertBoundaryLine(random_boundary_idx, new_boundary_line))
         {
-            std::cout << "WorldPlaceGenerator::generateRoom : " << std::endl <<
+            std::cout << "WorldPlaceGenerator::generateWallRoom : " << std::endl <<
               "insertBoundaryLine for new boundary line failed!" << std::endl;
 
             return false;
@@ -1163,3 +1396,154 @@ bool WorldPlaceGenerator::generateRoom()
     return true;
 }
 
+bool WorldPlaceGenerator::generateFreeRoom()
+{
+    if(!point_matrix_.setAllPointOccupancyState(PointOccupancyState::PointFree))
+    {
+        std::cout << "WorldPlaceGenerator::generateFreeRoom : " << std::endl <<
+          "setAllPointOccupancyState failed!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* wall_node = world_controller_.findNode(0, NodeType::OuterWall);
+
+    if(wall_node == nullptr)
+    {
+        std::cout << "WorldPlaceGenerator::generateFreeRoom : " << std::endl <<
+          "find wall node failed!" << std::endl;
+
+        return false;
+    }
+
+    std::vector<EasyPolygon2D> polygon_vec_in_wall_node;
+
+    std::vector<EasyNode*> roomcontainer_node_vec;
+    world_controller_.getRoomContainerNodeVec(roomcontainer_node_vec);
+
+    for(EasyNode* roomcontainer_node : roomcontainer_node_vec)
+    {
+        EasyNode* roomcontainer_space_node = roomcontainer_node->findChild(0, NodeType::Space);
+
+        if(roomcontainer_space_node == nullptr)
+        {
+            continue;
+        }
+
+        const EasyPolygon2D &roomcontainer_space_polygon =
+          roomcontainer_space_node->getBoundaryPolygon();
+
+        EasyPolygon2D roomcontainer_polygon_in_wall_node;
+
+        for(const EasyPoint2D &roomcontainer_boundary_point : roomcontainer_space_polygon.point_list)
+        {
+            EasyPoint2D roomcontainer_boundary_point_in_world;
+
+            if(!roomcontainer_space_node->getPointInWorld(
+                  roomcontainer_boundary_point,
+                  roomcontainer_boundary_point_in_world))
+            {
+                std::cout << "WorldPlaceGenerator::generateFreeRoom : " << std::endl <<
+                  "getPointInWorld failed!" << std::endl;
+
+                return false;
+            }
+
+            EasyPoint2D roomcontainer_boundary_point_in_wall_node;
+
+            if(!wall_node->getPointInNode(
+                  roomcontainer_boundary_point_in_world,
+                  roomcontainer_boundary_point_in_wall_node))
+            {
+                std::cout << "WorldPlaceGenerator::generateFreeRoom : " << std::endl <<
+                  "getPointInNode failed!" << std::endl;
+
+                return false;
+            }
+
+            roomcontainer_polygon_in_wall_node.addPoint(roomcontainer_boundary_point_in_wall_node);
+        }
+
+        polygon_vec_in_wall_node.emplace_back(roomcontainer_polygon_in_wall_node);
+    }
+
+    for(const EasyPolygon2D &polygon_in_wall_node : polygon_vec_in_wall_node)
+    {
+        const float &boundary_polygon_x_min = polygon_in_wall_node.rect.x_min;
+        const float &boundary_polygon_y_min = polygon_in_wall_node.rect.y_min;
+        const float &boundary_polygon_width = polygon_in_wall_node.rect.x_diff;
+        const float &boundary_polygon_height = polygon_in_wall_node.rect.y_diff;
+
+        if(!point_matrix_.setRectPointOccupancyState(
+              boundary_polygon_x_min,
+              boundary_polygon_y_min,
+              boundary_polygon_width,
+              boundary_polygon_height,
+              PointOccupancyState::PointUsed))
+        {
+            std::cout << "WorldPlaceGenerator::generateFreeRoom : " << std::endl <<
+              "setRectPointOccupancyState failed!" << std::endl;
+
+            return false;
+        }
+    }
+
+    for(size_t i = 0; i < wall_boundary_polygon_.point_list.size(); ++i)
+    {
+        const EasyPoint2D &current_point = wall_boundary_polygon_.point_list[i];
+        const EasyPoint2D &next_point = wall_boundary_polygon_.point_list[
+          (i + 1) % wall_boundary_polygon_.point_list.size()];
+
+        EasyPolygon2D new_boundary_line_polygon;
+        new_boundary_line_polygon.addPoint(current_point);
+        new_boundary_line_polygon.addPoint(next_point);
+
+        polygon_vec_in_wall_node.emplace_back(new_boundary_line_polygon);
+    }
+
+    float max_free_rect_start_position_x;
+    float max_free_rect_start_position_y;
+    float max_free_rect_width;
+    float max_free_rect_height;
+
+    if(!point_matrix_.getMaxFreeRect(
+          polygon_vec_in_wall_node,
+          max_free_rect_start_position_x,
+          max_free_rect_start_position_y,
+          max_free_rect_width,
+          max_free_rect_height))
+    {
+        std::cout << "WorldPlaceGenerator::generateFreeRoom : " << std::endl <<
+          "getMaxFreeRect failed!" << std::endl;
+
+        return false;
+    }
+
+    std::cout << "free roomcontainer start position = [" << max_free_rect_start_position_x << "," <<
+      max_free_rect_start_position_y << "]" << std::endl;
+    std::cout << "free roomcontainer size = [" << max_free_rect_width << "," <<
+      max_free_rect_height << "]" << std::endl;
+
+    return true;
+}
+
+bool WorldPlaceGenerator::generateRoom()
+{
+    if(!generateWallRoom())
+    {
+        std::cout << "WorldPlaceGenerator::generateRoom : " << std::endl <<
+          "generateWallRoom failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!generateFreeRoom())
+    {
+        std::cout << "WorldPlaceGenerator::generateRoom : " << std::endl <<
+          "generateFreeRoom failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}

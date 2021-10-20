@@ -888,8 +888,8 @@ bool PointMatrix::getMaxMinDistPointToPolygonVec(
     if(max_min_dist_point_x_idx >= x_direction_point_num_ ||
         max_min_dist_point_y_idx >= y_direction_point_num_)
     {
-        std::cout << "PointMatrix::getMaxMinDistPointToPolygonVec : " << std::endl <<
-          "no point is free!" << std::endl;
+        // std::cout << "PointMatrix::getMaxMinDistPointToPolygonVec : " << std::endl <<
+        //   "no point is free!" << std::endl;
 
         return false;
     }
@@ -1664,7 +1664,6 @@ bool WorldPlaceGenerator::generateRoom()
 
         return false;
     }
-    std::cout << "finish generateFreeRoom" << std::endl;
 
     return true;
 }

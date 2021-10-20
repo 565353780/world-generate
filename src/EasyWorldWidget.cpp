@@ -169,7 +169,7 @@ void EasyWorldWidget::run_example()
             world_place_generator_.generateWorld();
 
             // long cycle_num = 0;
-            // float avg_fps = -1;
+            // float avg_fps = 0;
             // setStartTime();
             // while(true)
             // {
@@ -177,8 +177,9 @@ void EasyWorldWidget::run_example()
             //     ++cycle_num;
             //     getFPS(cycle_num, avg_fps);
             //
-            //     std::cout << "fps = " << avg_fps << std::endl;
+            //     std::cout << "fps = " << size_t(avg_fps) << std::endl;
             // }
+
             break;
         }
     }

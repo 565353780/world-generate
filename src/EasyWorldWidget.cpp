@@ -164,8 +164,6 @@ void EasyWorldWidget::run_example()
             wall_boundary_polygon.setAntiClockWise();
 
             world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
-            world_place_generator_.setPersonNum(80);
-            world_place_generator_.setRoomNum(3);
             world_place_generator_.generateWorld();
 
             // long cycle_num = 0;

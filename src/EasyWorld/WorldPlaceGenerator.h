@@ -83,7 +83,8 @@ public:
 
     bool insertBoundaryLine(
         const size_t &boundary_idx,
-        const BoundaryLine &new_boundary_line);
+        const BoundaryLine &new_boundary_line,
+        BoundaryLine &valid_boundary_line);
 
     bool outputInfo(
         const size_t &info_level);
@@ -194,20 +195,29 @@ public:
     bool setWallBoundaryPolygon(
         const EasyPolygon2D &wall_boundary_polygon);
 
-    bool setPersonNum(
-        const size_t &person_num);
-
-    bool setRoomNum(
-        const size_t &room_num);
-
     bool generateWorld();
+
+    bool placeWallRoomContainer(
+        const size_t &boundary_idx,
+        const float &roomcontainer_start_position,
+        const float &roomcontainer_width,
+        const float &roomcontainer_height);
+
+    bool generateFreeRoomContainer(
+        const size_t &team_x_direction_person_num,
+        const size_t &team_y_direction_person_num,
+        const float &team_dist,
+        const float &person_edge);
 
 private:
     bool isReadyToGenerate();
 
     bool generateWall();
+
     bool generateWallRoom();
+
     bool generateFreeRoom();
+
     bool generateRoom();
 
 public:
@@ -218,13 +228,9 @@ public:
     bool is_wall_boundary_polygon_set_;
     EasyPolygon2D wall_boundary_polygon_;
 
-    bool is_person_num_set_;
-    size_t person_num_;
-
-    bool is_room_num_set_;
-    size_t room_num_;
-
     float free_room_error_max_;
+
+    size_t current_new_room_id_;
 };
 
 #endif //WORLD_PLACE_GENERATOR

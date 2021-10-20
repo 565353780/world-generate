@@ -81,7 +81,8 @@ SOURCES += \
     EasyWorld/EasyTree.cpp \
     EasyWorld/WorldController.cpp \
     EasyWorld/WorldSplitGenerator.cpp \
-    EasyWorld/WorldPlaceGenerator.cpp
+    EasyWorld/WorldPlaceGenerator.cpp \
+    EasyWorld/WorldReward.cpp
 
 HEADERS += \
     EasyWorld/EasyAxis2D.h \
@@ -89,7 +90,8 @@ HEADERS += \
     EasyWorld/EasyTree.h \
     EasyWorld/WorldController.h \
     EasyWorld/WorldSplitGenerator.h \
-    EasyWorld/WorldPlaceGenerator.h
+    EasyWorld/WorldPlaceGenerator.h \
+    EasyWorld/WorldReward.h
 
 HEADERS += \
     EasyWorld/EasyWorld.h

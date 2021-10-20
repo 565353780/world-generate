@@ -1633,13 +1633,16 @@ bool WorldPlaceGenerator::generateWall()
     return true;
 }
 
-bool WorldPlaceGenerator::generateWallRoom()
+bool WorldPlaceGenerator::generateRoom()
 {
     const size_t roomcontainer_num = 3;
+    const size_t team_x_direction_person_num = 2 * (std::rand() % 3 + 1);
+    const size_t team_y_direction_person_num = 2 * (std::rand() % 3 + 1);
+    const float team_dist = 0.5;
+    const float person_edge = 2.0;
 
     const float roomcontainer_width_min = 6;
     const float roomcontainer_width_max = 24;
-
     const float roomcontainer_height_min = 6;
     const float roomcontainer_height_max = 8;
 
@@ -1664,42 +1667,14 @@ bool WorldPlaceGenerator::generateWallRoom()
         }
     }
 
-    return true;
-}
-
-bool WorldPlaceGenerator::generateFreeRoom()
-{
-    const size_t team_x_direction_person_num = 2 * (std::rand() % 3 + 1);
-    const size_t team_y_direction_person_num = 2 * (std::rand() % 3 + 1);
-    const float team_dist = 0.5;
-    const float person_edge = 2.0;
-
     if(!generateFreeRoomContainer(
           team_x_direction_person_num,
           team_y_direction_person_num,
           team_dist,
           person_edge))
     {
-        return false;
-    }
-
-    return true;
-}
-
-bool WorldPlaceGenerator::generateRoom()
-{
-    if(!generateWallRoom())
-    {
         std::cout << "WorldPlaceGenerator::generateRoom : " << std::endl <<
-          "generateWallRoom failed!" << std::endl;
-
-        return false;
-    }
-
-    if(!generateFreeRoom())
-    {
-        std::cout << "WorldPlaceGenerator::generateRoom : " << std::endl <<
-          "generateFreeRoom failed!" << std::endl;
+          "generateFreeRoomContainer failed!" << std::endl;
 
         return false;
     }

@@ -214,10 +214,6 @@ private:
 
     bool generateWall();
 
-    bool generateWallRoom();
-
-    bool generateFreeRoom();
-
     bool generateRoom();
 
 public:

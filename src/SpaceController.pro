@@ -82,6 +82,7 @@ SOURCES += \
     EasyWorld/WorldController.cpp \
     EasyWorld/WorldSplitGenerator.cpp \
     EasyWorld/WorldPlaceGenerator.cpp \
+    EasyWorld/WorldDescriptor.cpp \
     EasyWorld/WorldReward.cpp
 
 HEADERS += \
@@ -91,6 +92,7 @@ HEADERS += \
     EasyWorld/WorldController.h \
     EasyWorld/WorldSplitGenerator.h \
     EasyWorld/WorldPlaceGenerator.h \
+    EasyWorld/WorldDescriptor.h \
     EasyWorld/WorldReward.h
 
 HEADERS += \

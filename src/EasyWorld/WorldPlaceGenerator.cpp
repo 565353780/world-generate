@@ -431,6 +431,18 @@ bool BoundaryLineListManager::insertBoundaryLine(
         return false;
     }
 
+    if(valid_boundary_line.line_start_position == valid_boundary_line.line_end_position)
+    {
+        // std::cout << "BoundaryLineListManager::insertBoundaryLine : " << std::endl <<
+        //   "Input :\n" <<
+        //   "boundary_idx = " << boundary_idx << std::endl <<
+        //   "new_boundary_line = [" << new_boundary_line.line_start_position << "," <<
+        //   new_boundary_line.line_end_position << "]" << std::endl <<
+        //   "valid boundary line width is zero!" << std::endl;
+
+        return true;
+    }
+
     float max_height;
     if(!getMaxHeight(boundary_idx, valid_boundary_line, max_height))
     {
@@ -819,6 +831,9 @@ bool PointMatrix::getMaxMinDistPointToPolygonVec(
     size_t &max_min_dist_point_x_idx,
     size_t &max_min_dist_point_y_idx)
 {
+    max_min_dist_point_x_idx = x_direction_point_num_;
+    max_min_dist_point_y_idx = y_direction_point_num_;
+
     if(polygon_vec.size() == 0)
     {
         std::cout << "PointMatrix::getMaxMinDistPointToPolygonVec : " << std::endl <<
@@ -870,6 +885,15 @@ bool PointMatrix::getMaxMinDistPointToPolygonVec(
         }
     }
 
+    if(max_min_dist_point_x_idx >= x_direction_point_num_ ||
+        max_min_dist_point_y_idx >= y_direction_point_num_)
+    {
+        std::cout << "PointMatrix::getMaxMinDistPointToPolygonVec : " << std::endl <<
+          "no point is free!" << std::endl;
+
+        return false;
+    }
+
     return true;
 }
 
@@ -888,8 +912,8 @@ bool PointMatrix::getMaxFreeRect(
           max_min_dist_point_x_idx,
           max_min_dist_point_y_idx))
     {
-        std::cout << "PointMatrix::getMaxFreeRect : " << std::endl <<
-          "getMaxMinDistPointToPolygonVec failed!" << std::endl;
+        // std::cout << "PointMatrix::getMaxFreeRect : " << std::endl <<
+        //   "getMaxMinDistPointToPolygonVec failed!" << std::endl;
 
         return false;
     }
@@ -1525,15 +1549,11 @@ bool WorldPlaceGenerator::generateFreeRoom()
               max_free_room_width,
               max_free_room_height))
         {
-            std::cout << "WorldPlaceGenerator::generateFreeRoom : " << std::endl <<
-              "getMaxFreeRect failed!" << std::endl;
+            // std::cout << "WorldPlaceGenerator::generateFreeRoom : " << std::endl <<
+            //   "getMaxFreeRect failed!" << std::endl;
 
-            return false;
+            continue;
         }
-
-        std::cout << "current max room : " << max_free_room_start_position_x << "," <<
-          max_free_room_start_position_y << ";" <<
-          max_free_room_width << "," << max_free_room_height << std::endl;
 
         size_t person_x_direction_num = 0;
         size_t person_y_direction_num = 0;
@@ -1558,9 +1578,6 @@ bool WorldPlaceGenerator::generateFreeRoom()
                 ++person_y_direction_num;
             }
         }
-
-        std::cout << "current free room person size :" << person_x_direction_num << "," <<
-          person_y_direction_num << std::endl;
 
         if(person_x_direction_num < 2 || person_y_direction_num < 2)
         {
@@ -1647,6 +1664,8 @@ bool WorldPlaceGenerator::generateRoom()
 
         return false;
     }
+    std::cout << "finish generateFreeRoom" << std::endl;
 
     return true;
 }
+

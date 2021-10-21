@@ -430,3 +430,89 @@ bool WorldEditer::loadData()
     return true;
 }
 
+bool WorldEditer::setWallRoomContainerPosition(
+    const size_t &wall_roomcontainer_id,
+    const float &new_position_x,
+    const float &new_position_y)
+{
+    if(!readData())
+    {
+        std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
+          "\tnew_position = [" << new_position_x << "," <<
+          new_position_y << "]" << std::endl <<
+          "readData failed!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* wall_roomcontainer_node = world_place_generator_.world_controller_.findNode(
+        wall_roomcontainer_id, NodeType::WallRoom);
+
+    if(wall_roomcontainer_node == nullptr)
+    {
+        std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
+          "\tnew_position = [" << new_position_x << "," <<
+          new_position_y << "]" << std::endl <<
+          "this wall roomcontainer not found!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* wall_roomcontainer_parent_node = wall_roomcontainer_node->getParent();
+
+    if(wall_roomcontainer_parent_node == nullptr)
+    {
+        std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
+          "\tnew_position = [" << new_position_x << "," <<
+          new_position_y << "]" << std::endl <<
+          "this wall roomcontainer's parent not exist!" << std::endl;
+
+        return false;
+    }
+
+    EasyPoint2D new_position_in_world;
+    EasyPoint2D new_position_in_parent;
+
+    new_position_in_world.setPosition(new_position_x, new_position_y);
+
+    if(!wall_roomcontainer_parent_node->getPointInNode(
+          new_position_in_world,
+          new_position_in_parent))
+    {
+        std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
+          "\tnew_position = [" << new_position_x << "," <<
+          new_position_y << "]" << std::endl <<
+          "getPointInNode failed!" << std::endl;
+
+        return false;
+    }
+
+    WallRoomContainerData &wall_roomcontainer_data =
+      world_generate_data_manager_.wall_roomcontainer_data_vec[wall_roomcontainer_id];
+
+    wall_roomcontainer_data.on_wall_boundary_start_position =
+      new_position_in_parent.x;
+
+    if(!loadData())
+    {
+        std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
+          "\tnew_position = [" << new_position_x << "," <<
+          new_position_y << "]" << std::endl <<
+          "loadData failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+

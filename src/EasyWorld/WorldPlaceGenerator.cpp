@@ -1328,7 +1328,7 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
               axis,
               person_x_direction_num,
               person_y_direction_num,
-              is_face_horizontal))
+              false))
         {
             std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<
               "Input :\n" <<
@@ -1598,7 +1598,7 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
                     team_axis,
                     person_x_direction_num,
                     person_y_direction_num,
-                    is_face_horizontal);
+                    true);
 
                 ++current_freeroom_id_start;
             }

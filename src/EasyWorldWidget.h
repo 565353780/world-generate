@@ -68,6 +68,10 @@ private:
         const NodeType &furniture_type,
         QMouseEvent *event);
 
+    bool moveWallRoomContainer(
+        const size_t &wall_roomcontainer_id,
+        QMouseEvent *event);
+
     bool drawWallBoundaryAxis(
         WorldController &world_controller);
     bool drawWallBoundaryPolygon(

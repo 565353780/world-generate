@@ -241,15 +241,13 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
     Q_UNUSED(event);
 
     // world_editer_.world_place_generator_.generateWorld();
-    world_editer_.readData();
-    world_editer_.loadData();
 
     update();
 }
 
 void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    Q_UNUSED(event);
+    // Q_UNUSED(event);
 
     // moveWallInWorld(0, NodeType::OuterWall, event);
 
@@ -258,6 +256,8 @@ void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
     // moveRoomInWorld(0, NodeType::WallRoom, event);
 
     // moveTeamInWorld(0, NodeType::Team, event);
+
+    moveWallRoomContainer(0, event);
 }
 
 void EasyWorldWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -393,6 +393,23 @@ bool EasyWorldWidget::moveFurnitureInWorld(
 
         update();
     }
+
+    return true;
+}
+
+bool EasyWorldWidget::moveWallRoomContainer(
+    const size_t &wall_roomcontainer_id,
+    QMouseEvent *event)
+{
+    if(event->buttons() == Qt::LeftButton)
+    {
+        world_editer_.setWallRoomContainerPosition(
+            wall_roomcontainer_id,
+            event->x() / zoom_ - 1,
+            event->y() / zoom_ - 1);
+    }
+
+    update();
 
     return true;
 }

@@ -425,16 +425,16 @@ bool BoundaryLineListManager::insertBoundaryLine(
         return false;
     }
 
-    if(valid_boundary_line.line_start_position >= valid_boundary_line.line_end_position)
+    if(valid_boundary_line.line_start_position > valid_boundary_line.line_end_position)
     {
-        // std::cout << "BoundaryLineListManager::insertBoundaryLine : " << std::endl <<
-        //   "Input :\n" <<
-        //   "boundary_idx = " << boundary_idx << std::endl <<
-        //   "new_boundary_line = [" << new_boundary_line.line_start_position << "," <<
-        //   new_boundary_line.line_end_position << "]" << std::endl <<
-        //   "valid boundary line width is zero!" << std::endl;
+        std::cout << "BoundaryLineListManager::insertBoundaryLine : " << std::endl <<
+          "Input :\n" <<
+          "boundary_idx = " << boundary_idx << std::endl <<
+          "new_boundary_line = [" << new_boundary_line.line_start_position << "," <<
+          new_boundary_line.line_end_position << "]" << std::endl <<
+          "valid boundary line width < 0!" << std::endl;
 
-        return true;
+        return false;
     }
 
     float max_height;
@@ -1212,15 +1212,15 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
         return false;
     }
 
-    if(valid_boundary_line.line_real_height <= 0)
+    if(valid_boundary_line.line_real_height < 0)
     {
-        // std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<
-        //   "Input :\n" <<
-        //   "\t boundary_idx = " << boundary_idx << std::endl <<
-        //   "\t boundary_start_position = " << boundary_start_position << std::endl <<
-        //   "\t roomcontainer_size = [" << roomcontainer_width << "," <<
-        //   roomcontainer_height << "]" << std::endl <<
-        //   "valid boundary line real height not valid!" << std::endl;
+        std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\tboundary_idx = " << boundary_idx << std::endl <<
+          "\troomcontainer_start_position = " << roomcontainer_start_position << std::endl <<
+          "\troomcontainer_size = [" << roomcontainer_width << "," <<
+          roomcontainer_height << "]" << std::endl <<
+          "valid boundary line real height not valid!" << std::endl;
 
         return false;
     }
@@ -1233,7 +1233,7 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
     axis.setXDirection(1, 0);
     axis.setCenter(valid_roomcontainer_start_position, 0);
 
-    if(valid_roomcontainer_width == 0 || valid_roomcontainer_height == 0)
+    if(valid_roomcontainer_width < 0 || valid_roomcontainer_height < 0)
     {
         std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<
           "Input :\n" <<
@@ -1244,6 +1244,19 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
           "valid roomcontainer size not valid!" << std::endl;
 
         return false;
+    }
+
+    if(valid_roomcontainer_width == 0 || valid_roomcontainer_height == 0)
+    {
+        // std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<
+        //   "Input :\n" <<
+        //   "\tboundary_idx = " << boundary_idx << std::endl <<
+        //   "\troomcontainer_start_position = " << roomcontainer_start_position << std::endl <<
+        //   "\troomcontainer_size = [" << roomcontainer_width << "," <<
+        //   roomcontainer_height << "]" << std::endl <<
+        //   "valid roomcontainer area = 0!" << std::endl;
+
+        return true;
     }
 
     size_t room_num = size_t(1.0 * valid_roomcontainer_width / valid_roomcontainer_height);

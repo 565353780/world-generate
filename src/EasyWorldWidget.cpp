@@ -300,16 +300,7 @@ bool EasyWorldWidget::chooseRoomContainer(
             current_choose_node_id_ = roomcontainer_node->getID();
             current_choose_node_type_ = roomcontainer_node->getNodeType();
 
-            EasyPoint2D roomcontainer_start_point_in_node;
-            roomcontainer_start_point_in_node.setPosition(0, 0);
-            EasyPoint2D roomcontainer_start_point_in_world;
-            roomcontainer_space_node->getPointInWorld(
-                roomcontainer_start_point_in_node,
-                roomcontainer_start_point_in_world);
-
-            current_press_position_to_start_position.setPosition(
-                (roomcontainer_start_point_in_world.x - mouse_pos_in_world.x) * zoom_,
-                (roomcontainer_start_point_in_world.y - mouse_pos_in_world.y) * zoom_);
+            current_press_position_to_start_position = mouse_pos_in_node.x;
 
             return true;
         }
@@ -327,14 +318,15 @@ bool EasyWorldWidget::moveWallRoomContainer(
         const QPoint &mouse_pos = event->pos();
 
         const float new_position_x =
-          1.0 * (mouse_pos.x() + current_press_position_to_start_position.x) / zoom_;
+          1.0 * mouse_pos.x() / zoom_;
         const float new_position_y =
-          1.0 * (mouse_pos.y() + current_press_position_to_start_position.y) / zoom_;
+          1.0 * mouse_pos.y() / zoom_;
 
         world_editer_.setWallRoomContainerPosition(
             wall_roomcontainer_id,
             new_position_x,
-            new_position_y);
+            new_position_y,
+            current_press_position_to_start_position);
 
         update();
     }

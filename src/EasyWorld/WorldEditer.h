@@ -154,7 +154,8 @@ public:
     bool setWallRoomContainerPosition(
         const size_t &wall_roomcontainer_id,
         const float &new_position_x,
-        const float &new_position_y);
+        const float &new_position_y,
+        const float &mouse_pos_x_direction_delta);
 
     WorldPlaceGenerator world_place_generator_;
     WorldGenerateDataManager world_generate_data_manager_;

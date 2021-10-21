@@ -496,8 +496,11 @@ bool WorldEditer::loadData()
 bool WorldEditer::setWallRoomContainerPosition(
     const size_t &wall_roomcontainer_id,
     const float &new_position_x,
-    const float &new_position_y)
+    const float &new_position_y,
+    const float &mouse_pos_x_direction_delta)
 {
+    const float start_change_edge_error = 1.0;
+
     if(!readData())
     {
         std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
@@ -505,6 +508,7 @@ bool WorldEditer::setWallRoomContainerPosition(
           "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
           "\tnew_position = [" << new_position_x << "," <<
           new_position_y << "]" << std::endl <<
+          "\tmouse_pos_x_direction_delta = " << mouse_pos_x_direction_delta << std::endl <<
           "readData failed!" << std::endl;
 
         return false;
@@ -520,6 +524,7 @@ bool WorldEditer::setWallRoomContainerPosition(
           "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
           "\tnew_position = [" << new_position_x << "," <<
           new_position_y << "]" << std::endl <<
+          "\tmouse_pos_x_direction_delta = " << mouse_pos_x_direction_delta << std::endl <<
           "this wall roomcontainer not found!" << std::endl;
 
         return false;
@@ -534,6 +539,7 @@ bool WorldEditer::setWallRoomContainerPosition(
           "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
           "\tnew_position = [" << new_position_x << "," <<
           new_position_y << "]" << std::endl <<
+          "\tmouse_pos_x_direction_delta = " << mouse_pos_x_direction_delta << std::endl <<
           "this wall roomcontainer's parent not exist!" << std::endl;
 
         return false;
@@ -553,6 +559,7 @@ bool WorldEditer::setWallRoomContainerPosition(
           "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
           "\tnew_position = [" << new_position_x << "," <<
           new_position_y << "]" << std::endl <<
+          "\tmouse_pos_x_direction_delta = " << mouse_pos_x_direction_delta << std::endl <<
           "getPointInNode failed!" << std::endl;
 
         return false;
@@ -561,8 +568,37 @@ bool WorldEditer::setWallRoomContainerPosition(
     WallRoomContainerData &wall_roomcontainer_data =
       world_generate_data_manager_.wall_roomcontainer_data_vec[wall_roomcontainer_id];
 
-    wall_roomcontainer_data.on_wall_boundary_start_position =
-      new_position_in_parent.x;
+    const size_t &wall_id = wall_roomcontainer_data.wall_id;
+    const float &wall_length =
+      world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_[wall_id].boundary_length_;
+
+    if(wall_roomcontainer_data.on_wall_boundary_start_position < start_change_edge_error &&
+        new_position_in_parent.y > wall_roomcontainer_data.real_height)
+    {
+        wall_roomcontainer_data.on_wall_boundary_idx =
+          (wall_roomcontainer_data.on_wall_boundary_idx - 1 +
+           world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_.size()) %
+          world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_.size();
+
+        wall_roomcontainer_data.on_wall_boundary_start_position = 0;
+    }
+    else if(wall_roomcontainer_data.on_wall_boundary_start_position + wall_roomcontainer_data.real_width >
+        wall_length - start_change_edge_error &&
+        new_position_in_parent.y > wall_roomcontainer_data.real_height)
+    {
+        wall_roomcontainer_data.on_wall_boundary_idx =
+          (wall_roomcontainer_data.on_wall_boundary_idx + 1) %
+          world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_.size();
+
+        wall_roomcontainer_data.on_wall_boundary_start_position =
+          world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_[
+          (wall_id + 1) % world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_.size()].boundary_length_;
+    }
+    else
+    {
+        wall_roomcontainer_data.on_wall_boundary_start_position =
+          new_position_in_parent.x - mouse_pos_x_direction_delta;
+    }
 
     if(!loadData())
     {
@@ -571,6 +607,7 @@ bool WorldEditer::setWallRoomContainerPosition(
           "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
           "\tnew_position = [" << new_position_x << "," <<
           new_position_y << "]" << std::endl <<
+          "\tmouse_pos_x_direction_delta = " << mouse_pos_x_direction_delta << std::endl <<
           "loadData failed!" << std::endl;
 
         return false;

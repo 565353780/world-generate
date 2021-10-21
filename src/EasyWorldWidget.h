@@ -38,34 +38,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event);
 
 private:
-    bool moveWallInWorld(
-        const size_t &wall_id,
-        const NodeType &wall_type,
-        QMouseEvent *event);
-
-    bool moveRoomContainerInWorld(
-        const size_t &roomcontainer_id,
-        const NodeType &roomcontainer_type,
-        QMouseEvent *event);
-
-    bool moveRoomInWorld(
-        const size_t &room_id,
-        const NodeType &room_type,
-        QMouseEvent *event);
-
-    bool moveTeamInWorld(
-        const size_t &team_id,
-        const NodeType &team_type,
-        QMouseEvent *event);
-
-    bool movePersonInWorld(
-        const size_t &person_id,
-        const NodeType &person_type,
-        QMouseEvent *event);
-
-    bool moveFurnitureInWorld(
-        const size_t &furniture_id,
-        const NodeType &furniture_type,
+    bool chooseRoomContainer(
         QMouseEvent *event);
 
     bool moveWallRoomContainer(
@@ -139,6 +112,11 @@ private:
     timespec t_spc_;
     long t_start_;
     long last_second_;
+
+    size_t current_choose_node_id_;
+    NodeType current_choose_node_type_;
+
+    float current_test_position_;
 };
 
 #endif // EASYWORLDWIDGET_H

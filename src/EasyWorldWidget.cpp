@@ -17,6 +17,11 @@ EasyWorldWidget::EasyWorldWidget(QWidget *parent) :
     person_color_ = QColor(0, 0, 0);
     furniture_color_ = QColor(157,157,161);
 
+    current_choose_node_id_ = 0;
+    current_choose_node_type_ = NodeType::NodeFree;
+
+    current_test_position_ = 1;
+
     run_example();
     
     this->show();
@@ -241,8 +246,8 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
     Q_UNUSED(event);
 
     // world_editer_.world_place_generator_.generateWorld();
-
-    update();
+    //
+    // update();
 }
 
 void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
@@ -265,135 +270,9 @@ void EasyWorldWidget::mouseReleaseEvent(QMouseEvent *event)
     Q_UNUSED(event);
 }
 
-bool EasyWorldWidget::moveWallInWorld(
-    const size_t &wall_id,
-    const NodeType &wall_type,
+bool EasyWorldWidget::chooseRoomContainer(
     QMouseEvent *event)
 {
-    if(event->buttons() == Qt::LeftButton)
-    {
-        const QPoint &mouse_pos = event->pos();
-
-        EasyPoint2D new_wall_pos;
-
-        new_wall_pos.setPosition(mouse_pos.x(), mouse_pos.y());
-
-        world_controller_.setWallAxisCenterPositionInWorld(
-            wall_id, wall_type, new_wall_pos);
-
-        update();
-    }
-
-    return true;
-}
-
-bool EasyWorldWidget::moveRoomContainerInWorld(
-    const size_t &roomcontainer_id,
-    const NodeType &roomcontainer_type,
-    QMouseEvent *event)
-{
-    if(event->buttons() == Qt::LeftButton)
-    {
-        const QPoint &mouse_pos = event->pos();
-
-        EasyPoint2D new_roomcontainer_pos;
-
-        new_roomcontainer_pos.setPosition(mouse_pos.x(), mouse_pos.y());
-
-        world_controller_.setRoomContainerAxisCenterPositionInWorld(
-            roomcontainer_id, roomcontainer_type, new_roomcontainer_pos);
-
-        update();
-    }
-
-    return true;
-}
-
-bool EasyWorldWidget::moveRoomInWorld(
-    const size_t &room_id,
-    const NodeType &room_type,
-    QMouseEvent *event)
-{
-    if(event->buttons() == Qt::LeftButton)
-    {
-        const QPoint &mouse_pos = event->pos();
-
-        EasyPoint2D new_room_pos;
-
-        new_room_pos.setPosition(mouse_pos.x(), mouse_pos.y());
-
-        world_controller_.setRoomAxisCenterPositionInWorld(
-            room_id, room_type, new_room_pos);
-
-        update();
-    }
-
-    return true;
-}
-
-bool EasyWorldWidget::moveTeamInWorld(
-    const size_t &team_id,
-    const NodeType &team_type,
-    QMouseEvent *event)
-{
-    if(event->buttons() == Qt::LeftButton)
-    {
-        const QPoint &mouse_pos = event->pos();
-
-        EasyPoint2D new_room_pos;
-
-        new_room_pos.setPosition(mouse_pos.x(), mouse_pos.y());
-
-        world_controller_.setTeamAxisCenterPositionInWorld(
-            team_id, team_type, new_room_pos);
-
-        update();
-    }
-
-    return true;
-}
-
-bool EasyWorldWidget::movePersonInWorld(
-    const size_t &person_id,
-    const NodeType &person_type,
-    QMouseEvent *event)
-{
-    if(event->buttons() == Qt::LeftButton)
-    {
-        const QPoint &mouse_pos = event->pos();
-
-        EasyPoint2D new_room_pos;
-
-        new_room_pos.setPosition(mouse_pos.x(), mouse_pos.y());
-
-        world_controller_.setPersonAxisCenterPositionInWorld(
-            person_id, person_type, new_room_pos);
-
-        update();
-    }
-
-    return true;
-}
-
-bool EasyWorldWidget::moveFurnitureInWorld(
-    const size_t &furniture_id,
-    const NodeType &furniture_type,
-    QMouseEvent *event)
-{
-    if(event->buttons() == Qt::LeftButton)
-    {
-        const QPoint &mouse_pos = event->pos();
-
-        EasyPoint2D new_room_pos;
-
-        new_room_pos.setPosition(mouse_pos.x(), mouse_pos.y());
-
-        world_controller_.setFurnitureAxisCenterPositionInWorld(
-            furniture_id, furniture_type, new_room_pos);
-
-        update();
-    }
-
     return true;
 }
 
@@ -403,13 +282,18 @@ bool EasyWorldWidget::moveWallRoomContainer(
 {
     if(event->buttons() == Qt::LeftButton)
     {
+        const QPoint &mouse_pos = event->pos();
+
+        const float new_position_x = 1.0 * mouse_pos.x() / zoom_;
+        const float new_position_y = 1.0 * mouse_pos.y() / zoom_;
+
         world_editer_.setWallRoomContainerPosition(
             wall_roomcontainer_id,
-            event->x() / zoom_ - 1,
-            event->y() / zoom_ - 1);
-    }
+            new_position_x,
+            new_position_y);
 
-    update();
+        update();
+    }
 
     return true;
 }

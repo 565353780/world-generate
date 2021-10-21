@@ -1,5 +1,29 @@
 #include "WorldEditer.h"
 
+bool WorldData::reset()
+{
+    world_center_x = 0;
+    world_center_y = 0;
+
+    return true;
+}
+
+bool WorldData::outputInfo(
+    const size_t &info_level)
+{
+    std::string line_start = "";
+    for(size_t i = 0; i < info_level; ++i)
+    {
+        line_start += "\t";
+    }
+
+    std::cout << "WorldData : " << std::endl <<
+      "\tworld_center = [" << world_center_x << "," <<
+      world_center_y << "]" << std::endl;
+
+    return true;
+}
+
 bool WallData::reset()
 {
     id = 0;
@@ -89,9 +113,20 @@ bool FreeRoomContainerData::outputInfo(
 
 bool WorldGenerateDataManager::reset()
 {
+    world_data.reset();
     wall_data_vec.clear();
     wall_roomcontainer_data_vec.clear();
     free_roomcontainer_data.reset();
+
+    return true;
+}
+
+bool WorldGenerateDataManager::setWorldCenter(
+    const float &world_center_x,
+    const float &world_center_y)
+{
+    world_data.world_center_x = world_center_x;
+    world_data.world_center_y = world_center_y;
 
     return true;
 }
@@ -200,14 +235,18 @@ bool WorldGenerateDataManager::outputInfo(
     }
 
     std::cout << line_start << "WorldGenerateDataManager : " << std::endl;
+    world_data.outputInfo(info_level + 1);
+
     for(WallData &wall_data : wall_data_vec)
     {
         wall_data.outputInfo(info_level + 1);
     }
+
     for(WallRoomContainerData &wall_roomcontainer_data : wall_roomcontainer_data_vec)
     {
         wall_roomcontainer_data.outputInfo(info_level + 1);
     }
+
     free_roomcontainer_data.outputInfo(info_level + 1);
 
     return true;
@@ -254,6 +293,30 @@ bool WorldEditer::readData()
     {
         std::cout << "WorldEditer::readData : " << std::endl <<
           "reset world generate data manager failed!" << std::endl;
+
+        return false;
+    }
+
+    EasyNode* world_node = world_place_generator_.world_controller_.findNode(
+        0, NodeType::World);
+
+    if(world_node == nullptr)
+    {
+        std::cout << "WorldEditer::readData : " << std::endl <<
+          "world node not found!" << std::endl;
+
+        return false;
+    }
+
+    const EasyAxis2D &world_axis_in_world =
+      world_node->getAxisInWorld();
+
+    if(!world_generate_data_manager_.setWorldCenter(
+          world_axis_in_world.center_.x,
+          world_axis_in_world.center_.y))
+    {
+        std::cout << "WorldEditer::readData : " << std::endl <<
+          "setWorldCenter failed!" << std::endl;
 
         return false;
     }
@@ -329,8 +392,8 @@ bool WorldEditer::readData()
 
 bool WorldEditer::loadData()
 {
-    const float world_center_x = 1;
-    const float world_center_y = 1;
+    const float &world_center_x = world_generate_data_manager_.world_data.world_center_x;
+    const float &world_center_y = world_generate_data_manager_.world_data.world_center_y;
 
     if(world_generate_data_manager_.wall_data_vec.size() == 0)
     {
@@ -448,7 +511,7 @@ bool WorldEditer::setWallRoomContainerPosition(
     }
 
     EasyNode* wall_roomcontainer_node = world_place_generator_.world_controller_.findNode(
-        wall_roomcontainer_id, NodeType::WallRoom);
+        wall_roomcontainer_id, NodeType::RoomContainer);
 
     if(wall_roomcontainer_node == nullptr)
     {

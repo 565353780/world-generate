@@ -6,6 +6,22 @@
 
 #include "WorldPlaceGenerator.h"
 
+class WorldData
+{
+public:
+    WorldData()
+    {
+    }
+
+    bool reset();
+    
+    bool outputInfo(
+        const size_t &info_level);
+
+    float world_center_x;
+    float world_center_y;
+};
+
 class WallData
 {
 public:
@@ -72,6 +88,10 @@ public:
 
     bool reset();
 
+    bool setWorldCenter(
+        const float &world_center_x,
+        const float &world_center_y);
+
     bool addWall(
         const size_t &id,
         const NodeType &type,
@@ -107,6 +127,7 @@ public:
     bool outputInfo(
         const size_t &info_level);
 
+    WorldData world_data;
     std::vector<WallData> wall_data_vec;
     std::vector<WallRoomContainerData> wall_roomcontainer_data_vec;
     FreeRoomContainerData free_roomcontainer_data;

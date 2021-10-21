@@ -208,6 +208,12 @@ EasyNode* EasyTree::findNode(
         return nullptr;
     }
 
+    if(root_->getID() == id &&
+        root_->getNodeType() == type)
+    {
+        return root_;
+    }
+
     EasyNode* search_node = root_->findFromAllChild(id, type);
 
     return search_node;

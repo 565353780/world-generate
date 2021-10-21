@@ -1279,46 +1279,46 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
 
     const float team_dist = 1.0 * person_edge;
 
+    size_t person_x_direction_num = 0;
+    size_t person_y_direction_num = 0;
+
+    if(room_width >= team_dist)
+    {
+        person_x_direction_num = size_t((room_width - 0.5 * team_dist) / person_edge);
+
+        if(person_x_direction_num == 0)
+        {
+            person_x_direction_num = 1;
+        }
+    }
+    if(room_height >= team_dist)
+    {
+        person_y_direction_num = size_t((room_height - 0.5 * team_dist) / person_edge);
+
+        if(person_y_direction_num == 0)
+        {
+            person_y_direction_num = 1;
+        }
+    }
+
+    if(person_x_direction_num == 0 || person_y_direction_num == 0)
+    {
+        current_new_room_id_ += room_num;
+
+        return true;
+    }
+
+    const float team_width = 1.0 * person_x_direction_num * person_edge;
+    const float team_height = 1.0 * person_y_direction_num * person_edge;
+
+    const float team_center_x = (room_width - team_width) / 2.0;
+    const float team_center_y = (room_height - team_height) / 2.0;
+
+    axis.setCenter(team_center_x, team_center_y);
+
     for(size_t i = 0; i < room_num; ++i)
     {
-        size_t person_x_direction_num = 0;
-        size_t person_y_direction_num = 0;
-
-        if(room_width >= team_dist)
-        {
-            person_x_direction_num = size_t((room_width - 0.5 * team_dist) / person_edge);
-
-            if(person_x_direction_num == 0)
-            {
-                person_x_direction_num = 1;
-            }
-        }
-        if(room_height >= team_dist)
-        {
-            person_y_direction_num = size_t((room_height - 0.5 * team_dist) / person_edge);
-
-            if(person_y_direction_num == 0)
-            {
-                person_y_direction_num = 1;
-            }
-        }
-
-        if(person_x_direction_num == 0 || person_y_direction_num == 0)
-        {
-            ++current_new_room_id_;
-
-            return true;
-        }
-
-        const float team_width = 1.0 * person_x_direction_num * person_edge;
-        const float team_height = 1.0 * person_y_direction_num * person_edge;
-
-        const float team_center_x = (room_width - team_width) / 2.0;
-        const float team_center_y = (room_height - team_height) / 2.0;
-
         const bool is_face_horizontal = (std::rand() % 2) == 1;
-
-        axis.setCenter(team_center_x, team_center_y);
 
         if(!world_controller_.createTeamForRoom(
               current_new_room_id_,

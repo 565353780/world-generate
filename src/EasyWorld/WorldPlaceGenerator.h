@@ -22,8 +22,10 @@ public:
     bool outputInfo(
         const size_t &info_level);
 
+    size_t place_idx;
     float line_start_position;
     float line_end_position;
+    float line_width;
     float line_height;
     float line_real_height;
 
@@ -89,6 +91,7 @@ public:
     bool outputInfo(
         const size_t &info_level);
 
+    size_t current_place_idx_;
     std::vector<BoundaryLineList> boundary_line_list_vec_;
 };
 
@@ -188,6 +191,11 @@ public:
     WorldPlaceGenerator()
     {
         free_room_error_max_ = 1;
+
+        team_x_direction_person_num_ = 2 * (std::rand() % 3 + 1);
+        team_y_direction_person_num_ = 2 * (std::rand() % 3 + 1);
+        team_dist_ = 0.5;
+        person_edge_ = 2.0;
     }
 
     bool reset();
@@ -227,6 +235,11 @@ public:
     float free_room_error_max_;
 
     size_t current_new_room_id_;
+
+    size_t team_x_direction_person_num_;
+    size_t team_y_direction_person_num_;
+    float team_dist_;
+    float person_edge_;
 };
 
 #endif //WORLD_PLACE_GENERATOR

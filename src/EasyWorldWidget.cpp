@@ -12,10 +12,10 @@ EasyWorldWidget::EasyWorldWidget(QWidget *parent) :
     zoom_ = 1;
     wall_color_ = QColor(0, 0, 0);
     roomcontainer_color_ = QColor(0, 0, 0);
-    room_color_ = QColor(0, 0, 0);
+    room_color_ = QColor(160, 132, 100);
     team_color_ = QColor(0, 0, 0);
     person_color_ = QColor(0, 0, 0);
-    furniture_color_ = QColor(0, 0, 0);
+    furniture_color_ = QColor(157,157,161);
 
     run_example();
     
@@ -31,7 +31,7 @@ EasyWorldWidget::~EasyWorldWidget()
 
 void EasyWorldWidget::run_example()
 {
-    size_t demo_mode = 3;
+    size_t demo_mode = 4;
 
     switch(demo_mode)
     {
@@ -163,15 +163,43 @@ void EasyWorldWidget::run_example()
             wall_boundary_polygon.addPoint(0, 40);
             wall_boundary_polygon.setAntiClockWise();
 
-            world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
-            world_place_generator_.generateWorld();
+            world_editer_.world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
+            world_editer_.world_place_generator_.generateWorld();
 
             // long cycle_num = 0;
             // float avg_fps = 0;
             // setStartTime();
             // while(true)
             // {
-            //     world_place_generator_.generateWorld();
+            //     world_editer_.world_place_generator_.generateWorld();
+            //     ++cycle_num;
+            //     getFPS(cycle_num, avg_fps);
+            //
+            //     std::cout << "fps = " << size_t(avg_fps) << std::endl;
+            // }
+
+            break;
+        }
+    case 4:
+        {
+            zoom_ = 20;
+
+            EasyPolygon2D wall_boundary_polygon;
+            wall_boundary_polygon.addPoint(0, 0);
+            wall_boundary_polygon.addPoint(20, 0);
+            wall_boundary_polygon.addPoint(20, 40);
+            wall_boundary_polygon.addPoint(0, 40);
+            wall_boundary_polygon.setAntiClockWise();
+
+            world_editer_.world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
+            world_editer_.world_place_generator_.generateWorld();
+
+            // long cycle_num = 0;
+            // float avg_fps = 0;
+            // setStartTime();
+            // while(true)
+            // {
+            //     world_editer_.world_place_generator_.generateWorld();
             //     ++cycle_num;
             //     getFPS(cycle_num, avg_fps);
             //
@@ -191,14 +219,14 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
-    WorldController &world_controller = world_place_generator_.world_controller_;
+    WorldController &world_controller = world_editer_.world_place_generator_.world_controller_;
 
-    drawWallSpaceBoundary(world_controller);
     // drawRoomContainerSpaceBoundary(world_controller);
     drawRoomSpaceBoundary(world_controller);
     // drawTeamSpaceBoundary(world_controller);
     // drawPersonSpaceBoundary(world_controller);
     drawFurnitureSpaceBoundary(world_controller);
+    drawWallSpaceBoundary(world_controller);
 
     // drawWallBoundaryAxis(world_controller);
     // drawRoomContainerBoundaryAxis(world_controller);
@@ -212,7 +240,9 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
 
-    world_place_generator_.generateWorld();
+    // world_editer_.world_place_generator_.generateWorld();
+    world_editer_.readData();
+    world_editer_.loadData();
 
     update();
 }

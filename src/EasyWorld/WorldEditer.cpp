@@ -221,6 +221,20 @@ bool WorldEditer::reset()
     return true;
 }
 
+bool WorldEditer::setWallBoundaryPolygon(
+    const EasyPolygon2D &wall_boundary_polygon)
+{
+    if(!world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon))
+    {
+        std::cout << "WorldEditer::setWallBoundaryPolygon : " << std::endl <<
+          "setWallBoundaryPolygon failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 bool WorldEditer::generateWorld()
 {
     if(!world_place_generator_.generateWorld())

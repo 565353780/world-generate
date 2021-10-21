@@ -191,8 +191,8 @@ void EasyWorldWidget::run_example()
             wall_boundary_polygon.addPoint(0, 40);
             wall_boundary_polygon.setAntiClockWise();
 
-            world_editer_.world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
-            world_editer_.world_place_generator_.generateWorld();
+            world_editer_.setWallBoundaryPolygon(wall_boundary_polygon);
+            world_editer_.generateWorld();
 
             // long cycle_num = 0;
             // float avg_fps = 0;

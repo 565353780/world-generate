@@ -121,6 +121,9 @@ public:
 
     bool reset();
 
+    bool setWallBoundaryPolygon(
+        const EasyPolygon2D &wall_boundary_polygon);
+
     bool generateWorld();
 
     bool readData();

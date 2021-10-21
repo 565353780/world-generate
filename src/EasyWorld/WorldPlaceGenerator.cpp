@@ -1353,13 +1353,6 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
     const float &team_dist,
     const float &person_edge)
 {
-    std::cout << "WorldPlaceGenerator::generateFreeRoomContainer : " << std::endl <<
-      "Input :\n" <<
-      "\tteam_person_num_size = [" << team_x_direction_person_num << "," <<
-      team_y_direction_person_num << "]" << std::endl <<
-      "\tteam_dist = " << team_dist << std::endl <<
-      "\tperson_edge = " << person_edge << std::endl;
-
     if(!point_matrix_.setAllPointOccupancyState(PointOccupancyState::PointFree))
     {
         std::cout << "WorldPlaceGenerator::generateFreeRoomContainer : " << std::endl <<

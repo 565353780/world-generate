@@ -20,8 +20,6 @@ EasyWorldWidget::EasyWorldWidget(QWidget *parent) :
     current_choose_node_id_ = 0;
     current_choose_node_type_ = NodeType::NodeFree;
 
-    current_test_position_ = 1;
-
     run_example();
     
     this->show();
@@ -245,24 +243,27 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
 
-    // world_editer_.world_place_generator_.generateWorld();
-    //
-    // update();
+    if(event->buttons() == Qt::LeftButton)
+    {
+        chooseRoomContainer(event);
+    }
+    else if(event->buttons() == Qt::RightButton)
+    {
+        world_editer_.world_place_generator_.generateWorld();
+        update();
+    }
+
 }
 
 void EasyWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    // Q_UNUSED(event);
-
-    // moveWallInWorld(0, NodeType::OuterWall, event);
-
-    // moveRoomContainerInWorld(0, NodeType::RoomContainer, event);
-
-    // moveRoomInWorld(0, NodeType::WallRoom, event);
-
-    // moveTeamInWorld(0, NodeType::Team, event);
-
-    moveWallRoomContainer(0, event);
+    if(event->buttons() == Qt::LeftButton)
+    {
+        if(current_choose_node_type_ == NodeType::RoomContainer)
+        {
+            moveWallRoomContainer(current_choose_node_id_, event);
+        }
+    }
 }
 
 void EasyWorldWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -273,7 +274,48 @@ void EasyWorldWidget::mouseReleaseEvent(QMouseEvent *event)
 bool EasyWorldWidget::chooseRoomContainer(
     QMouseEvent *event)
 {
-    return true;
+    current_choose_node_id_ = 0;
+    current_choose_node_type_ = NodeType::NodeFree;
+
+    std::vector<EasyNode*> roomcontainer_space_node_vec;
+
+    world_editer_.world_place_generator_.world_controller_.getRoomContainerSpaceNodeVec(
+        roomcontainer_space_node_vec);
+
+    for(EasyNode* roomcontainer_space_node : roomcontainer_space_node_vec)
+    {
+        const EasyPolygon2D &polygon = roomcontainer_space_node->getBoundaryPolygon();
+
+        EasyPoint2D mouse_pos_in_world;
+        EasyPoint2D mouse_pos_in_node;
+        mouse_pos_in_world.setPosition(event->x() / zoom_, event->y() / zoom_);
+
+        roomcontainer_space_node->getPointInNode(
+            mouse_pos_in_world, mouse_pos_in_node);
+
+        if(EasyComputation::isPointInPolygon(
+              mouse_pos_in_node, polygon))
+        {
+            EasyNode* roomcontainer_node = roomcontainer_space_node->getParent();
+            current_choose_node_id_ = roomcontainer_node->getID();
+            current_choose_node_type_ = roomcontainer_node->getNodeType();
+
+            EasyPoint2D roomcontainer_start_point_in_node;
+            roomcontainer_start_point_in_node.setPosition(0, 0);
+            EasyPoint2D roomcontainer_start_point_in_world;
+            roomcontainer_space_node->getPointInWorld(
+                roomcontainer_start_point_in_node,
+                roomcontainer_start_point_in_world);
+
+            current_press_position_to_start_position.setPosition(
+                (roomcontainer_start_point_in_world.x - mouse_pos_in_world.x) * zoom_,
+                (roomcontainer_start_point_in_world.y - mouse_pos_in_world.y) * zoom_);
+
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool EasyWorldWidget::moveWallRoomContainer(
@@ -284,8 +326,10 @@ bool EasyWorldWidget::moveWallRoomContainer(
     {
         const QPoint &mouse_pos = event->pos();
 
-        const float new_position_x = 1.0 * mouse_pos.x() / zoom_;
-        const float new_position_y = 1.0 * mouse_pos.y() / zoom_;
+        const float new_position_x =
+          1.0 * (mouse_pos.x() + current_press_position_to_start_position.x) / zoom_;
+        const float new_position_y =
+          1.0 * (mouse_pos.y() + current_press_position_to_start_position.y) / zoom_;
 
         world_editer_.setWallRoomContainerPosition(
             wall_roomcontainer_id,

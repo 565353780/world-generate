@@ -116,7 +116,7 @@ private:
     size_t current_choose_node_id_;
     NodeType current_choose_node_type_;
 
-    float current_test_position_;
+    EasyPoint2D current_press_position_to_start_position;
 };
 
 #endif // EASYWORLDWIDGET_H

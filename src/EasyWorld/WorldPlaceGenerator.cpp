@@ -325,6 +325,12 @@ bool BoundaryLineListManager::getMaxHeight(
         return false;
     }
 
+    if(boundary_line.line_start_position == boundary_line.line_end_position)
+    {
+        max_height = 0;
+        return true;
+    }
+
     EasyLine2D base_line;
     base_line.setPosition(boundary_line.line_start_position, 0, boundary_line.line_end_position, 0);
 
@@ -337,7 +343,7 @@ bool BoundaryLineListManager::getMaxHeight(
           "boundary_idx = " << boundary_idx << std::endl <<
           "boundary_line = [" << boundary_line.line_start_position << "," <<
           boundary_line.line_end_position << "], height = " << boundary_line.line_height << std::endl <<
-          "current line length is 0!" << std::endl;
+          "current line length < 0!" << std::endl;
 
         return false;
     }

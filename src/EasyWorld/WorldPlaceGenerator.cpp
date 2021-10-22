@@ -1192,9 +1192,10 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
     const float &roomcontainer_width,
     const float &roomcontainer_height)
 {
-    const float door_width = 2;
+    const float door_width = 1.5;
     const float window_width_scale = 0.7;
     const float person_edge = 2;
+    const float team_dist = 3.0 * person_edge;
 
     BoundaryLine new_boundary_line;
     new_boundary_line.line_start_position = roomcontainer_start_position;
@@ -1299,8 +1300,6 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
     const float room_height = valid_roomcontainer_height;
 
     const float window_width = window_width_scale * room_width;
-
-    const float team_dist = 3.0 * person_edge;
 
     size_t person_x_direction_num = 0;
     size_t person_y_direction_num = 0;

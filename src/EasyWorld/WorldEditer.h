@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "WorldController.h"
 #include "WorldPlaceGenerator.h"
 
 class WorldData
@@ -143,12 +144,15 @@ public:
     bool reset();
 
     bool readData(
+        WorldController &world_controller,
         WorldPlaceGenerator &world_place_generator);
 
     bool loadData(
+        WorldController &world_controller,
         WorldPlaceGenerator &world_place_generator);
 
     bool setWallRoomContainerPosition(
+        WorldController &world_controller,
         WorldPlaceGenerator &world_place_generator,
         const size_t &wall_roomcontainer_id,
         const float &new_position_x,

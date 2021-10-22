@@ -203,15 +203,18 @@ public:
     bool setWallBoundaryPolygon(
         const EasyPolygon2D &wall_boundary_polygon);
 
-    bool generateWorld();
+    bool generateWorld(
+        WorldController &world_controller);
 
     bool placeWallRoomContainer(
+        WorldController &world_controller,
         const size_t &boundary_idx,
         const float &roomcontainer_start_position,
         const float &roomcontainer_width,
         const float &roomcontainer_height);
 
     bool generateFreeRoomContainer(
+        WorldController &world_controller,
         const size_t &team_x_direction_person_num,
         const size_t &team_y_direction_person_num,
         const float &team_dist,
@@ -220,12 +223,13 @@ public:
 private:
     bool isReadyToGenerate();
 
-    bool generateWall();
+    bool generateWall(
+        WorldController &world_controller);
 
-    bool generateRoom();
+    bool generateRoom(
+        WorldController &world_controller);
 
 public:
-    WorldController world_controller_;
     BoundaryLineListManager boundary_line_list_manager_;
     PointMatrix point_matrix_;
 

@@ -1060,14 +1060,6 @@ bool PointMatrix::isValid()
 
 bool WorldPlaceGenerator::reset()
 {
-    if(!world_controller_.reset())
-    {
-        std::cout << "WorldPlaceGenerator::reset : " <<
-          "reset for world_controller_ failed!" << std::endl;
-
-        return false;
-    }
-
     if(!boundary_line_list_manager_.reset())
     {
         std::cout << "WorldPlaceGenerator::reset : " <<
@@ -1139,7 +1131,8 @@ bool WorldPlaceGenerator::setWallBoundaryPolygon(
     return true;
 }
 
-bool WorldPlaceGenerator::generateWorld()
+bool WorldPlaceGenerator::generateWorld(
+    WorldController &world_controller)
 {
     if(!isReadyToGenerate())
     {
@@ -1149,10 +1142,10 @@ bool WorldPlaceGenerator::generateWorld()
         return false;
     }
 
-    if(!world_controller_.reset())
+    if(!world_controller.reset())
     {
         std::cout << "WorldPlaceGenerator::generateWorld : " << std::endl <<
-          "reset for world_controller_ failed!" << std::endl;
+          "reset for world_controller failed!" << std::endl;
 
         return false;
     }
@@ -1167,7 +1160,7 @@ bool WorldPlaceGenerator::generateWorld()
         return false;
     }
 
-    if(!generateWall())
+    if(!generateWall(world_controller))
     {
         std::cout << "WorldPlaceGenerator::generateWorld : " << std::endl <<
           "generateWall failed!" << std::endl;
@@ -1175,7 +1168,7 @@ bool WorldPlaceGenerator::generateWorld()
         return false;
     }
 
-    if(!generateRoom())
+    if(!generateRoom(world_controller))
     {
         std::cout << "WorldPlaceGenerator::generateWorld : " << std::endl <<
           "generateRoom failed!" << std::endl;
@@ -1187,6 +1180,7 @@ bool WorldPlaceGenerator::generateWorld()
 }
 
 bool WorldPlaceGenerator::placeWallRoomContainer(
+    WorldController &world_controller,
     const size_t &boundary_idx,
     const float &roomcontainer_start_position,
     const float &roomcontainer_width,
@@ -1274,7 +1268,7 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
     roomcontainer_axis.setXDirection(1, 0);
     roomcontainer_axis.setCenter(valid_roomcontainer_start_position, 0);
 
-    if(!world_controller_.createWallRoomContainerForWall(
+    if(!world_controller.createWallRoomContainerForWall(
           0,
           NodeType::OuterWall,
           boundary_idx,
@@ -1352,7 +1346,7 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
     {
         const bool is_face_horizontal = (std::rand() % 2) == 1;
 
-        if(!world_controller_.createTeamForRoom(
+        if(!world_controller.createTeamForRoom(
               current_new_room_id_,
               NodeType::WallRoom,
               team_width,
@@ -1388,7 +1382,7 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
             is_handle_on_right_from_outside = false;
         }
 
-        if(!world_controller_.createDoorForRoom(
+        if(!world_controller.createDoorForRoom(
               current_new_room_id_,
               NodeType::WallRoom,
               2,
@@ -1407,7 +1401,7 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
             return false;
         }
 
-        if(!world_controller_.createWindowForRoom(
+        if(!world_controller.createWindowForRoom(
               current_new_room_id_,
               NodeType::WallRoom,
               0,
@@ -1432,6 +1426,7 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
 }
 
 bool WorldPlaceGenerator::generateFreeRoomContainer(
+    WorldController &world_controller,
     const size_t &team_x_direction_person_num,
     const size_t &team_y_direction_person_num,
     const float &team_dist,
@@ -1450,7 +1445,7 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
         return false;
     }
 
-    EasyNode* wall_node = world_controller_.findNode(0, NodeType::OuterWall);
+    EasyNode* wall_node = world_controller.findNode(0, NodeType::OuterWall);
 
     if(wall_node == nullptr)
     {
@@ -1468,7 +1463,7 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
     std::vector<EasyPolygon2D> polygon_vec_in_wall_node;
 
     std::vector<EasyNode*> roomcontainer_node_vec;
-    world_controller_.getRoomContainerNodeVec(roomcontainer_node_vec);
+    world_controller.getRoomContainerNodeVec(roomcontainer_node_vec);
 
     for(EasyNode* roomcontainer_node : roomcontainer_node_vec)
     {
@@ -1665,7 +1660,7 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
                     max_free_roomcontainer_start_position_x + i * room_width,
                     max_free_roomcontainer_start_position_y + j * room_height);
 
-                world_controller_.createFreeRoomContainerForWall(
+                world_controller.createFreeRoomContainerForWall(
                     0,
                     NodeType::OuterWall,
                     0,
@@ -1674,7 +1669,7 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
                     room_axis,
                     1);
 
-                world_controller_.createTeamForRoom(
+                world_controller.createTeamForRoom(
                     current_freeroom_id_start,
                     NodeType::FreeRoom,
                     team_width,
@@ -1736,9 +1731,10 @@ bool WorldPlaceGenerator::isReadyToGenerate()
     return false;
 }
 
-bool WorldPlaceGenerator::generateWall()
+bool WorldPlaceGenerator::generateWall(
+    WorldController &world_controller)
 {
-    if(!world_controller_.createWorld(1, 1))
+    if(!world_controller.createWorld(1, 1))
     {
         std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
           "createWorld failed!" << std::endl;
@@ -1746,7 +1742,7 @@ bool WorldPlaceGenerator::generateWall()
         return false;
     }
 
-    if(!world_controller_.createWall(0, NodeType::OuterWall))
+    if(!world_controller.createWall(0, NodeType::OuterWall))
     {
         std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
           "createWall failed!" << std::endl;
@@ -1754,7 +1750,7 @@ bool WorldPlaceGenerator::generateWall()
         return false;
     }
 
-    if(!world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon_))
+    if(!world_controller.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon_))
     {
         std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
           "setWallBoundaryPolygon failed!" << std::endl;
@@ -1765,7 +1761,8 @@ bool WorldPlaceGenerator::generateWall()
     return true;
 }
 
-bool WorldPlaceGenerator::generateRoom()
+bool WorldPlaceGenerator::generateRoom(
+    WorldController &world_controller)
 {
     const size_t roomcontainer_num = 3;
 
@@ -1786,6 +1783,7 @@ bool WorldPlaceGenerator::generateRoom()
           1.0 * (std::rand() % size_t(roomcontainer_height_max - roomcontainer_height_min)) + roomcontainer_height_min;
 
         if(!placeWallRoomContainer(
+              world_controller,
               random_boundary_idx,
               random_boundary_start_position,
               random_width,
@@ -1796,6 +1794,7 @@ bool WorldPlaceGenerator::generateRoom()
     }
 
     if(!generateFreeRoomContainer(
+          world_controller,
           team_x_direction_person_num_,
           team_y_direction_person_num_,
           team_dist_,

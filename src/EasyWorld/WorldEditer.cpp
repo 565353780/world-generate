@@ -260,6 +260,7 @@ bool WorldEditer::reset()
 }
 
 bool WorldEditer::readData(
+    WorldController &world_controller,
     WorldPlaceGenerator &world_place_generator)
 {
     if(!world_generate_data_manager_.reset())
@@ -270,7 +271,7 @@ bool WorldEditer::readData(
         return false;
     }
 
-    EasyNode* world_node = world_place_generator.world_controller_.findNode(
+    EasyNode* world_node = world_controller.findNode(
         0, NodeType::World);
 
     if(world_node == nullptr)
@@ -364,6 +365,7 @@ bool WorldEditer::readData(
 }
 
 bool WorldEditer::loadData(
+    WorldController &world_controller,
     WorldPlaceGenerator &world_place_generator)
 {
     const float &world_center_x = world_generate_data_manager_.world_data.world_center_x;
@@ -387,7 +389,15 @@ bool WorldEditer::loadData(
 
     world_place_generator.current_new_room_id_ = 0;
 
-    if(!world_place_generator.world_controller_.createWorld(world_center_x, world_center_y))
+    if(!world_controller.reset())
+    {
+        std::cout << "WorldEditer::loadData : " << std::endl <<
+          "reset world controller failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_controller.createWorld(world_center_x, world_center_y))
     {
         std::cout << "WorldEditer::loadData : " << std::endl <<
           "createWorld failed!" << std::endl;
@@ -397,7 +407,7 @@ bool WorldEditer::loadData(
 
     for(const WallData &wall_data : world_generate_data_manager_.wall_data_vec)
     {
-        if(!world_place_generator.world_controller_.createWall(
+        if(!world_controller.createWall(
               wall_data.id,
               wall_data.type))
         {
@@ -407,7 +417,7 @@ bool WorldEditer::loadData(
             return false;
         }
 
-        if(!world_place_generator.world_controller_.setWallBoundaryPolygon(
+        if(!world_controller.setWallBoundaryPolygon(
               wall_data.id,
               wall_data.type,
               wall_data.boundary_polygon))
@@ -431,6 +441,7 @@ bool WorldEditer::loadData(
     for(const WallRoomContainerData wall_roomcontainer_data : world_generate_data_manager_.wall_roomcontainer_data_vec)
     {
         if(!world_place_generator.placeWallRoomContainer(
+              world_controller,
               wall_roomcontainer_data.on_wall_boundary_idx,
               wall_roomcontainer_data.on_wall_boundary_start_position,
               wall_roomcontainer_data.target_width,
@@ -453,6 +464,7 @@ bool WorldEditer::loadData(
       world_generate_data_manager_.free_roomcontainer_data.person_edge;
 
     if(!world_place_generator.generateFreeRoomContainer(
+          world_controller,
           world_generate_data_manager_.free_roomcontainer_data.team_x_direction_person_num,
           world_generate_data_manager_.free_roomcontainer_data.team_y_direction_person_num,
           world_generate_data_manager_.free_roomcontainer_data.team_dist,
@@ -468,6 +480,7 @@ bool WorldEditer::loadData(
 }
 
 bool WorldEditer::setWallRoomContainerPosition(
+    WorldController &world_controller,
     WorldPlaceGenerator &world_place_generator,
     const size_t &wall_roomcontainer_id,
     const float &new_position_x,
@@ -476,7 +489,7 @@ bool WorldEditer::setWallRoomContainerPosition(
 {
     const float start_change_edge_error = 1.0;
 
-    if(!readData(world_place_generator))
+    if(!readData(world_controller, world_place_generator))
     {
         std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
           "Input :\n" <<
@@ -489,7 +502,7 @@ bool WorldEditer::setWallRoomContainerPosition(
         return false;
     }
 
-    EasyNode* wall_roomcontainer_node = world_place_generator.world_controller_.findNode(
+    EasyNode* wall_roomcontainer_node = world_controller.findNode(
         wall_roomcontainer_id, NodeType::RoomContainer);
 
     if(wall_roomcontainer_node == nullptr)
@@ -575,7 +588,7 @@ bool WorldEditer::setWallRoomContainerPosition(
           new_position_in_parent.x - mouse_pos_x_direction_delta;
     }
 
-    if(!loadData(world_place_generator))
+    if(!loadData(world_controller, world_place_generator))
     {
         std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
           "Input :\n" <<

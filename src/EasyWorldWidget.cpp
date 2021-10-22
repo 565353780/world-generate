@@ -178,7 +178,7 @@ void EasyWorldWidget::run_example()
             wall_boundary_polygon.setAntiClockWise();
 
             world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
-            world_place_generator_.generateWorld();
+            world_place_generator_.generateWorld(world_controller_);
 
             // long cycle_num = 0;
             // float avg_fps = 0;
@@ -206,7 +206,7 @@ void EasyWorldWidget::run_example()
             wall_boundary_polygon.setAntiClockWise();
 
             world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
-            world_place_generator_.generateWorld();
+            world_place_generator_.generateWorld(world_controller_);
 
             // long cycle_num = 0;
             // float avg_fps = 0;
@@ -231,27 +231,7 @@ void EasyWorldWidget::run_example()
 
 void EasyWorldWidget::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED(event);
-
-    WorldController &world_controller = world_place_generator_.world_controller_;
-
-    drawWallSpaceBoundary(world_controller);
-    // drawRoomContainerSpaceBoundary(world_controller);
-    drawRoomSpaceBoundary(world_controller);
-    // drawTeamSpaceBoundary(world_controller);
-    // drawPersonSpaceBoundary(world_controller);
-    drawFurnitureSpaceBoundary(world_controller);
-    drawDoorSpaceBoundary(world_controller);
-    drawWindowSpaceBoundary(world_controller);
-
-    // drawWallBoundaryAxis(world_controller);
-    // drawRoomContainerBoundaryAxis(world_controller);
-    // drawRoomBoundaryAxis(world_controller);
-    // drawDoorBoundaryAxis(world_controller);
-    // drawWindowBoundaryAxis(world_controller);
-    // drawTeamBoundaryAxis(world_controller);
-    // drawPersonBoundaryAxis(world_controller);
-    // drawFurnitureBoundaryAxis(world_controller);
+    paintWorld(world_controller_, event);
 }
 
 void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
@@ -264,7 +244,7 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
     }
     else if(event->buttons() == Qt::RightButton)
     {
-        world_place_generator_.generateWorld();
+        world_place_generator_.generateWorld(world_controller_);
         update();
     }
 
@@ -294,7 +274,7 @@ bool EasyWorldWidget::chooseRoomContainer(
 
     std::vector<EasyNode*> roomcontainer_space_node_vec;
 
-    world_place_generator_.world_controller_.getRoomContainerSpaceNodeVec(
+    world_controller_.getRoomContainerSpaceNodeVec(
         roomcontainer_space_node_vec);
 
     for(EasyNode* roomcontainer_space_node : roomcontainer_space_node_vec)
@@ -338,6 +318,7 @@ bool EasyWorldWidget::moveWallRoomContainer(
           1.0 * mouse_pos.y() / zoom_;
 
         world_editer_.setWallRoomContainerPosition(
+            world_controller_,
             world_place_generator_,
             wall_roomcontainer_id,
             new_position_x,
@@ -1541,6 +1522,33 @@ bool EasyWorldWidget::drawFurnitureSpaceBoundary(
         }
         painter.drawPolygon(polygon);
     }
+
+    return true;
+}
+
+bool EasyWorldWidget::paintWorld(
+    WorldController &world_controller,
+    QPaintEvent *event)
+{
+    Q_UNUSED(event);
+
+    drawWallSpaceBoundary(world_controller);
+    // drawRoomContainerSpaceBoundary(world_controller);
+    drawRoomSpaceBoundary(world_controller);
+    // drawTeamSpaceBoundary(world_controller);
+    // drawPersonSpaceBoundary(world_controller);
+    drawFurnitureSpaceBoundary(world_controller);
+    drawDoorSpaceBoundary(world_controller);
+    drawWindowSpaceBoundary(world_controller);
+
+    // drawWallBoundaryAxis(world_controller);
+    // drawRoomContainerBoundaryAxis(world_controller);
+    // drawRoomBoundaryAxis(world_controller);
+    // drawDoorBoundaryAxis(world_controller);
+    // drawWindowBoundaryAxis(world_controller);
+    // drawTeamBoundaryAxis(world_controller);
+    // drawPersonBoundaryAxis(world_controller);
+    // drawFurnitureBoundaryAxis(world_controller);
 
     return true;
 }

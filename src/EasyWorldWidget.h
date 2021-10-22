@@ -105,6 +105,10 @@ private:
     bool drawFurnitureSpaceBoundary(
         WorldController &world_controller);
 
+    bool paintWorld(
+        WorldController &world_controller,
+        QPaintEvent *event);
+
     bool setStartTime();
 
     bool getFPS(

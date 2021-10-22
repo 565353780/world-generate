@@ -287,6 +287,47 @@ bool WorldEditer::generateWorld()
     return true;
 }
 
+bool WorldEditer::placeWallRoomContainer(
+    const size_t &boundary_idx,
+    const float &roomcontainer_start_position,
+    const float &roomcontainer_width,
+    const float &roomcontainer_height)
+{
+    world_place_generator_.placeWallRoomContainer(
+        boundary_idx,
+        roomcontainer_start_position,
+        roomcontainer_width,
+        roomcontainer_height);
+
+    return true;
+}
+
+bool WorldEditer::generateFreeRoomContainer(
+    const size_t &team_x_direction_person_num,
+    const size_t &team_y_direction_person_num,
+    const float &team_dist,
+    const float &person_edge)
+{
+    if(!world_place_generator_.generateFreeRoomContainer(
+          team_x_direction_person_num,
+          team_y_direction_person_num,
+          team_dist,
+          person_edge))
+    {
+        std::cout << "WorldEditer::generateFreeRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_person_num_size = [" << team_x_direction_person_num << "," <<
+          team_y_direction_person_num << "]" << std::endl <<
+          "\tteam_dist = " << team_dist << std::endl <<
+          "\tperson_edge = " << person_edge << std::endl <<
+          "generateFreeRoomContainer failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 bool WorldEditer::readData()
 {
     if(!world_generate_data_manager_.reset())
@@ -456,7 +497,7 @@ bool WorldEditer::loadData()
 
     for(const WallRoomContainerData wall_roomcontainer_data : world_generate_data_manager_.wall_roomcontainer_data_vec)
     {
-        if(!world_place_generator_.placeWallRoomContainer(
+        if(!placeWallRoomContainer(
               wall_roomcontainer_data.on_wall_boundary_idx,
               wall_roomcontainer_data.on_wall_boundary_start_position,
               wall_roomcontainer_data.target_width,
@@ -478,7 +519,7 @@ bool WorldEditer::loadData()
     world_place_generator_.person_edge_ =
       world_generate_data_manager_.free_roomcontainer_data.person_edge;
 
-    if(!world_place_generator_.generateFreeRoomContainer(
+    if(!generateFreeRoomContainer(
           world_generate_data_manager_.free_roomcontainer_data.team_x_direction_person_num,
           world_generate_data_manager_.free_roomcontainer_data.team_y_direction_person_num,
           world_generate_data_manager_.free_roomcontainer_data.team_dist,

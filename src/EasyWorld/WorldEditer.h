@@ -147,6 +147,18 @@ public:
 
     bool generateWorld();
 
+    bool placeWallRoomContainer(
+        const size_t &boundary_idx,
+        const float &roomcontainer_start_position,
+        const float &roomcontainer_width,
+        const float &roomcontainer_height);
+
+    bool generateFreeRoomContainer(
+        const size_t &team_x_direction_person_num,
+        const size_t &team_y_direction_person_num,
+        const float &team_dist,
+        const float &person_edge);
+
     bool readData();
 
     bool loadData();

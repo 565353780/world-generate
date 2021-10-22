@@ -38,6 +38,9 @@ public:
 
     bool reset();
 
+    bool setName(
+        const std::string &name);
+
     bool setID(
         const size_t &id);
 
@@ -81,6 +84,7 @@ public:
         const NodeType &child_type);
 
     bool createChild(
+        const std::string &child_name,
         const size_t &child_id,
         const NodeType &child_type);
 
@@ -118,6 +122,7 @@ public:
         const EasyPoint2D &point_in_node,
         EasyPoint2D &point_in_world);
 
+    const std::string& getName() const { return name_; }
     const size_t& getID() const { return id_; }
     const NodeType& getNodeType() const { return type_; }
     EasyNode* getParent() { return parent_; }
@@ -130,6 +135,8 @@ public:
         const size_t &info_level) const;
 
 private:
+    std::string name_;
+
     size_t id_;
 
     NodeType type_;

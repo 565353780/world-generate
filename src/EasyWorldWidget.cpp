@@ -45,184 +45,29 @@ EasyWorldWidget::~EasyWorldWidget()
 
 void EasyWorldWidget::run_example()
 {
-    size_t demo_mode = 4;
+    zoom_ = 20;
 
-    switch(demo_mode)
-    {
-    case 0:
-        {
-            zoom_ = 1;
+    EasyPolygon2D wall_boundary_polygon;
+    wall_boundary_polygon.addPoint(0, 0);
+    wall_boundary_polygon.addPoint(20, 0);
+    wall_boundary_polygon.addPoint(20, 40);
+    wall_boundary_polygon.addPoint(0, 40);
+    wall_boundary_polygon.setAntiClockWise();
 
-            world_controller_.reset();
-            world_controller_.createWorld(400, 400);
+    world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
+    world_place_generator_.generateWorld(world_controller_);
 
-            world_controller_.createWall(0, NodeType::OuterWall);
-            EasyPolygon2D wall_boundary_polygon;
-            wall_boundary_polygon.addPoint(0, 0);
-            wall_boundary_polygon.addPoint(300, 0);
-            wall_boundary_polygon.addPoint(300, 300);
-            wall_boundary_polygon.addPoint(0, 300);
-            wall_boundary_polygon.setAntiClockWise();
-            world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon);
-
-            EasyAxis2D axis;
-            axis.setXDirection(1, 0);
-            axis.setCenter(10, 110);
-            world_controller_.createFreeRoomContainerForWall(0, NodeType::OuterWall, 0, 280, 80, axis, 3);
-            axis.setCenter(0, 0);
-            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 0, 300, 100, axis, 3);
-            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 2, 100, 100, axis, 1);
-            axis.setCenter(200, 0);
-            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 2, 100, 100, axis, 1);
-
-            axis.setCenter(25, 25);
-            world_controller_.createTeamForRoom(0, NodeType::WallRoom, 50, 50, axis, 2, 2, true);
-            world_controller_.createTeamForRoom(1, NodeType::WallRoom, 50, 50, axis, 2, 2, false);
-            world_controller_.createTeamForRoom(2, NodeType::WallRoom, 50, 50, axis, 2, 2, true);
-            world_controller_.createTeamForRoom(3, NodeType::WallRoom, 50, 50, axis, 1, 1, false);
-            world_controller_.createTeamForRoom(4, NodeType::WallRoom, 50, 50, axis, 1, 1, false);
-            axis.setCenter(10, 10);
-            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 80, 60, axis, 4, 4, true);
-            world_controller_.createTeamForRoom(1, NodeType::FreeRoom, 80, 60, axis, 4, 4, true);
-            world_controller_.createTeamForRoom(2, NodeType::FreeRoom, 80, 60, axis, 4, 4, true);
-            break;
-        }
-    case 1:
-        {
-            zoom_ = 22;
-
-            world_controller_.reset();
-            world_controller_.createWorld(1, 1);
-
-            world_controller_.createWall(0, NodeType::OuterWall);
-            EasyPolygon2D wall_boundary_polygon;
-            wall_boundary_polygon.addPoint(0, 0);
-            wall_boundary_polygon.addPoint(20, 0);
-            wall_boundary_polygon.addPoint(20, 40);
-            wall_boundary_polygon.addPoint(0, 40);
-            wall_boundary_polygon.setAntiClockWise();
-            world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, wall_boundary_polygon);
-
-            EasyAxis2D axis;
-            axis.setXDirection(1, 0);
-            axis.setCenter(24, 0);
-            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 3, 16, 8, axis, 2);
-            axis.setCenter(18, 0);
-            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 3, 6, 4, axis, 1);
-            axis.setCenter(18, 4);
-            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 3, 1, 3, axis, 1);
-            axis.setCenter(18, 7);
-            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 3, 4, 1, axis, 1);
-            axis.setCenter(12, 0);
-            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 0, 8, 2, axis, 1);
-            axis.setCenter(2, 0);
-            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 1, 4, 4, axis, 1);
-            axis.setCenter(6, 0);
-            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 1, 4, 8, axis, 1);
-            axis.setCenter(16, 0);
-            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 1, 4, 8, axis, 1);
-            axis.setCenter(20, 2);
-            world_controller_.createWallRoomContainerForWall(0, NodeType::OuterWall, 1, 2, 6, axis, 1);
-            axis.setCenter(0, 0);
-            world_controller_.createFreeRoomContainerForWall(0, NodeType::OuterWall, 2, 20, 18, axis, 2);
-
-            axis.setCenter(1, 2);
-            world_controller_.createTeamForRoom(0, NodeType::FreeRoom, 8, 14, axis, 5, 10, false);
-            world_controller_.createTeamForRoom(1, NodeType::FreeRoom, 8, 14, axis, 5, 10, false);
-            axis.setCenter(3, 1);
-            world_controller_.createTeamForRoom(1, NodeType::WallRoom, 2, 2, axis, 1, 1, false);
-            axis.setCenter(3, 1);
-            world_controller_.createTeamForRoom(0, NodeType::WallRoom, 2, 6, axis, 2, 6, true);
-            axis.setCenter(2.5, 0.5);
-            world_controller_.createTeamForRoom(2, NodeType::WallRoom, 1, 1, axis, 1, 1, false);
-            break;
-        }
-    case 2:
-        {
-            zoom_ = 20;
-
-            EasyPolygon2D wall_boundary_polygon;
-            wall_boundary_polygon.addPoint(0, 0);
-            wall_boundary_polygon.addPoint(20, 0);
-            wall_boundary_polygon.addPoint(20, 40);
-            wall_boundary_polygon.addPoint(0, 40);
-            wall_boundary_polygon.setAntiClockWise();
-
-            world_split_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
-            world_split_generator_.setPersonNum(80);
-            world_split_generator_.setRoomNum(6);
-            world_split_generator_.generateWorld();
-
-            // long cycle_num = 0;
-            // float avg_fps = -1;
-            // setStartTime();
-            // while(true)
-            // {
-            //     world_split_generator_.generateWorld();
-            //     ++cycle_num;
-            //     getFPS(cycle_num, avg_fps);
-            //
-            //     std::cout << "fps = " << avg_fps << std::endl;
-            // }
-            break;
-        }
-    case 3:
-        {
-            zoom_ = 20;
-
-            EasyPolygon2D wall_boundary_polygon;
-            wall_boundary_polygon.addPoint(0, 0);
-            wall_boundary_polygon.addPoint(20, 0);
-            wall_boundary_polygon.addPoint(20, 40);
-            wall_boundary_polygon.addPoint(0, 40);
-            wall_boundary_polygon.setAntiClockWise();
-
-            world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
-            world_place_generator_.generateWorld(world_controller_);
-
-            // long cycle_num = 0;
-            // float avg_fps = 0;
-            // setStartTime();
-            // while(true)
-            // {
-            //     world_editer_.world_place_generator_.generateWorld();
-            //     ++cycle_num;
-            //     getFPS(cycle_num, avg_fps);
-            //
-            //     std::cout << "fps = " << size_t(avg_fps) << std::endl;
-            // }
-
-            break;
-        }
-    case 4:
-        {
-            zoom_ = 20;
-
-            EasyPolygon2D wall_boundary_polygon;
-            wall_boundary_polygon.addPoint(0, 0);
-            wall_boundary_polygon.addPoint(20, 0);
-            wall_boundary_polygon.addPoint(20, 40);
-            wall_boundary_polygon.addPoint(0, 40);
-            wall_boundary_polygon.setAntiClockWise();
-
-            world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
-            world_place_generator_.generateWorld(world_controller_);
-
-            // long cycle_num = 0;
-            // float avg_fps = 0;
-            // setStartTime();
-            // while(true)
-            // {
-            //     world_editer_.world_place_generator_.generateWorld();
-            //     ++cycle_num;
-            //     getFPS(cycle_num, avg_fps);
-            //
-            //     std::cout << "fps = " << size_t(avg_fps) << std::endl;
-            // }
-
-            break;
-        }
-    }
+    // long cycle_num = 0;
+    // float avg_fps = 0;
+    // setStartTime();
+    // while(true)
+    // {
+    //     world_editer_.world_place_generator_.generateWorld();
+    //     ++cycle_num;
+    //     getFPS(cycle_num, avg_fps);
+    //
+    //     std::cout << "fps = " << size_t(avg_fps) << std::endl;
+    // }
 
     // world_controller_.outputInfo();
 

@@ -18,10 +18,12 @@ public:
     bool reset();
 
     bool createWorld(
+        const std::string &world_name,
         const float &world_center_x,
         const float &world_center_y);
 
     bool createNode(
+        const std::string &node_name,
         const size_t &node_id,
         const NodeType &node_type,
         const size_t &parent_node_id,

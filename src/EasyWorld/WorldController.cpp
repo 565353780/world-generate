@@ -24,13 +24,15 @@ bool WorldController::reset()
 }
 
 bool WorldController::createWorld(
+    const std::string &world_name,
     const float &world_center_x,
     const float &world_center_y)
 {
-    if(!world_tree_.createWorld(world_center_x, world_center_y))
+    if(!world_tree_.createWorld(world_name, world_center_x, world_center_y))
     {
         std::cout << "WorldController::createWorld : " << std::endl <<
           "Input :\n" <<
+          "\tworld_name = " << world_name << std::endl <<
           "\tworld_center = [" << world_center_x << "," <<
           world_center_y << "]" << std::endl <<
           "createWorld failed!" << std::endl;
@@ -42,6 +44,7 @@ bool WorldController::createWorld(
 }
 
 bool WorldController::createWall(
+    const std::string &wall_name,
     const size_t &wall_id,
     const NodeType &wall_type)
 {
@@ -50,6 +53,7 @@ bool WorldController::createWall(
     {
         std::cout << "WorldController::createWall : " << std::endl <<
           "Input :\n" <<
+          "\twall_name = " << wall_name << std::endl <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
           "this type is not the wall type!" << std::endl;
@@ -58,10 +62,11 @@ bool WorldController::createWall(
     }
 
     if(!world_tree_.createNode(
-          wall_id, wall_type, 0, NodeType::World, 0))
+          wall_name, wall_id, wall_type, 0, NodeType::World, 0))
     {
         std::cout << "WorldController::createWall : " << std::endl <<
           "Input :\n" <<
+          "\twall_name = " << wall_name << std::endl <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
           "createNode for wall failed!" << std::endl;
@@ -229,6 +234,7 @@ bool WorldController::setWallBoundaryPolygonPointPosition(
 }
 
 bool WorldController::createRoomContainer(
+    const std::string &roomcontainer_name,
     const size_t &roomcontainer_id,
     const NodeType &roomcontainer_type,
     const size_t &on_wall_id,
@@ -239,6 +245,7 @@ bool WorldController::createRoomContainer(
     {
         std::cout << "WorldController::createRoomContainer : " << std::endl <<
           "Input :\n" <<
+          "\troomcontainer_name = " << roomcontainer_name << std::endl <<
           "\troomcontainer_id = " << roomcontainer_id << std::endl <<
           "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\ton_wall_id = " << on_wall_id << std::endl <<
@@ -250,10 +257,11 @@ bool WorldController::createRoomContainer(
     }
 
     if(!world_tree_.createNode(
-          roomcontainer_id, roomcontainer_type, on_wall_id, on_wall_type, wall_boundary_id))
+          roomcontainer_name, roomcontainer_id, roomcontainer_type, on_wall_id, on_wall_type, wall_boundary_id))
     {
         std::cout << "WorldController::createRoomContainer : " << std::endl <<
           "Input :\n" <<
+          "\troomcontainer_name = " << roomcontainer_name << std::endl <<
           "\troomcontainer_id = " << roomcontainer_id << std::endl <<
           "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\ton_wall_id = " << on_wall_id << std::endl <<
@@ -420,6 +428,7 @@ bool WorldController::setRoomContainerBoundaryPolygonPointPosition(
 }
 
 bool WorldController::createRoom(
+    const std::string &room_name,
     const size_t &room_id,
     const NodeType &room_type,
     const size_t &on_roomcontainer_id,
@@ -430,6 +439,7 @@ bool WorldController::createRoom(
     {
         std::cout << "WorldController::createRoom : " << std::endl <<
           "Input :\n" <<
+          "\troom_name = " << room_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_roomcontainer_id = " << on_roomcontainer_id << std::endl <<
@@ -440,10 +450,11 @@ bool WorldController::createRoom(
     }
 
     if(!world_tree_.createNode(
-          room_id, room_type, on_roomcontainer_id, on_roomcontainer_type, 0))
+          room_name, room_id, room_type, on_roomcontainer_id, on_roomcontainer_type, 0))
     {
         std::cout << "WorldController::createRoom : " << std::endl <<
           "Input :\n" <<
+          "\troom_name = " << room_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_roomcontainer_id = " << on_roomcontainer_id << std::endl <<
@@ -613,6 +624,7 @@ bool WorldController::setRoomBoundaryPolygonPointPosition(
 }
 
 bool WorldController::createDoor(
+    const std::string &door_name,
     const size_t &door_id,
     const NodeType &door_type,
     const size_t &on_room_id,
@@ -623,6 +635,7 @@ bool WorldController::createDoor(
     {
         std::cout << "WorldController::createDoor : " << std::endl <<
           "Input :\n" <<
+          "\tdoor_name = " << door_name << std::endl <<
           "\tdoor_id = " << door_id << std::endl <<
           "\tdoor_type = " << door_type << std::endl <<
           "\ton_room_id = " << on_room_id << std::endl <<
@@ -634,10 +647,11 @@ bool WorldController::createDoor(
     }
 
     if(!world_tree_.createNode(
-          door_id, door_type, on_room_id, on_room_type, on_room_boundary_idx))
+          door_name, door_id, door_type, on_room_id, on_room_type, on_room_boundary_idx))
     {
         std::cout << "WorldController::createDoor : " << std::endl <<
           "Input :\n" <<
+          "\tdoor_name = " << door_name << std::endl <<
           "\tdoor_id = " << door_id << std::endl <<
           "\tdoor_type = " << door_type << std::endl <<
           "\ton_room_id = " << on_room_id << std::endl <<
@@ -804,6 +818,7 @@ bool WorldController::setDoorBoundaryPolygonPointPosition(
 }
 
 bool WorldController::createWindow(
+    const std::string &window_name,
     const size_t &window_id,
     const NodeType &window_type,
     const size_t &on_room_id,
@@ -814,6 +829,7 @@ bool WorldController::createWindow(
     {
         std::cout << "WorldController::createWindow : " << std::endl <<
           "Input :\n" <<
+          "\twindow_name = " << window_name << std::endl <<
           "\twindow_id = " << window_id << std::endl <<
           "\twindow_type = " << window_type << std::endl <<
           "\ton_room_id = " << on_room_id << std::endl <<
@@ -825,10 +841,11 @@ bool WorldController::createWindow(
     }
 
     if(!world_tree_.createNode(
-          window_id, window_type, on_room_id, on_room_type, on_room_boundary_idx))
+          window_name, window_id, window_type, on_room_id, on_room_type, on_room_boundary_idx))
     {
         std::cout << "WorldController::createWindow : " << std::endl <<
           "Input :\n" <<
+          "\twindow_name = " << window_name << std::endl <<
           "\twindow_id = " << window_id << std::endl <<
           "\twindow_type = " << window_type << std::endl <<
           "\ton_room_id = " << on_room_id << std::endl <<
@@ -995,6 +1012,7 @@ bool WorldController::setWindowBoundaryPolygonPointPosition(
 }
 
 bool WorldController::createTeam(
+    const std::string &team_name,
     const size_t &team_id,
     const NodeType &team_type,
     const size_t &on_room_id,
@@ -1004,6 +1022,7 @@ bool WorldController::createTeam(
     {
         std::cout << "WorldController::createTeam : " << std::endl <<
           "Input :\n" <<
+          "\tteam_name = " << team_name << std::endl <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
           "\ton_room_id = " << on_room_id << std::endl <<
@@ -1014,10 +1033,11 @@ bool WorldController::createTeam(
     }
 
     if(!world_tree_.createNode(
-          team_id, team_type, on_room_id, on_room_type, 0))
+          team_name, team_id, team_type, on_room_id, on_room_type, 0))
     {
         std::cout << "WorldController::createTeam : " << std::endl <<
           "Input :\n" <<
+          "\tteam_name = " << team_name << std::endl <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
           "\ton_room_id = " << on_room_id << std::endl <<
@@ -1183,6 +1203,7 @@ bool WorldController::setTeamBoundaryPolygonPointPosition(
 }
 
 bool WorldController::createPerson(
+    const std::string &person_name,
     const size_t &person_id,
     const NodeType &person_type,
     const size_t &on_team_id,
@@ -1192,6 +1213,7 @@ bool WorldController::createPerson(
     {
         std::cout << "WorldController::createPerson : " << std::endl <<
           "Input :\n" <<
+          "\tperson_name = " << person_name << std::endl <<
           "\tperson_id = " << person_id << std::endl <<
           "\tperson_type = " << person_type << std::endl <<
           "\ton_team_id = " << on_team_id << std::endl <<
@@ -1202,10 +1224,11 @@ bool WorldController::createPerson(
     }
 
     if(!world_tree_.createNode(
-          person_id, person_type, on_team_id, on_team_type, 0))
+          person_name, person_id, person_type, on_team_id, on_team_type, 0))
     {
         std::cout << "WorldController::createPerson : " << std::endl <<
           "Input :\n" <<
+          "\tperson_name = " << person_name << std::endl <<
           "\tperson_id = " << person_id << std::endl <<
           "\tperson_type = " << person_type << std::endl <<
           "\ton_team_id = " << on_team_id << std::endl <<
@@ -1371,6 +1394,7 @@ bool WorldController::setPersonBoundaryPolygonPointPosition(
 }
 
 bool WorldController::createFurniture(
+    const std::string &furniture_name,
     const size_t &furniture_id,
     const NodeType &furniture_type,
     const size_t &on_person_id,
@@ -1380,6 +1404,7 @@ bool WorldController::createFurniture(
     {
         std::cout << "WorldController::createFurniture : " << std::endl <<
           "Input :\n" <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tfurniture_id = " << furniture_id << std::endl <<
           "\tfurniture_type = " << furniture_type << std::endl <<
           "\ton_person_id = " << on_person_id << std::endl <<
@@ -1390,10 +1415,11 @@ bool WorldController::createFurniture(
     }
 
     if(!world_tree_.createNode(
-          furniture_id, furniture_type, on_person_id, on_person_type, 0))
+          furniture_name, furniture_id, furniture_type, on_person_id, on_person_type, 0))
     {
         std::cout << "WorldController::createFurniture : " << std::endl <<
           "Input :\n" <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tfurniture_id = " << furniture_id << std::endl <<
           "\tfurniture_type = " << furniture_type << std::endl <<
           "\ton_person_id = " << on_person_id << std::endl <<
@@ -1559,6 +1585,7 @@ bool WorldController::setFurnitureBoundaryPolygonPointPosition(
 }
 
 bool WorldController::createFurnitureForPerson(
+    const std::string &furniture_name,
     const size_t &person_id,
     const NodeType &person_type)
 {
@@ -1566,6 +1593,7 @@ bool WorldController::createFurnitureForPerson(
     {
         std::cout << "WorldController::createFurnitureForPerson : " << std::endl <<
           "Input :\n" <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tperson_id = " << person_id << std::endl <<
           "\tperson_type = " << person_type << std::endl <<
           "this type is not the person type!" << std::endl;
@@ -1579,6 +1607,7 @@ bool WorldController::createFurnitureForPerson(
     {
         std::cout << "WorldController::createFurnitureForPerson : " << std::endl <<
           "Input :\n" <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tperson_id = " << person_id << std::endl <<
           "\tperson_type = " << person_type << std::endl <<
           "person node not exist!" << std::endl;
@@ -1603,10 +1632,11 @@ bool WorldController::createFurnitureForPerson(
         ++new_furniture_id;
     }
 
-    if(!world_tree_.createNode(new_furniture_id, NodeType::Furniture, person_id, person_type, 0))
+    if(!world_tree_.createNode(furniture_name, new_furniture_id, NodeType::Furniture, person_id, person_type, 0))
     {
         std::cout << "WorldController::createFurnitureForPerson : " << std::endl <<
           "Input :\n" <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tperson_id = " << person_id << std::endl <<
           "\tperson_type = " << person_type << std::endl <<
           "createNode for this furniture node not exist!" << std::endl;
@@ -1626,6 +1656,7 @@ bool WorldController::createFurnitureForPerson(
     {
         std::cout << "WorldController::createFurnitureForPerson : " << std::endl <<
           "Input :\n" <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tperson_id = " << person_id << std::endl <<
           "\tperson_type = " << person_type << std::endl <<
           "person space node not exist!" << std::endl;
@@ -1642,6 +1673,7 @@ bool WorldController::createFurnitureForPerson(
     {
         std::cout << "WorldController::createFurnitureForPerson : " << std::endl <<
           "Input :\n" <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tperson_id = " << person_id << std::endl <<
           "\tperson_type = " << person_type << std::endl <<
           "this person size not valid!" << std::endl;
@@ -1665,6 +1697,7 @@ bool WorldController::createFurnitureForPerson(
     {
         std::cout << "WorldController::createFurnitureForPerson : " << std::endl <<
           "Input :\n" <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tperson_id = " << person_id << std::endl <<
           "\tperson_type = " << person_type << std::endl <<
           "setNodeBoundaryPolygon for new furniture failed!" << std::endl;
@@ -1676,6 +1709,8 @@ bool WorldController::createFurnitureForPerson(
 }
 
 bool WorldController::createPersonForTeam(
+    const std::string &person_name,
+    const std::string &furniture_name,
     const size_t &team_id,
     const NodeType &team_type,
     const float &person_width,
@@ -1686,6 +1721,8 @@ bool WorldController::createPersonForTeam(
     {
         std::cout << "WorldController::createPersonForTeam : " << std::endl <<
           "Input :\n" <<
+          "\tperson_name = " << person_name << std::endl <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
           "\tperson_width = " << person_width << std::endl <<
@@ -1701,6 +1738,8 @@ bool WorldController::createPersonForTeam(
     {
         std::cout << "WorldController::createPersonForTeam : " << std::endl <<
           "Input :\n" <<
+          "\tperson_name = " << person_name << std::endl <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
           "\tperson_width = " << person_width << std::endl <<
@@ -1716,6 +1755,8 @@ bool WorldController::createPersonForTeam(
     {
         std::cout << "WorldController::createPersonForTeam : " << std::endl <<
           "Input :\n" <<
+          "\tperson_name = " << person_name << std::endl <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
           "\tperson_width = " << person_width << std::endl <<
@@ -1744,10 +1785,12 @@ bool WorldController::createPersonForTeam(
         ++new_person_id;
     }
 
-    if(!world_tree_.createNode(new_person_id, NodeType::Person, team_id, team_type, 0))
+    if(!world_tree_.createNode(person_name, new_person_id, NodeType::Person, team_id, team_type, 0))
     {
         std::cout << "WorldController::createPersonForTeam : " << std::endl <<
           "Input :\n" <<
+          "\tperson_name = " << person_name << std::endl <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
           "\tperson_width = " << person_width << std::endl <<
@@ -1777,6 +1820,8 @@ bool WorldController::createPersonForTeam(
     {
         std::cout << "WorldController::createPersonForTeam : " << std::endl <<
           "Input :\n" <<
+          "\tperson_name = " << person_name << std::endl <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
           "\tperson_width = " << person_width << std::endl <<
@@ -1792,6 +1837,8 @@ bool WorldController::createPersonForTeam(
     {
         std::cout << "WorldController::createPersonForTeam : " << std::endl <<
           "Input :\n" <<
+          "\tperson_name = " << person_name << std::endl <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
           "\tperson_width = " << person_width << std::endl <<
@@ -1803,10 +1850,12 @@ bool WorldController::createPersonForTeam(
         return false;
     }
 
-    if(!createFurnitureForPerson(new_person_id, NodeType::Person))
+    if(!createFurnitureForPerson(furniture_name, new_person_id, NodeType::Person))
     {
         std::cout << "WorldController::createPersonForTeam : " << std::endl <<
           "Input :\n" <<
+          "\tperson_name = " << person_name << std::endl <<
+          "\tfurniture_name = " << furniture_name << std::endl <<
           "\tteam_id = " << team_id << std::endl <<
           "\tteam_type = " << team_type << std::endl <<
           "\tperson_width = " << person_width << std::endl <<
@@ -1822,12 +1871,59 @@ bool WorldController::createPersonForTeam(
 }
 
 bool WorldController::createPersonGroupForTeam(
+    const std::vector<std::vector<std::string>> &person_name_matrix,
+    const std::vector<std::vector<std::string>> &furniture_name_matrix,
     const size_t &team_id,
     const NodeType &team_type,
     const size_t &person_x_direction_num,
     const size_t &person_y_direction_num,
     const bool &is_face_horizontal)
 {
+    if(person_x_direction_num == 0 || person_y_direction_num == 0)
+    {
+        std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+          "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+          "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+          "this person size not valid!" << std::endl;
+
+        return false;
+    }
+
+    if(person_name_matrix.size() == 0 || furniture_name_matrix.size() == 0)
+    {
+        std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+          "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+          "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+          "name matrix size not valid!" << std::endl;
+
+        return false;
+    }
+
+    if(person_name_matrix.size() != person_x_direction_num ||
+        furniture_name_matrix.size() != person_x_direction_num ||
+        person_name_matrix[0].size() != person_y_direction_num ||
+        furniture_name_matrix[0].size() != person_y_direction_num)
+    {
+        std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_id = " << team_id << std::endl <<
+          "\tteam_type = " << team_type << std::endl <<
+          "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+          "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+          "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+          "name matrix size not match person size!" << std::endl;
+
+        return false;
+    }
+
     if(team_type != NodeType::Team)
     {
         std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
@@ -1854,20 +1950,6 @@ bool WorldController::createPersonGroupForTeam(
           "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
           "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
           "this team node not exist!" << std::endl;
-
-        return false;
-    }
-
-    if(person_x_direction_num == 0 || person_y_direction_num == 0)
-    {
-        std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
-          "Input :\n" <<
-          "\tteam_id = " << team_id << std::endl <<
-          "\tteam_type = " << team_type << std::endl <<
-          "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
-          "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
-          "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
-          "this person size not valid!" << std::endl;
 
         return false;
     }
@@ -1998,7 +2080,13 @@ bool WorldController::createPersonGroupForTeam(
                 }
 
                 if(!createPersonForTeam(
-                      team_id, team_type, person_y_length, person_x_length, axis_vec[use_axis_idx]))
+                      person_name_matrix[i][j],
+                      furniture_name_matrix[i][j],
+                      team_id,
+                      team_type,
+                      person_y_length,
+                      person_x_length,
+                      axis_vec[use_axis_idx]))
                 {
                     std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
                       "Input :\n" <<
@@ -2038,7 +2126,13 @@ bool WorldController::createPersonGroupForTeam(
                 }
 
                 if(!createPersonForTeam(
-                      team_id, team_type, person_x_length, person_y_length, axis_vec[use_axis_idx]))
+                      person_name_matrix[i][j],
+                      furniture_name_matrix[i][j],
+                      team_id,
+                      team_type,
+                      person_x_length,
+                      person_y_length,
+                      axis_vec[use_axis_idx]))
                 {
                     std::cout << "WorldController::createPersonGroupForTeam : " << std::endl <<
                       "Input :\n" <<
@@ -2059,6 +2153,9 @@ bool WorldController::createPersonGroupForTeam(
 }
 
 bool WorldController::createTeamForRoom(
+    const std::string &team_name,
+    const std::vector<std::vector<std::string>> &person_name_matrix,
+    const std::vector<std::vector<std::string>> &furniture_name_matrix,
     const size_t &room_id,
     const NodeType &room_type,
     const float &team_width,
@@ -2068,11 +2165,72 @@ bool WorldController::createTeamForRoom(
     const size_t &person_y_direction_num,
     const bool &is_face_horizontal)
 {
+    if(person_x_direction_num == 0 || person_y_direction_num == 0)
+    {
+        std::cout << "WorldController::createTeamForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_name = " << team_name << std::endl <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\tteam_width = " << team_width << std::endl <<
+          "\tteam_height = " << team_height << std::endl <<
+          "\tteam_axis_in_parent :" << std::endl;
+        team_axis_in_parent.outputInfo(1);
+        std::cout << "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+          "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+          "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+          "this person size not valid!" << std::endl;
+
+        return false;
+    }
+
+    if(person_name_matrix.size() == 0 || furniture_name_matrix.size() == 0)
+    {
+        std::cout << "WorldController::createTeamForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_name = " << team_name << std::endl <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\tteam_width = " << team_width << std::endl <<
+          "\tteam_height = " << team_height << std::endl <<
+          "\tteam_axis_in_parent :" << std::endl;
+        team_axis_in_parent.outputInfo(1);
+        std::cout << "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+          "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+          "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+          "name matrix size not valid!" << std::endl;
+
+        return false;
+    }
+
+    if(person_name_matrix.size() != person_x_direction_num ||
+        furniture_name_matrix.size() != person_x_direction_num ||
+        person_name_matrix[0].size() != person_y_direction_num ||
+        furniture_name_matrix[0].size() != person_y_direction_num)
+    {
+        std::cout << "WorldController::createTeamForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_name = " << team_name << std::endl <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\tteam_width = " << team_width << std::endl <<
+          "\tteam_height = " << team_height << std::endl <<
+          "\tteam_axis_in_parent :" << std::endl;
+        team_axis_in_parent.outputInfo(1);
+        std::cout << "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
+          "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
+          "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
+          "name matrix size not match person size!" << std::endl;
+
+        return false;
+    }
+
     if(room_type != NodeType::WallRoom &&
         room_type != NodeType::FreeRoom)
     {
         std::cout << "WorldController::createTeamForRoom : " << std::endl <<
           "Input :\n" <<
+          "\tteam_name = " << team_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\tteam_width = " << team_width << std::endl <<
@@ -2087,28 +2245,11 @@ bool WorldController::createTeamForRoom(
         return false;
     }
 
-    if(!haveThisNode(room_id, room_type))
-    {
-        std::cout << "WorldController::createTeamForRoom : " << std::endl <<
-          "Input :\n" <<
-          "\troom_id = " << room_id << std::endl <<
-          "\troom_type = " << room_type << std::endl <<
-          "\tteam_width = " << team_width << std::endl <<
-          "\tteam_height = " << team_height << std::endl <<
-          "\tteam_axis_in_parent :" << std::endl;
-        team_axis_in_parent.outputInfo(1);
-        std::cout << "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
-          "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
-          "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
-          "this room node not exist!" << std::endl;
-
-        return false;
-    }
-
     if(team_width <= 0 || team_height <= 0)
     {
         std::cout << "WorldController::createTeamForRoom : " << std::endl <<
           "Input :\n" <<
+          "\tteam_name = " << team_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\tteam_width = " << team_width << std::endl <<
@@ -2123,10 +2264,11 @@ bool WorldController::createTeamForRoom(
         return false;
     }
 
-    if(person_x_direction_num == 0 || person_y_direction_num == 0)
+    if(!haveThisNode(room_id, room_type))
     {
         std::cout << "WorldController::createTeamForRoom : " << std::endl <<
           "Input :\n" <<
+          "\tteam_name = " << team_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\tteam_width = " << team_width << std::endl <<
@@ -2136,7 +2278,7 @@ bool WorldController::createTeamForRoom(
         std::cout << "\tperson_x_direction_num = " << person_x_direction_num << std::endl <<
           "\tperson_y_direction_num = " << person_y_direction_num << std::endl <<
           "\tis_face_horizontal = " << is_face_horizontal << std::endl <<
-          "this team person size not valid!" << std::endl;
+          "this room node not exist!" << std::endl;
 
         return false;
     }
@@ -2158,10 +2300,11 @@ bool WorldController::createTeamForRoom(
         ++new_team_id;
     }
 
-    if(!world_tree_.createNode(new_team_id, NodeType::Team, room_id, room_type, 0))
+    if(!world_tree_.createNode(team_name, new_team_id, NodeType::Team, room_id, room_type, 0))
     {
         std::cout << "WorldController::createTeamForRoom : " << std::endl <<
           "Input :\n" <<
+          "\tteam_name = " << team_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\tteam_width = " << team_width << std::endl <<
@@ -2194,6 +2337,7 @@ bool WorldController::createTeamForRoom(
     {
         std::cout << "WorldController::createTeamForRoom : " << std::endl <<
           "Input :\n" <<
+          "\tteam_name = " << team_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\tteam_width = " << team_width << std::endl <<
@@ -2212,6 +2356,7 @@ bool WorldController::createTeamForRoom(
     {
         std::cout << "WorldController::createTeamForRoom : " << std::endl <<
           "Input :\n" <<
+          "\tteam_name = " << team_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\tteam_width = " << team_width << std::endl <<
@@ -2227,6 +2372,8 @@ bool WorldController::createTeamForRoom(
     }
 
     if(!createPersonGroupForTeam(
+          person_name_matrix,
+          furniture_name_matrix,
           new_team_id,
           NodeType::Team,
           person_x_direction_num,
@@ -2235,6 +2382,7 @@ bool WorldController::createTeamForRoom(
     {
         std::cout << "WorldController::createTeamForRoom : " << std::endl <<
           "Input :\n" <<
+          "\tteam_name = " << team_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\tteam_width = " << team_width << std::endl <<
@@ -2253,6 +2401,7 @@ bool WorldController::createTeamForRoom(
 }
 
 bool WorldController::createWindowForRoom(
+    const std::string &window_name,
     const size_t &room_id,
     const NodeType &room_type,
     const size_t &on_room_boundary_idx,
@@ -2266,6 +2415,7 @@ bool WorldController::createWindowForRoom(
     {
         std::cout << "WorldController::createWindowForRoom : " << std::endl <<
           "Input :\n" <<
+          "\twindow_name = " << window_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
@@ -2282,6 +2432,7 @@ bool WorldController::createWindowForRoom(
     {
         std::cout << "WorldController::createWindowForRoom : " << std::endl <<
           "Input :\n" <<
+          "\twindow_name = " << window_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
@@ -2297,6 +2448,7 @@ bool WorldController::createWindowForRoom(
     {
         std::cout << "WorldController::createWindowForRoom : " << std::endl <<
           "Input :\n" <<
+          "\twindow_name = " << window_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
@@ -2325,10 +2477,11 @@ bool WorldController::createWindowForRoom(
         ++new_window_id;
     }
 
-    if(!world_tree_.createNode(new_window_id, NodeType::Window, room_id, room_type, on_room_boundary_idx))
+    if(!world_tree_.createNode(window_name, new_window_id, NodeType::Window, room_id, room_type, on_room_boundary_idx))
     {
         std::cout << "WorldController::createWindowForRoom : " << std::endl <<
           "Input :\n" <<
+          "\twindow_name = " << window_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
@@ -2358,6 +2511,7 @@ bool WorldController::createWindowForRoom(
     {
         std::cout << "WorldController::createWindowForRoom : " << std::endl <<
           "Input :\n" <<
+          "\twindow_name = " << window_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
@@ -2373,6 +2527,7 @@ bool WorldController::createWindowForRoom(
     {
         std::cout << "WorldController::createWindowForRoom : " << std::endl <<
           "Input :\n" <<
+          "\twindow_name = " << window_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
@@ -2388,6 +2543,7 @@ bool WorldController::createWindowForRoom(
 }
 
 bool WorldController::createDoorForRoom(
+    const std::string &door_name,
     const size_t &room_id,
     const NodeType &room_type,
     const size_t &on_room_boundary_idx,
@@ -2402,6 +2558,7 @@ bool WorldController::createDoorForRoom(
     {
         std::cout << "WorldController::createDoorForRoom : " << std::endl <<
           "Input :\n" <<
+          "\tdoor_name = " << door_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
@@ -2419,6 +2576,7 @@ bool WorldController::createDoorForRoom(
     {
         std::cout << "WorldController::createDoorForRoom : " << std::endl <<
           "Input :\n" <<
+          "\tdoor_name = " << door_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
@@ -2435,6 +2593,7 @@ bool WorldController::createDoorForRoom(
     {
         std::cout << "WorldController::createDoorForRoom : " << std::endl <<
           "Input :\n" <<
+          "\tdoor_name = " << door_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
@@ -2464,10 +2623,11 @@ bool WorldController::createDoorForRoom(
         ++new_door_id;
     }
 
-    if(!world_tree_.createNode(new_door_id, NodeType::Door, room_id, room_type, on_room_boundary_idx))
+    if(!world_tree_.createNode(door_name, new_door_id, NodeType::Door, room_id, room_type, on_room_boundary_idx))
     {
         std::cout << "WorldController::createDoorForRoom : " << std::endl <<
           "Input :\n" <<
+          "\tdoor_name = " << door_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
@@ -2510,6 +2670,7 @@ bool WorldController::createDoorForRoom(
     {
         std::cout << "WorldController::createDoorForRoom : " << std::endl <<
           "Input :\n" <<
+          "\tdoor_name = " << door_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
@@ -2526,6 +2687,7 @@ bool WorldController::createDoorForRoom(
     {
         std::cout << "WorldController::createDoorForRoom : " << std::endl <<
           "Input :\n" <<
+          "\tdoor_name = " << door_name << std::endl <<
           "\troom_id = " << room_id << std::endl <<
           "\troom_type = " << room_type << std::endl <<
           "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
@@ -2542,6 +2704,7 @@ bool WorldController::createDoorForRoom(
 }
 
 bool WorldController::createRoomForRoomContainer(
+    const std::string &room_name,
     const size_t &roomcontainer_id,
     const NodeType &roomcontainer_type,
     const NodeType &room_type,
@@ -2553,6 +2716,7 @@ bool WorldController::createRoomForRoomContainer(
     {
         std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
+          "\troom_name = " << room_name << std::endl <<
           "\troomcontainer_id = " << roomcontainer_id << std::endl <<
           "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
@@ -2569,6 +2733,7 @@ bool WorldController::createRoomForRoomContainer(
     {
         std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
+          "\troom_name = " << room_name << std::endl <<
           "\troomcontainer_id = " << roomcontainer_id << std::endl <<
           "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
@@ -2586,6 +2751,7 @@ bool WorldController::createRoomForRoomContainer(
     {
         std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
+          "\troom_name = " << room_name << std::endl <<
           "\troomcontainer_id = " << roomcontainer_id << std::endl <<
           "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
@@ -2602,6 +2768,7 @@ bool WorldController::createRoomForRoomContainer(
     {
         std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
+          "\troom_name = " << room_name << std::endl <<
           "\troomcontainer_id = " << roomcontainer_id << std::endl <<
           "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
@@ -2632,10 +2799,11 @@ bool WorldController::createRoomForRoomContainer(
     }
 
     if(!world_tree_.createNode(
-          new_room_id, room_type, roomcontainer_id, roomcontainer_type, 0))
+          room_name, new_room_id, room_type, roomcontainer_id, roomcontainer_type, 0))
     {
         std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
+          "\troom_name = " << room_name << std::endl <<
           "\troomcontainer_id = " << roomcontainer_id << std::endl <<
           "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
@@ -2666,6 +2834,7 @@ bool WorldController::createRoomForRoomContainer(
     {
         std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
+          "\troom_name = " << room_name << std::endl <<
           "\troomcontainer_id = " << roomcontainer_id << std::endl <<
           "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
@@ -2682,6 +2851,7 @@ bool WorldController::createRoomForRoomContainer(
     {
         std::cout << "WorldController::createRoomForRoomContainer : " << std::endl <<
           "Input :\n" <<
+          "\troom_name = " << room_name << std::endl <<
           "\troomcontainer_id = " << roomcontainer_id << std::endl <<
           "\troomcontainer_type = " << roomcontainer_type << std::endl <<
           "\troom_type = " << room_type << std::endl <<
@@ -2698,11 +2868,25 @@ bool WorldController::createRoomForRoomContainer(
 }
 
 bool WorldController::createRoomGroupForRoomContainer(
+    const std::vector<std::string> &room_name_vec,
     const size_t &roomcontainer_id,
     const NodeType &roomcontainer_type,
     const NodeType &room_type,
     const size_t &room_x_direction_num)
 {
+    if(room_name_vec.size() != room_x_direction_num)
+    {
+        std::cout << "WorldController::createRoomGroupForRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_id = " << roomcontainer_id << std::endl <<
+          "\troomcontainer_type = " << roomcontainer_type << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "room_name_vec size not match room_x_direction_num!" << std::endl;
+
+        return false;
+    }
+
     if(roomcontainer_type != NodeType::RoomContainer)
     {
         std::cout << "WorldController::createRoomGroupForRoomContainer : " << std::endl <<
@@ -2825,7 +3009,7 @@ bool WorldController::createRoomGroupForRoomContainer(
         }
 
         if(!createRoomForRoomContainer(
-              roomcontainer_id, roomcontainer_type, room_type, room_x_length, room_y_length, room_axis))
+              room_name_vec[i], roomcontainer_id, roomcontainer_type, room_type, room_x_length, room_y_length, room_axis))
         {
             std::cout << "WorldController::createRoomGroupForRoomContainer : " << std::endl <<
               "Input :\n" <<
@@ -2843,6 +3027,8 @@ bool WorldController::createRoomGroupForRoomContainer(
 }
 
 bool WorldController::createRoomContainerForWall(
+    const std::string &roomcontainer_name,
+    const std::vector<std::string> &room_name_vec,
     const size_t &wall_id,
     const NodeType &wall_type,
     const size_t &wall_boundary_id,
@@ -2852,11 +3038,31 @@ bool WorldController::createRoomContainerForWall(
     const NodeType &room_type,
     const size_t &room_x_direction_num)
 {
+    if(room_name_vec.size() != room_x_direction_num)
+    {
+        std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
+          "Input :\n" <<
+          "\troomcontainer_name = " << roomcontainer_name << std::endl <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\twall_boundary_id = " << wall_boundary_id << std::endl <<
+          "\troomcontainer_width = " << roomcontainer_width << std::endl <<
+          "\troomcontainer_height = " << roomcontainer_height << std::endl <<
+          "\troomcontainer_axis_in_parent : " << std::endl;
+        roomcontainer_axis_in_parent.outputInfo(1);
+        std::cout << "\troom_type = " << room_type << std::endl <<
+          "\troom_x_direction_num = " << room_x_direction_num << std::endl <<
+          "room_name_vec size not match room_x_direction_num!" << std::endl;
+
+        return false;
+    }
+
     if(wall_type != NodeType::OuterWall &&
         wall_type != NodeType::InnerWall)
     {
         std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
           "Input :\n" <<
+          "\troomcontainer_name = " << roomcontainer_name << std::endl <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
           "\twall_boundary_id = " << wall_boundary_id << std::endl <<
@@ -2875,6 +3081,7 @@ bool WorldController::createRoomContainerForWall(
     {
         std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
           "Input :\n" <<
+          "\troomcontainer_name = " << roomcontainer_name << std::endl <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
           "\twall_boundary_id = " << wall_boundary_id << std::endl <<
@@ -2893,6 +3100,7 @@ bool WorldController::createRoomContainerForWall(
     {
         std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
           "Input :\n" <<
+          "\troomcontainer_name = " << roomcontainer_name << std::endl <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
           "\twall_boundary_id = " << wall_boundary_id << std::endl <<
@@ -2911,6 +3119,7 @@ bool WorldController::createRoomContainerForWall(
     {
         std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
           "Input :\n" <<
+          "\troomcontainer_name = " << roomcontainer_name << std::endl <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
           "\twall_boundary_id = " << wall_boundary_id << std::endl <<
@@ -2943,10 +3152,11 @@ bool WorldController::createRoomContainerForWall(
     }
 
     if(!world_tree_.createNode(
-          new_roomcontainer_id, NodeType::RoomContainer, wall_id, wall_type, wall_boundary_id))
+          roomcontainer_name, new_roomcontainer_id, NodeType::RoomContainer, wall_id, wall_type, wall_boundary_id))
     {
         std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
           "Input :\n" <<
+          "\troomcontainer_name = " << roomcontainer_name << std::endl <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
           "\twall_boundary_id = " << wall_boundary_id << std::endl <<
@@ -2979,6 +3189,7 @@ bool WorldController::createRoomContainerForWall(
     {
         std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
           "Input :\n" <<
+          "\troomcontainer_name = " << roomcontainer_name << std::endl <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
           "\twall_boundary_id = " << wall_boundary_id << std::endl <<
@@ -2997,6 +3208,7 @@ bool WorldController::createRoomContainerForWall(
     {
         std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
           "Input :\n" <<
+          "\troomcontainer_name = " << roomcontainer_name << std::endl <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
           "\twall_boundary_id = " << wall_boundary_id << std::endl <<
@@ -3012,6 +3224,7 @@ bool WorldController::createRoomContainerForWall(
     }
 
     if(!createRoomGroupForRoomContainer(
+          room_name_vec,
           new_roomcontainer_id,
           NodeType::RoomContainer,
           room_type,
@@ -3019,6 +3232,7 @@ bool WorldController::createRoomContainerForWall(
     {
         std::cout << "WorldController::createRoomContainerForWall : " << std::endl <<
           "Input :\n" <<
+          "\troomcontainer_name = " << roomcontainer_name << std::endl <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
           "\twall_boundary_id = " << wall_boundary_id << std::endl <<
@@ -3037,6 +3251,8 @@ bool WorldController::createRoomContainerForWall(
 }
 
 bool WorldController::createWallRoomContainerForWall(
+    const std::string &roomcontainer_name,
+    const std::vector<std::string> &room_name_vec,
     const size_t &wall_id,
     const NodeType &wall_type,
     const size_t &wall_boundary_id,
@@ -3046,6 +3262,8 @@ bool WorldController::createWallRoomContainerForWall(
     const size_t &room_x_direction_num)
 {
     if(!createRoomContainerForWall(
+          roomcontainer_name,
+          room_name_vec,
           wall_id,
           wall_type,
           wall_boundary_id,
@@ -3057,6 +3275,7 @@ bool WorldController::createWallRoomContainerForWall(
     {
         std::cout << "WorldController::createWallRoomContainerForWall : " << std::endl <<
           "Input :\n" <<
+          "\troomcontainer_name = " << roomcontainer_name << std::endl <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
           "\twall_boundary_id = " << wall_boundary_id << std::endl <<
@@ -3074,6 +3293,8 @@ bool WorldController::createWallRoomContainerForWall(
 }
 
 bool WorldController::createFreeRoomContainerForWall(
+    const std::string &roomcontainer_name,
+    const std::vector<std::string> &room_name_vec,
     const size_t &wall_id,
     const NodeType &wall_type,
     const size_t &wall_boundary_id,
@@ -3083,6 +3304,8 @@ bool WorldController::createFreeRoomContainerForWall(
     const size_t &room_x_direction_num)
 {
     if(!createRoomContainerForWall(
+          roomcontainer_name,
+          room_name_vec,
           wall_id,
           wall_type,
           wall_boundary_id,
@@ -3094,6 +3317,7 @@ bool WorldController::createFreeRoomContainerForWall(
     {
         std::cout << "WorldController::createFreeRoomContainerForWall : " << std::endl <<
           "Input :\n" <<
+          "\troomcontainer_name = " << roomcontainer_name << std::endl <<
           "\twall_id = " << wall_id << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
           "\twall_boundary_id = " << wall_boundary_id << std::endl <<

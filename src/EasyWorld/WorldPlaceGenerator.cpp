@@ -1652,6 +1652,26 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
         EasyAxis2D room_axis;
         room_axis.setXDirection(1, 0);
 
+        std::string team_name = "Auto Generate Team";
+
+        std::vector<std::string> free_name_vec;
+        free_name_vec.resize(1);
+        free_name_vec[0] = "Auto Generate FreeRoom";
+
+        std::vector<std::vector<std::string>> person_name_matrix;
+        person_name_matrix.resize(person_x_direction_num);
+        for(std::vector<std::string> &person_name_row : person_name_matrix)
+        {
+            person_name_row.resize(person_y_direction_num, "Auto Generate Person");
+        }
+
+        std::vector<std::vector<std::string>> furniture_name_matrix;
+        furniture_name_matrix.resize(person_x_direction_num);
+        for(std::vector<std::string> &furniture_name_row : furniture_name_matrix)
+        {
+            furniture_name_row.resize(person_y_direction_num, "Auto Generate Person");
+        }
+
         for(size_t i = 0; i < x_direction_room_num; ++i)
         {
             for(size_t j = 0; j < y_direction_room_num; ++j)
@@ -1661,6 +1681,8 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
                     max_free_roomcontainer_start_position_y + j * room_height);
 
                 world_controller.createFreeRoomContainerForWall(
+                    "Auto Generate Free RoomContainer",
+                    free_name_vec,
                     0,
                     NodeType::OuterWall,
                     0,
@@ -1670,6 +1692,9 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
                     1);
 
                 world_controller.createTeamForRoom(
+                    team_name,
+                    person_name_matrix,
+                    furniture_name_matrix,
                     current_freeroom_id_start,
                     NodeType::FreeRoom,
                     team_width,
@@ -1734,7 +1759,7 @@ bool WorldPlaceGenerator::isReadyToGenerate()
 bool WorldPlaceGenerator::generateWall(
     WorldController &world_controller)
 {
-    if(!world_controller.createWorld(1, 1))
+    if(!world_controller.createWorld("world", 1, 1))
     {
         std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
           "createWorld failed!" << std::endl;
@@ -1742,7 +1767,7 @@ bool WorldPlaceGenerator::generateWall(
         return false;
     }
 
-    if(!world_controller.createWall(0, NodeType::OuterWall))
+    if(!world_controller.createWall("outer wall 0", 0, NodeType::OuterWall))
     {
         std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
           "createWall failed!" << std::endl;

@@ -30,6 +30,7 @@ bool EasyTree::reset()
 }
 
 bool EasyTree::createWorld(
+    const std::string &world_name,
     const float &world_center_x,
     const float &world_center_y)
 {
@@ -37,6 +38,7 @@ bool EasyTree::createWorld(
     {
         std::cout << "EasyTree::createWorld : " << std::endl <<
           "Input :\n" <<
+          "\tworld_name = " << world_name << std::endl <<
           "\tworld_center = [" << world_center_x << "," <<
           world_center_y << "]" << std::endl <<
           "tree root already exist!" << std::endl;
@@ -46,10 +48,23 @@ bool EasyTree::createWorld(
 
     root_ = new EasyNode();
 
+    if(!root_->setName(world_name))
+    {
+        std::cout << "EasyTree::createWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tworld_name = " << world_name << std::endl <<
+          "\tworld_center = [" << world_center_x << "," <<
+          world_center_y << "]" << std::endl <<
+          "setName for root failed!" << std::endl;
+
+        return false;
+    }
+
     if(!root_->setID(0))
     {
         std::cout << "EasyTree::createWorld : " << std::endl <<
           "Input :\n" <<
+          "\tworld_name = " << world_name << std::endl <<
           "\tworld_center = [" << world_center_x << "," <<
           world_center_y << "]" << std::endl <<
           "setID for root failed!" << std::endl;
@@ -61,6 +76,7 @@ bool EasyTree::createWorld(
     {
         std::cout << "EasyTree::createWorld : " << std::endl <<
           "Input :\n" <<
+          "\tworld_name = " << world_name << std::endl <<
           "\tworld_center = [" << world_center_x << "," <<
           world_center_y << "]" << std::endl <<
           "setNodeType for root failed!" << std::endl;
@@ -72,6 +88,7 @@ bool EasyTree::createWorld(
     {
         std::cout << "EasyTree::createWorld : " << std::endl <<
           "Input :\n" <<
+          "\tworld_name = " << world_name << std::endl <<
           "\tworld_center = [" << world_center_x << "," <<
           world_center_y << "]" << std::endl <<
           "setAxisInParent for root failed!" << std::endl;
@@ -83,6 +100,7 @@ bool EasyTree::createWorld(
     {
         std::cout << "EasyTree::createWorld : " << std::endl <<
           "Input :\n" <<
+          "\tworld_name = " << world_name << std::endl <<
           "\tworld_center = [" << world_center_x << "," <<
           world_center_y << "]" << std::endl <<
           "setAxisInWorld for root failed!" << std::endl;
@@ -94,6 +112,7 @@ bool EasyTree::createWorld(
 }
 
 bool EasyTree::createNode(
+    const std::string &node_name,
     const size_t &node_id,
     const NodeType &node_type,
     const size_t &parent_node_id,
@@ -106,6 +125,7 @@ bool EasyTree::createNode(
         {
             std::cout << "EasyTree::createNode : " << std::endl <<
               "Input :\n" <<
+              "\tnode_name = " << node_name << std::endl <<
               "\tnode_id = " << node_id << std::endl <<
               "\tparent_node_id = " << parent_node_id << std::endl <<
               "\tparent_node_type = " << parent_node_type << std::endl <<
@@ -115,10 +135,11 @@ bool EasyTree::createNode(
             return false;
         }
 
-        if(!root_->createChild(node_id, node_type))
+        if(!root_->createChild(node_name, node_id, node_type))
         {
             std::cout << "EasyTree::createNode : " << std::endl <<
               "Input :\n" <<
+              "\tnode_name = " << node_name << std::endl <<
               "\tnode_id = " << node_id << std::endl <<
               "\tparent_node_id = " << parent_node_id << std::endl <<
               "\tparent_node_type = " << parent_node_type << std::endl <<
@@ -137,6 +158,7 @@ bool EasyTree::createNode(
     {
         std::cout << "EasyTree::createNode : " << std::endl <<
           "Input :\n" <<
+          "\tnode_name = " << node_name << std::endl <<
           "\tnode_id = " << node_id << std::endl <<
           "\tparent_node_id = " << parent_node_id << std::endl <<
           "\tparent_node_type = " << parent_node_type << std::endl <<
@@ -152,6 +174,7 @@ bool EasyTree::createNode(
     {
         std::cout << "EasyTree::createNode : " << std::endl <<
           "Input :\n" <<
+          "\tnode_name = " << node_name << std::endl <<
           "\tnode_id = " << node_id << std::endl <<
           "\tparent_node_id = " << parent_node_id << std::endl <<
           "\tparent_node_type = " << parent_node_type << std::endl <<
@@ -168,6 +191,7 @@ bool EasyTree::createNode(
     {
         std::cout << "EasyTree::createNode : " << std::endl <<
           "Input :\n" <<
+          "\tnode_name = " << node_name << std::endl <<
           "\tnode_id = " << node_id << std::endl <<
           "\tparent_node_id = " << parent_node_id << std::endl <<
           "\tparent_node_type = " << parent_node_type << std::endl <<
@@ -177,10 +201,11 @@ bool EasyTree::createNode(
         return false;
     }
 
-    if(!parent_boundary_node->createChild(node_id, node_type))
+    if(!parent_boundary_node->createChild(node_name, node_id, node_type))
     {
         std::cout << "EasyTree::createNode : " << std::endl <<
           "Input :\n" <<
+          "\tnode_name = " << node_name << std::endl <<
           "\tnode_id = " << node_id << std::endl <<
           "\tparent_node_id = " << parent_node_id << std::endl <<
           "\tparent_node_type = " << parent_node_type << std::endl <<

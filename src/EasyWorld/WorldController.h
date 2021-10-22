@@ -14,10 +14,12 @@ public:
     bool reset();
 
     bool createWorld(
+        const std::string &world_name,
         const float &world_center_x,
         const float &world_center_y);
 
     bool createWall(
+        const std::string &wall_name,
         const size_t &wall_id,
         const NodeType &wall_type);
 
@@ -43,6 +45,7 @@ public:
         const EasyPoint2D &point_new_position_in_world);
 
     bool createRoomContainer(
+        const std::string &roomcontainer_name,
         const size_t &roomcontainer_id,
         const NodeType &roomcontainer_type,
         const size_t &on_wall_id,
@@ -71,6 +74,7 @@ public:
         const EasyPoint2D &point_new_position_in_world);
 
     bool createRoom(
+        const std::string &room_name,
         const size_t &room_id,
         const NodeType &room_type,
         const size_t &on_roomcontainer_id,
@@ -98,6 +102,7 @@ public:
         const EasyPoint2D &point_new_position_in_world);
 
     bool createDoor(
+        const std::string &door_name,
         const size_t &door_id,
         const NodeType &door_type,
         const size_t &on_room_id,
@@ -126,6 +131,7 @@ public:
         const EasyPoint2D &point_new_position_in_world);
 
     bool createWindow(
+        const std::string &window_name,
         const size_t &window_id,
         const NodeType &window_type,
         const size_t &on_room_id,
@@ -154,6 +160,7 @@ public:
         const EasyPoint2D &point_new_position_in_world);
 
     bool createTeam(
+        const std::string &team_name,
         const size_t &team_id,
         const NodeType &team_type,
         const size_t &on_room_id,
@@ -181,6 +188,7 @@ public:
         const EasyPoint2D &point_new_position_in_world);
 
     bool createPerson(
+        const std::string &person_name,
         const size_t &person_id,
         const NodeType &person_type,
         const size_t &on_team_id,
@@ -208,6 +216,7 @@ public:
         const EasyPoint2D &point_new_position_in_world);
 
     bool createFurniture(
+        const std::string &furniture_name,
         const size_t &furniture_id,
         const NodeType &furniture_type,
         const size_t &on_person_id,
@@ -235,10 +244,13 @@ public:
         const EasyPoint2D &point_new_position_in_world);
 
     bool createFurnitureForPerson(
+        const std::string &furniture_name,
         const size_t &person_id,
         const NodeType &person_type);
 
     bool createPersonForTeam(
+        const std::string &person_name,
+        const std::string &furniture_name,
         const size_t &team_id,
         const NodeType &team_type,
         const float &person_width,
@@ -246,6 +258,8 @@ public:
         const EasyAxis2D &person_axis_in_parent);
 
     bool createPersonGroupForTeam(
+        const std::vector<std::vector<std::string>> &person_name_matrix,
+        const std::vector<std::vector<std::string>> &furniture_name_matrix,
         const size_t &team_id,
         const NodeType &team_type,
         const size_t &person_x_direction_num,
@@ -253,6 +267,9 @@ public:
         const bool &is_face_horizontal);
 
     bool createTeamForRoom(
+        const std::string &team_name,
+        const std::vector<std::vector<std::string>> &person_name_matrix,
+        const std::vector<std::vector<std::string>> &furniture_name_matrix,
         const size_t &room_id,
         const NodeType &room_type,
         const float &team_width,
@@ -263,6 +280,7 @@ public:
         const bool &is_face_horizontal);
 
     bool createWindowForRoom(
+        const std::string &window_name,
         const size_t &room_id,
         const NodeType &room_type,
         const size_t &on_room_boundary_idx,
@@ -270,6 +288,7 @@ public:
         const EasyAxis2D &window_axis_in_parent);
 
     bool createDoorForRoom(
+        const std::string &door_name,
         const size_t &room_id,
         const NodeType &room_type,
         const size_t &on_room_boundary_idx,
@@ -278,6 +297,7 @@ public:
         const bool &is_handle_on_right_from_outside);
 
     bool createRoomForRoomContainer(
+        const std::string &room_name,
         const size_t &roomcontainer_id,
         const NodeType &roomcontainer_type,
         const NodeType &room_type,
@@ -286,12 +306,15 @@ public:
         const EasyAxis2D &room_axis_in_parent);
 
     bool createRoomGroupForRoomContainer(
+        const std::vector<std::string> &room_name_vec,
         const size_t &roomcontainer_id,
         const NodeType &roomcontainer_type,
         const NodeType &room_type,
         const size_t &room_x_direction_num);
 
     bool createRoomContainerForWall(
+        const std::string &roomcontainer_name,
+        const std::vector<std::string> &room_name_vec,
         const size_t &wall_id,
         const NodeType &wall_type,
         const size_t &wall_boundary_id,
@@ -302,6 +325,8 @@ public:
         const size_t &room_x_direction_num);
 
     bool createWallRoomContainerForWall(
+        const std::string &roomcontainer_name,
+        const std::vector<std::string> &room_name_vec,
         const size_t &wall_id,
         const NodeType &wall_type,
         const size_t &wall_boundary_id,
@@ -311,6 +336,8 @@ public:
         const size_t &room_x_direction_num);
 
     bool createFreeRoomContainerForWall(
+        const std::string &roomcontainer_name,
+        const std::vector<std::string> &room_name_vec,
         const size_t &wall_id,
         const NodeType &wall_type,
         const size_t &wall_boundary_id,

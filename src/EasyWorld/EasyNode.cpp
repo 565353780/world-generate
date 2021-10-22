@@ -57,6 +57,14 @@ bool EasyNode::reset()
     return true;
 }
 
+bool EasyNode::setName(
+    const std::string &name)
+{
+    name_ = name;
+
+    return true;
+}
+
 bool EasyNode::setID(
     const size_t &id)
 {
@@ -374,6 +382,7 @@ bool EasyNode::haveThisChild(
 }
 
 bool EasyNode::createChild(
+    const std::string &child_name,
     const size_t &child_id,
     const NodeType &child_type)
 {
@@ -381,6 +390,7 @@ bool EasyNode::createChild(
     {
         std::cout << "EasyNode::createChild : " << std::endl <<
           "Input :\n" <<
+          "\tchild_name = " << child_name << std::endl <<
           "\tchild_id = " << child_id << std::endl <<
           "\tchild_type = " << child_type << std::endl <<
           "this child already exist!" << std::endl;
@@ -390,10 +400,23 @@ bool EasyNode::createChild(
 
     EasyNode* new_child_node = new EasyNode();
 
+    if(!new_child_node->setName(child_name))
+    {
+        std::cout << "EasyNode::createChild : " << std::endl <<
+          "Input :\n" <<
+          "\tchild_name = " << child_name << std::endl <<
+          "\tchild_id = " << child_id << std::endl <<
+          "\tchild_type = " << child_type << std::endl <<
+          "setName for child failed!" << std::endl;
+
+        return false;
+    }
+
     if(!new_child_node->setID(child_id))
     {
         std::cout << "EasyNode::createChild : " << std::endl <<
           "Input :\n" <<
+          "\tchild_name = " << child_name << std::endl <<
           "\tchild_id = " << child_id << std::endl <<
           "\tchild_type = " << child_type << std::endl <<
           "setID for child failed!" << std::endl;
@@ -405,6 +428,7 @@ bool EasyNode::createChild(
     {
         std::cout << "EasyNode::createChild : " << std::endl <<
           "Input :\n" <<
+          "\tchild_name = " << child_name << std::endl <<
           "\tchild_id = " << child_id << std::endl <<
           "\tchild_type = " << child_type << std::endl <<
           "setNodeType for child failed!" << std::endl;
@@ -416,6 +440,7 @@ bool EasyNode::createChild(
     {
         std::cout << "EasyNode::createChild : " << std::endl <<
           "Input :\n" <<
+          "\tchild_name = " << child_name << std::endl <<
           "\tchild_id = " << child_id << std::endl <<
           "\tchild_type = " << child_type << std::endl <<
           "setParent for child failed!" << std::endl;
@@ -729,6 +754,7 @@ bool EasyNode::outputInfo(
     }
 
     std::cout << line_start << "EasyNode :" << std::endl <<
+      line_start << "\tname = " << name_ << std::endl <<
       line_start << "\tid = " << id_ << std::endl <<
       line_start << "\ttype = " << type_ << std::endl;
 

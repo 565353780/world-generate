@@ -15,7 +15,7 @@
 #include <time.h>
 
 #include "EasyWorld/WorldSplitGenerator.h"
-
+#include "EasyWorld/WorldPlaceGenerator.h"
 #include "EasyWorld/WorldEditer.h"
 
 namespace Ui {
@@ -116,6 +116,7 @@ private:
 
     WorldController world_controller_;
     WorldSplitGenerator world_split_generator_;
+    WorldPlaceGenerator world_place_generator_;
     WorldEditer world_editer_;
 
     float axis_length_;

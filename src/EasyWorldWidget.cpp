@@ -177,8 +177,8 @@ void EasyWorldWidget::run_example()
             wall_boundary_polygon.addPoint(0, 40);
             wall_boundary_polygon.setAntiClockWise();
 
-            world_editer_.world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
-            world_editer_.world_place_generator_.generateWorld();
+            world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
+            world_place_generator_.generateWorld();
 
             // long cycle_num = 0;
             // float avg_fps = 0;
@@ -205,8 +205,8 @@ void EasyWorldWidget::run_example()
             wall_boundary_polygon.addPoint(0, 40);
             wall_boundary_polygon.setAntiClockWise();
 
-            world_editer_.setWallBoundaryPolygon(wall_boundary_polygon);
-            world_editer_.generateWorld();
+            world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
+            world_place_generator_.generateWorld();
 
             // long cycle_num = 0;
             // float avg_fps = 0;
@@ -233,7 +233,7 @@ void EasyWorldWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
-    WorldController &world_controller = world_editer_.world_place_generator_.world_controller_;
+    WorldController &world_controller = world_place_generator_.world_controller_;
 
     drawWallSpaceBoundary(world_controller);
     // drawRoomContainerSpaceBoundary(world_controller);
@@ -264,7 +264,7 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
     }
     else if(event->buttons() == Qt::RightButton)
     {
-        world_editer_.world_place_generator_.generateWorld();
+        world_place_generator_.generateWorld();
         update();
     }
 
@@ -294,7 +294,7 @@ bool EasyWorldWidget::chooseRoomContainer(
 
     std::vector<EasyNode*> roomcontainer_space_node_vec;
 
-    world_editer_.world_place_generator_.world_controller_.getRoomContainerSpaceNodeVec(
+    world_place_generator_.world_controller_.getRoomContainerSpaceNodeVec(
         roomcontainer_space_node_vec);
 
     for(EasyNode* roomcontainer_space_node : roomcontainer_space_node_vec)
@@ -338,6 +338,7 @@ bool EasyWorldWidget::moveWallRoomContainer(
           1.0 * mouse_pos.y() / zoom_;
 
         world_editer_.setWallRoomContainerPosition(
+            world_place_generator_,
             wall_roomcontainer_id,
             new_position_x,
             new_position_y,

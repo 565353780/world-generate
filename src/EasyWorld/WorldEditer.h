@@ -142,34 +142,20 @@ public:
 
     bool reset();
 
-    bool setWallBoundaryPolygon(
-        const EasyPolygon2D &wall_boundary_polygon);
+    bool readData(
+        WorldPlaceGenerator &world_place_generator);
 
-    bool generateWorld();
-
-    bool placeWallRoomContainer(
-        const size_t &boundary_idx,
-        const float &roomcontainer_start_position,
-        const float &roomcontainer_width,
-        const float &roomcontainer_height);
-
-    bool generateFreeRoomContainer(
-        const size_t &team_x_direction_person_num,
-        const size_t &team_y_direction_person_num,
-        const float &team_dist,
-        const float &person_edge);
-
-    bool readData();
-
-    bool loadData();
+    bool loadData(
+        WorldPlaceGenerator &world_place_generator);
 
     bool setWallRoomContainerPosition(
+        WorldPlaceGenerator &world_place_generator,
         const size_t &wall_roomcontainer_id,
         const float &new_position_x,
         const float &new_position_y,
         const float &mouse_pos_x_direction_delta);
 
-    WorldPlaceGenerator world_place_generator_;
+private:
     WorldGenerateDataManager world_generate_data_manager_;
 };
 

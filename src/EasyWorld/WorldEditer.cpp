@@ -254,81 +254,13 @@ bool WorldGenerateDataManager::outputInfo(
 
 bool WorldEditer::reset()
 {
-    world_place_generator_.reset();
     world_generate_data_manager_.reset();
 
     return true;
 }
 
-bool WorldEditer::setWallBoundaryPolygon(
-    const EasyPolygon2D &wall_boundary_polygon)
-{
-    if(!world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon))
-    {
-        std::cout << "WorldEditer::setWallBoundaryPolygon : " << std::endl <<
-          "setWallBoundaryPolygon failed!" << std::endl;
-
-        return false;
-    }
-
-    return true;
-}
-
-bool WorldEditer::generateWorld()
-{
-    if(!world_place_generator_.generateWorld())
-    {
-        std::cout << "WorldEditer::generateWorld : " << std::endl <<
-          "generateWorld failed!" << std::endl;
-
-        return false;
-    }
-
-    return true;
-}
-
-bool WorldEditer::placeWallRoomContainer(
-    const size_t &boundary_idx,
-    const float &roomcontainer_start_position,
-    const float &roomcontainer_width,
-    const float &roomcontainer_height)
-{
-    world_place_generator_.placeWallRoomContainer(
-        boundary_idx,
-        roomcontainer_start_position,
-        roomcontainer_width,
-        roomcontainer_height);
-
-    return true;
-}
-
-bool WorldEditer::generateFreeRoomContainer(
-    const size_t &team_x_direction_person_num,
-    const size_t &team_y_direction_person_num,
-    const float &team_dist,
-    const float &person_edge)
-{
-    if(!world_place_generator_.generateFreeRoomContainer(
-          team_x_direction_person_num,
-          team_y_direction_person_num,
-          team_dist,
-          person_edge))
-    {
-        std::cout << "WorldEditer::generateFreeRoomContainer : " << std::endl <<
-          "Input :\n" <<
-          "\tteam_person_num_size = [" << team_x_direction_person_num << "," <<
-          team_y_direction_person_num << "]" << std::endl <<
-          "\tteam_dist = " << team_dist << std::endl <<
-          "\tperson_edge = " << person_edge << std::endl <<
-          "generateFreeRoomContainer failed!" << std::endl;
-
-        return false;
-    }
-
-    return true;
-}
-
-bool WorldEditer::readData()
+bool WorldEditer::readData(
+    WorldPlaceGenerator &world_place_generator)
 {
     if(!world_generate_data_manager_.reset())
     {
@@ -338,7 +270,7 @@ bool WorldEditer::readData()
         return false;
     }
 
-    EasyNode* world_node = world_place_generator_.world_controller_.findNode(
+    EasyNode* world_node = world_place_generator.world_controller_.findNode(
         0, NodeType::World);
 
     if(world_node == nullptr)
@@ -365,7 +297,7 @@ bool WorldEditer::readData()
     if(!world_generate_data_manager_.addWall(
           0,
           NodeType::OuterWall,
-          world_place_generator_.wall_boundary_polygon_))
+          world_place_generator.wall_boundary_polygon_))
     {
         std::cout << "WorldEditer::readData : " << std::endl <<
           "addWall failed!" << std::endl;
@@ -374,7 +306,7 @@ bool WorldEditer::readData()
     }
 
     const size_t wall_roomcontainer_data_num =
-      world_place_generator_.boundary_line_list_manager_.current_place_idx_;
+      world_place_generator.boundary_line_list_manager_.current_place_idx_;
     
     if(wall_roomcontainer_data_num == 0)
     {
@@ -385,11 +317,11 @@ bool WorldEditer::readData()
         wall_roomcontainer_data_num);
 
     for(size_t i = 0;
-        i < world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_.size();
+        i < world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size();
         ++i)
     {
         const BoundaryLineList &boundary_line_list =
-          world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_[i];
+          world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_[i];
 
         BoundaryLine* boundary_line = boundary_line_list.boundary_line_list_;
 
@@ -417,10 +349,10 @@ bool WorldEditer::readData()
     }
 
     if(!world_generate_data_manager_.setFreeRoomContainer(
-          world_place_generator_.team_x_direction_person_num_,
-          world_place_generator_.team_y_direction_person_num_,
-          world_place_generator_.team_dist_,
-          world_place_generator_.person_edge_))
+          world_place_generator.team_x_direction_person_num_,
+          world_place_generator.team_y_direction_person_num_,
+          world_place_generator.team_dist_,
+          world_place_generator.person_edge_))
     {
         std::cout << "WorldEditer::readData : " << std::endl <<
           "setFreeRoomContainer failed!" << std::endl;
@@ -431,7 +363,8 @@ bool WorldEditer::readData()
     return true;
 }
 
-bool WorldEditer::loadData()
+bool WorldEditer::loadData(
+    WorldPlaceGenerator &world_place_generator)
 {
     const float &world_center_x = world_generate_data_manager_.world_data.world_center_x;
     const float &world_center_y = world_generate_data_manager_.world_data.world_center_y;
@@ -444,7 +377,7 @@ bool WorldEditer::loadData()
         return false;
     }
 
-    if(!world_place_generator_.reset())
+    if(!world_place_generator.reset())
     {
         std::cout << "WorldEditer::loadData : " << std::endl <<
           "reset world place generator failed!" << std::endl;
@@ -452,9 +385,9 @@ bool WorldEditer::loadData()
         return false;
     }
 
-    world_place_generator_.current_new_room_id_ = 0;
+    world_place_generator.current_new_room_id_ = 0;
 
-    if(!world_place_generator_.world_controller_.createWorld(world_center_x, world_center_y))
+    if(!world_place_generator.world_controller_.createWorld(world_center_x, world_center_y))
     {
         std::cout << "WorldEditer::loadData : " << std::endl <<
           "createWorld failed!" << std::endl;
@@ -464,7 +397,7 @@ bool WorldEditer::loadData()
 
     for(const WallData &wall_data : world_generate_data_manager_.wall_data_vec)
     {
-        if(!world_place_generator_.world_controller_.createWall(
+        if(!world_place_generator.world_controller_.createWall(
               wall_data.id,
               wall_data.type))
         {
@@ -474,7 +407,7 @@ bool WorldEditer::loadData()
             return false;
         }
 
-        if(!world_place_generator_.world_controller_.setWallBoundaryPolygon(
+        if(!world_place_generator.world_controller_.setWallBoundaryPolygon(
               wall_data.id,
               wall_data.type,
               wall_data.boundary_polygon))
@@ -485,7 +418,7 @@ bool WorldEditer::loadData()
             return false;
         }
 
-        if(!world_place_generator_.setWallBoundaryPolygon(
+        if(!world_place_generator.setWallBoundaryPolygon(
               wall_data.boundary_polygon))
         {
             std::cout << "WorldEditer::loadData : " << std::endl <<
@@ -497,7 +430,7 @@ bool WorldEditer::loadData()
 
     for(const WallRoomContainerData wall_roomcontainer_data : world_generate_data_manager_.wall_roomcontainer_data_vec)
     {
-        if(!placeWallRoomContainer(
+        if(!world_place_generator.placeWallRoomContainer(
               wall_roomcontainer_data.on_wall_boundary_idx,
               wall_roomcontainer_data.on_wall_boundary_start_position,
               wall_roomcontainer_data.target_width,
@@ -510,16 +443,16 @@ bool WorldEditer::loadData()
         }
     }
 
-    world_place_generator_.team_x_direction_person_num_ =
+    world_place_generator.team_x_direction_person_num_ =
       world_generate_data_manager_.free_roomcontainer_data.team_x_direction_person_num;
-    world_place_generator_.team_y_direction_person_num_ =
+    world_place_generator.team_y_direction_person_num_ =
       world_generate_data_manager_.free_roomcontainer_data.team_y_direction_person_num;
-    world_place_generator_.team_dist_ =
+    world_place_generator.team_dist_ =
       world_generate_data_manager_.free_roomcontainer_data.team_dist;
-    world_place_generator_.person_edge_ =
+    world_place_generator.person_edge_ =
       world_generate_data_manager_.free_roomcontainer_data.person_edge;
 
-    if(!generateFreeRoomContainer(
+    if(!world_place_generator.generateFreeRoomContainer(
           world_generate_data_manager_.free_roomcontainer_data.team_x_direction_person_num,
           world_generate_data_manager_.free_roomcontainer_data.team_y_direction_person_num,
           world_generate_data_manager_.free_roomcontainer_data.team_dist,
@@ -535,6 +468,7 @@ bool WorldEditer::loadData()
 }
 
 bool WorldEditer::setWallRoomContainerPosition(
+    WorldPlaceGenerator &world_place_generator,
     const size_t &wall_roomcontainer_id,
     const float &new_position_x,
     const float &new_position_y,
@@ -542,7 +476,7 @@ bool WorldEditer::setWallRoomContainerPosition(
 {
     const float start_change_edge_error = 1.0;
 
-    if(!readData())
+    if(!readData(world_place_generator))
     {
         std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
           "Input :\n" <<
@@ -555,7 +489,7 @@ bool WorldEditer::setWallRoomContainerPosition(
         return false;
     }
 
-    EasyNode* wall_roomcontainer_node = world_place_generator_.world_controller_.findNode(
+    EasyNode* wall_roomcontainer_node = world_place_generator.world_controller_.findNode(
         wall_roomcontainer_id, NodeType::RoomContainer);
 
     if(wall_roomcontainer_node == nullptr)
@@ -611,15 +545,15 @@ bool WorldEditer::setWallRoomContainerPosition(
 
     const size_t &wall_id = wall_roomcontainer_data.wall_id;
     const float &wall_length =
-      world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_[wall_id].boundary_length_;
+      world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_[wall_id].boundary_length_;
 
     if(wall_roomcontainer_data.on_wall_boundary_start_position < start_change_edge_error &&
         new_position_in_parent.y > wall_roomcontainer_data.real_height)
     {
         wall_roomcontainer_data.on_wall_boundary_idx =
           (wall_roomcontainer_data.on_wall_boundary_idx - 1 +
-           world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_.size()) %
-          world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_.size();
+           world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size()) %
+          world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size();
 
         wall_roomcontainer_data.on_wall_boundary_start_position = 0;
     }
@@ -629,11 +563,11 @@ bool WorldEditer::setWallRoomContainerPosition(
     {
         wall_roomcontainer_data.on_wall_boundary_idx =
           (wall_roomcontainer_data.on_wall_boundary_idx + 1) %
-          world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_.size();
+          world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size();
 
         wall_roomcontainer_data.on_wall_boundary_start_position =
-          world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_[
-          (wall_id + 1) % world_place_generator_.boundary_line_list_manager_.boundary_line_list_vec_.size()].boundary_length_;
+          world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_[
+          (wall_id + 1) % world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size()].boundary_length_;
     }
     else
     {
@@ -641,7 +575,7 @@ bool WorldEditer::setWallRoomContainerPosition(
           new_position_in_parent.x - mouse_pos_x_direction_delta;
     }
 
-    if(!loadData())
+    if(!loadData(world_place_generator))
     {
         std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
           "Input :\n" <<

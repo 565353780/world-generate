@@ -22,7 +22,8 @@ enum NodeType
     Furniture = 9,
     Boundary = 10,
     Door = 11,
-    Space = 12
+    Window = 12,
+    Space = 13
 };
 
 class EasyNode

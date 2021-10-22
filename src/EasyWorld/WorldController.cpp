@@ -14,6 +14,8 @@ bool WorldController::reset()
     wall_pair_vec_.clear();
     roomcontainer_pair_vec_.clear();
     room_pair_vec_.clear();
+    door_pair_vec_.clear();
+    window_pair_vec_.clear();
     team_pair_vec_.clear();
     person_pair_vec_.clear();
     furniture_pair_vec_.clear();
@@ -603,6 +605,388 @@ bool WorldController::setRoomBoundaryPolygonPointPosition(
           point_new_position_in_world.x << "," <<
           point_new_position_in_world.y << "]" << std::endl <<
           "setNodeBoundaryPolygonPointPosition for room failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::createDoor(
+    const size_t &door_id,
+    const NodeType &door_type,
+    const size_t &on_room_id,
+    const NodeType &on_room_type,
+    const size_t &on_room_boundary_idx)
+{
+    if(door_type != NodeType::Door)
+    {
+        std::cout << "WorldController::createDoor : " << std::endl <<
+          "Input :\n" <<
+          "\tdoor_id = " << door_id << std::endl <<
+          "\tdoor_type = " << door_type << std::endl <<
+          "\ton_room_id = " << on_room_id << std::endl <<
+          "\ton_room_type = " << on_room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "this type is not the door type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.createNode(
+          door_id, door_type, on_room_id, on_room_type, on_room_boundary_idx))
+    {
+        std::cout << "WorldController::createDoor : " << std::endl <<
+          "Input :\n" <<
+          "\tdoor_id = " << door_id << std::endl <<
+          "\tdoor_type = " << door_type << std::endl <<
+          "\ton_room_id = " << on_room_id << std::endl <<
+          "\ton_room_type = " << on_room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "createNode for door failed!" << std::endl;
+
+        return false;
+    }
+
+    std::pair<size_t, NodeType> new_door_pair;
+    new_door_pair.first = door_id;
+    new_door_pair.second = door_type;
+
+    door_pair_vec_.emplace_back(new_door_pair);
+
+    return true;
+}
+
+bool WorldController::setDoorAxisCenterPositionInParent(
+    const size_t &door_id,
+    const NodeType &door_type,
+    const EasyPoint2D &axis_new_center_position_in_parent)
+{
+    if(door_type != NodeType::Door)
+    {
+        std::cout << "WorldController::setDoorAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tdoor_id = " << door_id << std::endl <<
+          "\tdoor_type = " << door_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "this type is not the door type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInParent(
+          door_id,
+          door_type,
+          axis_new_center_position_in_parent,
+          true,
+          true,
+          true))
+    {
+        std::cout << "WorldController::setDoorAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\tdoor_id = " << door_id << std::endl <<
+          "\tdoor_type = " << door_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this door node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setDoorAxisCenterPositionInWorld(
+    const size_t &door_id,
+    const NodeType &door_type,
+    const EasyPoint2D &axis_new_center_position_in_world)
+{
+    if(door_type != NodeType::Door)
+    {
+        std::cout << "WorldController::setDoorAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tdoor_id = " << door_id << std::endl <<
+          "\tdoor_type = " << door_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "this type is not the door type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInWorld(
+          door_id,
+          door_type,
+          axis_new_center_position_in_world,
+          true,
+          true,
+          false))
+    {
+        std::cout << "WorldController::setDoorAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\tdoor_id = " << door_id << std::endl <<
+          "\tdoor_type = " << door_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this door node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setDoorBoundaryPolygon(
+    const size_t &door_id,
+    const NodeType &door_type,
+    const EasyPolygon2D &door_boundary_polygon)
+{
+    if(door_type != NodeType::Door)
+    {
+        std::cout << "WorldController::setDoorBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\tdoor_id = " << door_id << std::endl <<
+          "\tdoor_type = " << door_type << std::endl <<
+          "this type is not the door type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygon(door_id, door_type, door_boundary_polygon))
+    {
+        std::cout << "WorldController::setDoorBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\tdoor_id = " << door_id << std::endl <<
+          "\tdoor_type = " << door_type << std::endl <<
+          "setNodeBoundaryPolygon for door failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setDoorBoundaryPolygonPointPosition(
+    const size_t &door_id,
+    const NodeType &door_type,
+    const size_t &point_idx,
+    const EasyPoint2D &point_new_position_in_world)
+{
+    if(door_type != NodeType::Door)
+    {
+        std::cout << "WorldController::setDoorBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\tdoor_id = " << door_id << std::endl <<
+          "\tdoor_type = " << door_type << std::endl <<
+          "this type is not the door type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygonPointPosition(
+          door_id, door_type, point_idx, point_new_position_in_world))
+    {
+        std::cout << "WorldController::setDoorBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\tdoor_id = " << door_id << std::endl <<
+          "\tdoor_type = " << door_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setNodeBoundaryPolygonPointPosition for door failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::createWindow(
+    const size_t &window_id,
+    const NodeType &window_type,
+    const size_t &on_room_id,
+    const NodeType &on_room_type,
+    const size_t &on_room_boundary_idx)
+{
+    if(window_type != NodeType::Window)
+    {
+        std::cout << "WorldController::createWindow : " << std::endl <<
+          "Input :\n" <<
+          "\twindow_id = " << window_id << std::endl <<
+          "\twindow_type = " << window_type << std::endl <<
+          "\ton_room_id = " << on_room_id << std::endl <<
+          "\ton_room_type = " << on_room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "this type is not the window type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.createNode(
+          window_id, window_type, on_room_id, on_room_type, on_room_boundary_idx))
+    {
+        std::cout << "WorldController::createWindow : " << std::endl <<
+          "Input :\n" <<
+          "\twindow_id = " << window_id << std::endl <<
+          "\twindow_type = " << window_type << std::endl <<
+          "\ton_room_id = " << on_room_id << std::endl <<
+          "\ton_room_type = " << on_room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "createNode for window failed!" << std::endl;
+
+        return false;
+    }
+
+    std::pair<size_t, NodeType> new_window_pair;
+    new_window_pair.first = window_id;
+    new_window_pair.second = window_type;
+
+    window_pair_vec_.emplace_back(new_window_pair);
+
+    return true;
+}
+
+bool WorldController::setWindowAxisCenterPositionInParent(
+    const size_t &window_id,
+    const NodeType &window_type,
+    const EasyPoint2D &axis_new_center_position_in_parent)
+{
+    if(window_type != NodeType::Window)
+    {
+        std::cout << "WorldController::setWindowAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\twindow_id = " << window_id << std::endl <<
+          "\twindow_type = " << window_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "this type is not the window type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInParent(
+          window_id,
+          window_type,
+          axis_new_center_position_in_parent,
+          true,
+          true,
+          true))
+    {
+        std::cout << "WorldController::setWindowAxisCenterPositionInParent : " << std::endl <<
+          "Input :\n" <<
+          "\twindow_id = " << window_id << std::endl <<
+          "\twindow_type = " << window_type << std::endl <<
+          "\taxis_new_position_in_parent = [" << axis_new_center_position_in_parent.x << "," <<
+          axis_new_center_position_in_parent.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this window node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setWindowAxisCenterPositionInWorld(
+    const size_t &window_id,
+    const NodeType &window_type,
+    const EasyPoint2D &axis_new_center_position_in_world)
+{
+    if(window_type != NodeType::Window)
+    {
+        std::cout << "WorldController::setWindowAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\twindow_id = " << window_id << std::endl <<
+          "\twindow_type = " << window_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "this type is not the window type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisCenterPositionInWorld(
+          window_id,
+          window_type,
+          axis_new_center_position_in_world,
+          true,
+          true,
+          false))
+    {
+        std::cout << "WorldController::setWindowAxisCenterPositionInWorld : " << std::endl <<
+          "Input :\n" <<
+          "\twindow_id = " << window_id << std::endl <<
+          "\twindow_type = " << window_type << std::endl <<
+          "\taxis_new_position_in_world = [" << axis_new_center_position_in_world.x << "," <<
+          axis_new_center_position_in_world.y << "]" << std::endl <<
+          "setNodeAxisCenterPositionInParent for this window node failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setWindowBoundaryPolygon(
+    const size_t &window_id,
+    const NodeType &window_type,
+    const EasyPolygon2D &window_boundary_polygon)
+{
+    if(window_type != NodeType::Window)
+    {
+        std::cout << "WorldController::setWindowBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\twindow_id = " << window_id << std::endl <<
+          "\twindow_type = " << window_type << std::endl <<
+          "this type is not the window type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygon(window_id, window_type, window_boundary_polygon))
+    {
+        std::cout << "WorldController::setWindowBoundaryPolygon : " << std::endl <<
+          "Input :\n" <<
+          "\twindow_id = " << window_id << std::endl <<
+          "\twindow_type = " << window_type << std::endl <<
+          "setNodeBoundaryPolygon for window failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::setWindowBoundaryPolygonPointPosition(
+    const size_t &window_id,
+    const NodeType &window_type,
+    const size_t &point_idx,
+    const EasyPoint2D &point_new_position_in_world)
+{
+    if(window_type != NodeType::Window)
+    {
+        std::cout << "WorldController::setWindowBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twindow_id = " << window_id << std::endl <<
+          "\twindow_type = " << window_type << std::endl <<
+          "this type is not the window type!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygonPointPosition(
+          window_id, window_type, point_idx, point_new_position_in_world))
+    {
+        std::cout << "WorldController::setWindowBoundaryPolygonPointPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twindow_id = " << window_id << std::endl <<
+          "\twindow_type = " << window_type << std::endl <<
+          "\tpoint_idx = " << point_idx << std::endl <<
+          "\tpoint_new_position_in_world = [" <<
+          point_new_position_in_world.x << "," <<
+          point_new_position_in_world.y << "]" << std::endl <<
+          "setNodeBoundaryPolygonPointPosition for window failed!" << std::endl;
 
         return false;
     }
@@ -1868,6 +2252,295 @@ bool WorldController::createTeamForRoom(
     return true;
 }
 
+bool WorldController::createWindowForRoom(
+    const size_t &room_id,
+    const NodeType &room_type,
+    const size_t &on_room_boundary_idx,
+    const float &window_width,
+    const EasyAxis2D &window_axis_in_parent)
+{
+    const float window_small_height = 0.00001;
+
+    if(room_type != NodeType::WallRoom &&
+        room_type != NodeType::FreeRoom)
+    {
+        std::cout << "WorldController::createWindowForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "\twindow_width = " << window_width << std::endl <<
+          "\twindow_axis_in_parent :" << std::endl;
+        window_axis_in_parent.outputInfo(1);
+        std::cout <<
+          "this type is not the room type!" << std::endl;
+
+        return false;
+    }
+
+    if(!haveThisNode(room_id, room_type))
+    {
+        std::cout << "WorldController::createWindowForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "\twindow_width = " << window_width << std::endl <<
+          "\twindow_axis_in_parent :" << std::endl;
+        std::cout <<
+          "this room node not exist!" << std::endl;
+
+        return false;
+    }
+
+    if(window_width <= 0)
+    {
+        std::cout << "WorldController::createWindowForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "\twindow_width = " << window_width << std::endl <<
+          "\twindow_axis_in_parent :" << std::endl;
+        std::cout <<
+          "this window size not valid!" << std::endl;
+
+        return false;
+    }
+
+    bool find_exist_window = false;
+    size_t new_window_id = 0;
+    for(const std::pair<size_t, NodeType> &window_pair : window_pair_vec_)
+    {
+        if(window_pair.second != NodeType::Window)
+        {
+            continue;
+        }
+
+        new_window_id = std::max(new_window_id, window_pair.first);
+        find_exist_window = true;
+    }
+    if(find_exist_window)
+    {
+        ++new_window_id;
+    }
+
+    if(!world_tree_.createNode(new_window_id, NodeType::Window, room_id, room_type, on_room_boundary_idx))
+    {
+        std::cout << "WorldController::createWindowForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "\twindow_width = " << window_width << std::endl <<
+          "\twindow_axis_in_parent :" << std::endl;
+        std::cout <<
+          "createNode for this window node failed!" << std::endl;
+
+        return false;
+    }
+
+    std::pair<size_t, NodeType> new_window_pair;
+    new_window_pair.first = new_window_id;
+    new_window_pair.second = NodeType::Window;
+
+    window_pair_vec_.emplace_back(new_window_pair);
+
+    EasyPolygon2D window_node_boundary_polygon;
+    window_node_boundary_polygon.point_list.resize(4);
+    window_node_boundary_polygon.point_list[0].setPosition(0, 0);
+    window_node_boundary_polygon.point_list[1].setPosition(window_width, 0);
+    window_node_boundary_polygon.point_list[2].setPosition(window_width, window_small_height);
+    window_node_boundary_polygon.point_list[3].setPosition(0, window_small_height);
+    window_node_boundary_polygon.setAntiClockWise();
+
+    if(!world_tree_.setNodeBoundaryPolygon(new_window_id, NodeType::Window, window_node_boundary_polygon))
+    {
+        std::cout << "WorldController::createWindowForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "\twindow_width = " << window_width << std::endl <<
+          "\twindow_axis_in_parent :" << std::endl;
+        std::cout <<
+          "setNodeBoundaryPolygon for new window failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisInParent(new_window_id, NodeType::Window, window_axis_in_parent, true))
+    {
+        std::cout << "WorldController::createWindowForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "\twindow_width = " << window_width << std::endl <<
+          "\twindow_axis_in_parent :" << std::endl;
+        std::cout <<
+          "setNodeAxisInParent for new window failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::createDoorForRoom(
+    const size_t &room_id,
+    const NodeType &room_type,
+    const size_t &on_room_boundary_idx,
+    const float &door_width,
+    const EasyAxis2D &door_axis_in_parent,
+    const bool &is_handle_on_right_from_outside)
+{
+    const float door_small_height = 0.00001;
+
+    if(room_type != NodeType::WallRoom &&
+        room_type != NodeType::FreeRoom)
+    {
+        std::cout << "WorldController::createDoorForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "\tdoor_width = " << door_width << std::endl <<
+          "\tdoor_axis_in_parent :" << std::endl;
+        door_axis_in_parent.outputInfo(1);
+        std::cout <<
+          "\tis_handle_on_right_from_outside = " << is_handle_on_right_from_outside << std::endl <<
+          "this type is not the room type!" << std::endl;
+
+        return false;
+    }
+
+    if(!haveThisNode(room_id, room_type))
+    {
+        std::cout << "WorldController::createDoorForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "\tdoor_width = " << door_width << std::endl <<
+          "\tdoor_axis_in_parent :" << std::endl;
+        std::cout <<
+          "\tis_handle_on_right_from_outside = " << is_handle_on_right_from_outside << std::endl <<
+          "this room node not exist!" << std::endl;
+
+        return false;
+    }
+
+    if(door_width <= 0)
+    {
+        std::cout << "WorldController::createDoorForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "\tdoor_width = " << door_width << std::endl <<
+          "\tdoor_axis_in_parent :" << std::endl;
+        std::cout <<
+          "\tis_handle_on_right_from_outside = " << is_handle_on_right_from_outside << std::endl <<
+          "this door size not valid!" << std::endl;
+
+        return false;
+    }
+
+    bool find_exist_door = false;
+    size_t new_door_id = 0;
+    for(const std::pair<size_t, NodeType> &door_pair : door_pair_vec_)
+    {
+        if(door_pair.second != NodeType::Door)
+        {
+            continue;
+        }
+
+        new_door_id = std::max(new_door_id, door_pair.first);
+        find_exist_door = true;
+    }
+    if(find_exist_door)
+    {
+        ++new_door_id;
+    }
+
+    if(!world_tree_.createNode(new_door_id, NodeType::Door, room_id, room_type, on_room_boundary_idx))
+    {
+        std::cout << "WorldController::createDoorForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "\tdoor_width = " << door_width << std::endl <<
+          "\tdoor_axis_in_parent :" << std::endl;
+        std::cout <<
+          "\tis_handle_on_right_from_outside = " << is_handle_on_right_from_outside << std::endl <<
+          "createNode for this door node failed!" << std::endl;
+
+        return false;
+    }
+
+    std::pair<size_t, NodeType> new_door_pair;
+    new_door_pair.first = new_door_id;
+    new_door_pair.second = NodeType::Door;
+
+    door_pair_vec_.emplace_back(new_door_pair);
+
+    EasyPolygon2D door_node_boundary_polygon;
+    door_node_boundary_polygon.point_list.resize(6);
+    door_node_boundary_polygon.point_list[0].setPosition(0, 0);
+    door_node_boundary_polygon.point_list[1].setPosition(door_width, 0);
+    if(is_handle_on_right_from_outside)
+    {
+        door_node_boundary_polygon.point_list[2].setPosition(door_width, door_small_height);
+        door_node_boundary_polygon.point_list[3].setPosition(door_small_height, door_small_height);
+        door_node_boundary_polygon.point_list[4].setPosition(door_small_height, door_width + door_small_height);
+        door_node_boundary_polygon.point_list[5].setPosition(0, door_width + door_small_height);
+    }
+    else
+    {
+        door_node_boundary_polygon.point_list[2].setPosition(door_width, door_width + door_small_height);
+        door_node_boundary_polygon.point_list[3].setPosition(door_width - door_small_height, door_width + door_small_height);
+        door_node_boundary_polygon.point_list[4].setPosition(door_width - door_small_height, door_small_height);
+        door_node_boundary_polygon.point_list[5].setPosition(0, door_small_height);
+    }
+    door_node_boundary_polygon.setAntiClockWise();
+
+    if(!world_tree_.setNodeBoundaryPolygon(new_door_id, NodeType::Door, door_node_boundary_polygon))
+    {
+        std::cout << "WorldController::createDoorForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "\tdoor_width = " << door_width << std::endl <<
+          "\tdoor_axis_in_parent :" << std::endl;
+        std::cout <<
+          "\tis_handle_on_right_from_outside = " << is_handle_on_right_from_outside << std::endl <<
+          "setNodeBoundaryPolygon for new door failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisInParent(new_door_id, NodeType::Door, door_axis_in_parent, true))
+    {
+        std::cout << "WorldController::createDoorForRoom : " << std::endl <<
+          "Input :\n" <<
+          "\troom_id = " << room_id << std::endl <<
+          "\troom_type = " << room_type << std::endl <<
+          "\ton_room_boundary_idx = " << on_room_boundary_idx << std::endl <<
+          "\tdoor_width = " << door_width << std::endl <<
+          "\tdoor_axis_in_parent :" << std::endl;
+        std::cout <<
+          "\tis_handle_on_right_from_outside = " << is_handle_on_right_from_outside << std::endl <<
+          "setNodeAxisInParent for new door failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 bool WorldController::createRoomForRoomContainer(
     const size_t &roomcontainer_id,
     const NodeType &roomcontainer_type,
@@ -2788,6 +3461,218 @@ bool WorldController::getRoomSpaceNodeVec(
         }
 
         room_space_node_vec.emplace_back(room_space_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getDoorNodeVec(
+    std::vector<EasyNode*> &door_node_vec)
+{
+    door_node_vec.clear();
+
+    if(door_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    for(const std::pair<size_t, NodeType> &door_pair : door_pair_vec_)
+    {
+        EasyNode* door_node = findNode(door_pair.first, door_pair.second);
+
+        if(door_node == nullptr)
+        {
+            std::cout << "WorldController::getDoorNodeVec : " << std::endl <<
+              "get door : id = " << door_pair.first <<
+              ", type = " << door_pair.second <<
+              " failed!" << std::endl;
+
+            return false;
+        }
+
+        door_node_vec.emplace_back(door_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getDoorBoundaryNodeVecVec(
+    std::vector<std::vector<EasyNode*>> &door_boundary_node_vec_vec)
+{
+    door_boundary_node_vec_vec.clear();
+
+    if(door_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> door_node_vec;
+
+    if(!getDoorNodeVec(door_node_vec))
+    {
+        std::cout << "WorldController::getDoorBoundaryNodeVec : " << std::endl <<
+          "getDoorNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* door_node : door_node_vec)
+    {
+        std::vector<EasyNode*> door_boundary_node_vec;
+        std::vector<EasyNode*> door_child_node_vec = door_node->getChildNodeVec();
+
+        for(EasyNode* door_child_node : door_child_node_vec)
+        {
+            if(door_child_node->getNodeType() == NodeType::Boundary)
+            {
+                door_boundary_node_vec.emplace_back(door_child_node);
+            }
+        }
+
+        door_boundary_node_vec_vec.emplace_back(door_boundary_node_vec);
+    }
+    return true;
+}
+
+bool WorldController::getDoorSpaceNodeVec(
+    std::vector<EasyNode*> &door_space_node_vec)
+{
+    door_space_node_vec.clear();
+
+    if(door_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> door_node_vec;
+
+    if(!getDoorNodeVec(door_node_vec))
+    {
+        std::cout << "WorldController::getDoorSpaceNodeVec : " << std::endl <<
+          "getDoorNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* door_node : door_node_vec)
+    {
+        EasyNode* door_space_node = door_node->findChild(0, NodeType::Space);
+
+        if(door_space_node == nullptr)
+        {
+            std::cout << "WorldController::getDoorNodeVec : " << std::endl <<
+              "get door space node failed!" << std::endl;
+
+            return false;
+        }
+
+        door_space_node_vec.emplace_back(door_space_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getWindowNodeVec(
+    std::vector<EasyNode*> &window_node_vec)
+{
+    window_node_vec.clear();
+
+    if(window_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    for(const std::pair<size_t, NodeType> &window_pair : window_pair_vec_)
+    {
+        EasyNode* window_node = findNode(window_pair.first, window_pair.second);
+
+        if(window_node == nullptr)
+        {
+            std::cout << "WorldController::getWindowNodeVec : " << std::endl <<
+              "get window : id = " << window_pair.first <<
+              ", type = " << window_pair.second <<
+              " failed!" << std::endl;
+
+            return false;
+        }
+
+        window_node_vec.emplace_back(window_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getWindowBoundaryNodeVecVec(
+    std::vector<std::vector<EasyNode*>> &window_boundary_node_vec_vec)
+{
+    window_boundary_node_vec_vec.clear();
+
+    if(window_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> window_node_vec;
+
+    if(!getWindowNodeVec(window_node_vec))
+    {
+        std::cout << "WorldController::getWindowBoundaryNodeVec : " << std::endl <<
+          "getWindowNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* window_node : window_node_vec)
+    {
+        std::vector<EasyNode*> window_boundary_node_vec;
+        std::vector<EasyNode*> window_child_node_vec = window_node->getChildNodeVec();
+
+        for(EasyNode* window_child_node : window_child_node_vec)
+        {
+            if(window_child_node->getNodeType() == NodeType::Boundary)
+            {
+                window_boundary_node_vec.emplace_back(window_child_node);
+            }
+        }
+
+        window_boundary_node_vec_vec.emplace_back(window_boundary_node_vec);
+    }
+    return true;
+}
+
+bool WorldController::getWindowSpaceNodeVec(
+    std::vector<EasyNode*> &window_space_node_vec)
+{
+    window_space_node_vec.clear();
+
+    if(window_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> window_node_vec;
+
+    if(!getWindowNodeVec(window_node_vec))
+    {
+        std::cout << "WorldController::getWindowSpaceNodeVec : " << std::endl <<
+          "getWindowNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* window_node : window_node_vec)
+    {
+        EasyNode* window_space_node = window_node->findChild(0, NodeType::Space);
+
+        if(window_space_node == nullptr)
+        {
+            std::cout << "WorldController::getWindowNodeVec : " << std::endl <<
+              "get window space node failed!" << std::endl;
+
+            return false;
+        }
+
+        window_space_node_vec.emplace_back(window_space_node);
     }
 
     return true;

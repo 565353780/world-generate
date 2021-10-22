@@ -7,8 +7,10 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPen>
+#include <QBrush>
 #include <QMouseEvent>
 #include <QPoint>
+#include <QPolygon>
 
 #include <time.h>
 
@@ -51,6 +53,8 @@ private:
         WorldController &world_controller);
     bool drawWallSpaceBoundary(
         WorldController &world_controller);
+    bool drawWallInside(
+        WorldController &world_controller);
 
     bool drawRoomContainerBoundaryAxis(
         WorldController &world_controller);
@@ -64,6 +68,20 @@ private:
     bool drawRoomBoundaryPolygon(
         WorldController &world_controller);
     bool drawRoomSpaceBoundary(
+        WorldController &world_controller);
+
+    bool drawDoorBoundaryAxis(
+        WorldController &world_controller);
+    bool drawDoorBoundaryPolygon(
+        WorldController &world_controller);
+    bool drawDoorSpaceBoundary(
+        WorldController &world_controller);
+
+    bool drawWindowBoundaryAxis(
+        WorldController &world_controller);
+    bool drawWindowBoundaryPolygon(
+        WorldController &world_controller);
+    bool drawWindowSpaceBoundary(
         WorldController &world_controller);
 
     bool drawTeamBoundaryAxis(
@@ -103,11 +121,21 @@ private:
     float axis_length_;
     float zoom_;
     QColor wall_color_;
+    QColor wall_brush_color_;
     QColor roomcontainer_color_;
+    QColor roomcontainer_brush_color_;
     QColor room_color_;
+    QColor room_brush_color_;
+    QColor door_color_;
+    QColor door_brush_color_;
+    QColor window_color_;
+    QColor window_brush_color_;
     QColor team_color_;
+    QColor team_brush_color_;
     QColor person_color_;
+    QColor person_brush_color_;
     QColor furniture_color_;
+    QColor furniture_brush_color_;
 
     timespec t_spc_;
     long t_start_;

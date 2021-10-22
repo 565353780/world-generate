@@ -97,11 +97,67 @@ public:
         const size_t &point_idx,
         const EasyPoint2D &point_new_position_in_world);
 
+    bool createDoor(
+        const size_t &door_id,
+        const NodeType &door_type,
+        const size_t &on_room_id,
+        const NodeType &on_room_type,
+        const size_t &on_room_boundary_idx);
+
+    bool setDoorAxisCenterPositionInParent(
+        const size_t &door_id,
+        const NodeType &door_type,
+        const EasyPoint2D &axis_new_center_position_in_parent);
+
+    bool setDoorAxisCenterPositionInWorld(
+        const size_t &door_id,
+        const NodeType &door_type,
+        const EasyPoint2D &axis_new_center_position_in_world);
+
+    bool setDoorBoundaryPolygon(
+        const size_t &door_id,
+        const NodeType &door_type,
+        const EasyPolygon2D &door_boundary_polygon);
+
+    bool setDoorBoundaryPolygonPointPosition(
+        const size_t &door_id,
+        const NodeType &door_type,
+        const size_t &point_idx,
+        const EasyPoint2D &point_new_position_in_world);
+
+    bool createWindow(
+        const size_t &window_id,
+        const NodeType &window_type,
+        const size_t &on_room_id,
+        const NodeType &on_room_type,
+        const size_t &on_room_boundary_idx);
+
+    bool setWindowAxisCenterPositionInParent(
+        const size_t &window_id,
+        const NodeType &window_type,
+        const EasyPoint2D &axis_new_center_position_in_parent);
+
+    bool setWindowAxisCenterPositionInWorld(
+        const size_t &window_id,
+        const NodeType &window_type,
+        const EasyPoint2D &axis_new_center_position_in_world);
+
+    bool setWindowBoundaryPolygon(
+        const size_t &window_id,
+        const NodeType &window_type,
+        const EasyPolygon2D &window_boundary_polygon);
+
+    bool setWindowBoundaryPolygonPointPosition(
+        const size_t &window_id,
+        const NodeType &window_type,
+        const size_t &point_idx,
+        const EasyPoint2D &point_new_position_in_world);
+
     bool createTeam(
         const size_t &team_id,
         const NodeType &team_type,
-        const size_t &on_wall_id,
-        const NodeType &on_wall_type);
+        const size_t &on_room_id,
+        const NodeType &on_room_type);
 
     bool setTeamAxisCenterPositionInParent(
         const size_t &team_id,
@@ -206,6 +262,21 @@ public:
         const size_t &person_y_direction_num,
         const bool &is_face_horizontal);
 
+    bool createWindowForRoom(
+        const size_t &room_id,
+        const NodeType &room_type,
+        const size_t &on_room_boundary_idx,
+        const float &window_width,
+        const EasyAxis2D &window_axis_in_parent);
+
+    bool createDoorForRoom(
+        const size_t &room_id,
+        const NodeType &room_type,
+        const size_t &on_room_boundary_idx,
+        const float &door_width,
+        const EasyAxis2D &door_axis_in_parent,
+        const bool &is_handle_on_right_from_outside);
+
     bool createRoomForRoomContainer(
         const size_t &roomcontainer_id,
         const NodeType &roomcontainer_type,
@@ -283,6 +354,24 @@ public:
     bool getRoomSpaceNodeVec(
         std::vector<EasyNode*> &room_space_node_vec);
 
+    bool getDoorNodeVec(
+        std::vector<EasyNode*> &door_node_vec);
+
+    bool getDoorBoundaryNodeVecVec(
+        std::vector<std::vector<EasyNode*>> &door_boundary_node_vec_vec);
+
+    bool getDoorSpaceNodeVec(
+        std::vector<EasyNode*> &door_space_node_vec);
+
+    bool getWindowNodeVec(
+        std::vector<EasyNode*> &window_node_vec);
+
+    bool getWindowBoundaryNodeVecVec(
+        std::vector<std::vector<EasyNode*>> &window_boundary_node_vec_vec);
+
+    bool getWindowSpaceNodeVec(
+        std::vector<EasyNode*> &window_space_node_vec);
+
     bool getTeamNodeVec(
         std::vector<EasyNode*> &team_node_vec);
 
@@ -318,6 +407,8 @@ private:
     std::vector<std::pair<size_t, NodeType>> wall_pair_vec_;
     std::vector<std::pair<size_t, NodeType>> roomcontainer_pair_vec_;
     std::vector<std::pair<size_t, NodeType>> room_pair_vec_;
+    std::vector<std::pair<size_t, NodeType>> door_pair_vec_;
+    std::vector<std::pair<size_t, NodeType>> window_pair_vec_;
     std::vector<std::pair<size_t, NodeType>> team_pair_vec_;
     std::vector<std::pair<size_t, NodeType>> person_pair_vec_;
     std::vector<std::pair<size_t, NodeType>> furniture_pair_vec_;

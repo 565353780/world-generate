@@ -14,7 +14,6 @@
 
 #include <time.h>
 
-#include "EasyWorld/WorldSplitGenerator.h"
 #include "EasyWorld/WorldPlaceGenerator.h"
 #include "EasyWorld/WorldEditer.h"
 
@@ -119,7 +118,6 @@ private:
     Ui::EasyWorldWidget *ui;
 
     WorldController world_controller_;
-    WorldSplitGenerator world_split_generator_;
     WorldPlaceGenerator world_place_generator_;
     WorldEditer world_editer_;
 

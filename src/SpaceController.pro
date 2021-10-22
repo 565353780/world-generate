@@ -80,7 +80,6 @@ SOURCES += \
     EasyWorld/EasyNode.cpp \
     EasyWorld/EasyTree.cpp \
     EasyWorld/WorldController.cpp \
-    EasyWorld/WorldSplitGenerator.cpp \
     EasyWorld/WorldPlaceGenerator.cpp \
     EasyWorld/WorldDescriptor.cpp \
     EasyWorld/WorldEditer.cpp \
@@ -91,7 +90,6 @@ HEADERS += \
     EasyWorld/EasyNode.h \
     EasyWorld/EasyTree.h \
     EasyWorld/WorldController.h \
-    EasyWorld/WorldSplitGenerator.h \
     EasyWorld/WorldPlaceGenerator.h \
     EasyWorld/WorldDescriptor.h \
     EasyWorld/WorldEditer.h \

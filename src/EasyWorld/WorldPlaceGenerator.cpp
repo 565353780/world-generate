@@ -1268,7 +1268,12 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
     roomcontainer_axis.setXDirection(1, 0);
     roomcontainer_axis.setCenter(valid_roomcontainer_start_position, 0);
 
+    std::vector<std::string> wall_name_vec;
+    wall_name_vec.resize(room_num, "Auto Generate WallRoom");
+
     if(!world_controller.createWallRoomContainerForWall(
+          "Auto Generate Wall RoomContainer",
+          wall_name_vec,
           0,
           NodeType::OuterWall,
           boundary_idx,
@@ -1342,11 +1347,28 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
     window_axis.setCenter((room_width - window_width) / 2.0, 0);
     team_axis.setCenter(team_center_x, team_center_y);
 
+    std::vector<std::vector<std::string>> person_name_matrix;
+    person_name_matrix.resize(person_x_direction_num);
+    for(std::vector<std::string> &person_name_row : person_name_matrix)
+    {
+        person_name_row.resize(person_y_direction_num, "Auto Generate Person");
+    }
+
+    std::vector<std::vector<std::string>> furniture_name_matrix;
+    furniture_name_matrix.resize(person_x_direction_num);
+    for(std::vector<std::string> &furniture_name_row : furniture_name_matrix)
+    {
+        furniture_name_row.resize(person_y_direction_num, "Auto Generate Person");
+    }
+
     for(size_t i = 0; i < room_num; ++i)
     {
         const bool is_face_horizontal = (std::rand() % 2) == 1;
 
         if(!world_controller.createTeamForRoom(
+              "Auto Generate Team",
+              person_name_matrix,
+              furniture_name_matrix,
               current_new_room_id_,
               NodeType::WallRoom,
               team_width,
@@ -1383,6 +1405,7 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
         }
 
         if(!world_controller.createDoorForRoom(
+              "Auto Generate Door",
               current_new_room_id_,
               NodeType::WallRoom,
               2,
@@ -1402,6 +1425,7 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
         }
 
         if(!world_controller.createWindowForRoom(
+              "Auto Generate Window",
               current_new_room_id_,
               NodeType::WallRoom,
               0,
@@ -1652,8 +1676,6 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
         EasyAxis2D room_axis;
         room_axis.setXDirection(1, 0);
 
-        std::string team_name = "Auto Generate Team";
-
         std::vector<std::string> free_name_vec;
         free_name_vec.resize(1);
         free_name_vec[0] = "Auto Generate FreeRoom";
@@ -1692,7 +1714,7 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
                     1);
 
                 world_controller.createTeamForRoom(
-                    team_name,
+                    "Auto Generate Team",
                     person_name_matrix,
                     furniture_name_matrix,
                     current_freeroom_id_start,
@@ -1759,7 +1781,7 @@ bool WorldPlaceGenerator::isReadyToGenerate()
 bool WorldPlaceGenerator::generateWall(
     WorldController &world_controller)
 {
-    if(!world_controller.createWorld("world", 1, 1))
+    if(!world_controller.createWorld("World", 1, 1))
     {
         std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
           "createWorld failed!" << std::endl;
@@ -1767,7 +1789,7 @@ bool WorldPlaceGenerator::generateWall(
         return false;
     }
 
-    if(!world_controller.createWall("outer wall 0", 0, NodeType::OuterWall))
+    if(!world_controller.createWall("OuterWall 0", 0, NodeType::OuterWall))
     {
         std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
           "createWall failed!" << std::endl;

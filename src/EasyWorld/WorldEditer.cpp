@@ -397,7 +397,7 @@ bool WorldEditer::loadData(
         return false;
     }
 
-    if(!world_controller.createWorld(world_center_x, world_center_y))
+    if(!world_controller.createWorld("World", world_center_x, world_center_y))
     {
         std::cout << "WorldEditer::loadData : " << std::endl <<
           "createWorld failed!" << std::endl;
@@ -408,6 +408,7 @@ bool WorldEditer::loadData(
     for(const WallData &wall_data : world_generate_data_manager_.wall_data_vec)
     {
         if(!world_controller.createWall(
+              "OuterWall 0",
               wall_data.id,
               wall_data.type))
         {

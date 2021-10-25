@@ -207,7 +207,9 @@ public:
         const EasyPolygon2D &wall_boundary_polygon);
 
     bool createNewWorld(
-        WorldController &world_controller);
+        WorldController &world_controller,
+        const float &world_center_x,
+        const float &world_center_y);
 
     bool generateWall(
         WorldController &world_controller);

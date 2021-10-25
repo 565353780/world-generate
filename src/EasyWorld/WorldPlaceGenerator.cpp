@@ -1153,19 +1153,15 @@ bool WorldPlaceGenerator::setWallBoundaryPolygon(
 }
 
 bool WorldPlaceGenerator::createNewWorld(
-    WorldController &world_controller)
+    WorldController &world_controller,
+    const float &world_center_x,
+    const float &world_center_y)
 {
-    if(!isReadyToGenerate())
-    {
-        std::cout << "WorldPlaceGenerator::createNewWorld : " << std::endl <<
-          "wall_boundary_polygon not set!" << std::endl;
-
-        return false;
-    }
-
     if(!world_controller.reset())
     {
         std::cout << "WorldPlaceGenerator::createNewWorld : " << std::endl <<
+          "\tworld_center = [" << world_center_x << "," <<
+          world_center_y << "]" << std::endl <<
           "reset for world_controller failed!" << std::endl;
 
         return false;
@@ -1176,14 +1172,18 @@ bool WorldPlaceGenerator::createNewWorld(
     if(!boundary_line_list_manager_.reset())
     {
         std::cout << "WorldPlaceGenerator::createNewWorld : " << std::endl <<
+          "\tworld_center = [" << world_center_x << "," <<
+          world_center_y << "]" << std::endl <<
           "reset for boundary_line_list_manager_ failed!" << std::endl;
 
         return false;
     }
 
-    if(!world_controller.createWorld("World", 1, 1))
+    if(!world_controller.createWorld("World", world_center_x, world_center_y))
     {
         std::cout << "WorldPlaceGenerator::createNewWorld : " << std::endl <<
+          "\tworld_center = [" << world_center_x << "," <<
+          world_center_y << "]" << std::endl <<
           "createWorld failed!" << std::endl;
 
         return false;
@@ -1195,6 +1195,14 @@ bool WorldPlaceGenerator::createNewWorld(
 bool WorldPlaceGenerator::generateWall(
     WorldController &world_controller)
 {
+    if(!isReadyToGenerate())
+    {
+        std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
+          "wall_boundary_polygon not set!" << std::endl;
+
+        return false;
+    }
+
     if(!world_controller.createWall("OuterWall 0", 0, NodeType::OuterWall))
     {
         std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
@@ -1217,7 +1225,7 @@ bool WorldPlaceGenerator::generateWall(
 bool WorldPlaceGenerator::generateWorld(
     WorldController &world_controller)
 {
-    if(!createNewWorld(world_controller))
+    if(!createNewWorld(world_controller, 1, 1))
     {
         std::cout << "WorldPlaceGenerator::generateWorld : " << std::endl <<
           "createNewWorld failed!" << std::endl;

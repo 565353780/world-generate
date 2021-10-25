@@ -56,7 +56,7 @@ void EasyWorldWidget::run_example()
     wall_boundary_polygon.setAntiClockWise();
 
     world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
-    world_place_generator_.createNewWorld(world_controller_);
+    world_place_generator_.createNewWorld(world_controller_, 1, 1);
     world_place_generator_.generateWall(world_controller_);
 
     std::vector<std::string> room_name_vec;
@@ -111,7 +111,7 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
     {
         // world_place_generator_.generateWorld(world_controller_);
 
-        world_place_generator_.createNewWorld(world_controller_);
+        world_place_generator_.createNewWorld(world_controller_, 1, 1);
         world_place_generator_.generateWall(world_controller_);
 
         std::vector<std::string> room_name_vec;

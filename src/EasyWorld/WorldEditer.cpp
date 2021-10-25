@@ -417,53 +417,32 @@ bool WorldEditer::loadData(
         return false;
     }
 
-    world_place_generator.current_new_room_id_ = 0;
-
-    if(!world_controller.reset())
+    if(!world_place_generator.createNewWorld(
+          world_controller,
+          world_center_x,
+          world_center_y))
     {
         std::cout << "WorldEditer::loadData : " << std::endl <<
-          "reset world controller failed!" << std::endl;
-
-        return false;
-    }
-
-    if(!world_controller.createWorld("World", world_center_x, world_center_y))
-    {
-        std::cout << "WorldEditer::loadData : " << std::endl <<
-          "createWorld failed!" << std::endl;
+          "createNewWorld failed!" << std::endl;
 
         return false;
     }
 
     for(const WallData &wall_data : world_generate_data_manager_.wall_data_vec)
     {
-        if(!world_controller.createWall(
-              "OuterWall 0",
-              wall_data.id,
-              wall_data.type))
-        {
-            std::cout << "WorldEditer::loadData : " << std::endl <<
-              "createWall failed!" << std::endl;
-
-            return false;
-        }
-
-        if(!world_controller.setWallBoundaryPolygon(
-              wall_data.id,
-              wall_data.type,
-              wall_data.boundary_polygon))
-        {
-            std::cout << "WorldEditer::loadData : " << std::endl <<
-              "setWallBoundaryPolygon failed!" << std::endl;
-
-            return false;
-        }
-
         if(!world_place_generator.setWallBoundaryPolygon(
               wall_data.boundary_polygon))
         {
             std::cout << "WorldEditer::loadData : " << std::endl <<
               "setWallBoundaryPolygon failed!" << std::endl;
+
+            return false;
+        }
+
+        if(!world_place_generator.generateWall(world_controller))
+        {
+            std::cout << "WorldEditer::loadData : " << std::endl <<
+              "generateWall failed!" << std::endl;
 
             return false;
         }

@@ -11,22 +11,23 @@ EasyWorldWidget::EasyWorldWidget(QWidget *parent) :
     axis_length_ = 10;
     zoom_ = 1;
 
-    wall_color_ = QColor(0, 0, 0);
-    wall_brush_color_ = QColor(0, 0, 0);
+    background_color_ = QColor(0, 0, 0);
+    wall_color_ = QColor(128,128,128);
+    wall_brush_color_ = QColor(0,0,0);
     roomcontainer_color_ = QColor(0, 0, 0);
     roomcontainer_brush_color_ = QColor(0, 0, 0);
-    room_color_ = QColor(102,102,104);
-    room_brush_color_ = QColor(166,145,110);
-    door_color_ = QColor(200, 200, 200);
-    door_brush_color_ = QColor(200, 200, 200);
-    window_color_ = QColor(200,200,200);
-    window_brush_color_ = QColor(200,200,200);
+    room_color_ = QColor(128,128,128);
+    room_brush_color_ = QColor(0, 0, 0);
+    door_color_ = QColor(188,249,6);
+    door_brush_color_ = QColor(188,249,6);
+    window_color_ = QColor(8,205,206);
+    window_brush_color_ = QColor(8,205,206);
     team_color_ = QColor(0, 0, 0);
     team_brush_color_ = QColor(0, 0, 0);
     person_color_ = QColor(0, 0, 0);
     person_brush_color_ = QColor(0, 0, 0);
-    furniture_color_ = QColor(157,157,161);
-    furniture_brush_color_ = QColor(255,255,255);
+    furniture_color_ = QColor(8,200,200);
+    furniture_brush_color_ = QColor(0,0,0);
 
     current_choose_node_id_ = 0;
     current_choose_node_type_ = NodeType::NodeFree;
@@ -57,12 +58,23 @@ void EasyWorldWidget::run_example()
     world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
     world_place_generator_.createNewWorld(world_controller_);
     world_place_generator_.generateWall(world_controller_);
-    world_place_generator_.placeWallRoomContainer(world_controller_, 2, 22, 10, 10);
-    world_place_generator_.placeWallRoomContainer(world_controller_, 0, 0, 32, 10);
-    world_place_generator_.placeWallRoomContainer(world_controller_, 2, 0, 10, 10);
+
+    std::vector<std::string> room_name_vec;
+    room_name_vec.resize(1);
+    room_name_vec[0] = "茶水间";
+    world_place_generator_.placeWallRoomContainer(world_controller_, 2, 22, 10, 10, 1, room_name_vec);
+    room_name_vec.resize(3);
+    room_name_vec[0] = "财务室";
+    room_name_vec[1] = "总经办";
+    room_name_vec[2] = "会议室";
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, 0, 32, 10, 3, room_name_vec);
+    room_name_vec.resize(1);
+    room_name_vec[0] = "会议室";
+    world_place_generator_.placeWallRoomContainer(world_controller_, 2, 0, 10, 10, 1, room_name_vec);
     world_place_generator_.generateFreeRoomContainer(
         world_controller_, 4, 4, 6, 2);
     update();
+
     // world_place_generator_.generateWorld(world_controller_);
 
     // long cycle_num = 0;
@@ -97,7 +109,28 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
     }
     else if(event->buttons() == Qt::RightButton)
     {
-        world_place_generator_.generateWorld(world_controller_);
+        // world_place_generator_.generateWorld(world_controller_);
+
+        world_place_generator_.createNewWorld(world_controller_);
+        world_place_generator_.generateWall(world_controller_);
+
+        std::vector<std::string> room_name_vec;
+        room_name_vec.resize(1);
+        room_name_vec[0] = "茶水间";
+        world_place_generator_.placeWallRoomContainer(world_controller_,
+            std::rand() % 4, std::rand() % 22, 10, 10, 1, room_name_vec);
+        room_name_vec.resize(3);
+        room_name_vec[0] = "财务室";
+        room_name_vec[1] = "总经办";
+        room_name_vec[2] = "会议室";
+        world_place_generator_.placeWallRoomContainer(world_controller_,
+            std::rand() % 4, std::rand() % 12, 32, 10, 3, room_name_vec);
+        room_name_vec.resize(1);
+        room_name_vec[0] = "会议室";
+        world_place_generator_.placeWallRoomContainer(world_controller_,
+            std::rand() % 4, std::rand() % 22, 10, 10, 1, room_name_vec);
+        world_place_generator_.generateFreeRoomContainer(
+            world_controller_, 4, 4, 6, 2);
         update();
     }
 
@@ -180,6 +213,19 @@ bool EasyWorldWidget::moveWallRoomContainer(
 
         update();
     }
+
+    return true;
+}
+
+bool EasyWorldWidget::drawBackGround()
+{
+    QPainter painter(this);
+
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(background_color_);
+
+    QRect rect = QRect(0, 0, this->width(), this->height());
+    painter.drawRect(rect);
 
     return true;
 }
@@ -581,9 +627,10 @@ bool EasyWorldWidget::drawRoomSpaceBoundary(
     QPainter painter(this);
 
     QPen pen(room_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_text(QColor(255,255,0), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    QFont font_song("宋体", 15, QFont::Bold, true);
+    painter.setFont(font_song);
 
     painter.setPen(pen);
 
@@ -608,8 +655,13 @@ bool EasyWorldWidget::drawRoomSpaceBoundary(
             continue;
         }
 
+        const QString room_name = QString(room_space_node->getParent()->getName().c_str());
+
         const EasyPolygon2D &room_space_polygon =
           room_space_node->getBoundaryPolygon();
+
+        float point_x_sum = 0;
+        float point_y_sum = 0;
 
         QPolygon polygon;
         polygon.resize(room_space_polygon.point_list.size());
@@ -622,11 +674,22 @@ bool EasyWorldWidget::drawRoomSpaceBoundary(
             room_space_node->getPointInWorld(
                 current_point, current_point_in_world);
 
+            point_x_sum += current_point_in_world.x;
+            point_y_sum += current_point_in_world.y;
+
             polygon.setPoint(i, QPoint(
                   zoom_ * current_point_in_world.x,
                   zoom_ * current_point_in_world.y));
         }
+        painter.setPen(pen);
         painter.drawPolygon(polygon);
+
+        QPoint center_point = QPoint(
+            zoom_ * point_x_sum / room_space_polygon.point_list.size(),
+            zoom_ * point_y_sum / room_space_polygon.point_list.size());
+
+        painter.setPen(pen_text);
+        painter.drawText(center_point, room_name);
     }
 
     return true;
@@ -1327,7 +1390,7 @@ bool EasyWorldWidget::drawFurnitureSpaceBoundary(
 {
     QPainter painter(this);
 
-    QPen pen(furniture_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(furniture_color_, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     // QFont font_song("宋体", 15, QFont::Bold, true);
     // painter.setFont(font_song);
@@ -1384,6 +1447,8 @@ bool EasyWorldWidget::paintWorld(
     QPaintEvent *event)
 {
     Q_UNUSED(event);
+
+    drawBackGround();
 
     drawWallSpaceBoundary(world_controller);
     // drawRoomContainerSpaceBoundary(world_controller);

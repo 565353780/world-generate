@@ -60,6 +60,9 @@ bool WallRoomContainerData::reset()
     target_height = -1;
     real_height = -1;
 
+    room_num = 0;
+    room_name_vec.clear();
+
     return true;
 }
 
@@ -78,7 +81,23 @@ bool WallRoomContainerData::outputInfo(
       line_start << "\ton_wall_boundary_idx = " << on_wall_boundary_idx << std::endl <<
       line_start << "\ton_wall_boundary_start_position = " << on_wall_boundary_start_position << std::endl <<
       line_start << "\ttarget_size = [" << target_width << "," << target_height << "]" << std::endl <<
-      line_start << "\treal_size = [" << real_width << "," << real_height << "]" << std::endl;
+      line_start << "\treal_size = [" << real_width << "," << real_height << "]" << std::endl <<
+      line_start << "\troom_num = " << room_num << std::endl <<
+      line_start << "\troom_name_vec = ";
+
+    if(room_name_vec.size() == 0)
+    {
+        std::cout << "NULL" << std::endl;
+    }
+    else
+    {
+        for(const std::string &room_name : room_name_vec)
+        {
+            std::cout << room_name << " ";
+        }
+
+        std::cout << std::endl;
+    }
 
     return true;
 }
@@ -154,7 +173,9 @@ bool WorldGenerateDataManager::addWallRoomContainer(
     const float &target_width,
     const float &real_width,
     const float &target_height,
-    const float &real_height)
+    const float &real_height,
+    const size_t &room_num,
+    const std::vector<std::string> &room_name_vec)
 {
     WallRoomContainerData new_wall_roomcontainer_data;
     new_wall_roomcontainer_data.wall_id = wall_id;
@@ -165,6 +186,8 @@ bool WorldGenerateDataManager::addWallRoomContainer(
     new_wall_roomcontainer_data.real_width = real_width;
     new_wall_roomcontainer_data.target_height = target_height;
     new_wall_roomcontainer_data.real_height = real_height;
+    new_wall_roomcontainer_data.room_num = room_num;
+    new_wall_roomcontainer_data.room_name_vec = room_name_vec;
 
     wall_roomcontainer_data_vec.emplace_back(new_wall_roomcontainer_data);
 
@@ -180,7 +203,9 @@ bool WorldGenerateDataManager::setWallRoomContainer(
     const float &target_width,
     const float &real_width,
     const float &target_height,
-    const float &real_height)
+    const float &real_height,
+    const size_t &room_num,
+    const std::vector<std::string> &room_name_vec)
 {
     if(wall_roomcontainer_data_idx >= wall_roomcontainer_data_vec.size())
     {
@@ -193,6 +218,7 @@ bool WorldGenerateDataManager::setWallRoomContainer(
           "\ton_wall_boundary_start_position = " << on_wall_boundary_start_position << std::endl <<
           "\ttarget_size = [" << target_width << "," << target_height << "]" << std::endl <<
           "\treal_size = [" << real_width << "," << real_height << "]" << std::endl <<
+          "\troom_num = " << room_num << std::endl <<
           "wall_roomcontainer_data_idx out of range!" << std::endl;
 
         return false;
@@ -207,6 +233,8 @@ bool WorldGenerateDataManager::setWallRoomContainer(
     wall_roomcontainer_data.real_width = real_width;
     wall_roomcontainer_data.target_height = target_height;
     wall_roomcontainer_data.real_height = real_height;
+    wall_roomcontainer_data.room_num = room_num;
+    wall_roomcontainer_data.room_name_vec = room_name_vec;
 
     return true;
 }
@@ -337,7 +365,9 @@ bool WorldEditer::readData(
                   boundary_line->line_width,
                   boundary_line->line_end_position - boundary_line->line_start_position,
                   boundary_line->line_height,
-                  boundary_line->line_real_height))
+                  boundary_line->line_real_height,
+                  boundary_line->line_room_num,
+                  boundary_line->room_name_vec))
             {
                 std::cout << "WorldEditer::readData : " << std::endl <<
                   "setWallRoomContainer failed!" << std::endl;
@@ -439,14 +469,17 @@ bool WorldEditer::loadData(
         }
     }
 
-    for(const WallRoomContainerData wall_roomcontainer_data : world_generate_data_manager_.wall_roomcontainer_data_vec)
+    for(const WallRoomContainerData &wall_roomcontainer_data :
+        world_generate_data_manager_.wall_roomcontainer_data_vec)
     {
         if(!world_place_generator.placeWallRoomContainer(
               world_controller,
               wall_roomcontainer_data.on_wall_boundary_idx,
               wall_roomcontainer_data.on_wall_boundary_start_position,
               wall_roomcontainer_data.target_width,
-              wall_roomcontainer_data.target_height))
+              wall_roomcontainer_data.target_height,
+              wall_roomcontainer_data.room_num,
+              wall_roomcontainer_data.room_name_vec))
         {
             // std::cout << "WorldEditer::loadData : " << std::endl <<
             //   "placeWallRoomContainer failed!" << std::endl;

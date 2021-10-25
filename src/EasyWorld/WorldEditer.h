@@ -60,6 +60,8 @@ public:
     float real_width;
     float target_height;
     float real_height;
+    size_t room_num;
+    std::vector<std::string> room_name_vec;
 };
 
 class FreeRoomContainerData
@@ -106,7 +108,9 @@ public:
         const float &target_width,
         const float &real_width,
         const float &target_height,
-        const float &real_height);
+        const float &real_height,
+        const size_t &room_num,
+        const std::vector<std::string> &room_name_vec);
 
     bool setWallRoomContainer(
         const size_t &wall_roomcontainer_data_idx,
@@ -117,7 +121,9 @@ public:
         const float &target_width,
         const float &real_width,
         const float &target_height,
-        const float &real_height);
+        const float &real_height,
+        const size_t &room_num,
+        const std::vector<std::string> &room_name_vec);
 
     bool setFreeRoomContainer(
         const size_t &team_x_direction_person_num,

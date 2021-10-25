@@ -29,6 +29,9 @@ public:
     float line_height;
     float line_real_height;
 
+    size_t line_room_num;
+    std::vector<std::string> room_name_vec;
+
     BoundaryLine* prev_line;
     BoundaryLine* next_line;
 };
@@ -203,6 +206,12 @@ public:
     bool setWallBoundaryPolygon(
         const EasyPolygon2D &wall_boundary_polygon);
 
+    bool createNewWorld(
+        WorldController &world_controller);
+
+    bool generateWall(
+        WorldController &world_controller);
+
     bool generateWorld(
         WorldController &world_controller);
 
@@ -213,6 +222,15 @@ public:
         const float &roomcontainer_width,
         const float &roomcontainer_height);
 
+    bool placeWallRoomContainer(
+        WorldController &world_controller,
+        const size_t &boundary_idx,
+        const float &roomcontainer_start_position,
+        const float &roomcontainer_width,
+        const float &roomcontainer_height,
+        const size_t &room_num,
+        const std::vector<std::string> &room_name_vec);
+
     bool generateFreeRoomContainer(
         WorldController &world_controller,
         const size_t &team_x_direction_person_num,
@@ -220,14 +238,8 @@ public:
         const float &team_dist,
         const float &person_edge);
 
-// private:
+private:
     bool isReadyToGenerate();
-
-    bool createNewWorld(
-        WorldController &world_controller);
-
-    bool generateWall(
-        WorldController &world_controller);
 
     bool generateRoom(
         WorldController &world_controller);

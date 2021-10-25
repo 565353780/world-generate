@@ -10,6 +10,7 @@
 #include <QBrush>
 #include <QMouseEvent>
 #include <QPoint>
+#include <QRect>
 #include <QPolygon>
 
 #include <time.h>
@@ -45,6 +46,8 @@ private:
     bool moveWallRoomContainer(
         const size_t &wall_roomcontainer_id,
         QMouseEvent *event);
+
+    bool drawBackGround();
 
     bool drawWallBoundaryAxis(
         WorldController &world_controller);
@@ -123,6 +126,7 @@ private:
 
     float axis_length_;
     float zoom_;
+    QColor background_color_;
     QColor wall_color_;
     QColor wall_brush_color_;
     QColor roomcontainer_color_;

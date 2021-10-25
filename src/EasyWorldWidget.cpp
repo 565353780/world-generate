@@ -49,13 +49,21 @@ void EasyWorldWidget::run_example()
 
     EasyPolygon2D wall_boundary_polygon;
     wall_boundary_polygon.addPoint(0, 0);
-    wall_boundary_polygon.addPoint(20, 0);
-    wall_boundary_polygon.addPoint(20, 40);
-    wall_boundary_polygon.addPoint(0, 40);
+    wall_boundary_polygon.addPoint(32, 0);
+    wall_boundary_polygon.addPoint(32, 32);
+    wall_boundary_polygon.addPoint(0, 32);
     wall_boundary_polygon.setAntiClockWise();
 
     world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
-    world_place_generator_.generateWorld(world_controller_);
+    world_place_generator_.createNewWorld(world_controller_);
+    world_place_generator_.generateWall(world_controller_);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 2, 22, 10, 10);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, 0, 32, 10);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 2, 0, 10, 10);
+    world_place_generator_.generateFreeRoomContainer(
+        world_controller_, 4, 4, 6, 2);
+    update();
+    // world_place_generator_.generateWorld(world_controller_);
 
     // long cycle_num = 0;
     // float avg_fps = 0;

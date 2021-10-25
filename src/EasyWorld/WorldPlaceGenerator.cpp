@@ -1134,28 +1134,10 @@ bool WorldPlaceGenerator::setWallBoundaryPolygon(
 bool WorldPlaceGenerator::generateWorld(
     WorldController &world_controller)
 {
-    if(!isReadyToGenerate())
+    if(!createNewWorld(world_controller))
     {
         std::cout << "WorldPlaceGenerator::generateWorld : " << std::endl <<
-          "wall_boundary_polygon not set!" << std::endl;
-
-        return false;
-    }
-
-    if(!world_controller.reset())
-    {
-        std::cout << "WorldPlaceGenerator::generateWorld : " << std::endl <<
-          "reset for world_controller failed!" << std::endl;
-
-        return false;
-    }
-
-    current_new_room_id_ = 0;
-
-    if(!boundary_line_list_manager_.reset())
-    {
-        std::cout << "WorldPlaceGenerator::generateWorld : " << std::endl <<
-          "reset for boundary_line_list_manager_ failed!" << std::endl;
+          "createNewWorld failed!" << std::endl;
 
         return false;
     }
@@ -1778,17 +1760,49 @@ bool WorldPlaceGenerator::isReadyToGenerate()
     return false;
 }
 
-bool WorldPlaceGenerator::generateWall(
+bool WorldPlaceGenerator::createNewWorld(
     WorldController &world_controller)
 {
+    if(!isReadyToGenerate())
+    {
+        std::cout << "WorldPlaceGenerator::createNewWorld : " << std::endl <<
+          "wall_boundary_polygon not set!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_controller.reset())
+    {
+        std::cout << "WorldPlaceGenerator::createNewWorld : " << std::endl <<
+          "reset for world_controller failed!" << std::endl;
+
+        return false;
+    }
+
+    current_new_room_id_ = 0;
+
+    if(!boundary_line_list_manager_.reset())
+    {
+        std::cout << "WorldPlaceGenerator::createNewWorld : " << std::endl <<
+          "reset for boundary_line_list_manager_ failed!" << std::endl;
+
+        return false;
+    }
+
     if(!world_controller.createWorld("World", 1, 1))
     {
-        std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
+        std::cout << "WorldPlaceGenerator::createNewWorld : " << std::endl <<
           "createWorld failed!" << std::endl;
 
         return false;
     }
 
+    return true;
+}
+
+bool WorldPlaceGenerator::generateWall(
+    WorldController &world_controller)
+{
     if(!world_controller.createWall("OuterWall 0", 0, NodeType::OuterWall))
     {
         std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<

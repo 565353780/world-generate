@@ -220,8 +220,11 @@ public:
         const float &team_dist,
         const float &person_edge);
 
-private:
+// private:
     bool isReadyToGenerate();
+
+    bool createNewWorld(
+        WorldController &world_controller);
 
     bool generateWall(
         WorldController &world_controller);

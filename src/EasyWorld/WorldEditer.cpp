@@ -581,7 +581,13 @@ bool WorldEditer::setWallRoomContainerPosition(
            world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size()) %
           world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size();
 
-        wall_roomcontainer_data.on_wall_boundary_start_position = 0;
+        const float last_wall_length =
+          world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_[
+          (wall_id - 1 + world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size()) %
+            world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size()].boundary_length_;
+
+        wall_roomcontainer_data.on_wall_boundary_start_position =
+          last_wall_length - wall_roomcontainer_data.target_width;
     }
     else if(wall_roomcontainer_data.on_wall_boundary_start_position + wall_roomcontainer_data.real_width >
         wall_length - start_change_edge_error &&
@@ -591,9 +597,7 @@ bool WorldEditer::setWallRoomContainerPosition(
           (wall_roomcontainer_data.on_wall_boundary_idx + 1) %
           world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size();
 
-        wall_roomcontainer_data.on_wall_boundary_start_position =
-          world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_[
-          (wall_id + 1) % world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size()].boundary_length_;
+        wall_roomcontainer_data.on_wall_boundary_start_position = 0;
     }
     else
     {

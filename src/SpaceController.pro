@@ -58,8 +58,7 @@ SOURCES += \
     EasySpace/EasyBoundaryPoint.cpp \
     EasySpace/EasyBoundaryLine.cpp \
     EasySpace/EasyRoomLine.cpp \
-    EasySpace/EasyFixture.cpp \
-    EasySpace/SpaceController.cpp
+    EasySpace/EasyFixture.cpp
 
 HEADERS += \
     EasySpace/EasyBoundary.h \
@@ -68,8 +67,7 @@ HEADERS += \
     EasySpace/EasyBoundaryPoint.h \
     EasySpace/EasyBoundaryLine.h \
     EasySpace/EasyRoomLine.h \
-    EasySpace/EasyFixture.h \
-    EasySpace/SpaceController.h
+    EasySpace/EasyFixture.h
 
 HEADERS += \
     EasySpace/EasySpace.h
@@ -100,17 +98,14 @@ HEADERS += \
 
 SOURCES += \
     main.cpp \
-    EasySpaceWidget.cpp \
     EasyWorldWidget.cpp \
     MainWindow.cpp
 
 HEADERS += \
-    EasySpaceWidget.h \
     EasyWorldWidget.h \
     MainWindow.h
 
 FORMS += \
-    EasySpaceWidget.ui \
     EasyWorldWidget.ui \
     MainWindow.ui
 

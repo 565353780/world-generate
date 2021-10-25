@@ -839,11 +839,11 @@ PointState EasyComputation::getPointStateOfPolygon(
     return PointState::PointOnEdge;
 }
 
-LineState EasyComputation::getLineStateOfLine(
-    const EasyLine2D &line_1,
-    const EasyLine2D &line_2)
-{
-}
+// LineState EasyComputation::getLineStateOfLine(
+//     const EasyLine2D &line_1,
+//     const EasyLine2D &line_2)
+// {
+// }
 
 LineState EasyComputation::getLineStateOfPolygon(
     const EasyLine2D &line,

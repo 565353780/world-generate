@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 
-#include "EasySpaceWidget.h"
 #include "EasyWorldWidget.h"
 
 QT_BEGIN_NAMESPACE
@@ -23,7 +22,6 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    EasySpaceWidget *space_widget_;
     EasyWorldWidget *world_widget_;
 };
 #endif // MAINWINDOW_H

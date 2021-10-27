@@ -1965,7 +1965,6 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
 
     while(is_new_roomcontainer_valid)
     {
-        std::cout << "in while"<< std::endl;
         is_new_roomcontainer_valid = false;
 
         float max_free_roomcontainer_start_position_x;
@@ -2031,11 +2030,10 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
             }
         }
 
-        if(person_x_direction_num < 2 || person_y_direction_num < 2)
+        if(person_x_direction_num < 1 || person_y_direction_num < 1)
         {
             continue;
         }
-        std::cout << "start create freeroom"<< std::endl;
 
         is_new_roomcontainer_valid = true;
 

@@ -72,7 +72,7 @@ void EasyWorldWidget::run_example()
     room_name_vec[0] = "会议室";
     world_place_generator_.placeWallRoomContainer(world_controller_, 2, 0, 10, 10, 1, room_name_vec);
     world_place_generator_.generateFreeRoomContainer(
-        world_controller_, 4, 4, 6, 2);
+        world_controller_, 4, 4, 0.5, 2);
     update();
 
     // world_place_generator_.generateWorld(world_controller_);
@@ -130,7 +130,7 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
         world_place_generator_.placeWallRoomContainer(world_controller_,
             std::rand() % 4, std::rand() % 22, 10, 10, 1, room_name_vec);
         world_place_generator_.generateFreeRoomContainer(
-            world_controller_, 4, 4, 6, 2);
+            world_controller_, 4, 4, 0.5, 2);
         update();
     }
 

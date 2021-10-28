@@ -372,13 +372,22 @@ public:
     bool getRoomContainerSpaceNodeVec(
         std::vector<EasyNode*> &roomcontainer_space_node_vec);
 
-    bool getRoomNodeVec(
+    bool getWallRoomNodeVec(
         std::vector<EasyNode*> &room_node_vec);
 
-    bool getRoomBoundaryNodeVecVec(
+    bool getWallRoomBoundaryNodeVecVec(
         std::vector<std::vector<EasyNode*>> &room_boundary_node_vec_vec);
 
-    bool getRoomSpaceNodeVec(
+    bool getWallRoomSpaceNodeVec(
+        std::vector<EasyNode*> &room_space_node_vec);
+
+    bool getFreeRoomNodeVec(
+        std::vector<EasyNode*> &room_node_vec);
+
+    bool getFreeRoomBoundaryNodeVecVec(
+        std::vector<std::vector<EasyNode*>> &room_boundary_node_vec_vec);
+
+    bool getFreeRoomSpaceNodeVec(
         std::vector<EasyNode*> &room_space_node_vec);
 
     bool getDoorNodeVec(

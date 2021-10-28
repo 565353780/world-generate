@@ -65,11 +65,18 @@ private:
     bool drawRoomContainerSpaceBoundary(
         WorldController &world_controller);
 
-    bool drawRoomBoundaryAxis(
+    bool drawWallRoomBoundaryAxis(
         WorldController &world_controller);
-    bool drawRoomBoundaryPolygon(
+    bool drawWallRoomBoundaryPolygon(
         WorldController &world_controller);
-    bool drawRoomSpaceBoundary(
+    bool drawWallRoomSpaceBoundary(
+        WorldController &world_controller);
+
+    bool drawFreeRoomBoundaryAxis(
+        WorldController &world_controller);
+    bool drawFreeRoomBoundaryPolygon(
+        WorldController &world_controller);
+    bool drawFreeRoomSpaceBoundary(
         WorldController &world_controller);
 
     bool drawDoorBoundaryAxis(
@@ -131,8 +138,10 @@ private:
     QColor wall_brush_color_;
     QColor roomcontainer_color_;
     QColor roomcontainer_brush_color_;
-    QColor room_color_;
-    QColor room_brush_color_;
+    QColor wallroom_color_;
+    QColor wallroom_brush_color_;
+    QColor freeroom_color_;
+    QColor freeroom_brush_color_;
     QColor door_color_;
     QColor door_brush_color_;
     QColor window_color_;

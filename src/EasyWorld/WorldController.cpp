@@ -3579,112 +3579,223 @@ bool WorldController::getRoomContainerSpaceNodeVec(
     return true;
 }
 
-bool WorldController::getRoomNodeVec(
-    std::vector<EasyNode*> &room_node_vec)
+bool WorldController::getWallRoomNodeVec(
+    std::vector<EasyNode*> &wallroom_node_vec)
 {
-    room_node_vec.clear();
+    wallroom_node_vec.clear();
 
     if(room_pair_vec_.size() == 0)
     {
         return true;
     }
 
-    for(const std::pair<size_t, NodeType> &room_pair : room_pair_vec_)
+    for(const std::pair<size_t, NodeType> &wallroom_pair : room_pair_vec_)
     {
-        if(room_pair.second == NodeType::FreeRoom)
+        if(wallroom_pair.second != NodeType::WallRoom)
         {
             continue;
         }
 
-        EasyNode* room_node = findNode(room_pair.first, room_pair.second);
+        EasyNode* wallroom_node = findNode(wallroom_pair.first, wallroom_pair.second);
 
-        if(room_node == nullptr)
+        if(wallroom_node == nullptr)
         {
-            std::cout << "WorldController::getRoomNodeVec : " << std::endl <<
-              "get room : id = " << room_pair.first <<
-              ", type = " << room_pair.second <<
+            std::cout << "WorldController::getWallRoomNodeVec : " << std::endl <<
+              "get wallroom : id = " << wallroom_pair.first <<
+              ", type = " << wallroom_pair.second <<
               " failed!" << std::endl;
 
             return false;
         }
 
-        room_node_vec.emplace_back(room_node);
+        wallroom_node_vec.emplace_back(wallroom_node);
     }
 
     return true;
 }
 
-bool WorldController::getRoomBoundaryNodeVecVec(
-    std::vector<std::vector<EasyNode*>> &room_boundary_node_vec_vec)
+bool WorldController::getWallRoomBoundaryNodeVecVec(
+    std::vector<std::vector<EasyNode*>> &wallroom_boundary_node_vec_vec)
 {
-    room_boundary_node_vec_vec.clear();
+    wallroom_boundary_node_vec_vec.clear();
 
     if(room_pair_vec_.size() == 0)
     {
         return true;
     }
 
-    std::vector<EasyNode*> room_node_vec;
+    std::vector<EasyNode*> wallroom_node_vec;
 
-    if(!getRoomNodeVec(room_node_vec))
+    if(!getWallRoomNodeVec(wallroom_node_vec))
     {
-        std::cout << "WorldController::getRoomBoundaryNodeVec : " << std::endl <<
-          "getRoomNodeVec failed!" << std::endl;
+        std::cout << "WorldController::getWallRoomBoundaryNodeVec : " << std::endl <<
+          "getWallRoomNodeVec failed!" << std::endl;
 
         return false;
     }
 
-    for(EasyNode* room_node : room_node_vec)
+    for(EasyNode* wallroom_node : wallroom_node_vec)
     {
-        std::vector<EasyNode*> room_boundary_node_vec;
-        std::vector<EasyNode*> room_child_node_vec = room_node->getChildNodeVec();
+        std::vector<EasyNode*> wallroom_boundary_node_vec;
+        std::vector<EasyNode*> wallroom_child_node_vec = wallroom_node->getChildNodeVec();
 
-        for(EasyNode* room_child_node : room_child_node_vec)
+        for(EasyNode* wallroom_child_node : wallroom_child_node_vec)
         {
-            if(room_child_node->getNodeType() == NodeType::Boundary)
+            if(wallroom_child_node->getNodeType() == NodeType::Boundary)
             {
-                room_boundary_node_vec.emplace_back(room_child_node);
+                wallroom_boundary_node_vec.emplace_back(wallroom_child_node);
             }
         }
 
-        room_boundary_node_vec_vec.emplace_back(room_boundary_node_vec);
+        wallroom_boundary_node_vec_vec.emplace_back(wallroom_boundary_node_vec);
     }
     return true;
 }
 
-bool WorldController::getRoomSpaceNodeVec(
-    std::vector<EasyNode*> &room_space_node_vec)
+bool WorldController::getWallRoomSpaceNodeVec(
+    std::vector<EasyNode*> &wallroom_space_node_vec)
 {
-    room_space_node_vec.clear();
+    wallroom_space_node_vec.clear();
 
     if(room_pair_vec_.size() == 0)
     {
         return true;
     }
 
-    std::vector<EasyNode*> room_node_vec;
+    std::vector<EasyNode*> wallroom_node_vec;
 
-    if(!getRoomNodeVec(room_node_vec))
+    if(!getWallRoomNodeVec(wallroom_node_vec))
     {
-        std::cout << "WorldController::getRoomSpaceNodeVec : " << std::endl <<
-          "getRoomNodeVec failed!" << std::endl;
+        std::cout << "WorldController::getWallRoomSpaceNodeVec : " << std::endl <<
+          "getWallRoomNodeVec failed!" << std::endl;
 
         return false;
     }
 
-    for(EasyNode* room_node : room_node_vec)
+    for(EasyNode* wallroom_node : wallroom_node_vec)
     {
-        EasyNode* room_space_node = room_node->findChild(0, NodeType::Space);
+        EasyNode* wallroom_space_node = wallroom_node->findChild(0, NodeType::Space);
 
-        if(room_space_node == nullptr)
+        if(wallroom_space_node == nullptr)
         {
-            std::cout << "WorldController::getRoomNodeVec : " << std::endl <<
-              "get room space node failed!" << std::endl;
+            std::cout << "WorldController::getWallRoomNodeVec : " << std::endl <<
+              "get wallroom space node failed!" << std::endl;
 
             return false;
         }
 
-        room_space_node_vec.emplace_back(room_space_node);
+        wallroom_space_node_vec.emplace_back(wallroom_space_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getFreeRoomNodeVec(
+    std::vector<EasyNode*> &freeroom_node_vec)
+{
+    freeroom_node_vec.clear();
+
+    if(room_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    for(const std::pair<size_t, NodeType> &freeroom_pair : room_pair_vec_)
+    {
+        if(freeroom_pair.second != NodeType::FreeRoom)
+        {
+            continue;
+        }
+
+        EasyNode* freeroom_node = findNode(freeroom_pair.first, freeroom_pair.second);
+
+        if(freeroom_node == nullptr)
+        {
+            std::cout << "WorldController::getFreeRoomNodeVec : " << std::endl <<
+              "get freeroom : id = " << freeroom_pair.first <<
+              ", type = " << freeroom_pair.second <<
+              " failed!" << std::endl;
+
+            return false;
+        }
+
+        freeroom_node_vec.emplace_back(freeroom_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getFreeRoomBoundaryNodeVecVec(
+    std::vector<std::vector<EasyNode*>> &freeroom_boundary_node_vec_vec)
+{
+    freeroom_boundary_node_vec_vec.clear();
+
+    if(room_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> freeroom_node_vec;
+
+    if(!getFreeRoomNodeVec(freeroom_node_vec))
+    {
+        std::cout << "WorldController::getFreeRoomBoundaryNodeVec : " << std::endl <<
+          "getFreeRoomNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* freeroom_node : freeroom_node_vec)
+    {
+        std::vector<EasyNode*> freeroom_boundary_node_vec;
+        std::vector<EasyNode*> freeroom_child_node_vec = freeroom_node->getChildNodeVec();
+
+        for(EasyNode* freeroom_child_node : freeroom_child_node_vec)
+        {
+            if(freeroom_child_node->getNodeType() == NodeType::Boundary)
+            {
+                freeroom_boundary_node_vec.emplace_back(freeroom_child_node);
+            }
+        }
+
+        freeroom_boundary_node_vec_vec.emplace_back(freeroom_boundary_node_vec);
+    }
+    return true;
+}
+
+bool WorldController::getFreeRoomSpaceNodeVec(
+    std::vector<EasyNode*> &freeroom_space_node_vec)
+{
+    freeroom_space_node_vec.clear();
+
+    if(room_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> freeroom_node_vec;
+
+    if(!getFreeRoomNodeVec(freeroom_node_vec))
+    {
+        std::cout << "WorldController::getFreeRoomSpaceNodeVec : " << std::endl <<
+          "getFreeRoomNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* freeroom_node : freeroom_node_vec)
+    {
+        EasyNode* freeroom_space_node = freeroom_node->findChild(0, NodeType::Space);
+
+        if(freeroom_space_node == nullptr)
+        {
+            std::cout << "WorldController::getFreeRoomNodeVec : " << std::endl <<
+              "get freeroom space node failed!" << std::endl;
+
+            return false;
+        }
+
+        freeroom_space_node_vec.emplace_back(freeroom_space_node);
     }
 
     return true;

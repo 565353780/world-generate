@@ -943,6 +943,8 @@ bool PointMatrix::getMaxFreeRect(
         return false;
     }
 
+    float area_max = -1;
+
     bool is_x_left_bigger = true;
     bool is_x_right_bigger = true;
     bool is_y_left_bigger = true;
@@ -951,6 +953,270 @@ bool PointMatrix::getMaxFreeRect(
     size_t x_right_search_length = 0;
     size_t y_left_search_length = 0;
     size_t y_right_search_length = 0;
+
+    size_t safe_x_left_search_length = 0;
+    size_t safe_x_right_search_length = 0;
+    size_t safe_y_left_search_length = 0;
+    size_t safe_y_right_search_length = 0;
+
+    // case 1 : x direction first
+    while(is_x_left_bigger || is_x_right_bigger)
+    {
+        is_x_left_bigger = false;
+        is_x_right_bigger = false;
+
+        if(max_min_dist_point_x_idx - x_left_search_length > 0)
+        {
+            bool current_bigger_success = true;
+            size_t next_x_left_idx = max_min_dist_point_x_idx - x_left_search_length - 1;
+            for(size_t j = max_min_dist_point_y_idx - y_left_search_length;
+                j <= max_min_dist_point_y_idx + y_right_search_length; ++j)
+            {
+                if(point_matrix_[next_x_left_idx][j] == PointOccupancyState::PointUsed)
+                {
+                    current_bigger_success = false;
+
+                    break;
+                }
+            }
+
+            if(current_bigger_success)
+            {
+                ++x_left_search_length;
+                is_x_left_bigger = true;
+            }
+        }
+
+        if(max_min_dist_point_x_idx + x_right_search_length < x_direction_point_num_ - 1)
+        {
+            bool current_bigger_success = true;
+            size_t next_x_right_idx = max_min_dist_point_x_idx + x_right_search_length + 1;
+            for(size_t j = max_min_dist_point_y_idx - y_left_search_length;
+                j <= max_min_dist_point_y_idx + y_right_search_length; ++j)
+            {
+                if(point_matrix_[next_x_right_idx][j] == PointOccupancyState::PointUsed)
+                {
+                    current_bigger_success = false;
+
+                    break;
+                }
+            }
+
+            if(current_bigger_success)
+            {
+                ++x_right_search_length;
+                is_x_right_bigger = true;
+            }
+        }
+    }
+
+    while(is_y_left_bigger || is_y_right_bigger)
+    {
+        is_y_left_bigger = false;
+        is_y_right_bigger = false;
+
+        if(max_min_dist_point_y_idx - y_left_search_length > 0)
+        {
+            bool current_bigger_success = true;
+            size_t next_y_left_idx = max_min_dist_point_y_idx - y_left_search_length - 1;
+            for(size_t i = max_min_dist_point_x_idx - x_left_search_length;
+                i <= max_min_dist_point_x_idx + x_right_search_length; ++i)
+            {
+                if(point_matrix_[i][next_y_left_idx] == PointOccupancyState::PointUsed)
+                {
+                    current_bigger_success = false;
+
+                    break;
+                }
+            }
+
+            if(current_bigger_success)
+            {
+                ++y_left_search_length;
+                is_y_left_bigger = true;
+            }
+        }
+
+        if(max_min_dist_point_y_idx + y_right_search_length < y_direction_point_num_ - 1)
+        {
+            bool current_bigger_success = true;
+            size_t next_y_right_idx = max_min_dist_point_y_idx + y_right_search_length + 1;
+            for(size_t i = max_min_dist_point_x_idx - x_left_search_length;
+                i <= max_min_dist_point_x_idx + x_right_search_length; ++i)
+            {
+                if(point_matrix_[i][next_y_right_idx] == PointOccupancyState::PointUsed)
+                {
+                    current_bigger_success = false;
+
+                    break;
+                }
+            }
+
+            if(current_bigger_success)
+            {
+                ++y_right_search_length;
+                is_y_right_bigger = true;
+            }
+        }
+    }
+
+    safe_y_left_search_length = y_left_search_length;
+    safe_y_right_search_length = y_right_search_length;
+
+    float current_width = x_left_search_length + x_right_search_length;
+    float current_height = y_left_search_length + y_right_search_length;
+    float current_area = current_width * current_height;
+
+    if(current_area > area_max)
+    {
+        area_max = current_area;
+
+        max_free_rect_start_position_x =
+          boundary_start_x_ + (max_min_dist_point_x_idx - x_left_search_length) * split_edge_length_;
+        max_free_rect_start_position_y =
+          boundary_start_y_ + (max_min_dist_point_y_idx - y_left_search_length) * split_edge_length_;
+        max_free_rect_width = (x_left_search_length + x_right_search_length) * split_edge_length_;
+        max_free_rect_height = (y_left_search_length + y_right_search_length) * split_edge_length_;
+    }
+
+    is_x_left_bigger = true;
+    is_x_right_bigger = true;
+    is_y_left_bigger = true;
+    is_y_right_bigger = true;
+    x_left_search_length = 0;
+    x_right_search_length = 0;
+    y_left_search_length = 0;
+    y_right_search_length = 0;
+
+    // case 2 : y direction first
+    while(is_y_left_bigger || is_y_right_bigger)
+    {
+        is_y_left_bigger = false;
+        is_y_right_bigger = false;
+
+        if(max_min_dist_point_y_idx - y_left_search_length > 0)
+        {
+            bool current_bigger_success = true;
+            size_t next_y_left_idx = max_min_dist_point_y_idx - y_left_search_length - 1;
+            for(size_t i = max_min_dist_point_x_idx - x_left_search_length;
+                i <= max_min_dist_point_x_idx + x_right_search_length; ++i)
+            {
+                if(point_matrix_[i][next_y_left_idx] == PointOccupancyState::PointUsed)
+                {
+                    current_bigger_success = false;
+
+                    break;
+                }
+            }
+
+            if(current_bigger_success)
+            {
+                ++y_left_search_length;
+                is_y_left_bigger = true;
+            }
+        }
+
+        if(max_min_dist_point_y_idx + y_right_search_length < y_direction_point_num_ - 1)
+        {
+            bool current_bigger_success = true;
+            size_t next_y_right_idx = max_min_dist_point_y_idx + y_right_search_length + 1;
+            for(size_t i = max_min_dist_point_x_idx - x_left_search_length;
+                i <= max_min_dist_point_x_idx + x_right_search_length; ++i)
+            {
+                if(point_matrix_[i][next_y_right_idx] == PointOccupancyState::PointUsed)
+                {
+                    current_bigger_success = false;
+
+                    break;
+                }
+            }
+
+            if(current_bigger_success)
+            {
+                ++y_right_search_length;
+                is_y_right_bigger = true;
+            }
+        }
+    }
+
+    while(is_x_left_bigger || is_x_right_bigger)
+    {
+        is_x_left_bigger = false;
+        is_x_right_bigger = false;
+
+        if(max_min_dist_point_x_idx - x_left_search_length > 0)
+        {
+            bool current_bigger_success = true;
+            size_t next_x_left_idx = max_min_dist_point_x_idx - x_left_search_length - 1;
+            for(size_t j = max_min_dist_point_y_idx - y_left_search_length;
+                j <= max_min_dist_point_y_idx + y_right_search_length; ++j)
+            {
+                if(point_matrix_[next_x_left_idx][j] == PointOccupancyState::PointUsed)
+                {
+                    current_bigger_success = false;
+
+                    break;
+                }
+            }
+
+            if(current_bigger_success)
+            {
+                ++x_left_search_length;
+                is_x_left_bigger = true;
+            }
+        }
+
+        if(max_min_dist_point_x_idx + x_right_search_length < x_direction_point_num_ - 1)
+        {
+            bool current_bigger_success = true;
+            size_t next_x_right_idx = max_min_dist_point_x_idx + x_right_search_length + 1;
+            for(size_t j = max_min_dist_point_y_idx - y_left_search_length;
+                j <= max_min_dist_point_y_idx + y_right_search_length; ++j)
+            {
+                if(point_matrix_[next_x_right_idx][j] == PointOccupancyState::PointUsed)
+                {
+                    current_bigger_success = false;
+
+                    break;
+                }
+            }
+
+            if(current_bigger_success)
+            {
+                ++x_right_search_length;
+                is_x_right_bigger = true;
+            }
+        }
+    }
+
+    safe_x_left_search_length = x_left_search_length;
+    safe_x_right_search_length = x_right_search_length;
+
+    current_width = x_left_search_length + x_right_search_length;
+    current_height = y_left_search_length + y_right_search_length;
+    current_area = current_width * current_height;
+
+    if(current_area > area_max)
+    {
+        area_max = current_area;
+
+        max_free_rect_start_position_x =
+          boundary_start_x_ + (max_min_dist_point_x_idx - x_left_search_length) * split_edge_length_;
+        max_free_rect_start_position_y =
+          boundary_start_y_ + (max_min_dist_point_y_idx - y_left_search_length) * split_edge_length_;
+        max_free_rect_width = (x_left_search_length + x_right_search_length) * split_edge_length_;
+        max_free_rect_height = (y_left_search_length + y_right_search_length) * split_edge_length_;
+    }
+
+    is_x_left_bigger = true;
+    is_x_right_bigger = true;
+    is_y_left_bigger = true;
+    is_y_right_bigger = true;
+    x_left_search_length = safe_x_left_search_length;
+    x_right_search_length = safe_x_right_search_length;
+    y_left_search_length = safe_y_left_search_length;
+    y_right_search_length = safe_y_right_search_length;
+
     while(is_x_left_bigger || is_x_right_bigger || is_y_left_bigger || is_y_right_bigger)
     {
         is_x_left_bigger = false;
@@ -1047,6 +1313,21 @@ bool PointMatrix::getMaxFreeRect(
         }
     }
 
+    current_width = x_left_search_length + x_right_search_length;
+    current_height = y_left_search_length + y_right_search_length;
+    current_area = current_width * current_height;
+
+    if(current_area > area_max)
+    {
+        area_max = current_area;
+
+        max_free_rect_start_position_x =
+          boundary_start_x_ + (max_min_dist_point_x_idx - x_left_search_length) * split_edge_length_;
+        max_free_rect_start_position_y =
+          boundary_start_y_ + (max_min_dist_point_y_idx - y_left_search_length) * split_edge_length_;
+        max_free_rect_width = (x_left_search_length + x_right_search_length) * split_edge_length_;
+        max_free_rect_height = (y_left_search_length + y_right_search_length) * split_edge_length_;
+    }
 
     max_free_rect_start_position_x =
       boundary_start_x_ + (max_min_dist_point_x_idx - x_left_search_length) * split_edge_length_;

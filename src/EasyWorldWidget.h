@@ -143,6 +143,8 @@ private:
     QColor person_brush_color_;
     QColor furniture_color_;
     QColor furniture_brush_color_;
+    QColor length_color_;
+    QColor text_color_;
 
     timespec t_spc_;
     long t_start_;

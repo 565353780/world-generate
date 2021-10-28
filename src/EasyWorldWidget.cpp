@@ -28,6 +28,8 @@ EasyWorldWidget::EasyWorldWidget(QWidget *parent) :
     person_brush_color_ = QColor(0, 0, 0);
     furniture_color_ = QColor(8,200,200);
     furniture_brush_color_ = QColor(0,0,0);
+    length_color_ = QColor(153,114,0);
+    text_color_ = QColor(255,255,0);
 
     current_choose_node_id_ = 0;
     current_choose_node_type_ = NodeType::NodeFree;
@@ -56,7 +58,7 @@ void EasyWorldWidget::run_example()
     wall_boundary_polygon.setAntiClockWise();
     world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
 
-    world_place_generator_.createNewWorld(world_controller_, 1, 1);
+    world_place_generator_.createNewWorld(world_controller_, 2, 2);
     world_place_generator_.generateWall(world_controller_);
 
     std::vector<std::string> room_name_vec;
@@ -111,7 +113,7 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
     {
         // world_place_generator_.generateWorld(world_controller_);
 
-        world_place_generator_.createNewWorld(world_controller_, 1, 1);
+        world_place_generator_.createNewWorld(world_controller_, 2, 2);
         world_place_generator_.generateWall(world_controller_);
 
         std::vector<std::string> room_name_vec;
@@ -238,8 +240,8 @@ bool EasyWorldWidget::drawWallBoundaryAxis(
     QPen pen_red(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_green(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     std::vector<std::vector<EasyNode*>> wall_boundary_node_vec_vec;
 
@@ -283,8 +285,8 @@ bool EasyWorldWidget::drawWallBoundaryPolygon(
 
     QPen pen(wall_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
@@ -329,9 +331,12 @@ bool EasyWorldWidget::drawWallSpaceBoundary(
     QPainter painter(this);
 
     QPen pen(wall_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_line(length_color_, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_text(text_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
+    QFont font_song_10("宋体", 10, QFont::Bold, true);
 
     painter.setPen(pen);
 
@@ -362,23 +367,66 @@ bool EasyWorldWidget::drawWallSpaceBoundary(
         QPolygon polygon;
         polygon.resize(wall_space_polygon.point_list.size());
 
+        const float line_info_dist = 20;
+
         for(size_t i = 0; i < wall_space_polygon.point_list.size(); ++i)
         {
             const EasyPoint2D &current_point = wall_space_polygon.point_list[i];
-            const EasyPoint2D &next_point = wall_space_polygon.point_list[
-              (i + 1) % wall_space_polygon.point_list.size()];
 
             EasyPoint2D current_point_in_world;
-            EasyPoint2D next_point_in_world;
             wall_space_node->getPointInWorld(
                 current_point, current_point_in_world);
-            wall_space_node->getPointInWorld(
-                next_point, next_point_in_world);
 
             polygon.setPoint(i, QPoint(
                   zoom_ * current_point_in_world.x,
                   zoom_ * current_point_in_world.y));
+
+            const EasyPoint2D &next_point = wall_space_polygon.point_list[
+            (i+1) % wall_space_polygon.point_list.size()];
+
+            EasyPoint2D next_point_in_world;
+            wall_space_node->getPointInWorld(
+                next_point, next_point_in_world);
+
+            const float line_x_diff =
+              next_point_in_world.x - current_point_in_world.x;
+            const float line_y_diff =
+              next_point_in_world.y - current_point_in_world.y;
+
+            const float line_length = std::sqrt(
+                line_x_diff * line_x_diff +
+                line_y_diff * line_y_diff);
+
+            EasyPoint2D move_direction;
+            move_direction.setPosition(
+                line_y_diff / line_length,
+                -line_x_diff / line_length);
+
+            EasyPoint2D current_point_move;
+            EasyPoint2D next_point_move;
+            current_point_move.setPosition(
+                zoom_ * current_point_in_world.x + line_info_dist * move_direction.x,
+                zoom_ * current_point_in_world.y + line_info_dist * move_direction.y);
+            next_point_move.setPosition(
+                zoom_ * next_point_in_world.x + line_info_dist * move_direction.x,
+                zoom_ * next_point_in_world.y + line_info_dist * move_direction.y);
+
+            painter.setPen(pen_line);
+            painter.drawLine(
+                current_point_move.x,
+                current_point_move.y,
+                next_point_move.x,
+                next_point_move.y);
+
+            painter.setPen(pen_text);
+            painter.setFont(font_song_10);
+            painter.drawText(
+                (current_point_move.x + next_point_move.x) / 2.0,
+                (current_point_move.y + next_point_move.y) / 2.0,
+                QString::number(line_length));
         }
+
+        painter.setPen(pen);
         painter.drawPolygon(polygon);
     }
 
@@ -393,8 +441,8 @@ bool EasyWorldWidget::drawRoomContainerBoundaryAxis(
     QPen pen_red(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_green(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     std::vector<std::vector<EasyNode*>> roomcontainer_boundary_node_vec_vec;
 
@@ -437,8 +485,8 @@ bool EasyWorldWidget::drawRoomContainerBoundaryPolygon(
 
     QPen pen(roomcontainer_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
@@ -486,8 +534,8 @@ bool EasyWorldWidget::drawRoomContainerSpaceBoundary(
 
     QPen pen(roomcontainer_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
@@ -535,8 +583,8 @@ bool EasyWorldWidget::drawRoomBoundaryAxis(
     QPen pen_red(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_green(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     std::vector<std::vector<EasyNode*>> room_boundary_node_vec_vec;
 
@@ -579,8 +627,8 @@ bool EasyWorldWidget::drawRoomBoundaryPolygon(
 
     QPen pen(room_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
@@ -627,10 +675,12 @@ bool EasyWorldWidget::drawRoomSpaceBoundary(
     QPainter painter(this);
 
     QPen pen(room_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    QPen pen_text(QColor(255,255,0), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_line(length_color_, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_text(text_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    QFont font_song("宋体", 15, QFont::Bold, true);
-    painter.setFont(font_song);
+    QFont font_song_15("宋体", 15, QFont::Bold, true);
+    painter.setFont(font_song_15);
+    QFont font_song_10("宋体", 10, QFont::Bold, true);
 
     painter.setPen(pen);
 
@@ -660,11 +710,17 @@ bool EasyWorldWidget::drawRoomSpaceBoundary(
         const EasyPolygon2D &room_space_polygon =
           room_space_node->getBoundaryPolygon();
 
+        const QString room_area = QString::number(
+            room_space_polygon.point_list[2].x *
+            room_space_polygon.point_list[2].y) + " m^2";
+
         float point_x_sum = 0;
         float point_y_sum = 0;
 
         QPolygon polygon;
         polygon.resize(room_space_polygon.point_list.size());
+
+        const float line_info_dist = 5;
 
         for(size_t i = 0; i < room_space_polygon.point_list.size(); ++i)
         {
@@ -680,6 +736,50 @@ bool EasyWorldWidget::drawRoomSpaceBoundary(
             polygon.setPoint(i, QPoint(
                   zoom_ * current_point_in_world.x,
                   zoom_ * current_point_in_world.y));
+
+            const EasyPoint2D &next_point = room_space_polygon.point_list[
+              (i+1) % room_space_polygon.point_list.size()];
+
+            EasyPoint2D next_point_in_world;
+            room_space_node->getPointInWorld(
+                next_point, next_point_in_world);
+
+            const float line_x_diff =
+              next_point_in_world.x - current_point_in_world.x;
+            const float line_y_diff =
+              next_point_in_world.y - current_point_in_world.y;
+
+            const float line_length = std::sqrt(
+                line_x_diff * line_x_diff +
+                line_y_diff * line_y_diff);
+
+            EasyPoint2D move_direction;
+            move_direction.setPosition(
+                -line_y_diff / line_length,
+                line_x_diff / line_length);
+
+            EasyPoint2D current_point_move;
+            EasyPoint2D next_point_move;
+            current_point_move.setPosition(
+                zoom_ * current_point_in_world.x + line_info_dist * move_direction.x,
+                zoom_ * current_point_in_world.y + line_info_dist * move_direction.y);
+            next_point_move.setPosition(
+                zoom_ * next_point_in_world.x + line_info_dist * move_direction.x,
+                zoom_ * next_point_in_world.y + line_info_dist * move_direction.y);
+
+            painter.setPen(pen_line);
+            painter.drawLine(
+                current_point_move.x,
+                current_point_move.y,
+                next_point_move.x,
+                next_point_move.y);
+
+            painter.setPen(pen_text);
+            painter.setFont(font_song_10);
+            painter.drawText(
+                (current_point_move.x + next_point_move.x) / 2.0 + 10 * move_direction.x,
+                (current_point_move.y + next_point_move.y) / 2.0 + 10 * move_direction.y,
+                QString::number(line_length));
         }
         painter.setPen(pen);
         painter.drawPolygon(polygon);
@@ -689,7 +789,10 @@ bool EasyWorldWidget::drawRoomSpaceBoundary(
             zoom_ * point_y_sum / room_space_polygon.point_list.size());
 
         painter.setPen(pen_text);
+        painter.setFont(font_song_15);
         painter.drawText(center_point, room_name);
+        painter.setFont(font_song_10);
+        painter.drawText(center_point + QPoint(-5, 15), room_area);
     }
 
     return true;
@@ -703,8 +806,8 @@ bool EasyWorldWidget::drawDoorBoundaryAxis(
     QPen pen_red(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_green(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     std::vector<std::vector<EasyNode*>> door_boundary_node_vec_vec;
 
@@ -747,8 +850,8 @@ bool EasyWorldWidget::drawDoorBoundaryPolygon(
 
     QPen pen(door_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
@@ -796,8 +899,8 @@ bool EasyWorldWidget::drawDoorSpaceBoundary(
 
     QPen pen(door_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
@@ -854,8 +957,8 @@ bool EasyWorldWidget::drawWindowBoundaryAxis(
     QPen pen_red(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_green(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     std::vector<std::vector<EasyNode*>> window_boundary_node_vec_vec;
 
@@ -898,8 +1001,8 @@ bool EasyWorldWidget::drawWindowBoundaryPolygon(
 
     QPen pen(window_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
@@ -947,8 +1050,8 @@ bool EasyWorldWidget::drawWindowSpaceBoundary(
 
     QPen pen(window_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
@@ -1005,8 +1108,8 @@ bool EasyWorldWidget::drawTeamBoundaryAxis(
     QPen pen_red(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_green(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     std::vector<std::vector<EasyNode*>> team_boundary_node_vec_vec;
 
@@ -1049,8 +1152,8 @@ bool EasyWorldWidget::drawTeamBoundaryPolygon(
 
     QPen pen(team_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
@@ -1098,8 +1201,8 @@ bool EasyWorldWidget::drawTeamSpaceBoundary(
 
     QPen pen(team_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
@@ -1156,8 +1259,8 @@ bool EasyWorldWidget::drawPersonBoundaryAxis(
     QPen pen_red(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_green(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     std::vector<std::vector<EasyNode*>> person_boundary_node_vec_vec;
 
@@ -1200,8 +1303,8 @@ bool EasyWorldWidget::drawPersonBoundaryPolygon(
 
     QPen pen(person_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
@@ -1249,8 +1352,8 @@ bool EasyWorldWidget::drawPersonSpaceBoundary(
 
     QPen pen(person_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
@@ -1299,8 +1402,8 @@ bool EasyWorldWidget::drawFurnitureBoundaryAxis(
     QPen pen_red(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_green(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     std::vector<std::vector<EasyNode*>> furniture_boundary_node_vec_vec;
 
@@ -1343,8 +1446,8 @@ bool EasyWorldWidget::drawFurnitureBoundaryPolygon(
 
     QPen pen(furniture_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
@@ -1392,8 +1495,8 @@ bool EasyWorldWidget::drawFurnitureSpaceBoundary(
 
     QPen pen(furniture_color_, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-    // QFont font_song("宋体", 15, QFont::Bold, true);
-    // painter.setFont(font_song);
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 

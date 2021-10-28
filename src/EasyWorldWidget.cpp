@@ -75,6 +75,8 @@ void EasyWorldWidget::run_example()
     room_name_vec.resize(1);
     room_name_vec[0] = "会议室";
     world_place_generator_.placeWallRoomContainer(world_controller_, 2, 0, 10, 10, 1, room_name_vec);
+    room_name_vec[0] = "接待区";
+    world_place_generator_.placeWallRoomContainer(world_controller_, 2, 11, 10, 10, 1, room_name_vec);
     world_place_generator_.generateFreeRoomContainer(
         world_controller_, 4, 4, 0.5, 2);
     update();
@@ -131,6 +133,9 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
             std::rand() % 4, std::rand() % 12, 32, 10, 3, room_name_vec);
         room_name_vec.resize(1);
         room_name_vec[0] = "会议室";
+        world_place_generator_.placeWallRoomContainer(world_controller_,
+            std::rand() % 4, std::rand() % 22, 10, 10, 1, room_name_vec);
+        room_name_vec[0] = "接待区";
         world_place_generator_.placeWallRoomContainer(world_controller_,
             std::rand() % 4, std::rand() % 22, 10, 10, 1, room_name_vec);
         world_place_generator_.generateFreeRoomContainer(
@@ -899,8 +904,8 @@ bool EasyWorldWidget::drawFreeRoomSpaceBoundary(
 {
     QPainter painter(this);
 
-    QPen pen(freeroom_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    QPen pen_line(length_color_, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(freeroom_color_, 3, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_line(length_color_, 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_text(text_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     QFont font_song_15("宋体", 15, QFont::Bold, true);

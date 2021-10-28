@@ -1844,7 +1844,7 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
 
     const float door_width = 1.5;
     const float window_width_scale = 0.7;
-    const float person_edge = 2;
+    const float person_edge = 2.0;
     const float team_dist = 3.0 * person_edge;
 
     BoundaryLine new_boundary_line;
@@ -2059,6 +2059,31 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
             is_handle_on_right_from_outside = false;
         }
 
+        if(!world_controller.createWindowForRoom(
+              "Auto Generate Window",
+              current_new_room_id_,
+              NodeType::WallRoom,
+              0,
+              window_width,
+              window_axis))
+        {
+            std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<
+              "Input :\n" <<
+              "\tboundary_idx = " << boundary_idx << std::endl <<
+              "\troomcontainer_start_position = " << roomcontainer_start_position << std::endl <<
+              "\troomcontainer_size = [" << roomcontainer_width << "," <<
+              roomcontainer_height << "]" << std::endl <<
+              "\troom_num = " << room_num << std::endl <<
+              "createWindowForRoom failed!" << std::endl;
+
+            return false;
+        }
+
+        if(room_name_vec[0] == "接待区")
+        {
+            ++current_new_room_id_;
+            continue;
+        }
         if(!world_controller.createDoorForRoom(
               "Auto Generate Door",
               current_new_room_id_,
@@ -2080,26 +2105,6 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
             return false;
         }
 
-        if(!world_controller.createWindowForRoom(
-              "Auto Generate Window",
-              current_new_room_id_,
-              NodeType::WallRoom,
-              0,
-              window_width,
-              window_axis))
-        {
-            std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<
-              "Input :\n" <<
-              "\tboundary_idx = " << boundary_idx << std::endl <<
-              "\troomcontainer_start_position = " << roomcontainer_start_position << std::endl <<
-              "\troomcontainer_size = [" << roomcontainer_width << "," <<
-              roomcontainer_height << "]" << std::endl <<
-              "\troom_num = " << room_num << std::endl <<
-              "createWindowForRoom failed!" << std::endl;
-
-            return false;
-        }
-
         ++current_new_room_id_;
     }
 
@@ -2113,6 +2118,11 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
     const float &team_dist,
     const float &person_edge)
 {
+    team_x_direction_person_num_ = team_x_direction_person_num;
+    team_y_direction_person_num_ = team_y_direction_person_num;
+    team_dist_ = team_dist;
+    person_edge_ = person_edge;
+
     if(!point_matrix_.setAllPointOccupancyState(PointOccupancyState::PointFree))
     {
         std::cout << "WorldPlaceGenerator::generateFreeRoomContainer : " << std::endl <<

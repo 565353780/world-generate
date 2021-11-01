@@ -774,9 +774,13 @@ bool PointMatrix::getPointIdxRangeFromRect(
     point_y_idx_start = size_t((rect_start_position_y - boundary_start_y_) / split_edge_length_);
     point_y_idx_end = size_t((rect_start_position_y + rect_height - boundary_start_y_) / split_edge_length_) + 1;
 
+    // point_x_idx_start = std::fmin(point_x_idx_start, x_direction_point_num_ - 1);
     point_x_idx_start = std::fmax(point_x_idx_start, 0);
+    // point_x_idx_end = std::fmax(point_x_idx_end, 0);
     point_x_idx_end = std::fmin(point_x_idx_end, x_direction_point_num_ - 1);
+    // point_y_idx_start = std::fmin(point_y_idx_start, y_direction_point_num_ - 1);
     point_y_idx_start = std::fmax(point_y_idx_start, 0);
+    // point_y_idx_end = std::fmax(point_y_idx_end, 0);
     point_y_idx_end = std::fmin(point_y_idx_end, y_direction_point_num_ - 1);
 
     if(point_x_idx_start > point_x_idx_end || point_y_idx_start > point_y_idx_end)
@@ -1409,6 +1413,13 @@ bool WorldPlaceGenerator::resetButRemainWall(
         return false;
     }
 
+    current_new_room_id_ = 0;
+
+    team_x_direction_person_num_ = 0;
+    team_y_direction_person_num_ = 0;
+    team_dist_ = -1;
+    person_edge_ = -1;
+
     return true;
 }
 
@@ -1481,39 +1492,39 @@ bool WorldPlaceGenerator::generateWall(
     {
         outerwall_boundary_polygon_ = wall_polygon;
         is_outerwall_boundary_polygon_set_ = true;
-    }
 
-    if(!boundary_line_list_manager_.setBoundaryPolygon(wall_polygon))
-    {
-        std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
-          "Input :\n" <<
-          "\twall_name = " << wall_name << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "setBoundaryPolygon failed!" << std::endl;
+        if(!point_matrix_.setSplitEdgeLength(free_room_error_max_))
+        {
+            std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
+              "Input :\n" <<
+              "\twall_name = " << wall_name << std::endl <<
+              "\twall_type = " << wall_type << std::endl <<
+              "setSplitEdgeLength failed!" << std::endl;
 
-        return false;
-    }
+            return false;
+        }
 
-    if(!point_matrix_.setSplitEdgeLength(free_room_error_max_))
-    {
-        std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
-          "Input :\n" <<
-          "\twall_name = " << wall_name << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "setSplitEdgeLength failed!" << std::endl;
+        if(!point_matrix_.setBoundaryPolygon(wall_polygon))
+        {
+            std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
+              "Input :\n" <<
+              "\twall_name = " << wall_name << std::endl <<
+              "\twall_type = " << wall_type << std::endl <<
+              "setBoundaryPolygon failed!" << std::endl;
 
-        return false;
-    }
+            return false;
+        }
 
-    if(!point_matrix_.setBoundaryPolygon(wall_polygon))
-    {
-        std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
-          "Input :\n" <<
-          "\twall_name = " << wall_name << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "setBoundaryPolygon failed!" << std::endl;
+        if(!boundary_line_list_manager_.setBoundaryPolygon(wall_polygon))
+        {
+            std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
+              "Input :\n" <<
+              "\twall_name = " << wall_name << std::endl <<
+              "\twall_type = " << wall_type << std::endl <<
+              "setBoundaryPolygon failed!" << std::endl;
 
-        return false;
+            return false;
+        }
     }
 
     return true;
@@ -2291,8 +2302,8 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
         if(!point_matrix_.setRectPointOccupancyState(
               max_free_roomcontainer_start_position_x,
               max_free_roomcontainer_start_position_y,
-              max_free_roomcontainer_start_position_x + max_free_roomcontainer_width,
-              max_free_roomcontainer_start_position_y + max_free_roomcontainer_height,
+              max_free_roomcontainer_width,
+              max_free_roomcontainer_height,
               PointOccupancyState::PointUsed))
         {
             std::cout << "WorldPlaceGenerator::generateFreeRoomContainer : " << std::endl <<

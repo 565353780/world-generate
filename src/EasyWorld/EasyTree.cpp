@@ -42,12 +42,15 @@ bool EasyTree::resetButRemainWall()
 
     for(EasyNode* wall_node : root_->getChildNodeVec())
     {
-        if(!wall_node->removeAllChild())
+        for(EasyNode* wall_child_node : wall_node->getChildNodeVec())
         {
-            std::cout << "EasyTree::resetButRemainWall : " << std::endl <<
-              "removeAllChild for wall node failed!" << std::endl;
+            if(!wall_child_node->removeAllChild())
+            {
+                std::cout << "EasyTree::resetButRemainWall : " << std::endl <<
+                  "removeAllChild for wall node failed!" << std::endl;
 
-            return false;
+                return false;
+            }
         }
     }
 

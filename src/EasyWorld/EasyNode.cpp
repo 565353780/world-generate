@@ -580,6 +580,8 @@ bool EasyNode::removeAllChild()
         }
     }
 
+    child_vec_.clear();
+
     return true;
 }
 

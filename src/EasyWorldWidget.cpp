@@ -52,31 +52,43 @@ void EasyWorldWidget::run_example()
 {
     zoom_ = 20;
 
+    world_place_generator_.createNewWorld(world_controller_, 2, 2);
+
     EasyPolygon2D wall_boundary_polygon;
     wall_boundary_polygon.addPoint(0, 0);
     wall_boundary_polygon.addPoint(32, 0);
     wall_boundary_polygon.addPoint(32, 32);
     wall_boundary_polygon.addPoint(0, 32);
     wall_boundary_polygon.setAntiClockWise();
-    world_place_generator_.setWallBoundaryPolygon(wall_boundary_polygon);
 
-    world_place_generator_.createNewWorld(world_controller_, 2, 2);
-    world_place_generator_.generateWall(world_controller_);
+    world_place_generator_.generateOuterWall(
+        world_controller_, "Outer Wall 0", wall_boundary_polygon);
 
     std::vector<std::string> room_name_vec;
     room_name_vec.resize(1);
     room_name_vec[0] = "茶水间";
-    world_place_generator_.placeWallRoomContainer(world_controller_, 2, 22, 10, 10, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_,
+        0, NodeType::OuterWall, 2,
+        22, 10, 10,
+        1, room_name_vec);
     room_name_vec.resize(3);
     room_name_vec[0] = "财务室";
     room_name_vec[1] = "总经办";
     room_name_vec[2] = "会议室";
-    world_place_generator_.placeWallRoomContainer(world_controller_, 0, 0, 32, 10, 3, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_,
+        0, NodeType::OuterWall, 0,
+        0, 32, 10,
+        3, room_name_vec);
     room_name_vec.resize(1);
     room_name_vec[0] = "会议室";
-    world_place_generator_.placeWallRoomContainer(world_controller_, 2, 0, 10, 10, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_,
+        0, NodeType::OuterWall, 2,
+        0, 10, 10,
+        1, room_name_vec);
     room_name_vec[0] = "接待区";
-    world_place_generator_.placeWallRoomContainer(world_controller_, 2, 11, 10, 10, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_,
+        0, NodeType::OuterWall, 2,
+        11, 10, 10, 1, room_name_vec);
     world_place_generator_.generateFreeRoomContainer(
         world_controller_, 4, 4, 0.5, 2);
     update();
@@ -117,27 +129,34 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
     {
         // world_place_generator_.generateWorld(world_controller_);
 
-        world_place_generator_.createNewWorld(world_controller_, 2, 2);
-        world_place_generator_.generateWall(world_controller_);
+        world_place_generator_.resetButRemainWall(world_controller_);
 
         std::vector<std::string> room_name_vec;
         room_name_vec.resize(1);
         room_name_vec[0] = "茶水间";
         world_place_generator_.placeWallRoomContainer(world_controller_,
-            std::rand() % 4, std::rand() % 22, 10, 10, 1, room_name_vec);
+            0, NodeType::OuterWall, std::rand() % 4,
+            std::rand() % 22, 10, 10,
+            1, room_name_vec);
         room_name_vec.resize(3);
         room_name_vec[0] = "财务室";
         room_name_vec[1] = "总经办";
         room_name_vec[2] = "会议室";
         world_place_generator_.placeWallRoomContainer(world_controller_,
-            std::rand() % 4, std::rand() % 12, 32, 10, 3, room_name_vec);
+            0, NodeType::OuterWall, std::rand() % 4,
+            std::rand() % 12, 32, 10,
+            3, room_name_vec);
         room_name_vec.resize(1);
         room_name_vec[0] = "会议室";
         world_place_generator_.placeWallRoomContainer(world_controller_,
-            std::rand() % 4, std::rand() % 22, 10, 10, 1, room_name_vec);
+            0, NodeType::OuterWall, std::rand() % 4,
+            std::rand() % 22, 10, 10,
+            1, room_name_vec);
         room_name_vec[0] = "接待区";
         world_place_generator_.placeWallRoomContainer(world_controller_,
-            std::rand() % 4, std::rand() % 22, 10, 10, 1, room_name_vec);
+            0, NodeType::OuterWall, std::rand() % 4,
+            std::rand() % 22, 10, 10,
+            1, room_name_vec);
         world_place_generator_.generateFreeRoomContainer(
             world_controller_, 4, 4, 0.5, 2);
         update();

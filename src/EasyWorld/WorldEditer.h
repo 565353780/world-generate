@@ -21,6 +21,8 @@ public:
 
     float world_center_x;
     float world_center_y;
+
+    std::string name;
 };
 
 class WallData
@@ -38,6 +40,8 @@ public:
     size_t id;
     NodeType type;
     EasyPolygon2D boundary_polygon;
+
+    std::string name;
 };
 
 class WallRoomContainerData
@@ -60,6 +64,7 @@ public:
     float real_width;
     float target_height;
     float real_height;
+
     size_t room_num;
     std::vector<std::string> room_name_vec;
 };
@@ -91,11 +96,13 @@ public:
 
     bool reset();
 
-    bool setWorldCenter(
+    bool setWorld(
+        const std::string &name,
         const float &world_center_x,
         const float &world_center_y);
 
     bool addWall(
+        const std::string &name,
         const size_t &id,
         const NodeType &type,
         const EasyPolygon2D &boundary_polygon);

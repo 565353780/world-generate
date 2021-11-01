@@ -23,6 +23,27 @@ bool WorldController::reset()
     return true;
 }
 
+bool WorldController::resetButRemainWall()
+{
+    if(!world_tree_.resetButRemainWall())
+    {
+        std::cout << "WorldController::resetButRemainWall : " << std::endl <<
+          "resetButRemainWall failed!" << std::endl;
+
+        return false;
+    }
+
+    roomcontainer_pair_vec_.clear();
+    room_pair_vec_.clear();
+    door_pair_vec_.clear();
+    window_pair_vec_.clear();
+    team_pair_vec_.clear();
+    person_pair_vec_.clear();
+    furniture_pair_vec_.clear();
+
+    return true;
+}
+
 bool WorldController::createWorld(
     const std::string &world_name,
     const float &world_center_x,
@@ -3326,6 +3347,165 @@ bool WorldController::createFreeRoomContainerForWall(
           "\troomcontainer_axis_in_parent : " << std::endl;
         roomcontainer_axis_in_parent.outputInfo(1);
         std::cout << "createRoomGroupForRoomContainer for new roomcontainer failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::createWallForWorld(
+    const std::string &wall_name,
+    const EasyAxis2D &wall_axis_in_parent,
+    const NodeType &wall_type,
+    const EasyPolygon2D &wall_boundary_polygon)
+{
+    if(wall_type != NodeType::OuterWall &&
+        wall_type != NodeType::InnerWall)
+    {
+        std::cout << "WorldController::createWallForWorld : " << std::endl <<
+          "Input :\n" <<
+          "\twall_name = " << wall_name << std::endl <<
+          "\twall_axis_in_parent :" << std::endl;
+        wall_axis_in_parent.outputInfo(1);
+        std::cout << "\twall_type = " << wall_type << std::endl <<
+          "wall_type is not the wall type!" << std::endl;
+
+        return false;
+    }
+
+    if(wall_boundary_polygon.point_list.size() < 3)
+    {
+        std::cout << "WorldController::createWallForWorld : " << std::endl <<
+          "Input :\n" <<
+          "\twall_name = " << wall_name << std::endl <<
+          "\twall_axis_in_parent :" << std::endl;
+        wall_axis_in_parent.outputInfo(1);
+        std::cout << "\twall_type = " << wall_type << std::endl <<
+          "wall_boundary_polygon size not valid!" << std::endl;
+
+        return false;
+    }
+
+    bool find_exist_wall = false;
+    size_t new_wall_id = 0;
+    for(const std::pair<size_t, NodeType> &wall_pair : wall_pair_vec_)
+    {
+        if(wall_pair.second != wall_type)
+        {
+            continue;
+        }
+
+        new_wall_id = std::max(new_wall_id, wall_pair.first);
+        find_exist_wall = true;
+    }
+    if(find_exist_wall)
+    {
+        ++new_wall_id;
+    }
+
+    if(!world_tree_.createNode(
+          wall_name, new_wall_id, wall_type, 0, NodeType::World, 0))
+    {
+        std::cout << "WorldController::createWallForWorld : " << std::endl <<
+          "Input :\n" <<
+          "\twall_name = " << wall_name << std::endl <<
+          "\twall_axis_in_parent :" << std::endl;
+        wall_axis_in_parent.outputInfo(1);
+        std::cout << "\twall_type = " << wall_type << std::endl <<
+          "createNode for new wall failed!" << std::endl;
+
+        return false;
+    }
+
+    std::pair<size_t, NodeType> new_wall_pair;
+    new_wall_pair.first = new_wall_id;
+    new_wall_pair.second = wall_type;
+
+    wall_pair_vec_.emplace_back(new_wall_pair);
+
+    EasyPolygon2D wall_node_boundary_polygon = wall_boundary_polygon;
+    if(wall_type == NodeType::OuterWall)
+    {
+        wall_node_boundary_polygon.setAntiClockWise();
+    }
+    else
+    {
+        wall_node_boundary_polygon.setClockWise();
+    }
+
+    if(!world_tree_.setNodeBoundaryPolygon(new_wall_id, wall_type, wall_node_boundary_polygon))
+    {
+        std::cout << "WorldController::createWallForWorld : " << std::endl <<
+          "Input :\n" <<
+          "\twall_name = " << wall_name << std::endl <<
+          "\twall_axis_in_parent :" << std::endl;
+        wall_axis_in_parent.outputInfo(1);
+        std::cout << "\twall_type = " << wall_type << std::endl <<
+          "setNodeBoundaryPolygon for new wall failed!" << std::endl;
+
+        return false;
+    }
+
+    if(!world_tree_.setNodeAxisInParent(new_wall_id, wall_type, wall_axis_in_parent, true))
+    {
+        std::cout << "WorldController::createWallForWorld : " << std::endl <<
+          "Input :\n" <<
+          "\twall_name = " << wall_name << std::endl <<
+          "\twall_axis_in_parent :" << std::endl;
+        wall_axis_in_parent.outputInfo(1);
+        std::cout << "\twall_type = " << wall_type << std::endl <<
+          "setNodeAxisInParent for new wall failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::createInnerWallForWorld(
+    const std::string &wall_name,
+    const EasyAxis2D &wall_axis_in_parent,
+    const EasyPolygon2D &wall_boundary_polygon)
+{
+    if(!createWallForWorld(
+          wall_name,
+          wall_axis_in_parent,
+          NodeType::InnerWall,
+          wall_boundary_polygon))
+    {
+        std::cout << "WorldController::createInnerWallForWorld : " << std::endl <<
+          "Input :\n" <<
+          "\twall_name = " << wall_name << std::endl <<
+          "\twall_axis_in_parent :" << std::endl;
+        wall_axis_in_parent.outputInfo(1);
+        std::cout <<
+          "createWallForWorld failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldController::createOuterWallForWorld(
+    const std::string &wall_name,
+    const EasyAxis2D &wall_axis_in_parent,
+    const EasyPolygon2D &wall_boundary_polygon)
+{
+    if(!createWallForWorld(
+          wall_name,
+          wall_axis_in_parent,
+          NodeType::OuterWall,
+          wall_boundary_polygon))
+    {
+        std::cout << "WorldController::createOuterWallForWorld : " << std::endl <<
+          "Input :\n" <<
+          "\twall_name = " << wall_name << std::endl <<
+          "\twall_axis_in_parent :" << std::endl;
+        wall_axis_in_parent.outputInfo(1);
+        std::cout <<
+          "createWallForWorld failed!" << std::endl;
 
         return false;
     }

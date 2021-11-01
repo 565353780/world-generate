@@ -23,7 +23,32 @@ bool EasyTree::reset()
             return false;
         }
 
+        delete(root_);
         root_ = nullptr;
+    }
+
+    return true;
+}
+
+bool EasyTree::resetButRemainWall()
+{
+    if(root_ == nullptr)
+    {
+        std::cout << "EasyTree::resetButRemainWall : " << std::endl <<
+          "root_ is nullptr!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* wall_node : root_->getChildNodeVec())
+    {
+        if(!wall_node->removeAllChild())
+        {
+            std::cout << "EasyTree::resetButRemainWall : " << std::endl <<
+              "removeAllChild for wall node failed!" << std::endl;
+
+            return false;
+        }
     }
 
     return true;

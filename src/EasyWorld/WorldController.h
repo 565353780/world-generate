@@ -13,6 +13,8 @@ public:
 
     bool reset();
 
+    bool resetButRemainWall();
+
     bool createWorld(
         const std::string &world_name,
         const float &world_center_x,
@@ -345,6 +347,22 @@ public:
         const float &roomcontainer_height,
         const EasyAxis2D &roomcontainer_axis_in_parent,
         const size_t &room_x_direction_num);
+
+    bool createWallForWorld(
+        const std::string &wall_name,
+        const EasyAxis2D &wall_axis_in_parent,
+        const NodeType &wall_type,
+        const EasyPolygon2D &wall_boundary_polygon);
+
+    bool createInnerWallForWorld(
+        const std::string &wall_name,
+        const EasyAxis2D &wall_axis_in_parent,
+        const EasyPolygon2D &wall_boundary_polygon);
+
+    bool createOuterWallForWorld(
+        const std::string &wall_name,
+        const EasyAxis2D &wall_axis_in_parent,
+        const EasyPolygon2D &wall_boundary_polygon);
 
     EasyNode* findNode(
         const size_t &node_id,

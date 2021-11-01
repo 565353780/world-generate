@@ -140,10 +140,12 @@ bool WorldGenerateDataManager::reset()
     return true;
 }
 
-bool WorldGenerateDataManager::setWorldCenter(
+bool WorldGenerateDataManager::setWorld(
+    const std::string &name,
     const float &world_center_x,
     const float &world_center_y)
 {
+    world_data.name = name;
     world_data.world_center_x = world_center_x;
     world_data.world_center_y = world_center_y;
 
@@ -151,11 +153,13 @@ bool WorldGenerateDataManager::setWorldCenter(
 }
 
 bool WorldGenerateDataManager::addWall(
+    const std::string &name,
     const size_t &id,
     const NodeType &type,
     const EasyPolygon2D &boundary_polygon)
 {
     WallData new_wall_data;
+    new_wall_data.name = name;
     new_wall_data.id = id;
     new_wall_data.type = type;
     new_wall_data.boundary_polygon = boundary_polygon;
@@ -313,7 +317,8 @@ bool WorldEditer::readData(
     const EasyAxis2D &world_axis_in_world =
       world_node->getAxisInWorld();
 
-    if(!world_generate_data_manager_.setWorldCenter(
+    if(!world_generate_data_manager_.setWorld(
+          world_node->getName(),
           world_axis_in_world.center_.x,
           world_axis_in_world.center_.y))
     {
@@ -323,15 +328,37 @@ bool WorldEditer::readData(
         return false;
     }
 
-    if(!world_generate_data_manager_.addWall(
-          0,
-          NodeType::OuterWall,
-          world_place_generator.wall_boundary_polygon_))
+    for(EasyNode* wall_node : world_node->getChildNodeVec())
     {
-        std::cout << "WorldEditer::readData : " << std::endl <<
-          "addWall failed!" << std::endl;
+        const NodeType &wall_type = wall_node->getNodeType();
 
-        return false;
+        if(wall_type != NodeType::OuterWall &&
+            wall_type != NodeType::InnerWall)
+        {
+            continue;
+        }
+
+        EasyNode* wall_space_node = wall_node->findChild(0, NodeType::Space);
+
+        if(wall_space_node == nullptr)
+        {
+            std::cout << "WorldEditer::readData : " << std::endl <<
+              "wall space node is nullptr!" << std::endl;
+
+            return false;
+        }
+
+        if(!world_generate_data_manager_.addWall(
+              wall_node->getName(),
+              wall_node->getID(),
+              wall_node->getNodeType(),
+              wall_space_node->getBoundaryPolygon()))
+        {
+            std::cout << "WorldEditer::readData : " << std::endl <<
+              "addWall failed!" << std::endl;
+
+            return false;
+        }
     }
 
     const size_t wall_roomcontainer_data_num =
@@ -401,14 +428,6 @@ bool WorldEditer::loadData(
     const float &world_center_x = world_generate_data_manager_.world_data.world_center_x;
     const float &world_center_y = world_generate_data_manager_.world_data.world_center_y;
 
-    if(world_generate_data_manager_.wall_data_vec.size() == 0)
-    {
-        std::cout << "WorldEditer::loadData : " << std::endl <<
-          "no wall data found!" << std::endl;
-
-        return false;
-    }
-
     if(!world_place_generator.reset())
     {
         std::cout << "WorldEditer::loadData : " << std::endl <<
@@ -428,18 +447,26 @@ bool WorldEditer::loadData(
         return false;
     }
 
+    if(world_generate_data_manager_.wall_data_vec.size() == 0)
+    {
+        std::cout << "WorldEditer::loadData : " << std::endl <<
+          "no wall data found!" << std::endl;
+
+        return false;
+    }
+
     for(const WallData &wall_data : world_generate_data_manager_.wall_data_vec)
     {
-        if(!world_place_generator.setWallBoundaryPolygon(
-              wall_data.boundary_polygon))
+        if(wall_data.type == NodeType::OuterWall)
         {
-            std::cout << "WorldEditer::loadData : " << std::endl <<
-              "setWallBoundaryPolygon failed!" << std::endl;
-
-            return false;
+            world_place_generator.outerwall_boundary_polygon_ = wall_data.boundary_polygon;
+            world_place_generator.is_outerwall_boundary_polygon_set_ = true;
         }
 
-        if(!world_place_generator.generateWall(world_controller))
+        if(!world_place_generator.generateWall(world_controller,
+              wall_data.name,
+              wall_data.type,
+              wall_data.boundary_polygon))
         {
             std::cout << "WorldEditer::loadData : " << std::endl <<
               "generateWall failed!" << std::endl;
@@ -453,6 +480,8 @@ bool WorldEditer::loadData(
     {
         if(!world_place_generator.placeWallRoomContainer(
               world_controller,
+              wall_roomcontainer_data.wall_id,
+              wall_roomcontainer_data.wall_type,
               wall_roomcontainer_data.on_wall_boundary_idx,
               wall_roomcontainer_data.on_wall_boundary_start_position,
               wall_roomcontainer_data.target_width,

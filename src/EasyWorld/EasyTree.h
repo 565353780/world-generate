@@ -17,6 +17,8 @@ public:
 
     bool reset();
 
+    bool resetButRemainWall();
+
     bool createWorld(
         const std::string &world_name,
         const float &world_center_x,
@@ -98,12 +100,7 @@ private:
         EasyNode* node);
 
 private:
-    EasyNode *root_;
-
-    std::vector<size_t> outerwall_id_vec_;
-    std::vector<size_t> innerwall_id_vec_;
-    std::vector<size_t> room_id_vec_;
-    std::vector<size_t> furniture_id_vec_;
+    EasyNode* root_;
 };
 
 #endif //EASY_TREE_H

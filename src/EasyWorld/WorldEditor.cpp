@@ -1,4 +1,4 @@
-#include "WorldEditer.h"
+#include "WorldEditor.h"
 
 bool WorldData::reset()
 {
@@ -284,20 +284,20 @@ bool WorldGenerateDataManager::outputInfo(
     return true;
 }
 
-bool WorldEditer::reset()
+bool WorldEditor::reset()
 {
     world_generate_data_manager_.reset();
 
     return true;
 }
 
-bool WorldEditer::readData(
+bool WorldEditor::readData(
     WorldController &world_controller,
     WorldPlaceGenerator &world_place_generator)
 {
     if(!world_generate_data_manager_.reset())
     {
-        std::cout << "WorldEditer::readData : " << std::endl <<
+        std::cout << "WorldEditor::readData : " << std::endl <<
           "reset world generate data manager failed!" << std::endl;
 
         return false;
@@ -308,7 +308,7 @@ bool WorldEditer::readData(
 
     if(world_node == nullptr)
     {
-        std::cout << "WorldEditer::readData : " << std::endl <<
+        std::cout << "WorldEditor::readData : " << std::endl <<
           "world node not found!" << std::endl;
 
         return false;
@@ -322,7 +322,7 @@ bool WorldEditer::readData(
           world_axis_in_world.center_.x,
           world_axis_in_world.center_.y))
     {
-        std::cout << "WorldEditer::readData : " << std::endl <<
+        std::cout << "WorldEditor::readData : " << std::endl <<
           "setWorldCenter failed!" << std::endl;
 
         return false;
@@ -342,7 +342,7 @@ bool WorldEditer::readData(
 
         if(wall_space_node == nullptr)
         {
-            std::cout << "WorldEditer::readData : " << std::endl <<
+            std::cout << "WorldEditor::readData : " << std::endl <<
               "wall space node is nullptr!" << std::endl;
 
             return false;
@@ -354,7 +354,7 @@ bool WorldEditer::readData(
               wall_node->getNodeType(),
               wall_space_node->getBoundaryPolygon()))
         {
-            std::cout << "WorldEditer::readData : " << std::endl <<
+            std::cout << "WorldEditor::readData : " << std::endl <<
               "addWall failed!" << std::endl;
 
             return false;
@@ -396,7 +396,7 @@ bool WorldEditer::readData(
                   boundary_line->line_room_num,
                   boundary_line->room_name_vec))
             {
-                std::cout << "WorldEditer::readData : " << std::endl <<
+                std::cout << "WorldEditor::readData : " << std::endl <<
                   "setWallRoomContainer failed!" << std::endl;
 
                 return false;
@@ -412,7 +412,7 @@ bool WorldEditer::readData(
           world_place_generator.team_dist_,
           world_place_generator.person_edge_))
     {
-        std::cout << "WorldEditer::readData : " << std::endl <<
+        std::cout << "WorldEditor::readData : " << std::endl <<
           "setFreeRoomContainer failed!" << std::endl;
 
         return false;
@@ -421,7 +421,7 @@ bool WorldEditer::readData(
     return true;
 }
 
-bool WorldEditer::loadData(
+bool WorldEditor::loadData(
     WorldController &world_controller,
     WorldPlaceGenerator &world_place_generator)
 {
@@ -430,7 +430,7 @@ bool WorldEditer::loadData(
 
     if(!world_place_generator.reset())
     {
-        std::cout << "WorldEditer::loadData : " << std::endl <<
+        std::cout << "WorldEditor::loadData : " << std::endl <<
           "reset world place generator failed!" << std::endl;
 
         return false;
@@ -441,7 +441,7 @@ bool WorldEditer::loadData(
           world_center_x,
           world_center_y))
     {
-        std::cout << "WorldEditer::loadData : " << std::endl <<
+        std::cout << "WorldEditor::loadData : " << std::endl <<
           "createNewWorld failed!" << std::endl;
 
         return false;
@@ -449,7 +449,7 @@ bool WorldEditer::loadData(
 
     if(world_generate_data_manager_.wall_data_vec.size() == 0)
     {
-        std::cout << "WorldEditer::loadData : " << std::endl <<
+        std::cout << "WorldEditor::loadData : " << std::endl <<
           "no wall data found!" << std::endl;
 
         return false;
@@ -468,7 +468,7 @@ bool WorldEditer::loadData(
               wall_data.type,
               wall_data.boundary_polygon))
         {
-            std::cout << "WorldEditer::loadData : " << std::endl <<
+            std::cout << "WorldEditor::loadData : " << std::endl <<
               "generateWall failed!" << std::endl;
 
             return false;
@@ -489,7 +489,7 @@ bool WorldEditer::loadData(
               wall_roomcontainer_data.room_num,
               wall_roomcontainer_data.room_name_vec))
         {
-            // std::cout << "WorldEditer::loadData : " << std::endl <<
+            // std::cout << "WorldEditor::loadData : " << std::endl <<
             //   "placeWallRoomContainer failed!" << std::endl;
 
             continue;
@@ -512,7 +512,7 @@ bool WorldEditer::loadData(
           world_generate_data_manager_.free_roomcontainer_data.team_dist,
           world_generate_data_manager_.free_roomcontainer_data.person_edge))
     {
-        std::cout << "WorldEditer::loadData : " << std::endl <<
+        std::cout << "WorldEditor::loadData : " << std::endl <<
           "generateFreeRoomContainer failed!" << std::endl;
 
         return false;
@@ -521,7 +521,7 @@ bool WorldEditer::loadData(
     return true;
 }
 
-bool WorldEditer::setWallRoomContainerPosition(
+bool WorldEditor::setWallRoomContainerPosition(
     WorldController &world_controller,
     WorldPlaceGenerator &world_place_generator,
     const size_t &wall_roomcontainer_id,
@@ -533,7 +533,7 @@ bool WorldEditer::setWallRoomContainerPosition(
 
     if(!readData(world_controller, world_place_generator))
     {
-        std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
+        std::cout << "WorldEditor::setWallRoomContainerPosition : " << std::endl <<
           "Input :\n" <<
           "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
           "\tnew_position = [" << new_position_x << "," <<
@@ -549,7 +549,7 @@ bool WorldEditer::setWallRoomContainerPosition(
 
     if(wall_roomcontainer_node == nullptr)
     {
-        std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
+        std::cout << "WorldEditor::setWallRoomContainerPosition : " << std::endl <<
           "Input :\n" <<
           "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
           "\tnew_position = [" << new_position_x << "," <<
@@ -564,7 +564,7 @@ bool WorldEditer::setWallRoomContainerPosition(
 
     if(wall_roomcontainer_parent_node == nullptr)
     {
-        std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
+        std::cout << "WorldEditor::setWallRoomContainerPosition : " << std::endl <<
           "Input :\n" <<
           "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
           "\tnew_position = [" << new_position_x << "," <<
@@ -584,7 +584,7 @@ bool WorldEditer::setWallRoomContainerPosition(
           new_position_in_world,
           new_position_in_parent))
     {
-        std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
+        std::cout << "WorldEditor::setWallRoomContainerPosition : " << std::endl <<
           "Input :\n" <<
           "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
           "\tnew_position = [" << new_position_x << "," <<
@@ -636,7 +636,7 @@ bool WorldEditer::setWallRoomContainerPosition(
 
     if(!loadData(world_controller, world_place_generator))
     {
-        std::cout << "WorldEditer::setWallRoomContainerPosition : " << std::endl <<
+        std::cout << "WorldEditor::setWallRoomContainerPosition : " << std::endl <<
           "Input :\n" <<
           "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
           "\tnew_position = [" << new_position_x << "," <<

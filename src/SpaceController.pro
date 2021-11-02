@@ -80,7 +80,7 @@ SOURCES += \
     EasyWorld/WorldController.cpp \
     EasyWorld/WorldPlaceGenerator.cpp \
     EasyWorld/WorldDescriptor.cpp \
-    EasyWorld/WorldEditer.cpp \
+    EasyWorld/WorldEditor.cpp \
     EasyWorld/WorldReward.cpp
 
 HEADERS += \
@@ -90,7 +90,7 @@ HEADERS += \
     EasyWorld/WorldController.h \
     EasyWorld/WorldPlaceGenerator.h \
     EasyWorld/WorldDescriptor.h \
-    EasyWorld/WorldEditer.h \
+    EasyWorld/WorldEditor.h \
     EasyWorld/WorldReward.h
 
 HEADERS += \

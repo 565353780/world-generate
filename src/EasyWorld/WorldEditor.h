@@ -1,5 +1,5 @@
-#ifndef WORLD_EDITER_H
-#define WORLD_EDITER_H
+#ifndef WORLD_EDITOR_H
+#define WORLD_EDITOR_H
 
 #include <iostream>
 #include <string>
@@ -147,10 +147,10 @@ public:
     FreeRoomContainerData free_roomcontainer_data;
 };
 
-class WorldEditer
+class WorldEditor
 {
 public:
-    WorldEditer()
+    WorldEditor()
     {
     }
 
@@ -176,4 +176,4 @@ private:
     WorldGenerateDataManager world_generate_data_manager_;
 };
 
-#endif //WORLD_EDITER_H
+#endif //WORLD_EDITOR_H

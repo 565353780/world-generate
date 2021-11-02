@@ -16,7 +16,7 @@
 #include <time.h>
 
 #include "EasyWorld/WorldPlaceGenerator.h"
-#include "EasyWorld/WorldEditer.h"
+#include "EasyWorld/WorldEditor.h"
 
 namespace Ui {
 class EasyWorldWidget;
@@ -129,7 +129,7 @@ private:
 
     WorldController world_controller_;
     WorldPlaceGenerator world_place_generator_;
-    WorldEditer world_editer_;
+    WorldEditor world_editor_;
 
     float axis_length_;
     float zoom_;

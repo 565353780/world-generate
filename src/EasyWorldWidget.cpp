@@ -56,29 +56,31 @@ void EasyWorldWidget::run_example()
 
     EasyPolygon2D outerwall_boundary_polygon;
     outerwall_boundary_polygon.addPoint(0, 0);
-    outerwall_boundary_polygon.addPoint(40, 0);
-    outerwall_boundary_polygon.addPoint(40, 40);
-    outerwall_boundary_polygon.addPoint(0, 40);
+    outerwall_boundary_polygon.addPoint(32, 0);
+    outerwall_boundary_polygon.addPoint(32, 32);
+    outerwall_boundary_polygon.addPoint(0, 32);
 
     world_place_generator_.generateOuterWall(
         world_controller_, "Outer Wall 0", outerwall_boundary_polygon);
 
-    EasyPolygon2D innerwall_boundary_polygon;
-    innerwall_boundary_polygon.addPoint(15, 15);
-    innerwall_boundary_polygon.addPoint(25, 15);
-    innerwall_boundary_polygon.addPoint(25, 25);
-    innerwall_boundary_polygon.addPoint(15, 25);
-
-    world_place_generator_.generateInnerWall(
-        world_controller_, "Inner Wall 0", innerwall_boundary_polygon);
+    // EasyPolygon2D innerwall_boundary_polygon;
+    // innerwall_boundary_polygon.addPoint(10, 10);
+    // innerwall_boundary_polygon.addPoint(30, 10);
+    // innerwall_boundary_polygon.addPoint(30, 30);
+    // innerwall_boundary_polygon.addPoint(10, 10);
+    //
+    // world_place_generator_.generateInnerWall(
+    //     world_controller_, "Inner Wall 0", innerwall_boundary_polygon);
 
     std::vector<std::string> room_name_vec;
+
     room_name_vec.resize(1);
     room_name_vec[0] = "茶水间";
     world_place_generator_.placeWallRoomContainer(world_controller_,
         0, NodeType::OuterWall, 2,
         22, 10, 10,
         1, room_name_vec);
+
     room_name_vec.resize(3);
     room_name_vec[0] = "财务室";
     room_name_vec[1] = "总经办";
@@ -87,18 +89,24 @@ void EasyWorldWidget::run_example()
         0, NodeType::OuterWall, 0,
         0, 32, 10,
         3, room_name_vec);
+
     room_name_vec.resize(1);
     room_name_vec[0] = "会议室";
     world_place_generator_.placeWallRoomContainer(world_controller_,
         0, NodeType::OuterWall, 2,
         0, 10, 10,
         1, room_name_vec);
+
+    room_name_vec.resize(1);
     room_name_vec[0] = "接待区";
     world_place_generator_.placeWallRoomContainer(world_controller_,
         0, NodeType::OuterWall, 2,
-        11, 10, 10, 1, room_name_vec);
+        11, 10, 10,
+        1, room_name_vec);
+
     world_place_generator_.generateFreeRoomContainer(
         world_controller_, 4, 4, 0.5, 2);
+
     update();
 
     // world_place_generator_.generateWorld(world_controller_);
@@ -108,7 +116,7 @@ void EasyWorldWidget::run_example()
     // setStartTime();
     // while(true)
     // {
-    //     world_editer_.world_place_generator_.generateWorld();
+    //     world_editor_.world_place_generator_.generateWorld();
     //     ++cycle_num;
     //     getFPS(cycle_num, avg_fps);
     //
@@ -239,7 +247,7 @@ bool EasyWorldWidget::moveWallRoomContainer(
         const float new_position_y =
           1.0 * mouse_pos.y() / zoom_;
 
-        world_editer_.setWallRoomContainerPosition(
+        world_editor_.setWallRoomContainerPosition(
             world_controller_,
             world_place_generator_,
             wall_roomcontainer_id,

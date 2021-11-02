@@ -2277,7 +2277,7 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
                     team_axis,
                     person_x_direction_num,
                     person_y_direction_num,
-                    true);
+                    false);
 
                 ++current_freeroom_id_start;
             }

@@ -1483,7 +1483,7 @@ bool WorldPlaceGenerator::generateWall(
           "Input :\n" <<
           "\twall_name = " << wall_name << std::endl <<
           "\twall_type = " << wall_type << std::endl <<
-          "createOuterWallForWorld failed!" << std::endl;
+          "createWallForWorld failed!" << std::endl;
 
         return false;
     }

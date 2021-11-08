@@ -4,9 +4,7 @@
 #include <iostream>
 #include <string>
 
-#include "WorldController.h"
 #include "WorldDescriptor.h"
-#include "WorldPlaceGenerator.h"
 
 class WorldEditor
 {

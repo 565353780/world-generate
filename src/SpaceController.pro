@@ -50,28 +50,6 @@ HEADERS += \
 HEADERS += \
     EasyShape/EasyShape.h
 
-# EasySpace
-SOURCES += \
-    EasySpace/EasyBoundary.cpp \
-    EasySpace/EasyDoor.cpp \
-    EasySpace/EasyRoom.cpp \
-    EasySpace/EasyBoundaryPoint.cpp \
-    EasySpace/EasyBoundaryLine.cpp \
-    EasySpace/EasyRoomLine.cpp \
-    EasySpace/EasyFixture.cpp
-
-HEADERS += \
-    EasySpace/EasyBoundary.h \
-    EasySpace/EasyDoor.h \
-    EasySpace/EasyRoom.h \
-    EasySpace/EasyBoundaryPoint.h \
-    EasySpace/EasyBoundaryLine.h \
-    EasySpace/EasyRoomLine.h \
-    EasySpace/EasyFixture.h
-
-HEADERS += \
-    EasySpace/EasySpace.h
-
 # EasyWorld
 SOURCES += \
     EasyWorld/EasyAxis2D.cpp \

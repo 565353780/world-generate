@@ -56,21 +56,21 @@ void EasyWorldWidget::run_example()
 
     EasyPolygon2D outerwall_boundary_polygon;
     outerwall_boundary_polygon.addPoint(0, 0);
-    outerwall_boundary_polygon.addPoint(32, 0);
-    outerwall_boundary_polygon.addPoint(32, 32);
-    outerwall_boundary_polygon.addPoint(0, 32);
+    outerwall_boundary_polygon.addPoint(40, 0);
+    outerwall_boundary_polygon.addPoint(40, 40);
+    outerwall_boundary_polygon.addPoint(0, 40);
 
     world_place_generator_.generateOuterWall(
         world_controller_, "Outer Wall 0", outerwall_boundary_polygon);
 
-    // EasyPolygon2D innerwall_boundary_polygon;
-    // innerwall_boundary_polygon.addPoint(10, 10);
-    // innerwall_boundary_polygon.addPoint(30, 10);
-    // innerwall_boundary_polygon.addPoint(30, 30);
-    // innerwall_boundary_polygon.addPoint(10, 10);
-    //
-    // world_place_generator_.generateInnerWall(
-    //     world_controller_, "Inner Wall 0", innerwall_boundary_polygon);
+    EasyPolygon2D innerwall_boundary_polygon;
+    innerwall_boundary_polygon.addPoint(10, 10);
+    innerwall_boundary_polygon.addPoint(30, 10);
+    innerwall_boundary_polygon.addPoint(30, 30);
+    innerwall_boundary_polygon.addPoint(10, 30);
+
+    world_place_generator_.generateInnerWall(
+        world_controller_, "Inner Wall 0", innerwall_boundary_polygon);
 
     std::vector<std::string> room_name_vec;
 

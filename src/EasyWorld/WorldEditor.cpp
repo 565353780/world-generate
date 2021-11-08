@@ -85,21 +85,47 @@ bool WorldEditor::setWallRoomContainerPosition(
       world_descriptor_.wall_roomcontainer_data_vec[wall_roomcontainer_id];
 
     const size_t &wall_id = wall_roomcontainer_data.wall_id;
+    const NodeType &wall_type = wall_roomcontainer_data.wall_type;
+    const size_t &on_wall_boundary_idx = wall_roomcontainer_data.on_wall_boundary_idx;
+
+    size_t wall_boundary_line_list_idx;
+    if(!world_place_generator.boundary_line_manager_.getWallBoundaryLineListIdx(
+          wall_id, wall_type, wall_boundary_line_list_idx))
+    {
+        std::cout << "WorldEditor::setWallRoomContainerPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
+          "\tnew_position = [" << new_position_x << "," <<
+          new_position_y << "]" << std::endl <<
+          "\tmouse_pos_x_direction_delta = " << mouse_pos_x_direction_delta << std::endl <<
+          "getWallBoundaryLineListIdx failed!" << std::endl;
+
+        return false;
+    }
+
+    const WallBoundaryLineList &wall_boundary_line_list =
+      world_place_generator.boundary_line_manager_.wall_boundary_line_list_vec_[wall_boundary_line_list_idx];
+
+    const BoundaryLineList &boundary_line_list =
+      wall_boundary_line_list.boundary_line_list_vec_[on_wall_boundary_idx];
+
     const float &wall_length =
-      world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_[wall_id].boundary_length_;
+      boundary_line_list.boundary_length_;
 
     if(wall_roomcontainer_data.on_wall_boundary_start_position < start_change_edge_error &&
-        new_position_in_parent.y > wall_roomcontainer_data.real_height)
+        new_position_in_parent.y > wall_roomcontainer_data.real_height / 2.0)
     {
         wall_roomcontainer_data.on_wall_boundary_idx =
           (wall_roomcontainer_data.on_wall_boundary_idx - 1 +
-           world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size()) %
-          world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size();
+           wall_boundary_line_list.boundary_line_list_vec_.size()) %
+          wall_boundary_line_list.boundary_line_list_vec_.size();
 
-        const float last_wall_length =
-          world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_[
-          (wall_id - 1 + world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size()) %
-            world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size()].boundary_length_;
+        const BoundaryLineList &last_boundary_line_list =
+          wall_boundary_line_list.boundary_line_list_vec_[
+          (on_wall_boundary_idx - 1 + wall_boundary_line_list.boundary_line_list_vec_.size()) %
+          wall_boundary_line_list.boundary_line_list_vec_.size()];
+
+        const float last_wall_length = last_boundary_line_list.boundary_length_;
 
         wall_roomcontainer_data.on_wall_boundary_start_position =
           last_wall_length - wall_roomcontainer_data.target_width;
@@ -110,7 +136,7 @@ bool WorldEditor::setWallRoomContainerPosition(
     {
         wall_roomcontainer_data.on_wall_boundary_idx =
           (wall_roomcontainer_data.on_wall_boundary_idx + 1) %
-          world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size();
+          wall_boundary_line_list.boundary_line_list_vec_.size();
 
         wall_roomcontainer_data.on_wall_boundary_start_position = 0;
     }

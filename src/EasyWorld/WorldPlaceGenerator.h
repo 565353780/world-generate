@@ -79,11 +79,13 @@ private:
         WorldController &world_controller);
 
 public:
-    BoundaryLineListManager boundary_line_list_manager_;
+    BoundaryLineManager boundary_line_manager_;
     PointMatrix point_matrix_;
 
     float free_room_error_max_;
 
+    size_t current_new_innerwall_id_;
+    size_t current_new_outerwall_id_;
     size_t current_new_room_id_;
 
     bool is_outerwall_boundary_polygon_set_;

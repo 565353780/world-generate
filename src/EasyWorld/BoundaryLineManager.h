@@ -2,6 +2,7 @@
 #define BOUNDARY_LINE_MANAGER_H
 
 #include "EasyShape/EasyShape.h"
+#include "EasyWorld.h"
 
 class BoundaryLine
 {
@@ -17,7 +18,7 @@ public:
     bool reset();
 
     bool outputInfo(
-        const size_t &info_level);
+        const size_t &info_level) const;
 
     size_t place_idx;
     float line_start_position;
@@ -60,38 +61,54 @@ public:
         const BoundaryLine &valid_boundary_line);
 
     bool outputInfo(
-        const size_t &info_level);
+        const size_t &info_level) const;
 
     float boundary_length_;
     BoundaryLine* boundary_line_list_;
 };
 
-class BoundaryLineListManager
+class WallBoundaryLineList
 {
 public:
-    BoundaryLineListManager()
+    WallBoundaryLineList()
     {
     }
 
+    bool resetBoundaryLine();
+
     bool reset();
+
+    bool setWall(
+        const size_t &wall_id,
+        const NodeType &wall_type);
 
     bool setBoundaryPolygon(
         const EasyPolygon2D &boundary_polygon);
 
-    bool getMaxHeight(
-        const size_t &boundary_idx,
-        const BoundaryLine &boundary_line,
-        float &max_height);
-
     bool insertBoundaryLine(
         const size_t &boundary_idx,
-        const BoundaryLine &new_boundary_line,
-        BoundaryLine &valid_boundary_line);
+        const BoundaryLine &valid_boundary_line);
+
+    bool getBoundaryPoint(
+        const size_t &boundary_idx,
+        const float &boundary_position,
+        const float &point_height,
+        EasyPoint2D &boundary_point);
+
+    bool getBoundaryLinePolygon(
+        const size_t &boundary_idx,
+        const float &line_start_position,
+        const float &line_width,
+        const float &line_height,
+        EasyPolygon2D &boundary_line_polygon);
 
     bool outputInfo(
-        const size_t &info_level);
+        const size_t &info_level) const;
 
-    size_t current_place_idx_;
+    size_t wall_id_;
+    NodeType wall_type_;
+    EasyPolygon2D wall_boundary_polygon_;
+
     std::vector<BoundaryLineList> boundary_line_list_vec_;
 };
 
@@ -103,6 +120,46 @@ public:
     }
 
     bool reset();
+
+    bool addBoundaryPolygon(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const EasyPolygon2D &boundary_polygon);
+
+    bool setBoundaryPolygon(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const EasyPolygon2D &boundary_polygon);
+
+    bool insertBoundaryLine(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const size_t &boundary_idx,
+        const BoundaryLine &new_boundary_line,
+        BoundaryLine &valid_boundary_line);
+
+    bool getWallBoundaryLineListIdx(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        size_t &wall_boundary_line_list_idx);
+
+private:
+    bool getMaxHeight(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const size_t &boundary_idx,
+        const BoundaryLine &boundary_line,
+        float &max_height);
+
+public:
+    bool outputInfo(
+        const size_t &info_level) const;
+
+    std::vector<WallBoundaryLineList> wall_boundary_line_list_vec_;
+
+    size_t current_place_idx_;
+
+    std::vector<EasyPolygon2D> valid_boundary_polygon_vec_;
 };
 
 #endif //BOUNDARY_LINE_MANAGER_H

@@ -91,9 +91,17 @@ public:
         const EasyLine2D &line_1,
         const EasyLine2D &line_2);
 
+    static float getPointDistToLine(
+        const EasyPoint2D &point,
+        const EasyLine2D &base_line);
+
     static float getLineDistToLine(
         const EasyLine2D &base_line,
         const EasyLine2D &target_line);
+
+    static float getPolygonDistToLine(
+        const EasyPolygon2D &polygon,
+        const EasyLine2D &base_line);
 
     static bool isSamePoint(
         const EasyPoint2D &point_1,

@@ -210,51 +210,6 @@ bool WorldDescriptor::readData(
         }
     }
 
-    const size_t wall_roomcontainer_data_num =
-      world_place_generator.boundary_line_list_manager_.current_place_idx_;
-    
-    if(wall_roomcontainer_data_num == 0)
-    {
-        return true;
-    }
-
-    wall_roomcontainer_data_vec.resize(
-        wall_roomcontainer_data_num);
-
-    for(size_t i = 0;
-        i < world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_.size();
-        ++i)
-    {
-        const BoundaryLineList &boundary_line_list =
-          world_place_generator.boundary_line_list_manager_.boundary_line_list_vec_[i];
-
-        BoundaryLine* boundary_line = boundary_line_list.boundary_line_list_;
-
-        while(boundary_line != nullptr)
-        {
-            if(!setWallRoomContainer(
-                  boundary_line->place_idx,
-                  0,
-                  NodeType::OuterWall,
-                  i,
-                  boundary_line->line_start_position,
-                  boundary_line->line_width,
-                  boundary_line->line_end_position - boundary_line->line_start_position,
-                  boundary_line->line_height,
-                  boundary_line->line_real_height,
-                  boundary_line->line_room_num,
-                  boundary_line->room_name_vec))
-            {
-                std::cout << "WorldDescriptor::readData : " << std::endl <<
-                  "setWallRoomContainer failed!" << std::endl;
-
-                return false;
-            }
-
-            boundary_line = boundary_line->next_line;
-        }
-    }
-
     if(!setFreeRoomContainer(
           world_place_generator.team_x_direction_person_num_,
           world_place_generator.team_y_direction_person_num_,
@@ -265,6 +220,57 @@ bool WorldDescriptor::readData(
           "setFreeRoomContainer failed!" << std::endl;
 
         return false;
+    }
+
+    const size_t wall_roomcontainer_data_num =
+      world_place_generator.boundary_line_manager_.valid_boundary_polygon_vec_.size();
+    
+    if(wall_roomcontainer_data_num == 0)
+    {
+        wall_roomcontainer_data_vec.clear();
+
+        return true;
+    }
+
+    wall_roomcontainer_data_vec.resize(
+        wall_roomcontainer_data_num);
+
+    for(const WallBoundaryLineList &wall_boundary_line_list :
+        world_place_generator.boundary_line_manager_.wall_boundary_line_list_vec_)
+    {
+        const size_t &wall_id = wall_boundary_line_list.wall_id_;
+        const NodeType &wall_type = wall_boundary_line_list.wall_type_;
+
+        for(size_t i = 0; i < wall_boundary_line_list.boundary_line_list_vec_.size(); ++i)
+        {
+            const BoundaryLineList &boundary_line_list = wall_boundary_line_list.boundary_line_list_vec_[i];
+
+            BoundaryLine* boundary_line = boundary_line_list.boundary_line_list_;
+
+            while(boundary_line != nullptr)
+            {
+                if(!setWallRoomContainer(
+                      boundary_line->place_idx,
+                      wall_id,
+                      wall_type,
+                      i,
+                      boundary_line->line_start_position,
+                      boundary_line->line_width,
+                      boundary_line->line_end_position - boundary_line->line_start_position,
+                      boundary_line->line_height,
+                      boundary_line->line_real_height,
+                      boundary_line->line_room_num,
+                      boundary_line->room_name_vec))
+                {
+                    std::cout << "WorldDescriptor::readData : " << std::endl <<
+                      "setWallRoomContainer failed!" << std::endl;
+
+                    return false;
+                }
+
+                boundary_line = boundary_line->next_line;
+            }
+        }
     }
 
     return true;

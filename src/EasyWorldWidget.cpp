@@ -74,6 +74,7 @@ void EasyWorldWidget::run_example()
 
     std::vector<std::string> room_name_vec;
 
+    std::cout << "IN1" << std::endl;
     room_name_vec.resize(1);
     room_name_vec[0] = "茶水间";
     world_place_generator_.placeWallRoomContainer(world_controller_,
@@ -81,6 +82,7 @@ void EasyWorldWidget::run_example()
         22, 10, 10,
         1, room_name_vec);
 
+    std::cout << "IN2" << std::endl;
     room_name_vec.resize(3);
     room_name_vec[0] = "财务室";
     room_name_vec[1] = "总经办";
@@ -90,6 +92,7 @@ void EasyWorldWidget::run_example()
         0, 32, 10,
         3, room_name_vec);
 
+    std::cout << "IN3" << std::endl;
     room_name_vec.resize(1);
     room_name_vec[0] = "会议室";
     world_place_generator_.placeWallRoomContainer(world_controller_,
@@ -97,6 +100,7 @@ void EasyWorldWidget::run_example()
         0, 10, 10,
         1, room_name_vec);
 
+    std::cout << "IN4" << std::endl;
     room_name_vec.resize(1);
     room_name_vec[0] = "接待区";
     world_place_generator_.placeWallRoomContainer(world_controller_,
@@ -104,6 +108,7 @@ void EasyWorldWidget::run_example()
         11, 10, 10,
         1, room_name_vec);
 
+    std::cout << "IN5" << std::endl;
     world_place_generator_.generateFreeRoomContainer(
         world_controller_, 4, 4, 0.5, 2);
 

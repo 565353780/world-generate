@@ -55,6 +55,8 @@ SOURCES += \
     EasyWorld/EasyAxis2D.cpp \
     EasyWorld/EasyNode.cpp \
     EasyWorld/EasyTree.cpp \
+    EasyWorld/BoundaryLineManager.cpp \
+    EasyWorld/PointMatrix.cpp \
     EasyWorld/WorldController.cpp \
     EasyWorld/WorldPlaceGenerator.cpp \
     EasyWorld/WorldDescriptor.cpp \
@@ -65,6 +67,8 @@ HEADERS += \
     EasyWorld/EasyAxis2D.h \
     EasyWorld/EasyNode.h \
     EasyWorld/EasyTree.h \
+    EasyWorld/BoundaryLineManager.h \
+    EasyWorld/PointMatrix.h \
     EasyWorld/WorldController.h \
     EasyWorld/WorldPlaceGenerator.h \
     EasyWorld/WorldDescriptor.h \

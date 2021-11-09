@@ -121,6 +121,8 @@ public:
 
     bool reset();
 
+    bool resetButRemainWall();
+
     bool addBoundaryPolygon(
         const size_t &wall_id,
         const NodeType &wall_type,

@@ -556,6 +556,20 @@ bool BoundaryLineManager::reset()
     return true;
 }
 
+bool BoundaryLineManager::resetButRemainWall()
+{
+    for(WallBoundaryLineList &wall_boundary_line_list : wall_boundary_line_list_vec_)
+    {
+        wall_boundary_line_list.resetBoundaryLine();
+    }
+
+    current_place_idx_ = 0;
+
+    valid_boundary_polygon_vec_.clear();
+
+    return true;
+}
+
 bool BoundaryLineManager::addBoundaryPolygon(
     const size_t &wall_id,
     const NodeType &wall_type,

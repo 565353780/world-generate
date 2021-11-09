@@ -151,9 +151,9 @@ public:
         const EasyPoint2D &point,
         const EasyPolygon2D &polygon);
 
-    static LineState getLineStateOfLine(
-        const EasyLine2D &line_1,
-        const EasyLine2D &line_2);
+    // static LineState getLineStateOfLine(
+    //     const EasyLine2D &line_1,
+    //     const EasyLine2D &line_2);
 
     static LineState getLineStateOfPolygon(
         const EasyLine2D &line,

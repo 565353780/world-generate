@@ -921,34 +921,34 @@ PointState EasyComputation::getPointStateOfPolygon(
 // {
 // }
 
-LineState EasyComputation::getLineStateOfPolygon(
-    const EasyLine2D &line,
-    const EasyPolygon2D &polygon)
-{
-    const PointState line_point_1_state =
-      getPointStateOfPolygon(line.point_1, polygon);
-
-    const PointState line_point_2_state =
-      getPointStateOfPolygon(line.point_2, polygon);
-
-    if(line_point_1_state == PointState::PointInside)
-    {
-        if(line_point_2_state == PointState::PointInside)
-        {
-            return LineState::LineInside;
-        }
-
-        if(line_point_2_state == PointState::PointOnVertex)
-        {
-            return LineState::LineCrossVertex;
-        }
-
-        if(line_point_2_state == PointState::PointOnEdge)
-        {
-            return LineState::LineCrossEdge;
-        }
-    }
-}
+// LineState EasyComputation::getLineStateOfPolygon(
+//     const EasyLine2D &line,
+//     const EasyPolygon2D &polygon)
+// {
+//     const PointState line_point_1_state =
+//       getPointStateOfPolygon(line.point_1, polygon);
+//
+//     const PointState line_point_2_state =
+//       getPointStateOfPolygon(line.point_2, polygon);
+//
+//     if(line_point_1_state == PointState::PointInside)
+//     {
+//         if(line_point_2_state == PointState::PointInside)
+//         {
+//             return LineState::LineInside;
+//         }
+//
+//         if(line_point_2_state == PointState::PointOnVertex)
+//         {
+//             return LineState::LineCrossVertex;
+//         }
+//
+//         if(line_point_2_state == PointState::PointOnEdge)
+//         {
+//             return LineState::LineCrossEdge;
+//         }
+//     }
+// }
 
 bool EasyComputation::getLineCrossPoint(
     const EasyLine2D &line_1,

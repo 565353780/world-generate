@@ -43,10 +43,10 @@ bool WorldPlaceGenerator::resetButRemainWall(
         return false;
     }
 
-    if(!boundary_line_manager_.reset())
+    if(!boundary_line_manager_.resetButRemainWall())
     {
         std::cout << "WorldPlaceGenerator::resetButRemainWall : " <<
-          "reset for boundary_line_manager_ failed!" << std::endl;
+          "resetButRemainWall for boundary_line_manager_ failed!" << std::endl;
 
         return false;
     }

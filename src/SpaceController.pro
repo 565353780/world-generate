@@ -95,6 +95,7 @@ TRANSLATIONS += \
     SpaceController_zh_CN.ts
 
 CONFIG += lrelease
+# CONFIG += debug
 CONFIG += embed_translations
 
 # Default rules for deployment.

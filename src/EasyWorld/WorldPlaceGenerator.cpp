@@ -348,7 +348,6 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
 
     BoundaryLine valid_boundary_line;
 
-    std::cout << "IN1-1" << std::endl;
     if(!boundary_line_manager_.insertBoundaryLine(
           wall_id,
           wall_type,
@@ -370,7 +369,6 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
         return false;
     }
 
-    std::cout << "IN1-2" << std::endl;
     if(valid_boundary_line.line_real_height < 0)
     {
         std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<

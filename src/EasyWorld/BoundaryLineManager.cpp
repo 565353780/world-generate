@@ -744,7 +744,7 @@ bool BoundaryLineManager::insertBoundaryLine(
     }
 
     EasyPolygon2D new_valid_boundary_polygon;
-    if(!wall_boundary_line_list_vec_[boundary_idx].getBoundaryLinePolygon(
+    if(!wall_boundary_line_list_vec_[wall_boundary_line_list_idx].getBoundaryLinePolygon(
           boundary_idx,
           valid_boundary_line.line_start_position,
           valid_boundary_line.line_width,
@@ -857,7 +857,6 @@ bool BoundaryLineManager::getMaxHeight(
         return true;
     }
 
-    std::cout << "IN1-1-1-1" << std::endl;
     EasyLine2D base_line;
     EasyPoint2D base_line_start_point, base_line_end_point;
     if(!wall_boundary_line_list.getBoundaryPoint(boundary_idx, boundary_line.line_start_position, 0, base_line_start_point))
@@ -886,7 +885,6 @@ bool BoundaryLineManager::getMaxHeight(
 
         return false;
     }
-    std::cout << "IN1-1-1-2" << std::endl;
 
     base_line.setPosition(base_line_start_point, base_line_end_point);
 

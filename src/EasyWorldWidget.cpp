@@ -78,7 +78,7 @@ void EasyWorldWidget::run_example()
     room_name_vec[0] = "茶水间";
     world_place_generator_.placeWallRoomContainer(world_controller_,
         0, NodeType::OuterWall, 2,
-        22, 10, 10,
+        22, 4, 4,
         1, room_name_vec);
 
     room_name_vec.resize(3);
@@ -87,21 +87,21 @@ void EasyWorldWidget::run_example()
     room_name_vec[2] = "会议室";
     world_place_generator_.placeWallRoomContainer(world_controller_,
         0, NodeType::OuterWall, 0,
-        0, 32, 10,
+        0, 12, 4,
         3, room_name_vec);
 
     room_name_vec.resize(1);
     room_name_vec[0] = "会议室";
     world_place_generator_.placeWallRoomContainer(world_controller_,
-        0, NodeType::OuterWall, 2,
-        0, 10, 10,
+        0, NodeType::InnerWall, 2,
+        0, 4, 4,
         1, room_name_vec);
 
     room_name_vec.resize(1);
     room_name_vec[0] = "接待区";
     world_place_generator_.placeWallRoomContainer(world_controller_,
-        0, NodeType::OuterWall, 2,
-        11, 10, 10,
+        0, NodeType::InnerWall, 3,
+        0, 4, 4,
         1, room_name_vec);
 
     world_place_generator_.generateFreeRoomContainer(
@@ -152,7 +152,7 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
         room_name_vec[0] = "茶水间";
         world_place_generator_.placeWallRoomContainer(world_controller_,
             0, NodeType::OuterWall, std::rand() % 4,
-            std::rand() % 22, 10, 10,
+            std::rand() % 22, 4, 4,
             1, room_name_vec);
         room_name_vec.resize(3);
         room_name_vec[0] = "财务室";
@@ -160,18 +160,18 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
         room_name_vec[2] = "会议室";
         world_place_generator_.placeWallRoomContainer(world_controller_,
             0, NodeType::OuterWall, std::rand() % 4,
-            std::rand() % 12, 32, 10,
+            std::rand() % 12, 4, 4,
             3, room_name_vec);
         room_name_vec.resize(1);
         room_name_vec[0] = "会议室";
         world_place_generator_.placeWallRoomContainer(world_controller_,
             0, NodeType::OuterWall, std::rand() % 4,
-            std::rand() % 22, 10, 10,
+            std::rand() % 22, 4, 4,
             1, room_name_vec);
         room_name_vec[0] = "接待区";
         world_place_generator_.placeWallRoomContainer(world_controller_,
             0, NodeType::OuterWall, std::rand() % 4,
-            std::rand() % 22, 10, 10,
+            std::rand() % 22, 4, 4,
             1, room_name_vec);
         world_place_generator_.generateFreeRoomContainer(
             world_controller_, 4, 4, 0.5, 2);

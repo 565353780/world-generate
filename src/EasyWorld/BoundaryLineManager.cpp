@@ -890,17 +890,38 @@ bool BoundaryLineManager::getMaxHeight(
 
     for(const WallBoundaryLineList &wall_boundary_line_list : wall_boundary_line_list_vec_)
     {
-        if(wall_boundary_line_list.wall_type_ != NodeType::InnerWall)
+        const EasyPolygon2D &wall_boundary_polygon = wall_boundary_line_list.wall_boundary_polygon_;
+
+        if(wall_boundary_line_list.wall_id_ != wall_id ||
+            wall_boundary_line_list.wall_type_ != wall_type)
         {
+            const float polygon_dist_to_line = EasyComputation::getPolygonDistToLine(
+                wall_boundary_polygon, base_line);
+
+            max_height = std::fmin(max_height, polygon_dist_to_line);
+
             continue;
         }
 
-        const EasyPolygon2D &innerwall_boundary_polygon = wall_boundary_line_list.wall_boundary_polygon_;
+        for(size_t i = 0; i < wall_boundary_polygon.point_list.size(); ++i)
+        {
+            if(i == boundary_idx)
+            {
+                continue;
+            }
 
-        const float polygon_dist_to_line = EasyComputation::getPolygonDistToLine(
-            innerwall_boundary_polygon, base_line);
+            const EasyPoint2D &currnet_point = wall_boundary_polygon.point_list[i];
+            const EasyPoint2D &next_point = wall_boundary_polygon.point_list[
+            (i + 1) % wall_boundary_polygon.point_list.size()];
 
-        max_height = std::fmin(max_height, polygon_dist_to_line);
+            EasyLine2D polygon_line;
+            polygon_line.setPosition(currnet_point, next_point);
+
+            const float polygon_line_dist_to_line = EasyComputation::getLineDistToLine(
+                base_line, polygon_line);
+
+            max_height = std::fmin(max_height, polygon_line_dist_to_line);
+        }
     }
 
     for(const EasyPolygon2D &valid_boundary_polygon : valid_boundary_polygon_vec_)

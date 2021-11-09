@@ -426,8 +426,8 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
     if(!world_controller.createWallRoomContainerForWall(
           "Auto Generate Wall RoomContainer",
           room_name_vec,
-          0,
-          NodeType::OuterWall,
+          wall_id,
+          wall_type,
           boundary_idx,
           valid_roomcontainer_width,
           valid_roomcontainer_height,
@@ -721,10 +721,124 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
         return false;
     }
 
-    std::vector<EasyPolygon2D> polygon_vec_in_wall_node;
+    std::vector<EasyPolygon2D> innerwall_boundary_polygon_vec;
+
+    std::vector<EasyNode*> innerwall_node_vec;
+    if(!world_controller.getWallNodeVec(innerwall_node_vec))
+    {
+        std::cout << "WorldPlaceGenerator::generateFreeRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_person_num_size = [" << team_x_direction_person_num << "," <<
+          team_y_direction_person_num << "]" << std::endl <<
+          "\tteam_dist = " << team_dist << std::endl <<
+          "\tperson_edge = " << person_edge << std::endl <<
+          "getWallNodeVec for failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* innerwall_node : innerwall_node_vec)
+    {
+        if(innerwall_node->getNodeType() != NodeType::InnerWall)
+        {
+            continue;
+        }
+
+        EasyNode* innerwall_space_node = innerwall_node->findChild(0, NodeType::Space);
+
+        if(innerwall_space_node == nullptr)
+        {
+            continue;
+        }
+
+        const EasyPolygon2D &innerwall_space_polygon =
+          innerwall_space_node->getBoundaryPolygon();
+
+        EasyPolygon2D innerwall_polygon_in_wall_node;
+
+        for(const EasyPoint2D &innerwall_boundary_point : innerwall_space_polygon.point_list)
+        {
+            EasyPoint2D innerwall_boundary_point_in_world;
+
+            if(!innerwall_space_node->getPointInWorld(
+                  innerwall_boundary_point,
+                  innerwall_boundary_point_in_world))
+            {
+                std::cout << "WorldPlaceGenerator::generateFreeRoomContainer : " << std::endl <<
+                  "Input :\n" <<
+                  "\tteam_person_num_size = [" << team_x_direction_person_num << "," <<
+                  team_y_direction_person_num << "]" << std::endl <<
+                  "\tteam_dist = " << team_dist << std::endl <<
+                  "\tperson_edge = " << person_edge << std::endl <<
+                  "getPointInWorld for innerwall_boundary_point failed!" << std::endl;
+
+                return false;
+            }
+
+            EasyPoint2D innerwall_boundary_point_in_wall_node;
+
+            if(!wall_node->getPointInNode(
+                  innerwall_boundary_point_in_world,
+                  innerwall_boundary_point_in_wall_node))
+            {
+                std::cout << "WorldPlaceGenerator::generateFreeRoomContainer : " << std::endl <<
+                  "Input :\n" <<
+                  "\tteam_person_num_size = [" << team_x_direction_person_num << "," <<
+                  team_y_direction_person_num << "]" << std::endl <<
+                  "\tteam_dist = " << team_dist << std::endl <<
+                  "\tperson_edge = " << person_edge << std::endl <<
+                  "getPointInNode for innerwall_boundary_point_in_world failed!" << std::endl;
+
+                return false;
+            }
+
+            innerwall_polygon_in_wall_node.addPoint(innerwall_boundary_point_in_wall_node);
+        }
+
+        innerwall_boundary_polygon_vec.emplace_back(innerwall_polygon_in_wall_node);
+    }
+
+    for(const EasyPolygon2D &polygon_in_wall_node : innerwall_boundary_polygon_vec)
+    {
+        const float &boundary_polygon_x_min = polygon_in_wall_node.rect.x_min;
+        const float &boundary_polygon_y_min = polygon_in_wall_node.rect.y_min;
+        const float &boundary_polygon_width = polygon_in_wall_node.rect.x_diff;
+        const float &boundary_polygon_height = polygon_in_wall_node.rect.y_diff;
+
+        if(!point_matrix_.setRectPointOccupancyState(
+              boundary_polygon_x_min,
+              boundary_polygon_y_min,
+              boundary_polygon_width,
+              boundary_polygon_height,
+              PointOccupancyState::PointUsed))
+        {
+            std::cout << "WorldPlaceGenerator::generateFreeRoomContainer : " << std::endl <<
+              "Input :\n" <<
+              "\tteam_person_num_size = [" << team_x_direction_person_num << "," <<
+              team_y_direction_person_num << "]" << std::endl <<
+              "\tteam_dist = " << team_dist << std::endl <<
+              "\tperson_edge = " << person_edge << std::endl <<
+              "setRectPointOccupancyState failed!" << std::endl;
+
+            return false;
+        }
+    }
+
+    std::vector<EasyPolygon2D> wall_roomcontainer_polygon_vec;
 
     std::vector<EasyNode*> roomcontainer_node_vec;
-    world_controller.getRoomContainerNodeVec(roomcontainer_node_vec);
+    if(!world_controller.getRoomContainerNodeVec(roomcontainer_node_vec))
+    {
+        std::cout << "WorldPlaceGenerator::generateFreeRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\tteam_person_num_size = [" << team_x_direction_person_num << "," <<
+          team_y_direction_person_num << "]" << std::endl <<
+          "\tteam_dist = " << team_dist << std::endl <<
+          "\tperson_edge = " << person_edge << std::endl <<
+          "getRoomContainerNodeVec failed!" << std::endl;
+
+        return false;
+    }
 
     for(EasyNode* roomcontainer_node : roomcontainer_node_vec)
     {
@@ -754,7 +868,7 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
                   team_y_direction_person_num << "]" << std::endl <<
                   "\tteam_dist = " << team_dist << std::endl <<
                   "\tperson_edge = " << person_edge << std::endl <<
-                  "getPointInWorld failed!" << std::endl;
+                  "getPointInWorld for roomcontainer_boundary_point failed!" << std::endl;
 
                 return false;
             }
@@ -771,7 +885,7 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
                   team_y_direction_person_num << "]" << std::endl <<
                   "\tteam_dist = " << team_dist << std::endl <<
                   "\tperson_edge = " << person_edge << std::endl <<
-                  "getPointInNode failed!" << std::endl;
+                  "getPointInNode for roomcontainer_boundary_point_in_world failed!" << std::endl;
 
                 return false;
             }
@@ -779,10 +893,10 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
             roomcontainer_polygon_in_wall_node.addPoint(roomcontainer_boundary_point_in_wall_node);
         }
 
-        polygon_vec_in_wall_node.emplace_back(roomcontainer_polygon_in_wall_node);
+        wall_roomcontainer_polygon_vec.emplace_back(roomcontainer_polygon_in_wall_node);
     }
 
-    for(const EasyPolygon2D &polygon_in_wall_node : polygon_vec_in_wall_node)
+    for(const EasyPolygon2D &polygon_in_wall_node : wall_roomcontainer_polygon_vec)
     {
         const float &boundary_polygon_x_min = polygon_in_wall_node.rect.x_min;
         const float &boundary_polygon_y_min = polygon_in_wall_node.rect.y_min;
@@ -818,7 +932,7 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
         new_boundary_line_polygon.addPoint(current_point);
         new_boundary_line_polygon.addPoint(next_point);
 
-        polygon_vec_in_wall_node.emplace_back(new_boundary_line_polygon);
+        wall_roomcontainer_polygon_vec.emplace_back(new_boundary_line_polygon);
     }
 
     size_t current_freeroom_id_start = 0;
@@ -834,7 +948,7 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
         float max_free_roomcontainer_height;
 
         if(!point_matrix_.getMaxFreeRect(
-              polygon_vec_in_wall_node,
+              wall_roomcontainer_polygon_vec,
               max_free_roomcontainer_start_position_x,
               max_free_roomcontainer_start_position_y,
               max_free_roomcontainer_width,
@@ -981,7 +1095,7 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
             max_free_roomcontainer_start_position_x,
             max_free_roomcontainer_start_position_y + max_free_roomcontainer_height);
         new_room_polygon.setAntiClockWise();
-        polygon_vec_in_wall_node.emplace_back(new_room_polygon);
+        wall_roomcontainer_polygon_vec.emplace_back(new_room_polygon);
 
         if(!point_matrix_.setRectPointOccupancyState(
               max_free_roomcontainer_start_position_x,

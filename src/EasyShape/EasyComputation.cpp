@@ -266,7 +266,7 @@ float EasyComputation::getPointDistToLine(
     const float point_dist_to_base_line =
       cross(base_line, unit_base_line_point_1_to_point);
 
-    if(point_position < 0 || point_position > base_line_length || point_dist_to_base_line < 0)
+    if(point_position <= 0 || point_position >= base_line_length || point_dist_to_base_line <= 0)
     {
         return std::numeric_limits<float>::max();
     }
@@ -291,11 +291,6 @@ float EasyComputation::getLineDistToLine(
           "base_line length is 0!" << std::endl;
 
         return -1;
-    }
-
-    if(isLineCross(base_line, target_line))
-    {
-        return 0;
     }
 
     EasyLine2D unit_base_line;
@@ -335,12 +330,12 @@ float EasyComputation::getLineDistToLine(
         target_line_point_2_dist = temp_exchange_data;
     }
 
-    if(target_line_point_2_position < 0 || target_line_point_1_position > base_line_length)
+    if(target_line_point_2_position <= 0 || target_line_point_1_position >= base_line_length)
     {
         return std::numeric_limits<float>::max();
     }
 
-    if(target_line_point_1_dist < 0 && target_line_point_2_dist < 0)
+    if(target_line_point_1_dist <= 0 && target_line_point_2_dist <= 0)
     {
         return std::numeric_limits<float>::max();
     }

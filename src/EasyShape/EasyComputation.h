@@ -103,6 +103,10 @@ public:
         const EasyPolygon2D &polygon,
         const EasyLine2D &base_line);
 
+    static EasyPoint2D getNearestPointOnLine(
+        const EasyLine2D &line,
+        const EasyPoint2D &point);
+
     static bool isSamePoint(
         const EasyPoint2D &point_1,
         const EasyPoint2D &point_2);

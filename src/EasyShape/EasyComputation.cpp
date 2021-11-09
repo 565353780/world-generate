@@ -471,6 +471,49 @@ float EasyComputation::getPolygonDistToLine(
     return min_dist;
 }
 
+EasyPoint2D EasyComputation::getNearestPointOnLine(
+    const EasyLine2D &line,
+    const EasyPoint2D &point)
+{
+    const float line_length = lineLength(line);
+
+    if(line_length == 0)
+    {
+        return line.point_1;
+    }
+
+    EasyLine2D unit_line;
+    unit_line.setPosition(
+        line.point_1.x,
+        line.point_1.y,
+        line.point_1.x + line.x_diff / line_length,
+        line.point_1.y + line.y_diff / line_length);
+
+    EasyLine2D unit_line_point_1_to_point;
+    unit_line_point_1_to_point.setPosition(unit_line.point_1, point);
+
+    const float point_position = dot(
+        unit_line, unit_line_point_1_to_point);
+
+    if(point_position <= 0)
+    {
+        return line.point_1;
+    }
+
+    if(point_position >= line_length)
+    {
+        return line.point_2;
+    }
+
+    EasyPoint2D nearest_point_on_line;
+
+    nearest_point_on_line.setPosition(
+        line.point_1.x + point_position * unit_line.x_diff,
+        line.point_1.y + point_position * unit_line.y_diff);
+
+    return nearest_point_on_line;
+}
+
 bool EasyComputation::isSamePoint(
     const EasyPoint2D &point_1,
     const EasyPoint2D &point_2)

@@ -50,15 +50,15 @@ EasyWorldWidget::~EasyWorldWidget()
 
 void EasyWorldWidget::run_example()
 {
-    zoom_ = 20;
+    zoom_ = 22;
 
     world_place_generator_.createNewWorld(world_controller_, 2, 2);
 
     EasyPolygon2D outerwall_boundary_polygon;
     outerwall_boundary_polygon.addPoint(0, 0);
-    outerwall_boundary_polygon.addPoint(40, 0);
-    outerwall_boundary_polygon.addPoint(40, 40);
-    outerwall_boundary_polygon.addPoint(0, 40);
+    outerwall_boundary_polygon.addPoint(41.173, 0);
+    outerwall_boundary_polygon.addPoint(41.173, 40.978);
+    outerwall_boundary_polygon.addPoint(0, 40.978);
 
     world_place_generator_.generateOuterWall(
         world_controller_, "Outer Wall 0", outerwall_boundary_polygon);
@@ -75,37 +75,29 @@ void EasyWorldWidget::run_example()
     std::vector<std::string> room_name_vec;
 
     room_name_vec.resize(1);
-    room_name_vec[0] = "茶水间";
-    world_place_generator_.placeWallRoomContainer(world_controller_,
-        0, NodeType::OuterWall, 2,
-        22, 4, 4,
-        1, room_name_vec);
+    room_name_vec[0] = "Room";
 
-    room_name_vec.resize(3);
-    room_name_vec[0] = "财务室";
-    room_name_vec[1] = "总经办";
-    room_name_vec[2] = "会议室";
-    world_place_generator_.placeWallRoomContainer(world_controller_,
-        0, NodeType::OuterWall, 0,
-        0, 12, 4,
-        3, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 0, 0, 6.935, 16.169, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 0, 6.935, 6.139, 7.965, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 0, 13.074, 2.833, 7.965, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 0, 15.907, 3.028, 7.965, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 0, 18.935, 4.396, 7.965, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 0, 23.331, 3.726, 5.608, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 1, 0, 6.740, 6.935, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 1, 6.740, 11.969, 11.720, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 1, 18.709, 3.321, 7.769, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 1, 22.03, 4.197, 5.522, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 1, 26.227, 3.528, 5.522, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 2, 0, 5.665, 7.965, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 2, 5.665, 7.867, 7.965, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 2, 13.532, 4.057, 7.965, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 2, 17.589, 2.833, 9.385, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 2, 20.422, 3.862, 5.621, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 2, 24.284, 4.058, 5.621, 1, room_name_vec);
+    world_place_generator_.placeWallRoomContainer(world_controller_, 0, NodeType::OuterWall, 3, 20.023, 4.546, 11.774, 1, room_name_vec);
 
-    room_name_vec.resize(1);
-    room_name_vec[0] = "会议室";
-    world_place_generator_.placeWallRoomContainer(world_controller_,
-        0, NodeType::InnerWall, 2,
-        0, 4, 4,
-        1, room_name_vec);
-
-    room_name_vec.resize(1);
-    room_name_vec[0] = "接待区";
-    world_place_generator_.placeWallRoomContainer(world_controller_,
-        0, NodeType::InnerWall, 3,
-        0, 4, 4,
-        1, room_name_vec);
-
-    world_place_generator_.generateFreeRoomContainer(
-        world_controller_, 4, 4, 0.5, 2);
+    // world_place_generator_.generateFreeRoomContainer(
+        // world_controller_, 4, 4, 0.5, 2);
 
     update();
 

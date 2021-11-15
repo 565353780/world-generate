@@ -1,8 +1,7 @@
 #ifndef EASY_COMPUTATION_H
 #define EASY_COMPUTATION_H
 
-#include <iostream>
-#include <limits.h>
+#include "export_library_global.h"
 
 #include "EasyPoint2D.h"
 #include "EasyRect2D.h"
@@ -34,7 +33,7 @@ enum CrossState
     Cross = 3
 };
 
-class EasyComputation
+class LIBRARY_EXPORT EasyComputation
 {
 public:
     EasyComputation()

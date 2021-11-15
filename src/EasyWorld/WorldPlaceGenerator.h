@@ -1,11 +1,13 @@
 #ifndef WORLD_PLACE_GENERATOR
 #define WORLD_PLACE_GENERATOR
 
+#include "export_library_global.h"
+
 #include "WorldController.h"
 #include "BoundaryLineManager.h"
 #include "PointMatrix.h"
 
-class WorldPlaceGenerator
+class LIBRARY_EXPORT WorldPlaceGenerator
 {
 public:
     WorldPlaceGenerator()

@@ -1,6 +1,8 @@
 #ifndef POINT_MATRIX_H
 #define POINT_MATRIX_H
 
+#include "export_library_global.h"
+
 #include "EasyShape/EasyShape.h"
 
 enum PointOccupancyState
@@ -9,7 +11,7 @@ enum PointOccupancyState
     PointUsed = 1
 };
 
-class PointMatrix
+class LIBRARY_EXPORT PointMatrix
 {
 public:
     PointMatrix()

@@ -1,12 +1,11 @@
 #ifndef WORLD_EDITOR_H
 #define WORLD_EDITOR_H
 
-#include <iostream>
-#include <string>
+#include "export_library_global.h"
 
 #include "WorldDescriptor.h"
 
-class WorldEditor
+class LIBRARY_EXPORT WorldEditor
 {
 public:
     WorldEditor()

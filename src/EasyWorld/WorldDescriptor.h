@@ -1,13 +1,12 @@
 #ifndef WORLD_DESCRIPTOR_H
 #define WORLD_DESCRIPTOR_H
 
-#include <iostream>
-#include <string>
+#include "export_library_global.h"
 
 #include "WorldController.h"
 #include "WorldPlaceGenerator.h"
 
-class WorldData
+class LIBRARY_EXPORT WorldData
 {
 public:
     WorldData()
@@ -25,7 +24,7 @@ public:
     std::string name;
 };
 
-class WallData
+class LIBRARY_EXPORT WallData
 {
 public:
     WallData()
@@ -44,7 +43,7 @@ public:
     std::string name;
 };
 
-class WallRoomContainerData
+class LIBRARY_EXPORT WallRoomContainerData
 {
 public:
     WallRoomContainerData()
@@ -69,7 +68,7 @@ public:
     std::vector<std::string> room_name_vec;
 };
 
-class FreeRoomContainerData
+class LIBRARY_EXPORT FreeRoomContainerData
 {
 public:
     FreeRoomContainerData()
@@ -87,7 +86,7 @@ public:
     float person_edge;
 };
 
-class WorldDescriptor
+class LIBRARY_EXPORT WorldDescriptor
 {
 public:
     WorldDescriptor()

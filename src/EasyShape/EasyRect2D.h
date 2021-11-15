@@ -1,11 +1,11 @@
 #ifndef EASYRECT2D_H
 #define EASYRECT2D_H
 
-#include <iostream>
+#include "export_library_global.h"
 
 #include "EasyPoint2D.h"
 
-class EasyRect2D
+class LIBRARY_EXPORT EasyRect2D
 {
 public:
     EasyRect2D()

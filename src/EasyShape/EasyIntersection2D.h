@@ -1,12 +1,13 @@
 #ifndef EASYINTERSECTION_2D
 #define EASYINTERSECTION_2D
 
-#include <iostream>
+#include "export_library_global.h"
+
 #include <vector>
 
 #include "EasyPoint2D.h"
 
-class EasyIntersection2D
+class LIBRARY_EXPORT EasyIntersection2D
 {
 public:
     EasyIntersection2D()

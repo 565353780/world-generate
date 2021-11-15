@@ -1,9 +1,10 @@
 #ifndef EASYPOINT2D_H
 #define EASYPOINT2D_H
 
+#include "export_library_global.h"
 #include <iostream>
 
-class EasyPoint2D
+class LIBRARY_EXPORT EasyPoint2D
 {
 public:
     EasyPoint2D()

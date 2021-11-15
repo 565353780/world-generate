@@ -1,12 +1,11 @@
 #ifndef EASY_TREE_H
 #define EASY_TREE_H
 
-#include <iostream>
-#include <string>
+#include "export_library_global.h"
 
 #include "EasyNode.h"
 
-class EasyTree
+class LIBRARY_EXPORT EasyTree
 {
 public:
     EasyTree()

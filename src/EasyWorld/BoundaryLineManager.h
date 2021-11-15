@@ -1,10 +1,12 @@
 #ifndef BOUNDARY_LINE_MANAGER_H
 #define BOUNDARY_LINE_MANAGER_H
 
+#include "export_library_global.h"
+
 #include "EasyShape/EasyShape.h"
 #include "EasyWorld.h"
 
-class BoundaryLine
+class LIBRARY_EXPORT BoundaryLine
 {
 public:
     BoundaryLine()
@@ -34,7 +36,7 @@ public:
     BoundaryLine* next_line;
 };
 
-class BoundaryLineList
+class LIBRARY_EXPORT BoundaryLineList
 {
 public:
     BoundaryLineList()
@@ -67,7 +69,7 @@ public:
     BoundaryLine* boundary_line_list_;
 };
 
-class WallBoundaryLineList
+class LIBRARY_EXPORT WallBoundaryLineList
 {
 public:
     WallBoundaryLineList()
@@ -112,7 +114,7 @@ public:
     std::vector<BoundaryLineList> boundary_line_list_vec_;
 };
 
-class BoundaryLineManager
+class LIBRARY_EXPORT BoundaryLineManager
 {
 public:
     BoundaryLineManager()

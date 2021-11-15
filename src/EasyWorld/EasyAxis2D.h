@@ -1,12 +1,11 @@
 #ifndef EASY_AXIS_2D_H
 #define EASY_AXIS_2D_H
 
-#include <iostream>
-#include <string>
+#include "export_library_global.h"
 
 #include "EasyShape/EasyShape.h"
 
-class EasyAxis2D
+class LIBRARY_EXPORT EasyAxis2D
 {
 public:
     EasyAxis2D(){}

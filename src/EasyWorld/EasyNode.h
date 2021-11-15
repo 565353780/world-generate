@@ -1,11 +1,9 @@
 #ifndef EASY_NODE_H
 #define EASY_NODE_H
 
-#include <iostream>
-#include <string>
+#include "export_library_global.h"
 
 #include "EasyWorld/EasyAxis2D.h"
-
 #include "EasyShape/EasyShape.h"
 
 enum NodeType
@@ -26,7 +24,7 @@ enum NodeType
     Space = 13
 };
 
-class EasyNode
+class LIBRARY_EXPORT EasyNode
 {
 public:
     EasyNode()

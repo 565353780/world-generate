@@ -1,7 +1,7 @@
 #ifndef EASYPOLYGON_H
 #define EASYPOLYGON_H
 
-#include <iostream>
+#include "export_library_global.h"
 #include <vector>
 #include <algorithm>
 #include <stdlib.h>
@@ -12,7 +12,7 @@
 #include "EasyLine2D.h"
 #include "EasyIntersection2D.h"
 
-class EasyPolygon2D
+class LIBRARY_EXPORT EasyPolygon2D
 {
 public:
     EasyPolygon2D()

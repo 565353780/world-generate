@@ -1,12 +1,11 @@
 #ifndef WORLD_CONTROLLER_H
 #define WORLD_CONTROLLER_H
 
-#include <iostream>
-#include <string>
+#include "export_library_global.h"
 
 #include "EasyTree.h"
 
-class WorldController
+class LIBRARY_EXPORT WorldController
 {
 public:
     WorldController() {}

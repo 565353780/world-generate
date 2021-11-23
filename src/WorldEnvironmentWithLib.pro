@@ -12,20 +12,15 @@ DESTDIR = ../bin_linux
 }
 
 INCLUDEPATH += ../lib
+DEPENDPATH += ../lib
 HEADERS += \
     ../lib/export_library_global.h \
+
+LIBS += -L../lib/ -lWorldEnvironment
 
 INCLUDEPATH += WorldEnvironment
 
 # EasyShape
-SOURCES += \
-    WorldEnvironment/EasyShape/EasyPoint2D.cpp \
-    WorldEnvironment/EasyShape/EasyRect2D.cpp \
-    WorldEnvironment/EasyShape/EasyLine2D.cpp \
-    WorldEnvironment/EasyShape/EasyIntersection2D.cpp \
-    WorldEnvironment/EasyShape/EasyPolygon2D.cpp \
-    WorldEnvironment/EasyShape/EasyComputation.cpp
-
 HEADERS += \
     WorldEnvironment/EasyShape/EasyPoint2D.h \
     WorldEnvironment/EasyShape/EasyRect2D.h \
@@ -38,20 +33,6 @@ HEADERS += \
     WorldEnvironment/EasyShape/EasyShape.h
 
 # EasyWorld
-SOURCES += \
-    WorldEnvironment/EasyWorld/EasyAxis2D.cpp \
-    WorldEnvironment/EasyWorld/EasyNode.cpp \
-    WorldEnvironment/EasyWorld/EasyTree.cpp \
-    WorldEnvironment/EasyWorld/BoundaryLineManager.cpp \
-    WorldEnvironment/EasyWorld/PointMatrix.cpp \
-    WorldEnvironment/EasyWorld/WallGenerator.cpp \
-    WorldEnvironment/EasyWorld/WorldController.cpp \
-    WorldEnvironment/EasyWorld/WorldPlaceGenerator.cpp \
-    WorldEnvironment/EasyWorld/WorldDescriptor.cpp \
-    WorldEnvironment/EasyWorld/WorldEditor.cpp \
-    WorldEnvironment/EasyWorld/WorldReward.cpp \
-    WorldEnvironment/EasyWorld/WorldEnvironment.cpp
-
 HEADERS += \
     WorldEnvironment/EasyWorld/EasyAxis2D.h \
     WorldEnvironment/EasyWorld/EasyNode.h \

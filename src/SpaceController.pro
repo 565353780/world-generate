@@ -9,74 +9,61 @@ unix{
 DESTDIR = ../bin_linux
 }
 
+INCLUDEPATH += ../lib
+HEADERS += \
+    ../lib/export_library_global.h \
+
 CONFIG += c++17
 
-# LIBRARY_EXPORT
-INCLUDEPATH += ../lib
-HEADERS += ../lib/export_library_global.h
-
-# OpenCV
-unix{
-INCLUDEPATH += \
-    /home/chli/OpenCV/opencv-3.4.10/build/installed/include \
-    /home/chli/OpenCV/opencv-3.4.10/build/installed/include/opencv \
-    /home/chli/OpenCV/opencv-3.4.10/build/installed/include/opencv2
-
-LIBS += \
-    -L/home/chli/OpenCV/opencv-3.4.10/build/installed/lib \
-    -lopencv_core \
-    -lopencv_imgproc \
-    -lopencv_imgcodecs \
-    -lopencv_highgui
-}
+INCLUDEPATH += WorldController
 
 # EasyShape
 SOURCES += \
-    EasyShape/EasyPoint2D.cpp \
-    EasyShape/EasyRect2D.cpp \
-    EasyShape/EasyLine2D.cpp \
-    EasyShape/EasyIntersection2D.cpp \
-    EasyShape/EasyPolygon2D.cpp \
-    EasyShape/EasyComputation.cpp
+    WorldController/EasyShape/EasyPoint2D.cpp \
+    WorldController/EasyShape/EasyRect2D.cpp \
+    WorldController/EasyShape/EasyLine2D.cpp \
+    WorldController/EasyShape/EasyIntersection2D.cpp \
+    WorldController/EasyShape/EasyPolygon2D.cpp \
+    WorldController/EasyShape/EasyComputation.cpp
 
 HEADERS += \
-    EasyShape/EasyPoint2D.h \
-    EasyShape/EasyRect2D.h \
-    EasyShape/EasyLine2D.h \
-    EasyShape/EasyIntersection2D.h \
-    EasyShape/EasyPolygon2D.h \
-    EasyShape/EasyComputation.h
+    WorldController/EasyShape/EasyPoint2D.h \
+    WorldController/EasyShape/EasyRect2D.h \
+    WorldController/EasyShape/EasyLine2D.h \
+    WorldController/EasyShape/EasyIntersection2D.h \
+    WorldController/EasyShape/EasyPolygon2D.h \
+    WorldController/EasyShape/EasyComputation.h
 
 HEADERS += \
-    EasyShape/EasyShape.h
+    WorldController/EasyShape/EasyShape.h
 
 # EasyWorld
 SOURCES += \
-    EasyWorld/EasyAxis2D.cpp \
-    EasyWorld/EasyNode.cpp \
-    EasyWorld/EasyTree.cpp \
-    EasyWorld/BoundaryLineManager.cpp \
-    EasyWorld/PointMatrix.cpp \
-    EasyWorld/WorldController.cpp \
-    EasyWorld/WorldPlaceGenerator.cpp \
-    EasyWorld/WorldDescriptor.cpp \
-    EasyWorld/WorldEditor.cpp \
-    EasyWorld/WorldReward.cpp
+    WorldController/EasyWorld/EasyAxis2D.cpp \
+    WorldController/EasyWorld/EasyNode.cpp \
+    WorldController/EasyWorld/EasyTree.cpp \
+    WorldController/EasyWorld/BoundaryLineManager.cpp \
+    WorldController/EasyWorld/PointMatrix.cpp \
+    WorldController/EasyWorld/WorldController.cpp \
+    WorldController/EasyWorld/WorldPlaceGenerator.cpp \
+    WorldController/EasyWorld/WorldDescriptor.cpp \
+    WorldController/EasyWorld/WorldEditor.cpp \
+    WorldController/EasyWorld/WorldReward.cpp
 
 HEADERS += \
-    EasyWorld/EasyAxis2D.h \
-    EasyWorld/EasyNode.h \
-    EasyWorld/EasyTree.h \
-    EasyWorld/BoundaryLineManager.h \
-    EasyWorld/PointMatrix.h \
-    EasyWorld/WorldController.h \
-    EasyWorld/WorldPlaceGenerator.h \
-    EasyWorld/WorldDescriptor.h \
-    EasyWorld/WorldEditor.h \
-    EasyWorld/WorldReward.h
+    WorldController/EasyWorld/EasyAxis2D.h \
+    WorldController/EasyWorld/EasyNode.h \
+    WorldController/EasyWorld/EasyTree.h \
+    WorldController/EasyWorld/BoundaryLineManager.h \
+    WorldController/EasyWorld/PointMatrix.h \
+    WorldController/EasyWorld/WorldController.h \
+    WorldController/EasyWorld/WorldPlaceGenerator.h \
+    WorldController/EasyWorld/WorldDescriptor.h \
+    WorldController/EasyWorld/WorldEditor.h \
+    WorldController/EasyWorld/WorldReward.h
 
 HEADERS += \
-    EasyWorld/EasyWorld.h
+    WorldController/EasyWorld/EasyWorld.h
 
 SOURCES += \
     main.cpp \

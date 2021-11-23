@@ -1,11 +1,13 @@
 #ifndef WORLD_ENVIRONMENT_H
 #define WORLD_ENVIRONMENT_H
 
+#include "export_library_global.h"
+
 #include "EasyWorld/WallGenerator.h"
 #include "EasyWorld/WorldPlaceGenerator.h"
 #include "EasyWorld/WorldEditor.h"
 
-class WorldEnvironment
+class LIBRARY_EXPORT WorldEnvironment
 {
 public:
     WorldEnvironment()

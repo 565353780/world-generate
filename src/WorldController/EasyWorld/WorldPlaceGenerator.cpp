@@ -113,11 +113,32 @@ bool WorldPlaceGenerator::generateWall(
     wall_axis_in_parent.setCenter(0, 0);
     wall_axis_in_parent.setXDirection(1, 0);
 
+    EasyPolygon2D wall_polygon_copy = wall_polygon;
+
+    if(wall_type == NodeType::OuterWall)
+    {
+        wall_polygon_copy.setAntiClockWise();
+    }
+    else if(wall_type == NodeType::InnerWall)
+    {
+        wall_polygon_copy.setClockWise();
+    }
+    else
+    {
+        std::cout << "WorldPlaceGenerator::generateWall :\n" <<
+          "Input :\n" <<
+          "\twall_name = " << wall_name << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "this type is not the wall type!" << std::endl;
+
+        return false;
+    }
+
     if(!world_controller.createWallForWorld(
           wall_name,
           wall_axis_in_parent,
           wall_type,
-          wall_polygon))
+          wall_polygon_copy))
     {
         std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
           "Input :\n" <<
@@ -130,7 +151,7 @@ bool WorldPlaceGenerator::generateWall(
 
     if(wall_type == NodeType::OuterWall)
     {
-        outerwall_boundary_polygon_ = wall_polygon;
+        outerwall_boundary_polygon_ = wall_polygon_copy;
         is_outerwall_boundary_polygon_set_ = true;
 
         if(!point_matrix_.setSplitEdgeLength(free_room_error_max_))
@@ -144,7 +165,7 @@ bool WorldPlaceGenerator::generateWall(
             return false;
         }
 
-        if(!point_matrix_.setBoundaryPolygon(wall_polygon))
+        if(!point_matrix_.setBoundaryPolygon(wall_polygon_copy))
         {
             std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
               "Input :\n" <<
@@ -156,7 +177,7 @@ bool WorldPlaceGenerator::generateWall(
         }
 
         if(!boundary_line_manager_.addBoundaryPolygon(
-              current_new_outerwall_id_, wall_type, wall_polygon))
+              current_new_outerwall_id_, wall_type, wall_polygon_copy))
         {
             std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
               "Input :\n" <<
@@ -173,7 +194,7 @@ bool WorldPlaceGenerator::generateWall(
     }
 
     if(!boundary_line_manager_.addBoundaryPolygon(
-          current_new_innerwall_id_, wall_type, wall_polygon))
+          current_new_innerwall_id_, wall_type, wall_polygon_copy))
     {
         std::cout << "WorldPlaceGenerator::generateWall : " << std::endl <<
           "Input :\n" <<

@@ -44,11 +44,13 @@ SOURCES += \
     WorldController/EasyWorld/EasyTree.cpp \
     WorldController/EasyWorld/BoundaryLineManager.cpp \
     WorldController/EasyWorld/PointMatrix.cpp \
+    WorldController/EasyWorld/WallGenerator.cpp \
     WorldController/EasyWorld/WorldController.cpp \
     WorldController/EasyWorld/WorldPlaceGenerator.cpp \
     WorldController/EasyWorld/WorldDescriptor.cpp \
     WorldController/EasyWorld/WorldEditor.cpp \
-    WorldController/EasyWorld/WorldReward.cpp
+    WorldController/EasyWorld/WorldReward.cpp \
+    WorldController/EasyWorld/WorldEnvironment.cpp
 
 HEADERS += \
     WorldController/EasyWorld/EasyAxis2D.h \
@@ -56,11 +58,13 @@ HEADERS += \
     WorldController/EasyWorld/EasyTree.h \
     WorldController/EasyWorld/BoundaryLineManager.h \
     WorldController/EasyWorld/PointMatrix.h \
+    WorldController/EasyWorld/WallGenerator.h \
     WorldController/EasyWorld/WorldController.h \
     WorldController/EasyWorld/WorldPlaceGenerator.h \
     WorldController/EasyWorld/WorldDescriptor.h \
     WorldController/EasyWorld/WorldEditor.h \
-    WorldController/EasyWorld/WorldReward.h
+    WorldController/EasyWorld/WorldReward.h \
+    WorldController/EasyWorld/WorldEnvironment.h
 
 HEADERS += \
     WorldController/EasyWorld/EasyWorld.h

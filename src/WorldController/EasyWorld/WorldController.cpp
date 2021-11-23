@@ -3424,17 +3424,7 @@ bool WorldController::createWallForWorld(
 
     wall_pair_vec_.emplace_back(new_wall_pair);
 
-    EasyPolygon2D wall_node_boundary_polygon = wall_boundary_polygon;
-    if(wall_type == NodeType::OuterWall)
-    {
-        wall_node_boundary_polygon.setAntiClockWise();
-    }
-    else
-    {
-        wall_node_boundary_polygon.setClockWise();
-    }
-
-    if(!world_tree_.setNodeBoundaryPolygon(new_wall_id, wall_type, wall_node_boundary_polygon))
+    if(!world_tree_.setNodeBoundaryPolygon(new_wall_id, wall_type, wall_boundary_polygon))
     {
         std::cout << "WorldController::createWallForWorld : " << std::endl <<
           "Input :\n" <<

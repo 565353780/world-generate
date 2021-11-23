@@ -38,11 +38,13 @@ SOURCES += \
     ../src/WorldController/EasyWorld/EasyTree.cpp \
     ../src/WorldController/EasyWorld/BoundaryLineManager.cpp \
     ../src/WorldController/EasyWorld/PointMatrix.cpp \
+    ../src/WorldController/EasyWorld/WallGenerator.h.cpp \
     ../src/WorldController/EasyWorld/WorldController.cpp \
     ../src/WorldController/EasyWorld/WorldPlaceGenerator.cpp \
     ../src/WorldController/EasyWorld/WorldDescriptor.cpp \
     ../src/WorldController/EasyWorld/WorldEditor.cpp \
-    ../src/WorldController/EasyWorld/WorldReward.cpp
+    ../src/WorldController/EasyWorld/WorldReward.cpp \
+    ../src/WorldController/EasyWorld/WorldEnvironment.cpp
 
 HEADERS += \
     ../src/WorldController/EasyWorld/EasyAxis2D.h \
@@ -50,11 +52,13 @@ HEADERS += \
     ../src/WorldController/EasyWorld/EasyTree.h \
     ../src/WorldController/EasyWorld/BoundaryLineManager.h \
     ../src/WorldController/EasyWorld/PointMatrix.h \
+    ../src/WorldController/EasyWorld/WallGenerator.h \
     ../src/WorldController/EasyWorld/WorldController.h \
     ../src/WorldController/EasyWorld/WorldPlaceGenerator.h \
     ../src/WorldController/EasyWorld/WorldDescriptor.h \
     ../src/WorldController/EasyWorld/WorldEditor.h \
-    ../src/WorldController/EasyWorld/WorldReward.h
+    ../src/WorldController/EasyWorld/WorldReward.h \
+    ../src/WorldController/EasyWorld/WorldEnvironment.h
 
 HEADERS += \
     ../src/WorldController/EasyWorld/EasyWorld.h

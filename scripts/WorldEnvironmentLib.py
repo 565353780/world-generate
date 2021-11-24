@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from WorldEnvironment import WorldEnvironment
+from tqdm import tqdm
 from time import time
 from random import randint
 
@@ -28,20 +29,13 @@ world_environment.placeOuterWallRoomContainer(0, 0, 0, 6.935, 16.169, 1)
 
 world_environment.generateFreeRoomContainer(4, 4, 0.5, 2)
 
-time_start = time()
-
-for i in range(100):
+for i in tqdm(range(100)):
+    time_start = time()
     world_environment.resetButRemainWall()
     world_environment.placeOuterWallRoomContainer(0, randint(0, 3), randint(0, 21), 4, 4, 1)
     world_environment.placeOuterWallRoomContainer(0, randint(0, 3), randint(0, 11), 12, 4, 3)
     world_environment.placeInnerWallRoomContainer(0, randint(0, 3), randint(0, 21), 4, 4, 1)
     world_environment.placeInnerWallRoomContainer(0, randint(0, 3), randint(0, 21), 4, 4, 1)
     world_environment.generateFreeRoomContainer(4, 4, 0.5, 2)
-
-time_spend = time() - time_start
-
-fps = 100.0 / time_spend
-
-print("time = ", time_spend)
-print("fps = ", fps)
+    time_spend = time() - time_start
 

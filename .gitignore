@@ -24,3 +24,6 @@ compile_commands.json
 *.so.1
 *.so.1.0
 *.so.1.0.0
+
+# python compiled
+__pycache__

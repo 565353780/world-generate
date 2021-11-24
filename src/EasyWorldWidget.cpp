@@ -92,22 +92,21 @@ void EasyWorldWidget::run_example()
 
     update();
 
-    long cycle_num = 0;
-    float avg_fps = 0;
-    setStartTime();
-    while(true)
-    {
-        world_environment_.resetButRemainWall();
-        world_environment_.placeOuterWallRoomContainer(0, std::rand() % 4, std::rand() % 22, 4, 4, 1);
-        world_environment_.placeOuterWallRoomContainer(0, std::rand() % 4, std::rand() % 12, 12, 4, 3);
-        world_environment_.placeInnerWallRoomContainer(0, std::rand() % 4, std::rand() % 22, 4, 4, 1);
-        world_environment_.placeInnerWallRoomContainer(0, std::rand() % 4, std::rand() % 22, 4, 4, 1);
-        world_environment_.generateFreeRoomContainer(4, 4, 0.5, 2);
-        ++cycle_num;
-        getFPS(cycle_num, avg_fps);
-
-        std::cout << "fps = " << size_t(avg_fps) << std::endl;
-    }
+    // long cycle_num = 0;
+    // float avg_fps = 0;
+    // setStartTime();
+    // while(true)
+    // {
+        // world_environment_.resetButRemainWall();
+        // world_environment_.placeOuterWallRoomContainer(0, std::rand() % 4, std::rand() % 22, 4, 4, 1);
+        // world_environment_.placeOuterWallRoomContainer(0, std::rand() % 4, std::rand() % 12, 12, 4, 3);
+        // world_environment_.placeInnerWallRoomContainer(0, std::rand() % 4, std::rand() % 22, 4, 4, 1);
+        // world_environment_.placeInnerWallRoomContainer(0, std::rand() % 4, std::rand() % 22, 4, 4, 1);
+        // world_environment_.generateFreeRoomContainer(4, 4, 0.5, 2);
+        // ++cycle_num;
+        // getFPS(cycle_num, avg_fps);
+        // std::cout << "fps = " << size_t(avg_fps) << std::endl;
+    // }
 
     // world_controller_.outputInfo();
 

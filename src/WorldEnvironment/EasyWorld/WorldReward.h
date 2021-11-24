@@ -3,7 +3,7 @@
 
 #include "export_library_global.h"
 
-#include "EasyWorld/WorldController.h"
+#include "EasyWorld/WorldObservation.h"
 
 class LIBRARY_EXPORT WorldReward
 {
@@ -15,24 +15,24 @@ public:
     bool reset();
 
     bool getReward(
-        WorldController &world_controller,
+        const WorldObservation& world_observation,
         float &reward);
 
 private:
     bool getSpaceUtilizationReward(
-        WorldController &world_controller,
+        const WorldObservation& world_observation,
         float &space_utilization_reward);
 
     bool getNeighboorReward(
-        WorldController &world_controller,
+        const WorldObservation& world_observation,
         float &neighboor_reward);
 
     bool getMovableReward(
-        WorldController &world_controller,
+        const WorldObservation& world_observation,
         float &movable_reward);
 
     bool getEascapableReward(
-        WorldController &world_controller,
+        const WorldObservation& world_observation,
         float &eascapable_reward);
 };
 

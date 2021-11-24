@@ -371,13 +371,22 @@ public:
         const size_t &node_id,
         const NodeType &node_type);
 
-    bool getWallNodeVec(
+    bool getOuterWallNodeVec(
         std::vector<EasyNode*> &wall_node_vec);
 
-    bool getWallBoundaryNodeVecVec(
+    bool getOuterWallBoundaryNodeVecVec(
         std::vector<std::vector<EasyNode*>> &wall_boundary_node_vec_vec);
 
-    bool getWallSpaceNodeVec(
+    bool getOuterWallSpaceNodeVec(
+        std::vector<EasyNode*> &wall_space_node_vec);
+
+    bool getInnerWallNodeVec(
+        std::vector<EasyNode*> &wall_node_vec);
+
+    bool getInnerWallBoundaryNodeVecVec(
+        std::vector<std::vector<EasyNode*>> &wall_boundary_node_vec_vec);
+
+    bool getInnerWallSpaceNodeVec(
         std::vector<EasyNode*> &wall_space_node_vec);
 
     bool getRoomContainerNodeVec(

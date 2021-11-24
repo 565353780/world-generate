@@ -6,14 +6,14 @@ bool WorldReward::reset()
 }
 
 bool WorldReward::getReward(
-    WorldController &world_controller,
+    const WorldObservation& world_observation,
     float &reward)
 {
     reward = 0;
 
     float new_reward;
 
-    if(!getSpaceUtilizationReward(world_controller, new_reward))
+    if(!getSpaceUtilizationReward(world_observation, new_reward))
     {
         std::cout << "WorldReward::getReward : " << std::endl <<
           "getSpaceUtilizationReward failed!" << std::endl;
@@ -22,7 +22,7 @@ bool WorldReward::getReward(
     }
     reward += new_reward;
 
-    if(!getNeighboorReward(world_controller, new_reward))
+    if(!getNeighboorReward(world_observation, new_reward))
     {
         std::cout << "WorldReward::getReward : " << std::endl <<
           "getNeighboorReward failed!" << std::endl;
@@ -31,7 +31,7 @@ bool WorldReward::getReward(
     }
     reward += new_reward;
 
-    if(!getMovableReward(world_controller, new_reward))
+    if(!getMovableReward(world_observation, new_reward))
     {
         std::cout << "WorldReward::getReward : " << std::endl <<
           "getMovableReward failed!" << std::endl;
@@ -40,7 +40,7 @@ bool WorldReward::getReward(
     }
     reward += new_reward;
 
-    if(!getEascapableReward(world_controller, new_reward))
+    if(!getEascapableReward(world_observation, new_reward))
     {
         std::cout << "WorldReward::getReward : " << std::endl <<
           "getEascapableReward failed!" << std::endl;
@@ -53,16 +53,19 @@ bool WorldReward::getReward(
 }
 
 bool WorldReward::getSpaceUtilizationReward(
-    WorldController &world_controller,
+    const WorldObservation& world_observation,
     float &space_utilization_reward)
 {
     space_utilization_reward = 0;
+
+    const std::vector<EasyPolygon2D>& outerwall_boundary_polygon_vec =
+      world_observation.outerwall_boundary_polygon_vec_;
 
     return true;
 }
 
 bool WorldReward::getNeighboorReward(
-    WorldController &world_controller,
+    const WorldObservation& world_observation,
     float &neighboor_reward)
 {
     neighboor_reward = 0;
@@ -71,7 +74,7 @@ bool WorldReward::getNeighboorReward(
 }
 
 bool WorldReward::getMovableReward(
-    WorldController &world_controller,
+    const WorldObservation& world_observation,
     float &movable_reward)
 {
     movable_reward = 0;
@@ -80,7 +83,7 @@ bool WorldReward::getMovableReward(
 }
 
 bool WorldReward::getEascapableReward(
-    WorldController &world_controller,
+    const WorldObservation& world_observation,
     float &eascapable_reward)
 {
     eascapable_reward = 0;

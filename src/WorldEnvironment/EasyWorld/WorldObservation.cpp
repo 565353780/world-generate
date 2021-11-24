@@ -2,7 +2,16 @@
 
 bool WorldObservation::reset()
 {
-    wall_boundary_polygon_vec_.clear();
+    outerwall_boundary_polygon_vec_.clear();
+    innerwall_boundary_polygon_vec_.clear();
+    roomcontainer_boundary_polygon_vec_.clear();
+    wallroom_boundary_polygon_vec_.clear();
+    freeroom_boundary_polygon_vec_.clear();
+    door_boundary_polygon_vec_.clear();
+    window_boundary_polygon_vec_.clear();
+    team_boundary_polygon_vec_.clear();
+    person_boundary_polygon_vec_.clear();
+    furniture_boundary_polygon_vec_.clear();
 
     return true;
 }
@@ -10,10 +19,18 @@ bool WorldObservation::reset()
 bool WorldObservation::getObservation(
     WorldController& world_controller)
 {
-    if(!getWallBoundaryPolygon(world_controller))
+    if(!getOuterWallBoundaryPolygon(world_controller))
     {
         std::cout << "WorldObservation::getObservation :\n" <<
-          "getWallBoundaryPolygon failed!\n";
+          "getOuterWallBoundaryPolygon failed!\n";
+
+        return false;
+    }
+
+    if(!getInnerWallBoundaryPolygon(world_controller))
+    {
+        std::cout << "WorldObservation::getObservation :\n" <<
+          "getInnerWallBoundaryPolygon failed!\n";
 
         return false;
     }
@@ -85,61 +102,121 @@ bool WorldObservation::getObservation(
     return true;
 }
 
-bool WorldObservation::getWallBoundaryPolygon(
+bool WorldObservation::getOuterWallBoundaryPolygon(
     WorldController& world_controller)
 {
-    wall_boundary_polygon_vec_.clear();
+    outerwall_boundary_polygon_vec_.clear();
 
-    std::vector<EasyNode*> wall_space_node_vec;
+    std::vector<EasyNode*> outerwall_space_node_vec;
 
-    if(!world_controller.getWallSpaceNodeVec(wall_space_node_vec))
+    if(!world_controller.getOuterWallSpaceNodeVec(outerwall_space_node_vec))
     {
-        std::cout << "WorldObservation::getWallBoundaryPolygon :\n" <<
-          "getWallSpaceNodeVec failed!\n";
+        std::cout << "WorldObservation::getOuterWallBoundaryPolygon :\n" <<
+          "getOuterWallSpaceNodeVec failed!\n";
 
         return false;
     }
 
-    for(EasyNode* wall_space_node : wall_space_node_vec)
+    for(EasyNode* outerwall_space_node : outerwall_space_node_vec)
     {
-        if(wall_space_node == nullptr)
+        if(outerwall_space_node == nullptr)
         {
             continue;
         }
 
-        const EasyPolygon2D &wall_space_polygon =
-          wall_space_node->getBoundaryPolygon();
+        const EasyPolygon2D &outerwall_space_polygon =
+          outerwall_space_node->getBoundaryPolygon();
 
-        if(wall_space_polygon.point_list.size() == 0)
+        if(outerwall_space_polygon.point_list.size() == 0)
         {
-            std::cout << "WorldObservation::getWallBoundaryPolygon :\n" <<
-              "wall boundary polygon is empty!\n";
+            std::cout << "WorldObservation::getOuterWallBoundaryPolygon :\n" <<
+              "outerwall boundary polygon is empty!\n";
 
             return false;
         }
 
-        EasyPolygon2D wall_space_polygon_in_world;
+        EasyPolygon2D outerwall_space_polygon_in_world;
 
-        for(const EasyPoint2D& wall_space_polygon_point :
-            wall_space_polygon.point_list)
+        for(const EasyPoint2D& outerwall_space_polygon_point :
+            outerwall_space_polygon.point_list)
         {
-            EasyPoint2D wall_space_boundary_point_in_world;
+            EasyPoint2D outerwall_space_boundary_point_in_world;
 
-            if(!wall_space_node->getPointInWorld(
-                  wall_space_polygon_point,
-                  wall_space_boundary_point_in_world))
+            if(!outerwall_space_node->getPointInWorld(
+                  outerwall_space_polygon_point,
+                  outerwall_space_boundary_point_in_world))
             {
-                std::cout << "WorldObservation::getWallBoundaryPolygon :\n" <<
-                  "getPointInWorld for wall space polygon point failed!\n";
+                std::cout << "WorldObservation::getOuterWallBoundaryPolygon :\n" <<
+                  "getPointInWorld for outerwall space polygon point failed!\n";
 
                 return false;
             }
 
-            wall_space_polygon_in_world.addPoint(
-                wall_space_boundary_point_in_world);
+            outerwall_space_polygon_in_world.addPoint(
+                outerwall_space_boundary_point_in_world);
         }
 
-        wall_boundary_polygon_vec_.emplace_back(wall_space_polygon_in_world);
+        outerwall_boundary_polygon_vec_.emplace_back(outerwall_space_polygon_in_world);
+    }
+
+    return true;
+}
+
+bool WorldObservation::getInnerWallBoundaryPolygon(
+    WorldController& world_controller)
+{
+    innerwall_boundary_polygon_vec_.clear();
+
+    std::vector<EasyNode*> innerwall_space_node_vec;
+
+    if(!world_controller.getInnerWallSpaceNodeVec(innerwall_space_node_vec))
+    {
+        std::cout << "WorldObservation::getInnerWallBoundaryPolygon :\n" <<
+          "getInnerWallSpaceNodeVec failed!\n";
+
+        return false;
+    }
+
+    for(EasyNode* innerwall_space_node : innerwall_space_node_vec)
+    {
+        if(innerwall_space_node == nullptr)
+        {
+            continue;
+        }
+
+        const EasyPolygon2D &innerwall_space_polygon =
+          innerwall_space_node->getBoundaryPolygon();
+
+        if(innerwall_space_polygon.point_list.size() == 0)
+        {
+            std::cout << "WorldObservation::getInnerWallBoundaryPolygon :\n" <<
+              "innerwall boundary polygon is empty!\n";
+
+            return false;
+        }
+
+        EasyPolygon2D innerwall_space_polygon_in_world;
+
+        for(const EasyPoint2D& innerwall_space_polygon_point :
+            innerwall_space_polygon.point_list)
+        {
+            EasyPoint2D innerwall_space_boundary_point_in_world;
+
+            if(!innerwall_space_node->getPointInWorld(
+                  innerwall_space_polygon_point,
+                  innerwall_space_boundary_point_in_world))
+            {
+                std::cout << "WorldObservation::getInnerWallBoundaryPolygon :\n" <<
+                  "getPointInWorld for innerwall space polygon point failed!\n";
+
+                return false;
+            }
+
+            innerwall_space_polygon_in_world.addPoint(
+                innerwall_space_boundary_point_in_world);
+        }
+
+        innerwall_boundary_polygon_vec_.emplace_back(innerwall_space_polygon_in_world);
     }
 
     return true;

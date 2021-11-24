@@ -3537,107 +3537,223 @@ bool WorldController::haveThisNode(
     return true;
 }
 
-bool WorldController::getWallNodeVec(
-    std::vector<EasyNode*> &wall_node_vec)
+bool WorldController::getOuterWallNodeVec(
+    std::vector<EasyNode*> &outerwall_node_vec)
 {
-    wall_node_vec.clear();
+    outerwall_node_vec.clear();
 
     if(wall_pair_vec_.size() == 0)
     {
         return true;
     }
 
-    for(const std::pair<size_t, NodeType> &wall_pair : wall_pair_vec_)
+    for(const std::pair<size_t, NodeType> &outerwall_pair : wall_pair_vec_)
     {
-        EasyNode* wall_node = findNode(wall_pair.first, wall_pair.second);
-
-        if(wall_node == nullptr)
+        if(outerwall_pair.second != NodeType::OuterWall)
         {
-            std::cout << "WorldController::getWallNodeVec : " << std::endl <<
-              "get wall : id = " << wall_pair.first <<
-              ", type = " << wall_pair.second <<
+            continue;
+        }
+
+        EasyNode* outerwall_node = findNode(outerwall_pair.first, outerwall_pair.second);
+
+        if(outerwall_node == nullptr)
+        {
+            std::cout << "WorldController::getOuterWallNodeVec : " << std::endl <<
+              "get outerwall : id = " << outerwall_pair.first <<
+              ", type = " << outerwall_pair.second <<
               " failed!" << std::endl;
 
             return false;
         }
 
-        wall_node_vec.emplace_back(wall_node);
+        outerwall_node_vec.emplace_back(outerwall_node);
     }
 
     return true;
 }
 
-bool WorldController::getWallBoundaryNodeVecVec(
-    std::vector<std::vector<EasyNode*>> &wall_boundary_node_vec_vec)
+bool WorldController::getOuterWallBoundaryNodeVecVec(
+    std::vector<std::vector<EasyNode*>> &outerwall_boundary_node_vec_vec)
 {
-    wall_boundary_node_vec_vec.clear();
+    outerwall_boundary_node_vec_vec.clear();
 
     if(wall_pair_vec_.size() == 0)
     {
         return true;
     }
 
-    std::vector<EasyNode*> wall_node_vec;
+    std::vector<EasyNode*> outerwall_node_vec;
 
-    if(!getWallNodeVec(wall_node_vec))
+    if(!getOuterWallNodeVec(outerwall_node_vec))
     {
-        std::cout << "WorldController::getWallBoundaryNodeVec : " << std::endl <<
-          "getWallNodeVec failed!" << std::endl;
+        std::cout << "WorldController::getOuterWallBoundaryNodeVec : " << std::endl <<
+          "getOuterWallNodeVec failed!" << std::endl;
 
         return false;
     }
 
-    for(EasyNode* wall_node : wall_node_vec)
+    for(EasyNode* outerwall_node : outerwall_node_vec)
     {
-        std::vector<EasyNode*> wall_boundary_node_vec;
-        std::vector<EasyNode*> wall_child_node_vec = wall_node->getChildNodeVec();
+        std::vector<EasyNode*> outerwall_boundary_node_vec;
+        std::vector<EasyNode*> outerwall_child_node_vec = outerwall_node->getChildNodeVec();
 
-        for(EasyNode* wall_child_node : wall_child_node_vec)
+        for(EasyNode* outerwall_child_node : outerwall_child_node_vec)
         {
-            if(wall_child_node->getNodeType() == NodeType::Boundary)
+            if(outerwall_child_node->getNodeType() == NodeType::Boundary)
             {
-                wall_boundary_node_vec.emplace_back(wall_child_node);
+                outerwall_boundary_node_vec.emplace_back(outerwall_child_node);
             }
         }
 
-        wall_boundary_node_vec_vec.emplace_back(wall_boundary_node_vec);
+        outerwall_boundary_node_vec_vec.emplace_back(outerwall_boundary_node_vec);
     }
     return true;
 }
 
-bool WorldController::getWallSpaceNodeVec(
-    std::vector<EasyNode*> &wall_space_node_vec)
+bool WorldController::getOuterWallSpaceNodeVec(
+    std::vector<EasyNode*> &outerwall_space_node_vec)
 {
-    wall_space_node_vec.clear();
+    outerwall_space_node_vec.clear();
 
     if(wall_pair_vec_.size() == 0)
     {
         return true;
     }
 
-    std::vector<EasyNode*> wall_node_vec;
+    std::vector<EasyNode*> outerwall_node_vec;
 
-    if(!getWallNodeVec(wall_node_vec))
+    if(!getOuterWallNodeVec(outerwall_node_vec))
     {
-        std::cout << "WorldController::getWallSpaceNodeVec : " << std::endl <<
-          "getWallNodeVec failed!" << std::endl;
+        std::cout << "WorldController::getOuterWallSpaceNodeVec : " << std::endl <<
+          "getOuterWallNodeVec failed!" << std::endl;
 
         return false;
     }
 
-    for(EasyNode* wall_node : wall_node_vec)
+    for(EasyNode* outerwall_node : outerwall_node_vec)
     {
-        EasyNode* wall_space_node = wall_node->findChild(0, NodeType::Space);
+        EasyNode* outerwall_space_node = outerwall_node->findChild(0, NodeType::Space);
 
-        if(wall_space_node == nullptr)
+        if(outerwall_space_node == nullptr)
         {
-            std::cout << "WorldController::getWallNodeVec : " << std::endl <<
-              "get wall space node failed!" << std::endl;
+            std::cout << "WorldController::getOuterWallNodeVec : " << std::endl <<
+              "get outerwall space node failed!" << std::endl;
 
             return false;
         }
 
-        wall_space_node_vec.emplace_back(wall_space_node);
+        outerwall_space_node_vec.emplace_back(outerwall_space_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getInnerWallNodeVec(
+    std::vector<EasyNode*> &innerwall_node_vec)
+{
+    innerwall_node_vec.clear();
+
+    if(wall_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    for(const std::pair<size_t, NodeType> &innerwall_pair : wall_pair_vec_)
+    {
+        if(innerwall_pair.second != NodeType::InnerWall)
+        {
+            continue;
+        }
+
+        EasyNode* innerwall_node = findNode(innerwall_pair.first, innerwall_pair.second);
+
+        if(innerwall_node == nullptr)
+        {
+            std::cout << "WorldController::getInnerWallNodeVec : " << std::endl <<
+              "get innerwall : id = " << innerwall_pair.first <<
+              ", type = " << innerwall_pair.second <<
+              " failed!" << std::endl;
+
+            return false;
+        }
+
+        innerwall_node_vec.emplace_back(innerwall_node);
+    }
+
+    return true;
+}
+
+bool WorldController::getInnerWallBoundaryNodeVecVec(
+    std::vector<std::vector<EasyNode*>> &innerwall_boundary_node_vec_vec)
+{
+    innerwall_boundary_node_vec_vec.clear();
+
+    if(wall_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> innerwall_node_vec;
+
+    if(!getInnerWallNodeVec(innerwall_node_vec))
+    {
+        std::cout << "WorldController::getInnerWallBoundaryNodeVec : " << std::endl <<
+          "getInnerWallNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* innerwall_node : innerwall_node_vec)
+    {
+        std::vector<EasyNode*> innerwall_boundary_node_vec;
+        std::vector<EasyNode*> innerwall_child_node_vec = innerwall_node->getChildNodeVec();
+
+        for(EasyNode* innerwall_child_node : innerwall_child_node_vec)
+        {
+            if(innerwall_child_node->getNodeType() == NodeType::Boundary)
+            {
+                innerwall_boundary_node_vec.emplace_back(innerwall_child_node);
+            }
+        }
+
+        innerwall_boundary_node_vec_vec.emplace_back(innerwall_boundary_node_vec);
+    }
+    return true;
+}
+
+bool WorldController::getInnerWallSpaceNodeVec(
+    std::vector<EasyNode*> &innerwall_space_node_vec)
+{
+    innerwall_space_node_vec.clear();
+
+    if(wall_pair_vec_.size() == 0)
+    {
+        return true;
+    }
+
+    std::vector<EasyNode*> innerwall_node_vec;
+
+    if(!getInnerWallNodeVec(innerwall_node_vec))
+    {
+        std::cout << "WorldController::getInnerWallSpaceNodeVec : " << std::endl <<
+          "getInnerWallNodeVec failed!" << std::endl;
+
+        return false;
+    }
+
+    for(EasyNode* innerwall_node : innerwall_node_vec)
+    {
+        EasyNode* innerwall_space_node = innerwall_node->findChild(0, NodeType::Space);
+
+        if(innerwall_space_node == nullptr)
+        {
+            std::cout << "WorldController::getInnerWallNodeVec : " << std::endl <<
+              "get innerwall space node failed!" << std::endl;
+
+            return false;
+        }
+
+        innerwall_space_node_vec.emplace_back(innerwall_space_node);
     }
 
     return true;

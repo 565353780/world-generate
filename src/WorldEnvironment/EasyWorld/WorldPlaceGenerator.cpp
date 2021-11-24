@@ -745,7 +745,7 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
     std::vector<EasyPolygon2D> innerwall_boundary_polygon_vec;
 
     std::vector<EasyNode*> innerwall_node_vec;
-    if(!world_controller.getWallNodeVec(innerwall_node_vec))
+    if(!world_controller.getInnerWallNodeVec(innerwall_node_vec))
     {
         std::cout << "WorldPlaceGenerator::generateFreeRoomContainer : " << std::endl <<
           "Input :\n" <<
@@ -760,11 +760,6 @@ bool WorldPlaceGenerator::generateFreeRoomContainer(
 
     for(EasyNode* innerwall_node : innerwall_node_vec)
     {
-        if(innerwall_node->getNodeType() != NodeType::InnerWall)
-        {
-            continue;
-        }
-
         EasyNode* innerwall_space_node = innerwall_node->findChild(0, NodeType::Space);
 
         if(innerwall_space_node == nullptr)

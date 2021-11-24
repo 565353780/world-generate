@@ -15,7 +15,10 @@ public:
     bool getObservation(
         WorldController& world_controller);
 
-    bool getWallBoundaryPolygon(
+    bool getOuterWallBoundaryPolygon(
+        WorldController& world_controller);
+
+    bool getInnerWallBoundaryPolygon(
         WorldController& world_controller);
 
     bool getRoomContainerBoundaryPolygon(
@@ -42,7 +45,8 @@ public:
     bool getFurnitureBoundaryPolygon(
         WorldController& world_controller);
 
-    std::vector<EasyPolygon2D> wall_boundary_polygon_vec_;
+    std::vector<EasyPolygon2D> outerwall_boundary_polygon_vec_;
+    std::vector<EasyPolygon2D> innerwall_boundary_polygon_vec_;
     std::vector<EasyPolygon2D> roomcontainer_boundary_polygon_vec_;
     std::vector<EasyPolygon2D> wallroom_boundary_polygon_vec_;
     std::vector<EasyPolygon2D> freeroom_boundary_polygon_vec_;

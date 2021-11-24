@@ -48,12 +48,17 @@ private:
 
     bool drawBackGround();
 
-    bool drawWallBoundaryAxis(
+    bool drawOuterWallBoundaryAxis(
         WorldController &world_controller);
-    bool drawWallBoundaryPolygon(
+    bool drawOuterWallBoundaryPolygon(
         WorldController &world_controller);
-    bool drawWallSpaceBoundary(
+    bool drawOuterWallSpaceBoundary();
+
+    bool drawInnerWallBoundaryAxis(
         WorldController &world_controller);
+    bool drawInnerWallBoundaryPolygon(
+        WorldController &world_controller);
+    bool drawInnerWallSpaceBoundary();
 
     bool drawRoomContainerBoundaryAxis(
         WorldController &world_controller);
@@ -129,8 +134,10 @@ private:
     float axis_length_;
     float zoom_;
     QColor background_color_;
-    QColor wall_color_;
-    QColor wall_brush_color_;
+    QColor outerwall_color_;
+    QColor outerwall_brush_color_;
+    QColor innerwall_color_;
+    QColor innerwall_brush_color_;
     QColor roomcontainer_color_;
     QColor roomcontainer_brush_color_;
     QColor wallroom_color_;

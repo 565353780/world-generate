@@ -12,8 +12,10 @@ EasyWorldWidget::EasyWorldWidget(QWidget *parent) :
     zoom_ = 1;
 
     background_color_ = QColor(0, 0, 0);
-    wall_color_ = QColor(128,128,128);
-    wall_brush_color_ = QColor(0,0,0);
+    outerwall_color_ = QColor(128,128,128);
+    outerwall_brush_color_ = QColor(0,0,0);
+    innerwall_color_ = QColor(128,128,128);
+    innerwall_brush_color_ = QColor(0,0,0);
     roomcontainer_color_ = QColor(0, 0, 0);
     roomcontainer_brush_color_ = QColor(0, 0, 0);
     wallroom_color_ = QColor(128,128,128);
@@ -234,7 +236,7 @@ bool EasyWorldWidget::drawBackGround()
     return true;
 }
 
-bool EasyWorldWidget::drawWallBoundaryAxis(
+bool EasyWorldWidget::drawOuterWallBoundaryAxis(
     WorldController &world_controller)
 {
     QPainter painter(this);
@@ -245,34 +247,34 @@ bool EasyWorldWidget::drawWallBoundaryAxis(
     // QFont font_song_15("宋体", 15, QFont::Bold, true);
     // painter.setFont(font_song_15);
 
-    std::vector<std::vector<EasyNode*>> wall_boundary_node_vec_vec;
+    std::vector<std::vector<EasyNode*>> outerwall_boundary_node_vec_vec;
 
-    world_controller.getWallBoundaryNodeVecVec(wall_boundary_node_vec_vec);
+    world_controller.getOuterWallBoundaryNodeVecVec(outerwall_boundary_node_vec_vec);
 
-    for(const std::vector<EasyNode*>& wall_boundary_node_vec: wall_boundary_node_vec_vec)
+    for(const std::vector<EasyNode*>& outerwall_boundary_node_vec: outerwall_boundary_node_vec_vec)
     {
-        for(const EasyNode* wall_boundary_node : wall_boundary_node_vec)
+        for(const EasyNode* outerwall_boundary_node : outerwall_boundary_node_vec)
         {
-            if(wall_boundary_node == nullptr)
+            if(outerwall_boundary_node == nullptr)
             {
                 continue;
             }
 
-            EasyAxis2D wall_boundary_axis = wall_boundary_node->getAxisInWorld();
+            EasyAxis2D outerwall_boundary_axis = outerwall_boundary_node->getAxisInWorld();
 
             painter.setPen(pen_red);
 
             painter.drawLine(
-                zoom_ * wall_boundary_axis.center_.x, zoom_ * wall_boundary_axis.center_.y,
-                zoom_ * (wall_boundary_axis.center_.x + axis_length_ * wall_boundary_axis.x_direction_.x),
-                zoom_ * (wall_boundary_axis.center_.y + axis_length_ * wall_boundary_axis.x_direction_.y));
+                zoom_ * outerwall_boundary_axis.center_.x, zoom_ * outerwall_boundary_axis.center_.y,
+                zoom_ * (outerwall_boundary_axis.center_.x + axis_length_ * outerwall_boundary_axis.x_direction_.x),
+                zoom_ * (outerwall_boundary_axis.center_.y + axis_length_ * outerwall_boundary_axis.x_direction_.y));
 
             painter.setPen(pen_green);
 
             painter.drawLine(
-                zoom_ * wall_boundary_axis.center_.x, zoom_ * wall_boundary_axis.center_.y,
-                zoom_ * (wall_boundary_axis.center_.x + axis_length_ * wall_boundary_axis.y_direction_.x),
-                zoom_ * (wall_boundary_axis.center_.y + axis_length_ * wall_boundary_axis.y_direction_.y));
+                zoom_ * outerwall_boundary_axis.center_.x, zoom_ * outerwall_boundary_axis.center_.y,
+                zoom_ * (outerwall_boundary_axis.center_.x + axis_length_ * outerwall_boundary_axis.y_direction_.x),
+                zoom_ * (outerwall_boundary_axis.center_.y + axis_length_ * outerwall_boundary_axis.y_direction_.y));
         }
         
     }
@@ -280,41 +282,41 @@ bool EasyWorldWidget::drawWallBoundaryAxis(
     return true;
 }
 
-bool EasyWorldWidget::drawWallBoundaryPolygon(
+bool EasyWorldWidget::drawOuterWallBoundaryPolygon(
     WorldController &world_controller)
 {
     QPainter painter(this);
 
-    QPen pen(wall_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(outerwall_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     // QFont font_song_15("宋体", 15, QFont::Bold, true);
     // painter.setFont(font_song_15);
 
     painter.setPen(pen);
 
-    std::vector<std::vector<EasyNode*>> wall_boundary_node_vec_vec;
+    std::vector<std::vector<EasyNode*>> outerwall_boundary_node_vec_vec;
 
-    world_controller.getWallBoundaryNodeVecVec(wall_boundary_node_vec_vec);
+    world_controller.getOuterWallBoundaryNodeVecVec(outerwall_boundary_node_vec_vec);
 
-    for(const std::vector<EasyNode*> &wall_boundary_node_vec :
-        wall_boundary_node_vec_vec)
+    for(const std::vector<EasyNode*> &outerwall_boundary_node_vec :
+        outerwall_boundary_node_vec_vec)
     {
-        for(EasyNode* wall_boundary_node : wall_boundary_node_vec)
+        for(EasyNode* outerwall_boundary_node : outerwall_boundary_node_vec)
         {
-            const EasyPolygon2D &wall_boundary_polygon =
-              wall_boundary_node->getBoundaryPolygon();
+            const EasyPolygon2D &outerwall_boundary_polygon =
+              outerwall_boundary_node->getBoundaryPolygon();
 
-            for(size_t i = 0; i < wall_boundary_polygon.point_list.size(); ++i)
+            for(size_t i = 0; i < outerwall_boundary_polygon.point_list.size(); ++i)
             {
-                const EasyPoint2D &current_point = wall_boundary_polygon.point_list[i];
-                const EasyPoint2D &next_point = wall_boundary_polygon.point_list[
-                  (i + 1) % wall_boundary_polygon.point_list.size()];
+                const EasyPoint2D &current_point = outerwall_boundary_polygon.point_list[i];
+                const EasyPoint2D &next_point = outerwall_boundary_polygon.point_list[
+                  (i + 1) % outerwall_boundary_polygon.point_list.size()];
 
                 EasyPoint2D current_point_in_world;
                 EasyPoint2D next_point_in_world;
-                wall_boundary_node->getPointInWorld(
+                outerwall_boundary_node->getPointInWorld(
                     current_point, current_point_in_world);
-                wall_boundary_node->getPointInWorld(
+                outerwall_boundary_node->getPointInWorld(
                     next_point, next_point_in_world);
 
             painter.drawLine(
@@ -327,12 +329,11 @@ bool EasyWorldWidget::drawWallBoundaryPolygon(
     return true;
 }
 
-bool EasyWorldWidget::drawWallSpaceBoundary(
-    WorldController &world_controller)
+bool EasyWorldWidget::drawOuterWallSpaceBoundary()
 {
     QPainter painter(this);
 
-    QPen pen(wall_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(outerwall_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_line(length_color_, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_text(text_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
@@ -342,42 +343,233 @@ bool EasyWorldWidget::drawWallSpaceBoundary(
 
     painter.setPen(pen);
 
-    if(wall_brush_color_.red() != 0 ||
-        wall_brush_color_.green() != 0 ||
-        wall_brush_color_.blue() != 0)
+    if(outerwall_brush_color_.red() != 0 ||
+        outerwall_brush_color_.green() != 0 ||
+        outerwall_brush_color_.blue() != 0)
     {
         QBrush brush;
-        brush.setColor(wall_brush_color_);
+        brush.setColor(outerwall_brush_color_);
         brush.setStyle(Qt::SolidPattern);
         painter.setBrush(brush);
     }
 
-    const std::vector<std::vector<float>> wall_boundary_xy_data_vec =
-      world_environment_.getWallBoundaryXYDataVec();
+    const std::vector<std::vector<float>> outerwall_boundary_xy_data_vec =
+      world_environment_.getOuterWallBoundaryXYDataVec();
 
-    for(const std::vector<float>& wall_boundary_xy_data : wall_boundary_xy_data_vec)
+    for(const std::vector<float>& outerwall_boundary_xy_data : outerwall_boundary_xy_data_vec)
     {
-        if(wall_boundary_xy_data.size() == 0)
+        if(outerwall_boundary_xy_data.size() == 0)
         {
             continue;
         }
 
-        const size_t wall_boundary_point_num = wall_boundary_xy_data.size() / 2;
+        const size_t outerwall_boundary_point_num = outerwall_boundary_xy_data.size() / 2;
 
         QPolygon polygon;
-        polygon.resize(wall_boundary_point_num);
+        polygon.resize(outerwall_boundary_point_num);
 
         const float line_info_dist = 20;
 
-        for(size_t i = 0; i < wall_boundary_point_num; ++i)
+        for(size_t i = 0; i < outerwall_boundary_point_num; ++i)
         {
             const size_t current_point_idx = 2 * i;
-            const size_t next_point_idx = (2 * (i + 1)) % wall_boundary_xy_data.size();
+            const size_t next_point_idx = (2 * (i + 1)) % outerwall_boundary_xy_data.size();
 
-            const float current_point_x = wall_boundary_xy_data[current_point_idx];
-            const float current_point_y = wall_boundary_xy_data[current_point_idx + 1];
-            const float next_point_x = wall_boundary_xy_data[next_point_idx];
-            const float next_point_y = wall_boundary_xy_data[next_point_idx + 1];
+            const float current_point_x = outerwall_boundary_xy_data[current_point_idx];
+            const float current_point_y = outerwall_boundary_xy_data[current_point_idx + 1];
+            const float next_point_x = outerwall_boundary_xy_data[next_point_idx];
+            const float next_point_y = outerwall_boundary_xy_data[next_point_idx + 1];
+
+            polygon.setPoint(i, QPoint(
+                  zoom_ * current_point_x,
+                  zoom_ * current_point_y));
+
+            const float line_x_diff = next_point_x - current_point_x;
+            const float line_y_diff = next_point_y - current_point_y;
+
+            const float line_length = std::sqrt(
+                line_x_diff * line_x_diff +
+                line_y_diff * line_y_diff);
+
+            EasyPoint2D move_direction;
+            move_direction.setPosition(
+                line_y_diff / line_length,
+                -line_x_diff / line_length);
+
+            EasyPoint2D current_point_move;
+            EasyPoint2D next_point_move;
+            current_point_move.setPosition(
+                zoom_ * current_point_x + line_info_dist * move_direction.x,
+                zoom_ * current_point_y + line_info_dist * move_direction.y);
+            next_point_move.setPosition(
+                zoom_ * next_point_x + line_info_dist * move_direction.x,
+                zoom_ * next_point_y + line_info_dist * move_direction.y);
+
+            painter.setPen(pen_line);
+            painter.drawLine(
+                current_point_move.x,
+                current_point_move.y,
+                next_point_move.x,
+                next_point_move.y);
+
+            painter.setPen(pen_text);
+            painter.setFont(font_song_10);
+            painter.drawText(
+                (current_point_move.x + next_point_move.x) / 2.0,
+                (current_point_move.y + next_point_move.y) / 2.0,
+                QString::number(line_length));
+        }
+
+        painter.setPen(pen);
+        painter.drawPolygon(polygon);
+    }
+
+    return true;
+}
+
+bool EasyWorldWidget::drawInnerWallBoundaryAxis(
+    WorldController &world_controller)
+{
+    QPainter painter(this);
+
+    QPen pen_red(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_green(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
+
+    std::vector<std::vector<EasyNode*>> innerwall_boundary_node_vec_vec;
+
+    world_controller.getInnerWallBoundaryNodeVecVec(innerwall_boundary_node_vec_vec);
+
+    for(const std::vector<EasyNode*>& innerwall_boundary_node_vec: innerwall_boundary_node_vec_vec)
+    {
+        for(const EasyNode* innerwall_boundary_node : innerwall_boundary_node_vec)
+        {
+            if(innerwall_boundary_node == nullptr)
+            {
+                continue;
+            }
+
+            EasyAxis2D innerwall_boundary_axis = innerwall_boundary_node->getAxisInWorld();
+
+            painter.setPen(pen_red);
+
+            painter.drawLine(
+                zoom_ * innerwall_boundary_axis.center_.x, zoom_ * innerwall_boundary_axis.center_.y,
+                zoom_ * (innerwall_boundary_axis.center_.x + axis_length_ * innerwall_boundary_axis.x_direction_.x),
+                zoom_ * (innerwall_boundary_axis.center_.y + axis_length_ * innerwall_boundary_axis.x_direction_.y));
+
+            painter.setPen(pen_green);
+
+            painter.drawLine(
+                zoom_ * innerwall_boundary_axis.center_.x, zoom_ * innerwall_boundary_axis.center_.y,
+                zoom_ * (innerwall_boundary_axis.center_.x + axis_length_ * innerwall_boundary_axis.y_direction_.x),
+                zoom_ * (innerwall_boundary_axis.center_.y + axis_length_ * innerwall_boundary_axis.y_direction_.y));
+        }
+        
+    }
+    
+    return true;
+}
+
+bool EasyWorldWidget::drawInnerWallBoundaryPolygon(
+    WorldController &world_controller)
+{
+    QPainter painter(this);
+
+    QPen pen(innerwall_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
+
+    painter.setPen(pen);
+
+    std::vector<std::vector<EasyNode*>> innerwall_boundary_node_vec_vec;
+
+    world_controller.getInnerWallBoundaryNodeVecVec(innerwall_boundary_node_vec_vec);
+
+    for(const std::vector<EasyNode*> &innerwall_boundary_node_vec :
+        innerwall_boundary_node_vec_vec)
+    {
+        for(EasyNode* innerwall_boundary_node : innerwall_boundary_node_vec)
+        {
+            const EasyPolygon2D &innerwall_boundary_polygon =
+              innerwall_boundary_node->getBoundaryPolygon();
+
+            for(size_t i = 0; i < innerwall_boundary_polygon.point_list.size(); ++i)
+            {
+                const EasyPoint2D &current_point = innerwall_boundary_polygon.point_list[i];
+                const EasyPoint2D &next_point = innerwall_boundary_polygon.point_list[
+                  (i + 1) % innerwall_boundary_polygon.point_list.size()];
+
+                EasyPoint2D current_point_in_world;
+                EasyPoint2D next_point_in_world;
+                innerwall_boundary_node->getPointInWorld(
+                    current_point, current_point_in_world);
+                innerwall_boundary_node->getPointInWorld(
+                    next_point, next_point_in_world);
+
+            painter.drawLine(
+                zoom_ * current_point_in_world.x, zoom_ * current_point_in_world.y,
+                zoom_ * next_point_in_world.x, zoom_ * next_point_in_world.y);
+            }
+        }
+    }
+
+    return true;
+}
+
+bool EasyWorldWidget::drawInnerWallSpaceBoundary()
+{
+    QPainter painter(this);
+
+    QPen pen(innerwall_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_line(length_color_, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_text(text_color_, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    // QFont font_song_15("宋体", 15, QFont::Bold, true);
+    // painter.setFont(font_song_15);
+    QFont font_song_10("宋体", 10, QFont::Bold, true);
+
+    painter.setPen(pen);
+
+    if(innerwall_brush_color_.red() != 0 ||
+        innerwall_brush_color_.green() != 0 ||
+        innerwall_brush_color_.blue() != 0)
+    {
+        QBrush brush;
+        brush.setColor(innerwall_brush_color_);
+        brush.setStyle(Qt::SolidPattern);
+        painter.setBrush(brush);
+    }
+
+    const std::vector<std::vector<float>> innerwall_boundary_xy_data_vec =
+      world_environment_.getInnerWallBoundaryXYDataVec();
+
+    for(const std::vector<float>& innerwall_boundary_xy_data : innerwall_boundary_xy_data_vec)
+    {
+        if(innerwall_boundary_xy_data.size() == 0)
+        {
+            continue;
+        }
+
+        const size_t innerwall_boundary_point_num = innerwall_boundary_xy_data.size() / 2;
+
+        QPolygon polygon;
+        polygon.resize(innerwall_boundary_point_num);
+
+        const float line_info_dist = 20;
+
+        for(size_t i = 0; i < innerwall_boundary_point_num; ++i)
+        {
+            const size_t current_point_idx = 2 * i;
+            const size_t next_point_idx = (2 * (i + 1)) % innerwall_boundary_xy_data.size();
+
+            const float current_point_x = innerwall_boundary_xy_data[current_point_idx];
+            const float current_point_y = innerwall_boundary_xy_data[current_point_idx + 1];
+            const float next_point_x = innerwall_boundary_xy_data[next_point_idx];
+            const float next_point_y = innerwall_boundary_xy_data[next_point_idx + 1];
 
             polygon.setPoint(i, QPoint(
                   zoom_ * current_point_x,
@@ -1765,7 +1957,8 @@ bool EasyWorldWidget::paintWorld(
 
     drawBackGround();
 
-    drawWallSpaceBoundary(world_controller);
+    drawOuterWallSpaceBoundary();
+    drawInnerWallSpaceBoundary();
     // drawRoomContainerSpaceBoundary(world_controller);
     drawWallRoomSpaceBoundary(world_controller);
     drawFreeRoomSpaceBoundary(world_controller);

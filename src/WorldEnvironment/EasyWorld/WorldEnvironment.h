@@ -6,6 +6,7 @@
 #include "EasyWorld/WallGenerator.h"
 #include "EasyWorld/WorldPlaceGenerator.h"
 #include "EasyWorld/WorldObservation.h"
+#include "EasyWorld/WorldReward.h"
 #include "EasyWorld/WorldEditor.h"
 
 #if defined(EXPORT_PYBIND)
@@ -67,7 +68,8 @@ public:
         const float &new_position_y,
         const float &mouse_pos_x_direction_delta);
 
-    std::vector<std::vector<float>> getWallBoundaryXYDataVec();
+    std::vector<std::vector<float>> getOuterWallBoundaryXYDataVec();
+    std::vector<std::vector<float>> getInnerWallBoundaryXYDataVec();
     std::vector<std::vector<float>> getRoomContainerBoundaryXYDataVec();
     std::vector<std::vector<float>> getWallRoomBoundaryXYDataVec();
     std::vector<std::vector<float>> getFreeRoomBoundaryXYDataVec();
@@ -82,6 +84,7 @@ public:
     WorldController world_controller_;
     WorldPlaceGenerator world_place_generator_;
     WorldObservation world_observation_;
+    WorldReward world_reward_;
     WorldEditor world_editor_;
 };
 
@@ -102,7 +105,16 @@ PYBIND11_MODULE(WorldEnvironment, m)
         .def("placeInnerWallRoomContainer", &WorldEnvironment::placeInnerWallRoomContainer)
         .def("generateFreeRoomContainer", &WorldEnvironment::generateFreeRoomContainer)
         .def("setWallRoomContainerPosition", &WorldEnvironment::setWallRoomContainerPosition)
-        .def("getWallBoundaryXYDataVec", &WorldEnvironment::getWallBoundaryXYDataVec);
+        .def("getOuterWallBoundaryXYDataVec", &WorldEnvironment::getOuterWallBoundaryXYDataVec)
+        .def("getInnerWallBoundaryXYDataVec", &WorldEnvironment::getInnerWallBoundaryXYDataVec)
+        .def("getRoomContainerBoundaryXYDataVec", &WorldEnvironment::getRoomContainerBoundaryXYDataVec)
+        .def("getWallRoomBoundaryXYDataVec", &WorldEnvironment::getWallRoomBoundaryXYDataVec)
+        .def("getFreeRoomBoundaryXYDataVec", &WorldEnvironment::getFreeRoomBoundaryXYDataVec)
+        .def("getDoorBoundaryXYDataVec", &WorldEnvironment::getDoorBoundaryXYDataVec)
+        .def("getWindowBoundaryXYDataVec", &WorldEnvironment::getWindowBoundaryXYDataVec)
+        .def("getTeamBoundaryXYDataVec", &WorldEnvironment::getTeamBoundaryXYDataVec)
+        .def("getPersonBoundaryXYDataVec", &WorldEnvironment::getPersonBoundaryXYDataVec)
+        .def("getFurnitureBoundaryXYDataVec", &WorldEnvironment::getFurnitureBoundaryXYDataVec);
 }
 #endif
 

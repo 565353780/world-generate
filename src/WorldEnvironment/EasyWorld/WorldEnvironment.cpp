@@ -157,9 +157,8 @@ bool WorldEnvironment::generateWall()
     return true;
 }
 
-bool WorldEnvironment::placeWallRoomContainer(
+bool WorldEnvironment::placeOuterWallRoomContainer(
     const size_t &wall_id,
-    const NodeType &wall_type,
     const size_t &boundary_idx,
     const float &roomcontainer_start_position,
     const float &roomcontainer_width,
@@ -171,7 +170,7 @@ bool WorldEnvironment::placeWallRoomContainer(
     if(!world_place_generator_.placeWallRoomContainer(
           world_controller_,
           wall_id,
-          wall_type,
+          NodeType::OuterWall,
           boundary_idx,
           roomcontainer_start_position,
           roomcontainer_width,
@@ -179,10 +178,46 @@ bool WorldEnvironment::placeWallRoomContainer(
           room_num,
           room_name_vec))
     {
-        std::cout << "WorldEnvironment::placeWallRoomContainer :\n" <<
+        std::cout << "WorldEnvironment::placeOuterWallRoomContainer :\n" <<
           "Input :\n" <<
           "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
+          "\tboundary_idx = " << boundary_idx << std::endl <<
+          "\troomcontainer_start_position = " << roomcontainer_start_position << std::endl <<
+          "\troomcontainer_size = [" << roomcontainer_width << "," <<
+          roomcontainer_height << "]\n" <<
+          "\troom_num = " << room_num << std::endl <<
+          "placeWallRoomContainer failed!" << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+bool WorldEnvironment::placeInnerWallRoomContainer(
+    const size_t &wall_id,
+    const size_t &boundary_idx,
+    const float &roomcontainer_start_position,
+    const float &roomcontainer_width,
+    const float &roomcontainer_height,
+    const size_t &room_num)
+{
+    std::vector<std::string> room_name_vec(room_num, "Auto Generate Room");
+
+    if(!world_place_generator_.placeWallRoomContainer(
+          world_controller_,
+          wall_id,
+          NodeType::InnerWall,
+          boundary_idx,
+          roomcontainer_start_position,
+          roomcontainer_width,
+          roomcontainer_height,
+          room_num,
+          room_name_vec))
+    {
+        std::cout << "WorldEnvironment::placeInnerWallRoomContainer :\n" <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
           "\tboundary_idx = " << boundary_idx << std::endl <<
           "\troomcontainer_start_position = " << roomcontainer_start_position << std::endl <<
           "\troomcontainer_size = [" << roomcontainer_width << "," <<

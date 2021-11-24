@@ -69,42 +69,45 @@ void EasyWorldWidget::run_example()
 
     world_environment_.generateWall();
 
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 0, 0, 6.935, 16.169, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 0, 6.935, 6.139, 7.965, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 0, 13.074, 2.833, 7.965, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 0, 15.907, 3.028, 7.965, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 0, 18.935, 4.396, 7.965, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 0, 23.331, 3.726, 5.608, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 1, 0, 6.740, 6.935, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 1, 6.740, 11.969, 11.720, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 1, 18.709, 3.321, 7.769, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 1, 22.03, 4.197, 5.522, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 1, 26.227, 3.528, 5.522, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 2, 0, 5.665, 7.965, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 2, 5.665, 7.867, 7.965, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 2, 13.532, 4.057, 7.965, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 2, 17.589, 2.833, 9.385, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 2, 20.422, 3.862, 5.621, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 2, 24.284, 4.058, 5.621, 1);
-    world_environment_.placeWallRoomContainer(0, NodeType::OuterWall, 3, 20.023, 4.546, 11.774, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 0, 0, 6.935, 16.169, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 0, 6.935, 6.139, 7.965, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 0, 13.074, 2.833, 7.965, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 0, 15.907, 3.028, 7.965, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 0, 18.935, 4.396, 7.965, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 0, 23.331, 3.726, 5.608, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 1, 0, 6.740, 6.935, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 1, 6.740, 11.969, 11.720, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 1, 18.709, 3.321, 7.769, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 1, 22.03, 4.197, 5.522, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 1, 26.227, 3.528, 5.522, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 2, 0, 5.665, 7.965, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 2, 5.665, 7.867, 7.965, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 2, 13.532, 4.057, 7.965, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 2, 17.589, 2.833, 9.385, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 2, 20.422, 3.862, 5.621, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 2, 24.284, 4.058, 5.621, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 3, 20.023, 4.546, 11.774, 1);
 
     world_environment_.generateFreeRoomContainer(4, 4, 0.5, 2);
 
     update();
 
-    // world_environment_.generateWorld(world_controller_);
+    long cycle_num = 0;
+    float avg_fps = 0;
+    setStartTime();
+    while(true)
+    {
+        world_environment_.resetButRemainWall();
+        world_environment_.placeOuterWallRoomContainer(0, std::rand() % 4, std::rand() % 22, 4, 4, 1);
+        world_environment_.placeOuterWallRoomContainer(0, std::rand() % 4, std::rand() % 12, 12, 4, 3);
+        world_environment_.placeInnerWallRoomContainer(0, std::rand() % 4, std::rand() % 22, 4, 4, 1);
+        world_environment_.placeInnerWallRoomContainer(0, std::rand() % 4, std::rand() % 22, 4, 4, 1);
+        world_environment_.generateFreeRoomContainer(4, 4, 0.5, 2);
+        ++cycle_num;
+        getFPS(cycle_num, avg_fps);
 
-    // long cycle_num = 0;
-    // float avg_fps = 0;
-    // setStartTime();
-    // while(true)
-    // {
-    //     world_editor_.world_environment_.generateWorld();
-    //     ++cycle_num;
-    //     getFPS(cycle_num, avg_fps);
-    //
-    //     std::cout << "fps = " << size_t(avg_fps) << std::endl;
-    // }
+        std::cout << "fps = " << size_t(avg_fps) << std::endl;
+    }
 
     // world_controller_.outputInfo();
 
@@ -130,24 +133,11 @@ void EasyWorldWidget::mousePressEvent(QMouseEvent *event)
 
         world_environment_.resetButRemainWall();
 
-        world_environment_.placeWallRoomContainer(
-            0, NodeType::OuterWall, std::rand() % 4,
-            std::rand() % 22, 4, 4,
-            1);
-        world_environment_.placeWallRoomContainer(
-            0, NodeType::OuterWall, std::rand() % 4,
-            std::rand() % 12, 12, 4,
-            3);
-        world_environment_.placeWallRoomContainer(
-            0, NodeType::InnerWall, std::rand() % 4,
-            std::rand() % 22, 4, 4,
-            1);
-        world_environment_.placeWallRoomContainer(
-            0, NodeType::InnerWall, std::rand() % 4,
-            std::rand() % 22, 4, 4,
-            1);
-        world_environment_.generateFreeRoomContainer(
-            4, 4, 0.5, 2);
+        world_environment_.placeOuterWallRoomContainer(0, std::rand() % 4, std::rand() % 22, 4, 4, 1);
+        world_environment_.placeOuterWallRoomContainer(0, std::rand() % 4, std::rand() % 12, 12, 4, 3);
+        world_environment_.placeInnerWallRoomContainer(0, std::rand() % 4, std::rand() % 22, 4, 4, 1);
+        world_environment_.placeInnerWallRoomContainer(0, std::rand() % 4, std::rand() % 22, 4, 4, 1);
+        world_environment_.generateFreeRoomContainer(4, 4, 0.5, 2);
         update();
     }
 

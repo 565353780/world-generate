@@ -8,6 +8,10 @@ CONFIG += c++17
 HEADERS += \
     export_library_global.h \
 
+# PyBind11
+INCLUDEPATH += \
+    /usr/include/python3.8
+
 INCLUDEPATH += \
     ../src/WorldEnvironment
 

@@ -7,6 +7,10 @@
 #include "EasyWorld/WorldPlaceGenerator.h"
 #include "EasyWorld/WorldEditor.h"
 
+#if defined(EXPORT_PYBIND)
+#include <pybind11/pybind11.h>
+#endif
+
 class LIBRARY_EXPORT WorldEnvironment
 {
 public:
@@ -35,9 +39,15 @@ public:
 
     bool generateWall();
 
-    bool placeWallRoomContainer(
+    bool placeOuterWallRoomContainer(
         const size_t &wall_id,
-        const NodeType &wall_type,
+        const size_t &boundary_idx,
+        const float &roomcontainer_start_position,
+        const float &roomcontainer_width,
+        const float &roomcontainer_height,
+        const size_t &room_num);
+    bool placeInnerWallRoomContainer(
+        const size_t &wall_id,
         const size_t &boundary_idx,
         const float &roomcontainer_start_position,
         const float &roomcontainer_width,
@@ -61,5 +71,25 @@ public:
     WorldPlaceGenerator world_place_generator_;
     WorldEditor world_editor_;
 };
+
+#if defined(EXPORT_PYBIND)
+PYBIND11_MODULE(WorldEnvironment, m)
+{
+    pybind11::class_<WorldEnvironment>(m, "WorldEnvironment")
+        .def(pybind11::init())
+        .def("reset", &WorldEnvironment::reset)
+        .def("resetButRemainWall", &WorldEnvironment::resetButRemainWall)
+        .def("createNewWorld", &WorldEnvironment::createNewWorld)
+        .def("createOuterWall", &WorldEnvironment::createOuterWall)
+        .def("createInnerWall", &WorldEnvironment::createInnerWall)
+        .def("addPointForOuterWall", &WorldEnvironment::addPointForOuterWall)
+        .def("addPointForInnerWall", &WorldEnvironment::addPointForInnerWall)
+        .def("generateWall", &WorldEnvironment::generateWall)
+        .def("placeOuterWallRoomContainer", &WorldEnvironment::placeOuterWallRoomContainer)
+        .def("placeInnerWallRoomContainer", &WorldEnvironment::placeInnerWallRoomContainer)
+        .def("generateFreeRoomContainer", &WorldEnvironment::generateFreeRoomContainer)
+        .def("setWallRoomContainerPosition", &WorldEnvironment::setWallRoomContainerPosition);
+}
+#endif
 
 #endif //WORLD_ENVIRONMENT_H

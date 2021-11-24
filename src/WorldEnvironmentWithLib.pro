@@ -44,6 +44,7 @@ HEADERS += \
     WorldEnvironment/EasyWorld/WorldPlaceGenerator.h \
     WorldEnvironment/EasyWorld/WorldDescriptor.h \
     WorldEnvironment/EasyWorld/WorldEditor.h \
+    WorldEnvironment/EasyWorld/WorldObservation.h \
     WorldEnvironment/EasyWorld/WorldReward.h \
     WorldEnvironment/EasyWorld/WorldEnvironment.h
 

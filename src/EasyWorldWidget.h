@@ -54,8 +54,6 @@ private:
         WorldController &world_controller);
     bool drawWallSpaceBoundary(
         WorldController &world_controller);
-    bool drawWallInside(
-        WorldController &world_controller);
 
     bool drawRoomContainerBoundaryAxis(
         WorldController &world_controller);

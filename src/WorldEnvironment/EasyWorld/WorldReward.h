@@ -3,7 +3,7 @@
 
 #include "export_library_global.h"
 
-#include "WorldController.h"
+#include "EasyWorld/WorldController.h"
 
 class LIBRARY_EXPORT WorldReward
 {

@@ -5,6 +5,7 @@
 
 #include "EasyWorld/WallGenerator.h"
 #include "EasyWorld/WorldPlaceGenerator.h"
+#include "EasyWorld/WorldObservation.h"
 #include "EasyWorld/WorldEditor.h"
 
 #if defined(EXPORT_PYBIND)
@@ -66,9 +67,21 @@ public:
         const float &new_position_y,
         const float &mouse_pos_x_direction_delta);
 
+    std::vector<std::vector<float>> getWallBoundaryXYDataVec();
+    std::vector<std::vector<float>> getRoomContainerBoundaryXYDataVec();
+    std::vector<std::vector<float>> getWallRoomBoundaryXYDataVec();
+    std::vector<std::vector<float>> getFreeRoomBoundaryXYDataVec();
+    std::vector<std::vector<float>> getDoorBoundaryXYDataVec();
+    std::vector<std::vector<float>> getWindowBoundaryXYDataVec();
+    std::vector<std::vector<float>> getTeamBoundaryXYDataVec();
+    std::vector<std::vector<float>> getPersonBoundaryXYDataVec();
+    std::vector<std::vector<float>> getFurnitureBoundaryXYDataVec();
+
+
     WallGenerator wall_generator_;
     WorldController world_controller_;
     WorldPlaceGenerator world_place_generator_;
+    WorldObservation world_observation_;
     WorldEditor world_editor_;
 };
 
@@ -88,7 +101,8 @@ PYBIND11_MODULE(WorldEnvironment, m)
         .def("placeOuterWallRoomContainer", &WorldEnvironment::placeOuterWallRoomContainer)
         .def("placeInnerWallRoomContainer", &WorldEnvironment::placeInnerWallRoomContainer)
         .def("generateFreeRoomContainer", &WorldEnvironment::generateFreeRoomContainer)
-        .def("setWallRoomContainerPosition", &WorldEnvironment::setWallRoomContainerPosition);
+        .def("setWallRoomContainerPosition", &WorldEnvironment::setWallRoomContainerPosition)
+        .def("getWallBoundaryXYDataVec", &WorldEnvironment::getWallBoundaryXYDataVec);
 }
 #endif
 

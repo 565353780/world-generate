@@ -352,48 +352,39 @@ bool EasyWorldWidget::drawWallSpaceBoundary(
         painter.setBrush(brush);
     }
 
-    std::vector<EasyNode*> wall_space_node_vec;
+    const std::vector<std::vector<float>> wall_boundary_xy_data_vec =
+      world_environment_.getWallBoundaryXYDataVec();
 
-    world_controller.getWallSpaceNodeVec(wall_space_node_vec);
-
-    for(EasyNode* wall_space_node : wall_space_node_vec)
+    for(const std::vector<float>& wall_boundary_xy_data : wall_boundary_xy_data_vec)
     {
-        if(wall_space_node == nullptr)
+        if(wall_boundary_xy_data.size() == 0)
         {
             continue;
         }
 
-        const EasyPolygon2D &wall_space_polygon =
-          wall_space_node->getBoundaryPolygon();
+        const size_t wall_boundary_point_num = wall_boundary_xy_data.size() / 2;
 
         QPolygon polygon;
-        polygon.resize(wall_space_polygon.point_list.size());
+        polygon.resize(wall_boundary_point_num);
 
         const float line_info_dist = 20;
 
-        for(size_t i = 0; i < wall_space_polygon.point_list.size(); ++i)
+        for(size_t i = 0; i < wall_boundary_point_num; ++i)
         {
-            const EasyPoint2D &current_point = wall_space_polygon.point_list[i];
+            const size_t current_point_idx = 2 * i;
+            const size_t next_point_idx = (2 * (i + 1)) % wall_boundary_xy_data.size();
 
-            EasyPoint2D current_point_in_world;
-            wall_space_node->getPointInWorld(
-                current_point, current_point_in_world);
+            const float current_point_x = wall_boundary_xy_data[current_point_idx];
+            const float current_point_y = wall_boundary_xy_data[current_point_idx + 1];
+            const float next_point_x = wall_boundary_xy_data[next_point_idx];
+            const float next_point_y = wall_boundary_xy_data[next_point_idx + 1];
 
             polygon.setPoint(i, QPoint(
-                  zoom_ * current_point_in_world.x,
-                  zoom_ * current_point_in_world.y));
+                  zoom_ * current_point_x,
+                  zoom_ * current_point_y));
 
-            const EasyPoint2D &next_point = wall_space_polygon.point_list[
-            (i+1) % wall_space_polygon.point_list.size()];
-
-            EasyPoint2D next_point_in_world;
-            wall_space_node->getPointInWorld(
-                next_point, next_point_in_world);
-
-            const float line_x_diff =
-              next_point_in_world.x - current_point_in_world.x;
-            const float line_y_diff =
-              next_point_in_world.y - current_point_in_world.y;
+            const float line_x_diff = next_point_x - current_point_x;
+            const float line_y_diff = next_point_y - current_point_y;
 
             const float line_length = std::sqrt(
                 line_x_diff * line_x_diff +
@@ -407,11 +398,11 @@ bool EasyWorldWidget::drawWallSpaceBoundary(
             EasyPoint2D current_point_move;
             EasyPoint2D next_point_move;
             current_point_move.setPosition(
-                zoom_ * current_point_in_world.x + line_info_dist * move_direction.x,
-                zoom_ * current_point_in_world.y + line_info_dist * move_direction.y);
+                zoom_ * current_point_x + line_info_dist * move_direction.x,
+                zoom_ * current_point_y + line_info_dist * move_direction.y);
             next_point_move.setPosition(
-                zoom_ * next_point_in_world.x + line_info_dist * move_direction.x,
-                zoom_ * next_point_in_world.y + line_info_dist * move_direction.y);
+                zoom_ * next_point_x + line_info_dist * move_direction.x,
+                zoom_ * next_point_y + line_info_dist * move_direction.y);
 
             painter.setPen(pen_line);
             painter.drawLine(

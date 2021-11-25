@@ -476,6 +476,101 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
 
     const float window_width = window_width_scale * room_width;
 
+    EasyAxis2D door_axis;
+    EasyAxis2D window_axis;
+    door_axis.setXDirection(1, 0);
+    window_axis.setXDirection(1, 0);
+
+    size_t wall_boundary_line_list_idx;
+    if(!boundary_line_manager_.getWallBoundaryLineListIdx(
+          wall_id, wall_type, wall_boundary_line_list_idx))
+    {
+        std::cout << "valid roomcontainer size = " << valid_roomcontainer_width << "," <<
+          valid_roomcontainer_height << std::endl;
+        std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<
+          "Input :\n" <<
+          "\twall_id = " << wall_id << std::endl <<
+          "\twall_type = " << wall_type << std::endl <<
+          "\tboundary_idx = " << boundary_idx << std::endl <<
+          "\troomcontainer_start_position = " << roomcontainer_start_position << std::endl <<
+          "\troomcontainer_size = [" << roomcontainer_width << "," <<
+          roomcontainer_height << "]" << std::endl <<
+          "\troom_num = " << room_num << std::endl <<
+          "getWallBoundaryLineListIdx failed!" << std::endl;
+
+        return false;
+    }
+
+    const WallBoundaryLineList &wall_boundary_line_list =
+      boundary_line_manager_.wall_boundary_line_list_vec_[wall_boundary_line_list_idx];
+
+    const float &boundary_length =
+      wall_boundary_line_list.boundary_line_list_vec_[boundary_idx].boundary_length_;
+    window_axis.setCenter((room_width - window_width) / 2.0, 0);
+
+    for(size_t i = 0; i < room_num; ++i)
+    {
+        const float room_center_position = valid_roomcontainer_start_position +
+          (1.0 * i + 0.5) * room_width;
+        bool is_handle_on_right_from_outside;
+
+        if(room_center_position < 0.5 * boundary_length)
+        {
+            door_axis.setCenter(0.1 * (room_width - door_width), 0);
+            is_handle_on_right_from_outside = true;
+        }
+        else
+        {
+            door_axis.setCenter(0.9 * (room_width - door_width), 0);
+            is_handle_on_right_from_outside = false;
+        }
+
+        if(!world_controller.createWindowForRoom(
+              "Auto Generate Window",
+              current_new_room_id_ + i,
+              NodeType::WallRoom,
+              0,
+              window_width,
+              window_axis))
+        {
+            std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<
+              "Input :\n" <<
+              "\twall_id = " << wall_id << std::endl <<
+              "\twall_type = " << wall_type << std::endl <<
+              "\tboundary_idx = " << boundary_idx << std::endl <<
+              "\troomcontainer_start_position = " << roomcontainer_start_position << std::endl <<
+              "\troomcontainer_size = [" << roomcontainer_width << "," <<
+              roomcontainer_height << "]" << std::endl <<
+              "\troom_num = " << room_num << std::endl <<
+              "createWindowForRoom failed!" << std::endl;
+
+            return false;
+        }
+
+        if(!world_controller.createDoorForRoom(
+              "Auto Generate Door",
+              current_new_room_id_ + i,
+              NodeType::WallRoom,
+              2,
+              door_width,
+              door_axis,
+              is_handle_on_right_from_outside))
+        {
+            std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<
+              "Input :\n" <<
+              "\twall_id = " << wall_id << std::endl <<
+              "\twall_type = " << wall_type << std::endl <<
+              "\tboundary_idx = " << boundary_idx << std::endl <<
+              "\troomcontainer_start_position = " << roomcontainer_start_position << std::endl <<
+              "\troomcontainer_size = [" << roomcontainer_width << "," <<
+              roomcontainer_height << "]" << std::endl <<
+              "\troom_num = " << room_num << std::endl <<
+              "createDoorForRoom failed!" << std::endl;
+
+            return false;
+        }
+    }
+
     size_t person_x_direction_num = 0;
     size_t person_y_direction_num = 0;
 
@@ -511,39 +606,9 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
     const float team_center_x = (room_width - team_width) / 2.0;
     const float team_center_y = (room_height - team_height) / 2.0;
 
-    EasyAxis2D door_axis;
-    EasyAxis2D window_axis;
     EasyAxis2D team_axis;
-    door_axis.setXDirection(1, 0);
-    window_axis.setXDirection(1, 0);
     team_axis.setXDirection(1, 0);
 
-    size_t wall_boundary_line_list_idx;
-    if(!boundary_line_manager_.getWallBoundaryLineListIdx(
-          wall_id, wall_type, wall_boundary_line_list_idx))
-    {
-        std::cout << "valid roomcontainer size = " << valid_roomcontainer_width << "," <<
-          valid_roomcontainer_height << std::endl;
-        std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<
-          "Input :\n" <<
-          "\twall_id = " << wall_id << std::endl <<
-          "\twall_type = " << wall_type << std::endl <<
-          "\tboundary_idx = " << boundary_idx << std::endl <<
-          "\troomcontainer_start_position = " << roomcontainer_start_position << std::endl <<
-          "\troomcontainer_size = [" << roomcontainer_width << "," <<
-          roomcontainer_height << "]" << std::endl <<
-          "\troom_num = " << room_num << std::endl <<
-          "getWallBoundaryLineListIdx failed!" << std::endl;
-
-        return false;
-    }
-
-    const WallBoundaryLineList &wall_boundary_line_list =
-      boundary_line_manager_.wall_boundary_line_list_vec_[wall_boundary_line_list_idx];
-
-    const float &boundary_length =
-      wall_boundary_line_list.boundary_line_list_vec_[boundary_idx].boundary_length_;
-    window_axis.setCenter((room_width - window_width) / 2.0, 0);
     team_axis.setCenter(team_center_x, team_center_y);
 
     std::vector<std::vector<std::string>> person_name_matrix;
@@ -568,7 +633,7 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
               // "Auto Generate Team",
               // person_name_matrix,
               // furniture_name_matrix,
-              // current_new_room_id_,
+              // current_new_room_id_ + i,
               // NodeType::WallRoom,
               // team_width,
               // team_height,
@@ -590,69 +655,9 @@ bool WorldPlaceGenerator::placeWallRoomContainer(
 //
             // return false;
         // }
-
-        const float room_center_position = valid_roomcontainer_start_position +
-          (1.0 * i + 0.5) * room_width;
-        bool is_handle_on_right_from_outside;
-
-        if(room_center_position < 0.5 * boundary_length)
-        {
-            door_axis.setCenter(0.1 * (room_width - door_width), 0);
-            is_handle_on_right_from_outside = true;
-        }
-        else
-        {
-            door_axis.setCenter(0.9 * (room_width - door_width), 0);
-            is_handle_on_right_from_outside = false;
-        }
-
-        if(!world_controller.createWindowForRoom(
-              "Auto Generate Window",
-              current_new_room_id_,
-              NodeType::WallRoom,
-              0,
-              window_width,
-              window_axis))
-        {
-            std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<
-              "Input :\n" <<
-              "\twall_id = " << wall_id << std::endl <<
-              "\twall_type = " << wall_type << std::endl <<
-              "\tboundary_idx = " << boundary_idx << std::endl <<
-              "\troomcontainer_start_position = " << roomcontainer_start_position << std::endl <<
-              "\troomcontainer_size = [" << roomcontainer_width << "," <<
-              roomcontainer_height << "]" << std::endl <<
-              "\troom_num = " << room_num << std::endl <<
-              "createWindowForRoom failed!" << std::endl;
-
-            return false;
-        }
-
-        if(!world_controller.createDoorForRoom(
-              "Auto Generate Door",
-              current_new_room_id_,
-              NodeType::WallRoom,
-              2,
-              door_width,
-              door_axis,
-              is_handle_on_right_from_outside))
-        {
-            std::cout << "WorldPlaceGenerator::placeWallRoomContainer : " << std::endl <<
-              "Input :\n" <<
-              "\twall_id = " << wall_id << std::endl <<
-              "\twall_type = " << wall_type << std::endl <<
-              "\tboundary_idx = " << boundary_idx << std::endl <<
-              "\troomcontainer_start_position = " << roomcontainer_start_position << std::endl <<
-              "\troomcontainer_size = [" << roomcontainer_width << "," <<
-              roomcontainer_height << "]" << std::endl <<
-              "\troom_num = " << room_num << std::endl <<
-              "createDoorForRoom failed!" << std::endl;
-
-            return false;
-        }
-
-        ++current_new_room_id_;
     }
+
+    current_new_room_id_ += room_num;
 
     return true;
 }

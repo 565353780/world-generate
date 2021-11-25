@@ -52,7 +52,12 @@ class WorldGenerateEnvironment(gym.Env):
                 np.inf                                   # position
             ], dtype=np.float32)
         )
-        self.observation_space = gym.spaces.Box(low=0, high=255, shape=(3, self.observation_width, self.observation_height), dtype=np.uint8)
+        self.observation_space = gym.spaces.Box(low=0, high=255, shape=(4, self.observation_width, self.observation_height), dtype=np.uint8)
+
+        self.step([0, 0, 0])
+
+        self.world_generate_observation.updateObservation(self.world_environment)
+
         return
 
     def initWorld(self):
@@ -85,8 +90,6 @@ class WorldGenerateEnvironment(gym.Env):
             self.observation_height,
             self.observation_free)
 
-        self.world_generate_observation.getObservation(self.world_environment)
-
         self.run_time = 0
         return
 
@@ -110,13 +113,13 @@ class WorldGenerateEnvironment(gym.Env):
             room_num = 1
 
         if wall_idx >= self.outerwall_num + self.innerwall_num:
-            return self.observation, -100, done, {}
+            return self.world_generate_observation.observation, -100, done, {}
 
         if wall_idx < self.outerwall_num:
             if wall_edge_idx >= self.outerwall_edge_num_vec[wall_idx]:
-                return self.observation, -100, done, {}
+                return self.world_generate_observation.observation, -100, done, {}
         elif wall_edge_idx >= self.innerwall_edge_num_vec[wall_idx - self.outerwall_num]:
-            return self.observation, -100, done, {}
+            return self.world_generate_observation.observation, -100, done, {}
 
         if wall_idx < self.outerwall_num:
             self.world_environment.placeOuterWallRoomContainer(
@@ -135,7 +138,7 @@ class WorldGenerateEnvironment(gym.Env):
                 self.height_prefix,
                 self.room_num_prefix)
 
-        return self.observation, reward, done, {}
+        return self.world_generate_observation.observation, reward, done, {}
 
         #  reward = self.world_environment.getReward()
         reward = 1
@@ -144,11 +147,11 @@ class WorldGenerateEnvironment(gym.Env):
         if self.run_time > 10:
             done = True
 
-        return self.observation, reward, done, {}
+        return self.world_generate_observation.observation, reward, done, {}
 
     def reset(self):
         self.world_environment.resetButRemainWall()
-        return self.observation
+        return self.world_generate_observation.observation
 
     def render(self, mode="human"):
         return None

@@ -37,9 +37,10 @@ class WorldGenerateObservation(object):
         self.person_boundary_data_vec_in_image = None
         self.furniture_boundary_data_vec_in_image = None
 
-        self.wall_channel_idx = 0
-        self.room_channel_idx = 1
-        self.obstacle_channel_idx = 2
+        self.scene_channel_idx = 0
+        self.wall_channel_idx = 1
+        self.room_channel_idx = 2
+        self.obstacle_channel_idx = 3
         return
 
     def initObservation(self, width, height, free):
@@ -47,8 +48,8 @@ class WorldGenerateObservation(object):
         self.image_height = height
         self.free_area_width = free
 
-        # channels : wall, room, obstacle
-        self.observation = np.zeros((3, self.image_width, self.image_height))
+        # channels : scene, wall, room, obstacle
+        self.observation = np.zeros((4, self.image_width, self.image_height))
         return True
 
     def getImageTransform(self):
@@ -114,7 +115,7 @@ class WorldGenerateObservation(object):
                 world_boundary_point_in_image = self.getPointInImage(world_boundary_point)
                 world_boundary_data_in_image.append(world_boundary_point_in_image)
             world_boundary_data_vec_in_image.append(world_boundary_data_in_image)
-        return world_boundary_data_vec_in_image
+        return np.array(world_boundary_data_vec_in_image, dtype=np.int32)
 
     def getWorldBoundaryDataInImage(self):
         self.outerwall_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.outerwall_boundary_data_vec)
@@ -127,6 +128,7 @@ class WorldGenerateObservation(object):
         self.team_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.team_boundary_data_vec)
         self.person_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.person_boundary_data_vec)
         self.furniture_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.furniture_boundary_data_vec)
+        return True
 
     def getWorldBoundaryData(self, world_environment):
         self.outerwall_boundary_data_vec = world_environment.getOuterWallBoundaryDataVec()
@@ -144,26 +146,59 @@ class WorldGenerateObservation(object):
         self.getWorldBoundaryDataInImage()
         return True
 
-    def fillWallInObservation(self):
+    def drawPolyLinesInObservation(self, channel_idx, poly_data, color):
         cv2.polylines(
-            self.observation[self.wall_channel_idx],
-            np.array(self.outerwall_boundary_data_vec_in_image, dtype=np.int32),
-            True,
-            255)
-
-        cv2.polylines(
-            self.observation[self.wall_channel_idx],
-            np.array(self.innerwall_boundary_data_vec_in_image, dtype=np.int32),
-            True,
-            255)
-
-        cv2.imshow("wall channel", self.observation[self.wall_channel_idx])
-        cv2.waitKey(0)
+            self.observation[channel_idx],
+            poly_data,
+            True, color)
         return True
 
-    def getObservation(self, world_environment):
-        self.getWorldBoundaryData(world_environment)
-        self.fillWallInObservation()
+    def fillPolyInObservation(self, channel_idx, poly_data, color):
+        cv2.fillPoly(
+            self.observation[channel_idx],
+            poly_data,
+            color)
+        return True
 
-        return self.observation
+    def generateSceneObservation(self):
+        self.drawPolyLinesInObservation(self.scene_channel_idx, self.outerwall_boundary_data_vec_in_image, 255)
+        self.drawPolyLinesInObservation(self.scene_channel_idx, self.innerwall_boundary_data_vec_in_image, 255)
+
+        self.fillPolyInObservation(self.scene_channel_idx, self.roomcontainer_boundary_data_vec_in_image, 255)
+        return True
+
+
+    def generateWallObservation(self):
+        self.drawPolyLinesInObservation(self.wall_channel_idx, self.outerwall_boundary_data_vec_in_image, 255)
+        self.drawPolyLinesInObservation(self.wall_channel_idx, self.innerwall_boundary_data_vec_in_image, 255)
+        return True
+
+    def generateRoomObservation(self):
+        self.fillPolyInObservation(self.room_channel_idx, self.roomcontainer_boundary_data_vec_in_image, 255)
+        return True
+
+    def generateObstacleObservation(self):
+        self.drawPolyLinesInObservation(self.obstacle_channel_idx, self.outerwall_boundary_data_vec_in_image, 255)
+        self.drawPolyLinesInObservation(self.obstacle_channel_idx, self.innerwall_boundary_data_vec_in_image, 255)
+        self.drawPolyLinesInObservation(self.obstacle_channel_idx, self.wallroom_boundary_data_vec_in_image, 255)
+        self.drawPolyLinesInObservation(self.obstacle_channel_idx, self.freeroom_boundary_data_vec_in_image, 255)
+
+        self.fillPolyInObservation(self.obstacle_channel_idx, self.furniture_boundary_data_vec_in_image, 255)
+        self.fillPolyInObservation(self.obstacle_channel_idx, self.door_boundary_data_vec_in_image, 0)
+        return True
+
+    def updateObservation(self, world_environment):
+        self.getWorldBoundaryData(world_environment)
+        self.generateSceneObservation()
+        self.generateWallObservation()
+        self.generateRoomObservation()
+        self.generateObstacleObservation()
+
+        cv2.imshow("observation", np.hstack((
+                       self.observation[self.scene_channel_idx],
+                       self.observation[self.wall_channel_idx],
+                       self.observation[self.room_channel_idx],
+                       self.observation[self.obstacle_channel_idx])))
+        cv2.waitKey(0)
+        return True
 

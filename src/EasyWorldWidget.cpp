@@ -60,37 +60,20 @@ void EasyWorldWidget::run_example()
     world_environment_.createInnerWall();
 
     world_environment_.addPointForOuterWall(0, 0, 0);
-    world_environment_.addPointForOuterWall(0, 41.173, 0);
-    world_environment_.addPointForOuterWall(0, 41.173, 40.978);
-    world_environment_.addPointForOuterWall(0, 0, 40.978);
+    world_environment_.addPointForOuterWall(0, 30, 0);
+    world_environment_.addPointForOuterWall(0, 30, 30);
+    world_environment_.addPointForOuterWall(0, 0, 30);
 
     world_environment_.addPointForInnerWall(0, 10, 10);
-    world_environment_.addPointForInnerWall(0, 30, 10);
-    world_environment_.addPointForInnerWall(0, 30, 30);
-    world_environment_.addPointForInnerWall(0, 10, 30);
+    world_environment_.addPointForInnerWall(0, 20, 10);
+    world_environment_.addPointForInnerWall(0, 20, 20);
+    world_environment_.addPointForInnerWall(0, 10, 20);
 
     world_environment_.generateWall();
 
-    world_environment_.placeOuterWallRoomContainer(0, 0, 0, 6.935, 16.169, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 0, 6.935, 6.139, 7.965, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 0, 13.074, 2.833, 7.965, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 0, 15.907, 3.028, 7.965, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 0, 18.935, 4.396, 7.965, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 0, 23.331, 3.726, 5.608, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 1, 0, 6.740, 6.935, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 1, 6.740, 11.969, 11.720, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 1, 18.709, 3.321, 7.769, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 1, 22.03, 4.197, 5.522, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 1, 26.227, 3.528, 5.522, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 2, 0, 5.665, 7.965, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 2, 5.665, 7.867, 7.965, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 2, 13.532, 4.057, 7.965, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 2, 17.589, 2.833, 9.385, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 2, 20.422, 3.862, 5.621, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 2, 24.284, 4.058, 5.621, 1);
-    world_environment_.placeOuterWallRoomContainer(0, 3, 20.023, 4.546, 11.774, 1);
+    world_environment_.placeOuterWallRoomContainer(0, 0, 0, 4, 4, 1);
 
-    world_environment_.generateFreeRoomContainer(4, 4, 0.5, 2);
+    // world_environment_.generateFreeRoomContainer(4, 4, 0.5, 2);
 
     update();
 

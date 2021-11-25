@@ -11,6 +11,7 @@ class WorldGenerateObservation(object):
 
         self.image_width = None
         self.image_height = None
+        self.free_area_width = None
         self.offset = None
         self.scale = None
 
@@ -25,30 +26,29 @@ class WorldGenerateObservation(object):
         self.person_boundary_data_vec = None
         self.furniture_boundary_data_vec = None
 
+        self.outerwall_boundary_data_vec_in_image = None
+        self.innerwall_boundary_data_vec_in_image = None
+        self.roomcontainer_boundary_data_vec_in_image = None
+        self.wallroom_boundary_data_vec_in_image = None
+        self.freeroom_boundary_data_vec_in_image = None
+        self.door_boundary_data_vec_in_image = None
+        self.window_boundary_data_vec_in_image = None
+        self.team_boundary_data_vec_in_image = None
+        self.person_boundary_data_vec_in_image = None
+        self.furniture_boundary_data_vec_in_image = None
+
         self.wall_channel_idx = 0
         self.room_channel_idx = 1
         self.obstacle_channel_idx = 2
         return
 
-    def initObservation(self, width, height):
+    def initObservation(self, width, height, free):
         self.image_width = width
         self.image_height = height
+        self.free_area_width = free
 
         # channels : wall, room, obstacle
         self.observation = np.zeros((3, self.image_width, self.image_height))
-        return True
-
-    def getWorldBoundaryData(self, world_environment):
-        self.outerwall_boundary_data_vec = world_environment.getOuterWallBoundaryDataVec()
-        self.innerwall_boundary_data_vec = world_environment.getInnerWallBoundaryDataVec()
-        self.roomcontainer_boundary_data_vec = world_environment.getRoomContainerBoundaryDataVec()
-        self.wallroom_boundary_data_vec = world_environment.getWallRoomBoundaryDataVec()
-        self.freeroom_boundary_data_vec = world_environment.getFreeRoomBoundaryDataVec()
-        self.door_boundary_data_vec = world_environment.getDoorBoundaryDataVec()
-        self.window_boundary_data_vec = world_environment.getWindowBoundaryDataVec()
-        self.team_boundary_data_vec = world_environment.getTeamBoundaryDataVec()
-        self.person_boundary_data_vec = world_environment.getPersonBoundaryDataVec()
-        self.furniture_boundary_data_vec = world_environment.getFurnitureBoundaryDataVec()
         return True
 
     def getImageTransform(self):
@@ -81,33 +81,79 @@ class WorldGenerateObservation(object):
             return False
 
         self.offset = [-x_min, -y_min]
-        self.scale = min(self.image_width / x_diff, self.image_height / y_diff)
+        self.scale = min(
+            (self.image_width - 2 * self.free_area_width) / x_diff,
+            (self.image_height - 2 * self.free_area_width) / y_diff)
         return True
 
-    def getPointInImage(self, x, y):
-        x_in_image = (x + self.offset[0]) * self.scale
-        y_in_image = (y + self.offset[1]) * self.scale
+    def getXYInImage(self, x, y):
+        x_in_image = (x + self.offset[0]) * self.scale + self.free_area_width
+        y_in_image = (y + self.offset[1]) * self.scale + self.free_area_width
         return x_in_image, y_in_image
     def getPointInImage(self, point):
         x = point[0]
         y = point[1]
-        x_in_image, y_in_image = self.getPointInImage(x, y)
+        x_in_image, y_in_image = self.getXYInImage(x, y)
         return [x_in_image, y_in_image]
 
-    def getPointInWorld(self, x, y):
-        x_in_world = x / self.scale - self.offset[0]
-        y_in_world = y / self.scale - self.offset[1]
+    def getXYInWorld(self, x, y):
+        x_in_world = (x - self.free_area_width) / self.scale - self.offset[0]
+        y_in_world = (y - self.free_area_width) / self.scale - self.offset[1]
         return x_in_world, y_in_world
     def getPointInWorld(self, point):
         x = point[0]
         y = point[1]
-        x_in_world, y_in_world = self.getPointInWorld(x, y)
+        x_in_world, y_in_world = self.getXYInWorld(x, y)
         return [x_in_world, y_in_world]
+
+    def getWorldBoundaryDataVecInImage(self, world_boundary_data_vec):
+        world_boundary_data_vec_in_image = []
+        for world_boundary_data in world_boundary_data_vec:
+            world_boundary_data_in_image = []
+            for world_boundary_point in world_boundary_data:
+                world_boundary_point_in_image = self.getPointInImage(world_boundary_point)
+                world_boundary_data_in_image.append(world_boundary_point_in_image)
+            world_boundary_data_vec_in_image.append(world_boundary_data_in_image)
+        return world_boundary_data_vec_in_image
+
+    def getWorldBoundaryDataInImage(self):
+        self.outerwall_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.outerwall_boundary_data_vec)
+        self.innerwall_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.innerwall_boundary_data_vec)
+        self.roomcontainer_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.roomcontainer_boundary_data_vec)
+        self.wallroom_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.wallroom_boundary_data_vec)
+        self.freeroom_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.freeroom_boundary_data_vec)
+        self.door_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.door_boundary_data_vec)
+        self.window_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.window_boundary_data_vec)
+        self.team_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.team_boundary_data_vec)
+        self.person_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.person_boundary_data_vec)
+        self.furniture_boundary_data_vec_in_image = self.getWorldBoundaryDataVecInImage(self.furniture_boundary_data_vec)
+
+    def getWorldBoundaryData(self, world_environment):
+        self.outerwall_boundary_data_vec = world_environment.getOuterWallBoundaryDataVec()
+        self.innerwall_boundary_data_vec = world_environment.getInnerWallBoundaryDataVec()
+        self.roomcontainer_boundary_data_vec = world_environment.getRoomContainerBoundaryDataVec()
+        self.wallroom_boundary_data_vec = world_environment.getWallRoomBoundaryDataVec()
+        self.freeroom_boundary_data_vec = world_environment.getFreeRoomBoundaryDataVec()
+        self.door_boundary_data_vec = world_environment.getDoorBoundaryDataVec()
+        self.window_boundary_data_vec = world_environment.getWindowBoundaryDataVec()
+        self.team_boundary_data_vec = world_environment.getTeamBoundaryDataVec()
+        self.person_boundary_data_vec = world_environment.getPersonBoundaryDataVec()
+        self.furniture_boundary_data_vec = world_environment.getFurnitureBoundaryDataVec()
+
+        self.getImageTransform()
+        self.getWorldBoundaryDataInImage()
+        return True
 
     def fillWallInObservation(self):
         cv2.polylines(
             self.observation[self.wall_channel_idx],
-            np.array(self.outerwall_boundary_data_vec, dtype=np.int32),
+            np.array(self.outerwall_boundary_data_vec_in_image, dtype=np.int32),
+            True,
+            255)
+
+        cv2.polylines(
+            self.observation[self.wall_channel_idx],
+            np.array(self.innerwall_boundary_data_vec_in_image, dtype=np.int32),
             True,
             255)
 
@@ -117,7 +163,6 @@ class WorldGenerateObservation(object):
 
     def getObservation(self, world_environment):
         self.getWorldBoundaryData(world_environment)
-        self.getImageTransform()
         self.fillWallInObservation()
 
         return self.observation

@@ -25,6 +25,7 @@ class WorldGenerateEnvironment(gym.Env):
 
         self.observation_width = 256
         self.observation_height = 256
+        self.observation_free = 20
 
         self.wall_edge_num_max = None
         self.outerwall_edge_num_vec = []
@@ -79,7 +80,10 @@ class WorldGenerateEnvironment(gym.Env):
         self.innerwall_num = 1
         self.container_room_num_max = 4
 
-        self.world_generate_observation.initObservation(self.observation_width, self.observation_height)
+        self.world_generate_observation.initObservation(
+            self.observation_width,
+            self.observation_height,
+            self.observation_free)
 
         self.world_generate_observation.getObservation(self.world_environment)
 

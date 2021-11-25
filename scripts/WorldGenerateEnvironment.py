@@ -165,7 +165,7 @@ class WorldGenerateEnvironment(gym.Env):
         return self.observation
 
     def render(self, mode="human"):
-        self.world_generate_observation.render(0)
+        self.world_generate_observation.render(1)
         return None
 
     def close(self):

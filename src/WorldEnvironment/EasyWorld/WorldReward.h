@@ -34,6 +34,11 @@ private:
     bool getEascapableReward(
         const WorldObservation& world_observation,
         float &eascapable_reward);
+
+private:
+    float space_utilization_ratio_;
+    float neighboor_satisfied_ratio_;
+    size_t movable_split_space_num_;
 };
 
 #endif //WORLD_REWARD_H

@@ -41,16 +41,18 @@ public:
     bool removePoint(
         const size_t &remove_idx);
 
-    bool isClockWise();
+    bool isClockWise() const;
 
     bool setClockWise();
 
     bool setAntiClockWise();
 
-    float getPolygonArea();
+    float getPolygonArea() const;
+
+    float getPolygonAreaAbs() const;
 
     bool getPolygonRect(
-        EasyRect2D &rect_2d);
+        EasyRect2D &rect_2d) const;
 
     std::vector<EasyPoint2D> point_list;
 

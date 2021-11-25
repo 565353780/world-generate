@@ -6,6 +6,8 @@ import numpy as np
 import random
 
 from WorldEnvironment import WorldEnvironment
+from WorldGenerateObservation import WorldGenerateObservation
+from WorldGenerateReward import WorldGenerateReward
 
 #  world_environment.generateFreeRoomContainer(4, 4, 0.5, 2)
 
@@ -18,6 +20,9 @@ class WorldGenerateEnvironment(gym.Env):
     def __init__(self):
         super(WorldGenerateEnvironment, self).__init__()
         self.world_environment = WorldEnvironment()
+        self.world_generate_observation = WorldGenerateObservation()
+        self.world_generate_reward = WorldGenerateReward()
+
         self.wall_edge_num_max = None
         self.outerwall_edge_num_vec = []
         self.innerwall_edge_num_vec = []
@@ -25,13 +30,16 @@ class WorldGenerateEnvironment(gym.Env):
         self.innerwall_num = None
         self.container_room_num_max = None
 
+        self.width_prefix = 4
+        self.height_prefix = 4
+        self.room_num_prefix = 1
+
         self.initWorld()
+
+        self.world_generate_observation.getWorldXYData(self.world_environment)
 
         self.action_space = gym.spaces.Box(
             np.array([
-                0.0,
-                0.0,
-                0.0,
                 0.0,
                 0.0,
                 0.0
@@ -39,10 +47,7 @@ class WorldGenerateEnvironment(gym.Env):
             np.array([
                 self.outerwall_num + self.innerwall_num, # wall_idx
                 self.wall_edge_num_max,                  # wall_edge_idx
-                np.inf,                                  # position
-                np.inf,                                  # width
-                np.inf,                                  # height
-                np.inf                                   # room_num
+                np.inf                                   # position
             ], dtype=np.float32)
         )
         self.observation_space = gym.spaces.Box(low=0, high=255, shape=(3, 1024, 1024), dtype=np.uint8)
@@ -91,7 +96,9 @@ class WorldGenerateEnvironment(gym.Env):
 
         wall_idx = int(action[0])
         wall_edge_idx = int(action[1])
-        room_num = int(action[5])
+        room_position = action[2]
+        #  room_num = int(action[5])
+        room_num = int(self.room_num_prefix)
         if room_num == 0:
             room_num = 1
 
@@ -108,18 +115,18 @@ class WorldGenerateEnvironment(gym.Env):
             self.world_environment.placeOuterWallRoomContainer(
                 wall_idx,
                 wall_edge_idx,
-                action[2],
-                action[3],
-                action[4],
-                room_num)
+                room_position,
+                self.width_prefix,
+                self.height_prefix,
+                self.room_num_prefix)
         else:
             self.world_environment.placeInnerWallRoomContainer(
                 wall_idx - self.outerwall_num,
                 wall_edge_idx,
-                action[2],
-                action[3],
-                action[4],
-                room_num)
+                room_position,
+                self.width_prefix,
+                self.height_prefix,
+                self.room_num_prefix)
 
         return self.observation, reward, done, {}
 
@@ -146,4 +153,7 @@ class WorldGenerateEnvironment(gym.Env):
     def seed(self, seed=None):
         if seed is not None:
             random.seed(seed)
+
+if __name__ == "__main__":
+    world_generate_environment = WorldGenerateEnvironment()
 

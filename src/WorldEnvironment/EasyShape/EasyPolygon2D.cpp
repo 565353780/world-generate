@@ -94,7 +94,7 @@ bool EasyPolygon2D::removePoint(
     return true;
 }
 
-bool EasyPolygon2D::isClockWise()
+bool EasyPolygon2D::isClockWise() const
 {
     if(getPolygonArea() < 0)
     {
@@ -124,7 +124,7 @@ bool EasyPolygon2D::setAntiClockWise()
     return true;
 }
 
-float EasyPolygon2D::getPolygonArea()
+float EasyPolygon2D::getPolygonArea() const
 {
     if(point_list.size() < 3)
     {
@@ -135,11 +135,7 @@ float EasyPolygon2D::getPolygonArea()
     
     for(size_t i = 0; i < point_list.size(); ++i)
     {
-        int next_point_idx = i + 1;
-        if(i == point_list.size() - 1)
-        {
-            next_point_idx = 0;
-        }
+        const size_t next_point_idx = (i + 1) % point_list.size();
 
         area -= 0.5 *
           (point_list[next_point_idx].y + point_list[i].y) *
@@ -149,8 +145,15 @@ float EasyPolygon2D::getPolygonArea()
     return area;
 }
 
+float EasyPolygon2D::getPolygonAreaAbs() const
+{
+    float polygon_area = getPolygonArea();
+
+    return std::abs(polygon_area);
+}
+
 bool EasyPolygon2D::getPolygonRect(
-    EasyRect2D &rect_2d)
+    EasyRect2D &rect_2d) const
 {
     if(point_list.size() == 0)
     {

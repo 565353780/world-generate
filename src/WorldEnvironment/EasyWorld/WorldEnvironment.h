@@ -11,6 +11,7 @@
 
 #if defined(EXPORT_PYBIND)
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #endif
 
 class LIBRARY_EXPORT WorldEnvironment

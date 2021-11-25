@@ -61,7 +61,7 @@ class WorldGenerateEnvironment(gym.Env):
         self.observation_space = gym.spaces.Box(
             low=0,
             high=255,
-            shape=(4, self.observation_width, self.observation_height),
+            shape=(5, self.observation_width, self.observation_height),
             dtype=np.uint8)
 
         self.world_generate_observation.initObservation(

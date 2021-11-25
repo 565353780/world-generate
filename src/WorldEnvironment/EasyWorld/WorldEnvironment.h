@@ -69,16 +69,16 @@ public:
         const float &new_position_y,
         const float &mouse_pos_x_direction_delta);
 
-    std::vector<std::vector<float>> getOuterWallBoundaryXYDataVec();
-    std::vector<std::vector<float>> getInnerWallBoundaryXYDataVec();
-    std::vector<std::vector<float>> getRoomContainerBoundaryXYDataVec();
-    std::vector<std::vector<float>> getWallRoomBoundaryXYDataVec();
-    std::vector<std::vector<float>> getFreeRoomBoundaryXYDataVec();
-    std::vector<std::vector<float>> getDoorBoundaryXYDataVec();
-    std::vector<std::vector<float>> getWindowBoundaryXYDataVec();
-    std::vector<std::vector<float>> getTeamBoundaryXYDataVec();
-    std::vector<std::vector<float>> getPersonBoundaryXYDataVec();
-    std::vector<std::vector<float>> getFurnitureBoundaryXYDataVec();
+    std::vector<std::vector<std::vector<float>>> getOuterWallBoundaryDataVec();
+    std::vector<std::vector<std::vector<float>>> getInnerWallBoundaryDataVec();
+    std::vector<std::vector<std::vector<float>>> getRoomContainerBoundaryDataVec();
+    std::vector<std::vector<std::vector<float>>> getWallRoomBoundaryDataVec();
+    std::vector<std::vector<std::vector<float>>> getFreeRoomBoundaryDataVec();
+    std::vector<std::vector<std::vector<float>>> getDoorBoundaryDataVec();
+    std::vector<std::vector<std::vector<float>>> getWindowBoundaryDataVec();
+    std::vector<std::vector<std::vector<float>>> getTeamBoundaryDataVec();
+    std::vector<std::vector<std::vector<float>>> getPersonBoundaryDataVec();
+    std::vector<std::vector<std::vector<float>>> getFurnitureBoundaryDataVec();
 
 
     WallGenerator wall_generator_;
@@ -106,16 +106,16 @@ PYBIND11_MODULE(WorldEnvironment, m)
         .def("placeInnerWallRoomContainer", &WorldEnvironment::placeInnerWallRoomContainer)
         .def("generateFreeRoomContainer", &WorldEnvironment::generateFreeRoomContainer)
         .def("setWallRoomContainerPosition", &WorldEnvironment::setWallRoomContainerPosition)
-        .def("getOuterWallBoundaryXYDataVec", &WorldEnvironment::getOuterWallBoundaryXYDataVec)
-        .def("getInnerWallBoundaryXYDataVec", &WorldEnvironment::getInnerWallBoundaryXYDataVec)
-        .def("getRoomContainerBoundaryXYDataVec", &WorldEnvironment::getRoomContainerBoundaryXYDataVec)
-        .def("getWallRoomBoundaryXYDataVec", &WorldEnvironment::getWallRoomBoundaryXYDataVec)
-        .def("getFreeRoomBoundaryXYDataVec", &WorldEnvironment::getFreeRoomBoundaryXYDataVec)
-        .def("getDoorBoundaryXYDataVec", &WorldEnvironment::getDoorBoundaryXYDataVec)
-        .def("getWindowBoundaryXYDataVec", &WorldEnvironment::getWindowBoundaryXYDataVec)
-        .def("getTeamBoundaryXYDataVec", &WorldEnvironment::getTeamBoundaryXYDataVec)
-        .def("getPersonBoundaryXYDataVec", &WorldEnvironment::getPersonBoundaryXYDataVec)
-        .def("getFurnitureBoundaryXYDataVec", &WorldEnvironment::getFurnitureBoundaryXYDataVec);
+        .def("getOuterWallBoundaryDataVec", &WorldEnvironment::getOuterWallBoundaryDataVec)
+        .def("getInnerWallBoundaryDataVec", &WorldEnvironment::getInnerWallBoundaryDataVec)
+        .def("getRoomContainerBoundaryDataVec", &WorldEnvironment::getRoomContainerBoundaryDataVec)
+        .def("getWallRoomBoundaryDataVec", &WorldEnvironment::getWallRoomBoundaryDataVec)
+        .def("getFreeRoomBoundaryDataVec", &WorldEnvironment::getFreeRoomBoundaryDataVec)
+        .def("getDoorBoundaryDataVec", &WorldEnvironment::getDoorBoundaryDataVec)
+        .def("getWindowBoundaryDataVec", &WorldEnvironment::getWindowBoundaryDataVec)
+        .def("getTeamBoundaryDataVec", &WorldEnvironment::getTeamBoundaryDataVec)
+        .def("getPersonBoundaryDataVec", &WorldEnvironment::getPersonBoundaryDataVec)
+        .def("getFurnitureBoundaryDataVec", &WorldEnvironment::getFurnitureBoundaryDataVec);
 }
 #endif
 

@@ -286,16 +286,16 @@ bool WorldEnvironment::setWallRoomContainerPosition(
     return true;
 }
 
-std::vector<std::vector<float>> WorldEnvironment::getOuterWallBoundaryXYDataVec()
+std::vector<std::vector<std::vector<float>>> WorldEnvironment::getOuterWallBoundaryDataVec()
 {
-    std::vector<std::vector<float>> outerwall_boundary_xy_data_vec;
+    std::vector<std::vector<std::vector<float>>> outerwall_boundary_data_vec;
 
     if(!world_observation_.getOuterWallBoundaryPolygon(world_controller_))
     {
-        std::cout << "WorldEnvironment::getOuterWallBoundaryXYData :\n" <<
+        std::cout << "WorldEnvironment::getOuterWallBoundaryData :\n" <<
           "getOuterWallBoundaryPolygon failed!\n";
 
-        return outerwall_boundary_xy_data_vec;
+        return outerwall_boundary_data_vec;
     }
 
     const std::vector<EasyPolygon2D>& outerwall_boundary_polygon_vec =
@@ -303,48 +303,50 @@ std::vector<std::vector<float>> WorldEnvironment::getOuterWallBoundaryXYDataVec(
 
     if(outerwall_boundary_polygon_vec.size() == 0)
     {
-        return outerwall_boundary_xy_data_vec;
+        return outerwall_boundary_data_vec;
     }
 
-    outerwall_boundary_xy_data_vec.resize(outerwall_boundary_polygon_vec.size());
+    outerwall_boundary_data_vec.resize(outerwall_boundary_polygon_vec.size());
 
     for(size_t i = 0; i < outerwall_boundary_polygon_vec.size(); ++i)
     {
-        std::vector<float>& outerwall_boundary_xy_data = outerwall_boundary_xy_data_vec[i];
+        std::vector<std::vector<float>>& outerwall_boundary_data = outerwall_boundary_data_vec[i];
         const EasyPolygon2D& outerwall_boundary_polygon = outerwall_boundary_polygon_vec[i];
 
         if(outerwall_boundary_polygon.point_list.size() == 0)
         {
-            std::cout << "WorldEnvironment::getOuterWallBoundaryXYData :\n" <<
+            std::cout << "WorldEnvironment::getOuterWallBoundaryData :\n" <<
               "outerwall boundary polygon is empty!\n";
 
             continue;
         }
 
-        outerwall_boundary_xy_data.resize(2 * outerwall_boundary_polygon.point_list.size(), 0);
+        outerwall_boundary_data.resize(outerwall_boundary_polygon.point_list.size());
 
         for(size_t j = 0; j < outerwall_boundary_polygon.point_list.size(); ++j)
         {
+            outerwall_boundary_data[j].resize(2);
+
             const EasyPoint2D& outerwall_boundary_point = outerwall_boundary_polygon.point_list[j];
 
-            outerwall_boundary_xy_data[2 * j] = outerwall_boundary_point.x;
-            outerwall_boundary_xy_data[2 * j + 1] = outerwall_boundary_point.y;
+            outerwall_boundary_data[j][0] = outerwall_boundary_point.x;
+            outerwall_boundary_data[j][1] = outerwall_boundary_point.y;
         }
     }
 
-    return outerwall_boundary_xy_data_vec;
+    return outerwall_boundary_data_vec;
 }
 
-std::vector<std::vector<float>> WorldEnvironment::getInnerWallBoundaryXYDataVec()
+std::vector<std::vector<std::vector<float>>> WorldEnvironment::getInnerWallBoundaryDataVec()
 {
-    std::vector<std::vector<float>> innerwall_boundary_xy_data_vec;
+    std::vector<std::vector<std::vector<float>>> innerwall_boundary_data_vec;
 
     if(!world_observation_.getInnerWallBoundaryPolygon(world_controller_))
     {
-        std::cout << "WorldEnvironment::getInnerWallBoundaryXYData :\n" <<
+        std::cout << "WorldEnvironment::getInnerWallBoundaryData :\n" <<
           "getInnerWallBoundaryPolygon failed!\n";
 
-        return innerwall_boundary_xy_data_vec;
+        return innerwall_boundary_data_vec;
     }
 
     const std::vector<EasyPolygon2D>& innerwall_boundary_polygon_vec =
@@ -352,48 +354,50 @@ std::vector<std::vector<float>> WorldEnvironment::getInnerWallBoundaryXYDataVec(
 
     if(innerwall_boundary_polygon_vec.size() == 0)
     {
-        return innerwall_boundary_xy_data_vec;
+        return innerwall_boundary_data_vec;
     }
 
-    innerwall_boundary_xy_data_vec.resize(innerwall_boundary_polygon_vec.size());
+    innerwall_boundary_data_vec.resize(innerwall_boundary_polygon_vec.size());
 
     for(size_t i = 0; i < innerwall_boundary_polygon_vec.size(); ++i)
     {
-        std::vector<float>& innerwall_boundary_xy_data = innerwall_boundary_xy_data_vec[i];
+        std::vector<std::vector<float>>& innerwall_boundary_data = innerwall_boundary_data_vec[i];
         const EasyPolygon2D& innerwall_boundary_polygon = innerwall_boundary_polygon_vec[i];
 
         if(innerwall_boundary_polygon.point_list.size() == 0)
         {
-            std::cout << "WorldEnvironment::getInnerWallBoundaryXYData :\n" <<
+            std::cout << "WorldEnvironment::getInnerWallBoundaryData :\n" <<
               "innerwall boundary polygon is empty!\n";
 
             continue;
         }
 
-        innerwall_boundary_xy_data.resize(2 * innerwall_boundary_polygon.point_list.size(), 0);
+        innerwall_boundary_data.resize(innerwall_boundary_polygon.point_list.size());
 
         for(size_t j = 0; j < innerwall_boundary_polygon.point_list.size(); ++j)
         {
+            innerwall_boundary_data[j].resize(2);
+
             const EasyPoint2D& innerwall_boundary_point = innerwall_boundary_polygon.point_list[j];
 
-            innerwall_boundary_xy_data[2 * j] = innerwall_boundary_point.x;
-            innerwall_boundary_xy_data[2 * j + 1] = innerwall_boundary_point.y;
+            innerwall_boundary_data[j][0] = innerwall_boundary_point.x;
+            innerwall_boundary_data[j][1] = innerwall_boundary_point.y;
         }
     }
 
-    return innerwall_boundary_xy_data_vec;
+    return innerwall_boundary_data_vec;
 }
 
-std::vector<std::vector<float>> WorldEnvironment::getRoomContainerBoundaryXYDataVec()
+std::vector<std::vector<std::vector<float>>> WorldEnvironment::getRoomContainerBoundaryDataVec()
 {
-    std::vector<std::vector<float>> roomcontainer_boundary_xy_data_vec;
+    std::vector<std::vector<std::vector<float>>> roomcontainer_boundary_data_vec;
 
     if(!world_observation_.getRoomContainerBoundaryPolygon(world_controller_))
     {
-        std::cout << "WorldEnvironment::getRoomContainerBoundaryXYData :\n" <<
+        std::cout << "WorldEnvironment::getRoomContainerBoundaryData :\n" <<
           "getRoomContainerBoundaryPolygon failed!\n";
 
-        return roomcontainer_boundary_xy_data_vec;
+        return roomcontainer_boundary_data_vec;
     }
 
     const std::vector<EasyPolygon2D>& roomcontainer_boundary_polygon_vec =
@@ -401,48 +405,50 @@ std::vector<std::vector<float>> WorldEnvironment::getRoomContainerBoundaryXYData
 
     if(roomcontainer_boundary_polygon_vec.size() == 0)
     {
-        return roomcontainer_boundary_xy_data_vec;
+        return roomcontainer_boundary_data_vec;
     }
 
-    roomcontainer_boundary_xy_data_vec.resize(roomcontainer_boundary_polygon_vec.size());
+    roomcontainer_boundary_data_vec.resize(roomcontainer_boundary_polygon_vec.size());
 
     for(size_t i = 0; i < roomcontainer_boundary_polygon_vec.size(); ++i)
     {
-        std::vector<float>& roomcontainer_boundary_xy_data = roomcontainer_boundary_xy_data_vec[i];
+        std::vector<std::vector<float>>& roomcontainer_boundary_data = roomcontainer_boundary_data_vec[i];
         const EasyPolygon2D& roomcontainer_boundary_polygon = roomcontainer_boundary_polygon_vec[i];
 
         if(roomcontainer_boundary_polygon.point_list.size() == 0)
         {
-            std::cout << "WorldEnvironment::getRoomContainerBoundaryXYData :\n" <<
+            std::cout << "WorldEnvironment::getRoomContainerBoundaryData :\n" <<
               "roomcontainer boundary polygon is empty!\n";
 
             continue;
         }
 
-        roomcontainer_boundary_xy_data.resize(2 * roomcontainer_boundary_polygon.point_list.size(), 0);
+        roomcontainer_boundary_data.resize(roomcontainer_boundary_polygon.point_list.size());
 
         for(size_t j = 0; j < roomcontainer_boundary_polygon.point_list.size(); ++j)
         {
+            roomcontainer_boundary_data[j].resize(2);
+
             const EasyPoint2D& roomcontainer_boundary_point = roomcontainer_boundary_polygon.point_list[j];
 
-            roomcontainer_boundary_xy_data[2 * j] = roomcontainer_boundary_point.x;
-            roomcontainer_boundary_xy_data[2 * j + 1] = roomcontainer_boundary_point.y;
+            roomcontainer_boundary_data[j][0] = roomcontainer_boundary_point.x;
+            roomcontainer_boundary_data[j][1] = roomcontainer_boundary_point.y;
         }
     }
 
-    return roomcontainer_boundary_xy_data_vec;
+    return roomcontainer_boundary_data_vec;
 }
 
-std::vector<std::vector<float>> WorldEnvironment::getWallRoomBoundaryXYDataVec()
+std::vector<std::vector<std::vector<float>>> WorldEnvironment::getWallRoomBoundaryDataVec()
 {
-    std::vector<std::vector<float>> wallroom_boundary_xy_data_vec;
+    std::vector<std::vector<std::vector<float>>> wallroom_boundary_data_vec;
 
     if(!world_observation_.getWallRoomBoundaryPolygon(world_controller_))
     {
-        std::cout << "WorldEnvironment::getWallRoomBoundaryXYData :\n" <<
+        std::cout << "WorldEnvironment::getWallRoomBoundaryData :\n" <<
           "getWallRoomBoundaryPolygon failed!\n";
 
-        return wallroom_boundary_xy_data_vec;
+        return wallroom_boundary_data_vec;
     }
 
     const std::vector<EasyPolygon2D>& wallroom_boundary_polygon_vec =
@@ -450,48 +456,50 @@ std::vector<std::vector<float>> WorldEnvironment::getWallRoomBoundaryXYDataVec()
 
     if(wallroom_boundary_polygon_vec.size() == 0)
     {
-        return wallroom_boundary_xy_data_vec;
+        return wallroom_boundary_data_vec;
     }
 
-    wallroom_boundary_xy_data_vec.resize(wallroom_boundary_polygon_vec.size());
+    wallroom_boundary_data_vec.resize(wallroom_boundary_polygon_vec.size());
 
     for(size_t i = 0; i < wallroom_boundary_polygon_vec.size(); ++i)
     {
-        std::vector<float>& wallroom_boundary_xy_data = wallroom_boundary_xy_data_vec[i];
+        std::vector<std::vector<float>>& wallroom_boundary_data = wallroom_boundary_data_vec[i];
         const EasyPolygon2D& wallroom_boundary_polygon = wallroom_boundary_polygon_vec[i];
 
         if(wallroom_boundary_polygon.point_list.size() == 0)
         {
-            std::cout << "WorldEnvironment::getWallRoomBoundaryXYData :\n" <<
+            std::cout << "WorldEnvironment::getWallRoomBoundaryData :\n" <<
               "wallroom boundary polygon is empty!\n";
 
             continue;
         }
 
-        wallroom_boundary_xy_data.resize(2 * wallroom_boundary_polygon.point_list.size(), 0);
+        wallroom_boundary_data.resize(wallroom_boundary_polygon.point_list.size());
 
         for(size_t j = 0; j < wallroom_boundary_polygon.point_list.size(); ++j)
         {
+            wallroom_boundary_data[j].resize(2);
+
             const EasyPoint2D& wallroom_boundary_point = wallroom_boundary_polygon.point_list[j];
 
-            wallroom_boundary_xy_data[2 * j] = wallroom_boundary_point.x;
-            wallroom_boundary_xy_data[2 * j + 1] = wallroom_boundary_point.y;
+            wallroom_boundary_data[j][0] = wallroom_boundary_point.x;
+            wallroom_boundary_data[j][1] = wallroom_boundary_point.y;
         }
     }
 
-    return wallroom_boundary_xy_data_vec;
+    return wallroom_boundary_data_vec;
 }
 
-std::vector<std::vector<float>> WorldEnvironment::getFreeRoomBoundaryXYDataVec()
+std::vector<std::vector<std::vector<float>>> WorldEnvironment::getFreeRoomBoundaryDataVec()
 {
-    std::vector<std::vector<float>> freeroom_boundary_xy_data_vec;
+    std::vector<std::vector<std::vector<float>>> freeroom_boundary_data_vec;
 
     if(!world_observation_.getFreeRoomBoundaryPolygon(world_controller_))
     {
-        std::cout << "WorldEnvironment::getFreeRoomBoundaryXYData :\n" <<
+        std::cout << "WorldEnvironment::getFreeRoomBoundaryData :\n" <<
           "getFreeRoomBoundaryPolygon failed!\n";
 
-        return freeroom_boundary_xy_data_vec;
+        return freeroom_boundary_data_vec;
     }
 
     const std::vector<EasyPolygon2D>& freeroom_boundary_polygon_vec =
@@ -499,48 +507,50 @@ std::vector<std::vector<float>> WorldEnvironment::getFreeRoomBoundaryXYDataVec()
 
     if(freeroom_boundary_polygon_vec.size() == 0)
     {
-        return freeroom_boundary_xy_data_vec;
+        return freeroom_boundary_data_vec;
     }
 
-    freeroom_boundary_xy_data_vec.resize(freeroom_boundary_polygon_vec.size());
+    freeroom_boundary_data_vec.resize(freeroom_boundary_polygon_vec.size());
 
     for(size_t i = 0; i < freeroom_boundary_polygon_vec.size(); ++i)
     {
-        std::vector<float>& freeroom_boundary_xy_data = freeroom_boundary_xy_data_vec[i];
+        std::vector<std::vector<float>>& freeroom_boundary_data = freeroom_boundary_data_vec[i];
         const EasyPolygon2D& freeroom_boundary_polygon = freeroom_boundary_polygon_vec[i];
 
         if(freeroom_boundary_polygon.point_list.size() == 0)
         {
-            std::cout << "WorldEnvironment::getFreeRoomBoundaryXYData :\n" <<
+            std::cout << "WorldEnvironment::getFreeRoomBoundaryData :\n" <<
               "freeroom boundary polygon is empty!\n";
 
             continue;
         }
 
-        freeroom_boundary_xy_data.resize(2 * freeroom_boundary_polygon.point_list.size(), 0);
+        freeroom_boundary_data.resize(freeroom_boundary_polygon.point_list.size());
 
         for(size_t j = 0; j < freeroom_boundary_polygon.point_list.size(); ++j)
         {
+            freeroom_boundary_data[j].resize(2);
+
             const EasyPoint2D& freeroom_boundary_point = freeroom_boundary_polygon.point_list[j];
 
-            freeroom_boundary_xy_data[2 * j] = freeroom_boundary_point.x;
-            freeroom_boundary_xy_data[2 * j + 1] = freeroom_boundary_point.y;
+            freeroom_boundary_data[j][0] = freeroom_boundary_point.x;
+            freeroom_boundary_data[j][1] = freeroom_boundary_point.y;
         }
     }
 
-    return freeroom_boundary_xy_data_vec;
+    return freeroom_boundary_data_vec;
 }
 
-std::vector<std::vector<float>> WorldEnvironment::getDoorBoundaryXYDataVec()
+std::vector<std::vector<std::vector<float>>> WorldEnvironment::getDoorBoundaryDataVec()
 {
-    std::vector<std::vector<float>> door_boundary_xy_data_vec;
+    std::vector<std::vector<std::vector<float>>> door_boundary_data_vec;
 
     if(!world_observation_.getDoorBoundaryPolygon(world_controller_))
     {
-        std::cout << "WorldEnvironment::getDoorBoundaryXYData :\n" <<
+        std::cout << "WorldEnvironment::getDoorBoundaryData :\n" <<
           "getDoorBoundaryPolygon failed!\n";
 
-        return door_boundary_xy_data_vec;
+        return door_boundary_data_vec;
     }
 
     const std::vector<EasyPolygon2D>& door_boundary_polygon_vec =
@@ -548,48 +558,50 @@ std::vector<std::vector<float>> WorldEnvironment::getDoorBoundaryXYDataVec()
 
     if(door_boundary_polygon_vec.size() == 0)
     {
-        return door_boundary_xy_data_vec;
+        return door_boundary_data_vec;
     }
 
-    door_boundary_xy_data_vec.resize(door_boundary_polygon_vec.size());
+    door_boundary_data_vec.resize(door_boundary_polygon_vec.size());
 
     for(size_t i = 0; i < door_boundary_polygon_vec.size(); ++i)
     {
-        std::vector<float>& door_boundary_xy_data = door_boundary_xy_data_vec[i];
+        std::vector<std::vector<float>>& door_boundary_data = door_boundary_data_vec[i];
         const EasyPolygon2D& door_boundary_polygon = door_boundary_polygon_vec[i];
 
         if(door_boundary_polygon.point_list.size() == 0)
         {
-            std::cout << "WorldEnvironment::getDoorBoundaryXYData :\n" <<
+            std::cout << "WorldEnvironment::getDoorBoundaryData :\n" <<
               "door boundary polygon is empty!\n";
 
             continue;
         }
 
-        door_boundary_xy_data.resize(2 * door_boundary_polygon.point_list.size(), 0);
+        door_boundary_data.resize(door_boundary_polygon.point_list.size());
 
         for(size_t j = 0; j < door_boundary_polygon.point_list.size(); ++j)
         {
+            door_boundary_data[j].resize(2);
+
             const EasyPoint2D& door_boundary_point = door_boundary_polygon.point_list[j];
 
-            door_boundary_xy_data[2 * j] = door_boundary_point.x;
-            door_boundary_xy_data[2 * j + 1] = door_boundary_point.y;
+            door_boundary_data[j][0] = door_boundary_point.x;
+            door_boundary_data[j][1] = door_boundary_point.y;
         }
     }
 
-    return door_boundary_xy_data_vec;
+    return door_boundary_data_vec;
 }
 
-std::vector<std::vector<float>> WorldEnvironment::getWindowBoundaryXYDataVec()
+std::vector<std::vector<std::vector<float>>> WorldEnvironment::getWindowBoundaryDataVec()
 {
-    std::vector<std::vector<float>> window_boundary_xy_data_vec;
+    std::vector<std::vector<std::vector<float>>> window_boundary_data_vec;
 
     if(!world_observation_.getWindowBoundaryPolygon(world_controller_))
     {
-        std::cout << "WorldEnvironment::getWindowBoundaryXYData :\n" <<
+        std::cout << "WorldEnvironment::getWindowBoundaryData :\n" <<
           "getWindowBoundaryPolygon failed!\n";
 
-        return window_boundary_xy_data_vec;
+        return window_boundary_data_vec;
     }
 
     const std::vector<EasyPolygon2D>& window_boundary_polygon_vec =
@@ -597,48 +609,50 @@ std::vector<std::vector<float>> WorldEnvironment::getWindowBoundaryXYDataVec()
 
     if(window_boundary_polygon_vec.size() == 0)
     {
-        return window_boundary_xy_data_vec;
+        return window_boundary_data_vec;
     }
 
-    window_boundary_xy_data_vec.resize(window_boundary_polygon_vec.size());
+    window_boundary_data_vec.resize(window_boundary_polygon_vec.size());
 
     for(size_t i = 0; i < window_boundary_polygon_vec.size(); ++i)
     {
-        std::vector<float>& window_boundary_xy_data = window_boundary_xy_data_vec[i];
+        std::vector<std::vector<float>>& window_boundary_data = window_boundary_data_vec[i];
         const EasyPolygon2D& window_boundary_polygon = window_boundary_polygon_vec[i];
 
         if(window_boundary_polygon.point_list.size() == 0)
         {
-            std::cout << "WorldEnvironment::getWindowBoundaryXYData :\n" <<
+            std::cout << "WorldEnvironment::getWindowBoundaryData :\n" <<
               "window boundary polygon is empty!\n";
 
             continue;
         }
 
-        window_boundary_xy_data.resize(2 * window_boundary_polygon.point_list.size(), 0);
+        window_boundary_data.resize(window_boundary_polygon.point_list.size());
 
         for(size_t j = 0; j < window_boundary_polygon.point_list.size(); ++j)
         {
+            window_boundary_data[j].resize(2);
+
             const EasyPoint2D& window_boundary_point = window_boundary_polygon.point_list[j];
 
-            window_boundary_xy_data[2 * j] = window_boundary_point.x;
-            window_boundary_xy_data[2 * j + 1] = window_boundary_point.y;
+            window_boundary_data[j][0] = window_boundary_point.x;
+            window_boundary_data[j][1] = window_boundary_point.y;
         }
     }
 
-    return window_boundary_xy_data_vec;
+    return window_boundary_data_vec;
 }
 
-std::vector<std::vector<float>> WorldEnvironment::getTeamBoundaryXYDataVec()
+std::vector<std::vector<std::vector<float>>> WorldEnvironment::getTeamBoundaryDataVec()
 {
-    std::vector<std::vector<float>> team_boundary_xy_data_vec;
+    std::vector<std::vector<std::vector<float>>> team_boundary_data_vec;
 
     if(!world_observation_.getTeamBoundaryPolygon(world_controller_))
     {
-        std::cout << "WorldEnvironment::getTeamBoundaryXYData :\n" <<
+        std::cout << "WorldEnvironment::getTeamBoundaryData :\n" <<
           "getTeamBoundaryPolygon failed!\n";
 
-        return team_boundary_xy_data_vec;
+        return team_boundary_data_vec;
     }
 
     const std::vector<EasyPolygon2D>& team_boundary_polygon_vec =
@@ -646,48 +660,50 @@ std::vector<std::vector<float>> WorldEnvironment::getTeamBoundaryXYDataVec()
 
     if(team_boundary_polygon_vec.size() == 0)
     {
-        return team_boundary_xy_data_vec;
+        return team_boundary_data_vec;
     }
 
-    team_boundary_xy_data_vec.resize(team_boundary_polygon_vec.size());
+    team_boundary_data_vec.resize(team_boundary_polygon_vec.size());
 
     for(size_t i = 0; i < team_boundary_polygon_vec.size(); ++i)
     {
-        std::vector<float>& team_boundary_xy_data = team_boundary_xy_data_vec[i];
+        std::vector<std::vector<float>>& team_boundary_data = team_boundary_data_vec[i];
         const EasyPolygon2D& team_boundary_polygon = team_boundary_polygon_vec[i];
 
         if(team_boundary_polygon.point_list.size() == 0)
         {
-            std::cout << "WorldEnvironment::getTeamBoundaryXYData :\n" <<
+            std::cout << "WorldEnvironment::getTeamBoundaryData :\n" <<
               "team boundary polygon is empty!\n";
 
             continue;
         }
 
-        team_boundary_xy_data.resize(2 * team_boundary_polygon.point_list.size(), 0);
+        team_boundary_data.resize(team_boundary_polygon.point_list.size());
 
         for(size_t j = 0; j < team_boundary_polygon.point_list.size(); ++j)
         {
+            team_boundary_data[j].resize(2);
+
             const EasyPoint2D& team_boundary_point = team_boundary_polygon.point_list[j];
 
-            team_boundary_xy_data[2 * j] = team_boundary_point.x;
-            team_boundary_xy_data[2 * j + 1] = team_boundary_point.y;
+            team_boundary_data[j][0] = team_boundary_point.x;
+            team_boundary_data[j][1] = team_boundary_point.y;
         }
     }
 
-    return team_boundary_xy_data_vec;
+    return team_boundary_data_vec;
 }
 
-std::vector<std::vector<float>> WorldEnvironment::getPersonBoundaryXYDataVec()
+std::vector<std::vector<std::vector<float>>> WorldEnvironment::getPersonBoundaryDataVec()
 {
-    std::vector<std::vector<float>> person_boundary_xy_data_vec;
+    std::vector<std::vector<std::vector<float>>> person_boundary_data_vec;
 
     if(!world_observation_.getPersonBoundaryPolygon(world_controller_))
     {
-        std::cout << "WorldEnvironment::getPersonBoundaryXYData :\n" <<
+        std::cout << "WorldEnvironment::getPersonBoundaryData :\n" <<
           "getPersonBoundaryPolygon failed!\n";
 
-        return person_boundary_xy_data_vec;
+        return person_boundary_data_vec;
     }
 
     const std::vector<EasyPolygon2D>& person_boundary_polygon_vec =
@@ -695,48 +711,50 @@ std::vector<std::vector<float>> WorldEnvironment::getPersonBoundaryXYDataVec()
 
     if(person_boundary_polygon_vec.size() == 0)
     {
-        return person_boundary_xy_data_vec;
+        return person_boundary_data_vec;
     }
 
-    person_boundary_xy_data_vec.resize(person_boundary_polygon_vec.size());
+    person_boundary_data_vec.resize(person_boundary_polygon_vec.size());
 
     for(size_t i = 0; i < person_boundary_polygon_vec.size(); ++i)
     {
-        std::vector<float>& person_boundary_xy_data = person_boundary_xy_data_vec[i];
+        std::vector<std::vector<float>>& person_boundary_data = person_boundary_data_vec[i];
         const EasyPolygon2D& person_boundary_polygon = person_boundary_polygon_vec[i];
 
         if(person_boundary_polygon.point_list.size() == 0)
         {
-            std::cout << "WorldEnvironment::getPersonBoundaryXYData :\n" <<
+            std::cout << "WorldEnvironment::getPersonBoundaryData :\n" <<
               "person boundary polygon is empty!\n";
 
             continue;
         }
 
-        person_boundary_xy_data.resize(2 * person_boundary_polygon.point_list.size(), 0);
+        person_boundary_data.resize(person_boundary_polygon.point_list.size());
 
         for(size_t j = 0; j < person_boundary_polygon.point_list.size(); ++j)
         {
+            person_boundary_data[j].resize(2);
+
             const EasyPoint2D& person_boundary_point = person_boundary_polygon.point_list[j];
 
-            person_boundary_xy_data[2 * j] = person_boundary_point.x;
-            person_boundary_xy_data[2 * j + 1] = person_boundary_point.y;
+            person_boundary_data[j][0] = person_boundary_point.x;
+            person_boundary_data[j][1] = person_boundary_point.y;
         }
     }
 
-    return person_boundary_xy_data_vec;
+    return person_boundary_data_vec;
 }
 
-std::vector<std::vector<float>> WorldEnvironment::getFurnitureBoundaryXYDataVec()
+std::vector<std::vector<std::vector<float>>> WorldEnvironment::getFurnitureBoundaryDataVec()
 {
-    std::vector<std::vector<float>> furniture_boundary_xy_data_vec;
+    std::vector<std::vector<std::vector<float>>> furniture_boundary_data_vec;
 
     if(!world_observation_.getFurnitureBoundaryPolygon(world_controller_))
     {
-        std::cout << "WorldEnvironment::getFurnitureBoundaryXYData :\n" <<
+        std::cout << "WorldEnvironment::getFurnitureBoundaryData :\n" <<
           "getFurnitureBoundaryPolygon failed!\n";
 
-        return furniture_boundary_xy_data_vec;
+        return furniture_boundary_data_vec;
     }
 
     const std::vector<EasyPolygon2D>& furniture_boundary_polygon_vec =
@@ -744,35 +762,37 @@ std::vector<std::vector<float>> WorldEnvironment::getFurnitureBoundaryXYDataVec(
 
     if(furniture_boundary_polygon_vec.size() == 0)
     {
-        return furniture_boundary_xy_data_vec;
+        return furniture_boundary_data_vec;
     }
 
-    furniture_boundary_xy_data_vec.resize(furniture_boundary_polygon_vec.size());
+    furniture_boundary_data_vec.resize(furniture_boundary_polygon_vec.size());
 
     for(size_t i = 0; i < furniture_boundary_polygon_vec.size(); ++i)
     {
-        std::vector<float>& furniture_boundary_xy_data = furniture_boundary_xy_data_vec[i];
+        std::vector<std::vector<float>>& furniture_boundary_data = furniture_boundary_data_vec[i];
         const EasyPolygon2D& furniture_boundary_polygon = furniture_boundary_polygon_vec[i];
 
         if(furniture_boundary_polygon.point_list.size() == 0)
         {
-            std::cout << "WorldEnvironment::getFurnitureBoundaryXYData :\n" <<
+            std::cout << "WorldEnvironment::getFurnitureBoundaryData :\n" <<
               "furniture boundary polygon is empty!\n";
 
             continue;
         }
 
-        furniture_boundary_xy_data.resize(2 * furniture_boundary_polygon.point_list.size(), 0);
+        furniture_boundary_data.resize(furniture_boundary_polygon.point_list.size());
 
         for(size_t j = 0; j < furniture_boundary_polygon.point_list.size(); ++j)
         {
+            furniture_boundary_data[j].resize(2);
+
             const EasyPoint2D& furniture_boundary_point = furniture_boundary_polygon.point_list[j];
 
-            furniture_boundary_xy_data[2 * j] = furniture_boundary_point.x;
-            furniture_boundary_xy_data[2 * j + 1] = furniture_boundary_point.y;
+            furniture_boundary_data[j][0] = furniture_boundary_point.x;
+            furniture_boundary_data[j][1] = furniture_boundary_point.y;
         }
     }
 
-    return furniture_boundary_xy_data_vec;
+    return furniture_boundary_data_vec;
 }
 

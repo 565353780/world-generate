@@ -353,32 +353,29 @@ bool EasyWorldWidget::drawOuterWallSpaceBoundary()
         painter.setBrush(brush);
     }
 
-    const std::vector<std::vector<float>> outerwall_boundary_xy_data_vec =
-      world_environment_.getOuterWallBoundaryXYDataVec();
+    const std::vector<std::vector<std::vector<float>>> outerwall_boundary_data_vec =
+      world_environment_.getOuterWallBoundaryDataVec();
 
-    for(const std::vector<float>& outerwall_boundary_xy_data : outerwall_boundary_xy_data_vec)
+    for(const std::vector<std::vector<float>>& outerwall_boundary_data : outerwall_boundary_data_vec)
     {
-        if(outerwall_boundary_xy_data.size() == 0)
+        if(outerwall_boundary_data.size() == 0)
         {
             continue;
         }
 
-        const size_t outerwall_boundary_point_num = outerwall_boundary_xy_data.size() / 2;
-
         QPolygon polygon;
-        polygon.resize(outerwall_boundary_point_num);
+        polygon.resize(outerwall_boundary_data.size());
 
         const float line_info_dist = 20;
 
-        for(size_t i = 0; i < outerwall_boundary_point_num; ++i)
+        for(size_t i = 0; i < outerwall_boundary_data.size(); ++i)
         {
-            const size_t current_point_idx = 2 * i;
-            const size_t next_point_idx = (2 * (i + 1)) % outerwall_boundary_xy_data.size();
+            const size_t next_point_idx = (i + 1) % outerwall_boundary_data.size();
 
-            const float current_point_x = outerwall_boundary_xy_data[current_point_idx];
-            const float current_point_y = outerwall_boundary_xy_data[current_point_idx + 1];
-            const float next_point_x = outerwall_boundary_xy_data[next_point_idx];
-            const float next_point_y = outerwall_boundary_xy_data[next_point_idx + 1];
+            const float current_point_x = outerwall_boundary_data[i][0];
+            const float current_point_y = outerwall_boundary_data[i][1];
+            const float next_point_x = outerwall_boundary_data[next_point_idx][0];
+            const float next_point_y = outerwall_boundary_data[next_point_idx][1];
 
             polygon.setPoint(i, QPoint(
                   zoom_ * current_point_x,
@@ -544,32 +541,29 @@ bool EasyWorldWidget::drawInnerWallSpaceBoundary()
         painter.setBrush(brush);
     }
 
-    const std::vector<std::vector<float>> innerwall_boundary_xy_data_vec =
-      world_environment_.getInnerWallBoundaryXYDataVec();
+    const std::vector<std::vector<std::vector<float>>> innerwall_boundary_data_vec =
+      world_environment_.getInnerWallBoundaryDataVec();
 
-    for(const std::vector<float>& innerwall_boundary_xy_data : innerwall_boundary_xy_data_vec)
+    for(const std::vector<std::vector<float>>& innerwall_boundary_data : innerwall_boundary_data_vec)
     {
-        if(innerwall_boundary_xy_data.size() == 0)
+        if(innerwall_boundary_data.size() == 0)
         {
             continue;
         }
 
-        const size_t innerwall_boundary_point_num = innerwall_boundary_xy_data.size() / 2;
-
         QPolygon polygon;
-        polygon.resize(innerwall_boundary_point_num);
+        polygon.resize(innerwall_boundary_data.size());
 
         const float line_info_dist = 20;
 
-        for(size_t i = 0; i < innerwall_boundary_point_num; ++i)
+        for(size_t i = 0; i < innerwall_boundary_data.size(); ++i)
         {
-            const size_t current_point_idx = 2 * i;
-            const size_t next_point_idx = (2 * (i + 1)) % innerwall_boundary_xy_data.size();
+            const size_t next_point_idx = (i + 1) % innerwall_boundary_data.size();
 
-            const float current_point_x = innerwall_boundary_xy_data[current_point_idx];
-            const float current_point_y = innerwall_boundary_xy_data[current_point_idx + 1];
-            const float next_point_x = innerwall_boundary_xy_data[next_point_idx];
-            const float next_point_y = innerwall_boundary_xy_data[next_point_idx + 1];
+            const float current_point_x = innerwall_boundary_data[i][0];
+            const float current_point_y = innerwall_boundary_data[i][1];
+            const float next_point_x = innerwall_boundary_data[next_point_idx][0];
+            const float next_point_y = innerwall_boundary_data[next_point_idx][1];
 
             polygon.setPoint(i, QPoint(
                   zoom_ * current_point_x,

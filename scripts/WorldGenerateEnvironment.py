@@ -14,8 +14,8 @@ from WorldGenerateReward import WorldGenerateReward
 
 class WorldGenerateEnvironment(gym.Env):
     metadata = {
-        'render.modes': ['human'],
-        'video.frames_per_second': 2
+        'render.modes': ['human']
+        #  'video.frames_per_second': 2
     }
     
     def __init__(self):
@@ -111,6 +111,7 @@ class WorldGenerateEnvironment(gym.Env):
         done = False
         self.run_time += 1
         if self.run_time > 10:
+            self.run_time = 0
             done = True
 
         if not self.action_space.contains(action):

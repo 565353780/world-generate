@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import cv2
 import gym
 import numpy as np
 import random
@@ -27,6 +28,14 @@ class WorldGenerateEnvironment(gym.Env):
         self.observation_height = 256
         self.observation_free = 20
 
+        self.space_utilization_weight = 0.01
+        self.movable_weight = 1
+        self.escapable_weight = 1
+
+        self.width_prefix = 4
+        self.height_prefix = 4
+        self.room_num_prefix = 1
+
         self.wall_edge_num_max = None
         self.outerwall_edge_num_vec = []
         self.innerwall_edge_num_vec = []
@@ -34,10 +43,6 @@ class WorldGenerateEnvironment(gym.Env):
         self.innerwall_num = None
         self.container_room_num_max = None
         self.wall_length_max = None
-
-        self.width_prefix = 4
-        self.height_prefix = 4
-        self.room_num_prefix = 1
 
         self.initWorld()
 
@@ -53,7 +58,23 @@ class WorldGenerateEnvironment(gym.Env):
                 self.wall_length_max                     # position
             ], dtype=np.float32)
         )
-        self.observation_space = gym.spaces.Box(low=0, high=255, shape=(4, self.observation_width, self.observation_height), dtype=np.uint8)
+        self.observation_space = gym.spaces.Box(
+            low=0,
+            high=255,
+            shape=(4, self.observation_width, self.observation_height),
+            dtype=np.uint8)
+
+        self.world_generate_observation.initObservation(
+            self.observation_width,
+            self.observation_height,
+            self.observation_free)
+        self.observation = self.world_generate_observation.getObservation(self.world_environment)
+
+        self.world_generate_reward.initReward(
+            self.space_utilization_weight,
+            self.movable_weight,
+            self.escapable_weight)
+        self.reward = self.world_generate_reward.getReward(self.observation)
 
         return
 
@@ -83,26 +104,19 @@ class WorldGenerateEnvironment(gym.Env):
         self.container_room_num_max = 4
         self.wall_length_max = 30
 
-        self.world_generate_observation.initObservation(
-            self.observation_width,
-            self.observation_height,
-            self.observation_free)
-
-        self.world_generate_observation.updateObservation(self.world_environment)
-
         self.run_time = 0
         return
 
     def step(self, action):
-        if not self.action_space.contains(action):
-            print("WorldGenerateEnvironment::step :\nthis action is not valid!")
-            return None, None, None, {}
-
-        reward = 1
         done = False
         self.run_time += 1
         if self.run_time > 10:
             done = True
+
+        if not self.action_space.contains(action):
+            print("WorldGenerateEnvironment::step :\nthis action is not valid!")
+            return self.observation, -1000, done, {}
+
 
         wall_idx = int(action[0])
         wall_edge_idx = int(action[1])
@@ -113,13 +127,13 @@ class WorldGenerateEnvironment(gym.Env):
             room_num = 1
 
         if wall_idx >= self.outerwall_num + self.innerwall_num:
-            return self.world_generate_observation.observation, -100, done, {}
+            return self.observation, -100, done, {}
 
         if wall_idx < self.outerwall_num:
             if wall_edge_idx >= self.outerwall_edge_num_vec[wall_idx]:
                 return self.world_generate_observation.observation, -100, done, {}
         elif wall_edge_idx >= self.innerwall_edge_num_vec[wall_idx - self.outerwall_num]:
-            return self.world_generate_observation.observation, -100, done, {}
+            return self.observation, -100, done, {}
 
         if wall_idx < self.outerwall_num:
             self.world_environment.placeOuterWallRoomContainer(
@@ -138,25 +152,19 @@ class WorldGenerateEnvironment(gym.Env):
                 self.height_prefix,
                 self.room_num_prefix)
 
-        self.world_generate_observation.updateObservation(self.world_environment)
+        self.observation = self.world_generate_observation.getObservation(self.world_environment)
+        self.reward = self.world_generate_reward.getReward(self.observation)
 
-        return self.world_generate_observation.observation, reward, done, {}
-
-        #  reward = self.world_environment.getReward()
-        reward = 1
-        done = False
-        self.run_time += 1
-        if self.run_time > 10:
-            done = True
-
-        return self.world_generate_observation.observation, reward, done, {}
+        return self.observation, self.reward, done, {}
 
     def reset(self):
         self.world_environment.resetButRemainWall()
-        self.world_generate_observation.updateObservation(self.world_environment)
-        return self.world_generate_observation.observation
+        self.observation = self.world_generate_observation.getObservation(self.world_environment)
+        self.reward = self.world_generate_reward.getReward(self.observation)
+        return self.observation
 
     def render(self, mode="human"):
+        self.world_generate_observation.render(0)
         return None
 
     def close(self):
@@ -169,6 +177,23 @@ class WorldGenerateEnvironment(gym.Env):
 
 if __name__ == "__main__":
     world_generate_environment = WorldGenerateEnvironment()
-    world_generate_environment.step([0, 0, 0])
+    world_generate_environment.step(world_generate_environment.action_space.sample())
+    world_generate_environment.render()
+    world_generate_environment.step(world_generate_environment.action_space.sample())
+    world_generate_environment.render()
+    world_generate_environment.step(world_generate_environment.action_space.sample())
+    world_generate_environment.render()
+    world_generate_environment.step(world_generate_environment.action_space.sample())
+    world_generate_environment.render()
+    world_generate_environment.reset()
+    world_generate_environment.render()
+    world_generate_environment.step(world_generate_environment.action_space.sample())
+    world_generate_environment.render()
+    world_generate_environment.step(world_generate_environment.action_space.sample())
+    world_generate_environment.render()
+    world_generate_environment.step(world_generate_environment.action_space.sample())
+    world_generate_environment.render()
+    world_generate_environment.step(world_generate_environment.action_space.sample())
+    world_generate_environment.render()
     world_generate_environment.reset()
 

@@ -7,6 +7,14 @@ import cv2
 class WorldGenerateObservation(object):
 
     def __init__(self):
+        # channels : scene, wall, room, free, connect
+        self.scene_channel_idx = 0
+        self.wall_channel_idx = 1
+        self.room_channel_idx = 2
+        self.free_channel_idx = 3
+        self.connect_channel_idx = 4
+        self.image_channels = 5
+
         self.observation = None
 
         self.image_width = None
@@ -36,20 +44,12 @@ class WorldGenerateObservation(object):
         self.team_boundary_data_vec_in_image = None
         self.person_boundary_data_vec_in_image = None
         self.furniture_boundary_data_vec_in_image = None
-
-        self.scene_channel_idx = 0
-        self.wall_channel_idx = 1
-        self.room_channel_idx = 2
-        self.obstacle_channel_idx = 3
         return
 
     def initObservation(self, width, height, free):
         self.image_width = width
         self.image_height = height
         self.free_area_width = free
-
-        # channels : scene, wall, room, obstacle
-        self.observation = np.zeros((4, self.image_width, self.image_height))
         return True
 
     def getImageTransform(self):
@@ -176,29 +176,44 @@ class WorldGenerateObservation(object):
         self.fillPolyInObservation(self.room_channel_idx, self.roomcontainer_boundary_data_vec_in_image, 255)
         return True
 
-    def generateObstacleObservation(self):
-        self.drawPolyLinesInObservation(self.obstacle_channel_idx, self.outerwall_boundary_data_vec_in_image, 255)
-        self.drawPolyLinesInObservation(self.obstacle_channel_idx, self.innerwall_boundary_data_vec_in_image, 255)
-        self.drawPolyLinesInObservation(self.obstacle_channel_idx, self.wallroom_boundary_data_vec_in_image, 255)
-        self.drawPolyLinesInObservation(self.obstacle_channel_idx, self.freeroom_boundary_data_vec_in_image, 255)
+    def generateFreeObservation(self):
+        self.fillPolyInObservation(self.free_channel_idx, self.outerwall_boundary_data_vec_in_image, 255)
+        self.fillPolyInObservation(self.free_channel_idx, self.innerwall_boundary_data_vec_in_image, 0)
+        self.fillPolyInObservation(self.free_channel_idx, self.roomcontainer_boundary_data_vec_in_image, 0)
+        return True
 
-        self.fillPolyInObservation(self.obstacle_channel_idx, self.furniture_boundary_data_vec_in_image, 255)
-        self.fillPolyInObservation(self.obstacle_channel_idx, self.door_boundary_data_vec_in_image, 0)
+    def generateConnectObservation(self):
+        self.fillPolyInObservation(self.connect_channel_idx, self.outerwall_boundary_data_vec_in_image, 255)
+        self.fillPolyInObservation(self.connect_channel_idx, self.innerwall_boundary_data_vec_in_image, 0)
+
+        self.drawPolyLinesInObservation(self.connect_channel_idx, self.wallroom_boundary_data_vec_in_image, 0)
+        self.drawPolyLinesInObservation(self.connect_channel_idx, self.freeroom_boundary_data_vec_in_image, 0)
+
+        self.fillPolyInObservation(self.connect_channel_idx, self.door_boundary_data_vec_in_image, 255)
+        self.fillPolyInObservation(self.connect_channel_idx, self.furniture_boundary_data_vec_in_image, 0)
         return True
 
     def updateObservation(self, world_environment):
-        self.observation = np.zeros((4, self.image_width, self.image_height))
+        self.observation = np.zeros((self.image_channels, self.image_width, self.image_height), dtype=np.uint8)
         self.getWorldBoundaryData(world_environment)
         self.generateSceneObservation()
         self.generateWallObservation()
         self.generateRoomObservation()
-        self.generateObstacleObservation()
+        self.generateFreeObservation()
+        self.generateConnectObservation()
+        return True
 
+    def getObservation(self, world_environment):
+        self.updateObservation(world_environment)
+        return self.observation
+
+    def render(self, wait_key):
         cv2.imshow("observation", np.hstack((
-                       self.observation[self.scene_channel_idx],
-                       self.observation[self.wall_channel_idx],
-                       self.observation[self.room_channel_idx],
-                       self.observation[self.obstacle_channel_idx])))
-        cv2.waitKey(0)
+            self.observation[self.scene_channel_idx],
+            self.observation[self.wall_channel_idx],
+            self.observation[self.room_channel_idx],
+            self.observation[self.free_channel_idx],
+            self.observation[self.connect_channel_idx])))
+        cv2.waitKey(wait_key)
         return True
 

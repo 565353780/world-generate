@@ -2,47 +2,75 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import cv2
 
 class WorldGenerateReward(object):
 
     def __init__(self):
-        #  self.global_map = global_map
-        #  self.previous_observation = np.zeros(global_map.shape)
-        self.information_gain_weight = 0.6
-        self.step_weight = 0.1
-        self.obstacle_weight = 10.0
+        self.scene_channel_idx = 0
+        self.wall_channel_idx = 1
+        self.room_channel_idx = 2
+        self.free_channel_idx = 3
+        self.connect_channel_idx = 4
 
-    def compute_reward(self, current_pose, current_observation):
+        self.reward = None
 
-        return self.step_weight * self.compute_step_reward() + \
-               self.obstacle_weight * self.compute_obstacle_reward(current_pose) + \
-               self.information_gain_weight * self.compute_information_gain_reward(current_observation) 
-    
-    def compute_step_reward(self):
-        return -1.0
+        self.space_utilization_weight = None
+        self.movable_weight = None
+        self.escapable_weight = None
 
-    def compute_obstacle_reward(self, current_pose):
-        if int(current_pose[0]) < 0 or int(current_pose[0]) >= self.global_map.shape[0] or int(current_pose[1]) < 0 or int(current_pose[1]) >= self.global_map.shape[1]:
-            # print("Out of the Map!")
-            return -1.0
-        if self.global_map[int(current_pose[0])][int(current_pose[1])][0] == 0:
-            # print("Hit an obstacle!")
-            return -1.0
+        self.previous_observation = None
+
+        self.space_utilization_score = None
+        self.movable_score = None
+        self.escapable_score = None
+
+        self.previous_space_utilization_score = None
+        self.previous_movable_score = None
+        self.previous_escapable_score = None
+
+    def initReward(self, space_utilization_weight, movable_weight, escapable_weight):
+        self.space_utilization_weight = space_utilization_weight
+        self.movable_weight = movable_weight
+        self.escapable_weight = escapable_weight
+        return True
+
+    def getSpaceUtilizationScore(self, observation):
+        self.space_utilization_score = float(np.sum(observation[self.room_channel_idx] > 0))
+        return True
+
+    def getMovableScore(self, observation):
+        connected_areas_num, pixel_labels = cv2.connectedComponents(observation[self.free_channel_idx])
+        self.movable_score = connected_areas_num
+        return True
+
+    def getEscapableScore(self, observation):
+        connected_areas_num, pixel_labels = cv2.connectedComponents(observation[self.connect_channel_idx])
+        self.escapable_score = connected_areas_num
+        return True
+
+    def updateReward(self, observation):
+        self.reward = 0
+        self.getSpaceUtilizationScore(observation)
+        self.getMovableScore(observation)
+        self.getEscapableScore(observation)
+
+        if self.previous_space_utilization_score is None:
+            self.reward += self.space_utilization_weight * self.space_utilization_score
         else:
-            return 0.0
+            self.reward += self.space_utilization_weight * \
+                (self.space_utilization_score - self.previous_space_utilization_score)
+            self.reward -= self.movable_weight * \
+                (self.movable_score - self.previous_movable_score)
+            self.reward -= self.escapable_weight * \
+                (self.escapable_score - self.previous_escapable_score)
 
-    def compute_information_gain_reward(self, current_observation):
-        if self.previous_observation is None:
-            reward = float(np.sum(current_observation != 0)) / 3.0
-        else:
-            reward = float(np.sum(current_observation != 0) - np.sum(self.previous_observation != 0)) / 3.0
+        self.previous_space_utilization_score = self.space_utilization_score
+        self.previous_movable_score = self.movable_score
+        self.previous_escapable_score = self.escapable_score
+        return True
 
-            if reward < 0:
-                reward = float(np.sum(current_observation != 0)) / 3.0
-        
-        # print('Current Reward : ', reward)
-
-        self.previous_observation = current_observation.copy()
-
-        return reward
+    def getReward(self, observation):
+        self.updateReward(observation)
+        return self.reward
 

@@ -23,6 +23,9 @@ class WorldGenerateEnvironment(gym.Env):
         self.world_generate_observation = WorldGenerateObservation()
         self.world_generate_reward = WorldGenerateReward()
 
+        self.observation_width = 256
+        self.observation_height = 256
+
         self.wall_edge_num_max = None
         self.outerwall_edge_num_vec = []
         self.innerwall_edge_num_vec = []
@@ -36,8 +39,6 @@ class WorldGenerateEnvironment(gym.Env):
 
         self.initWorld()
 
-        self.world_generate_observation.getWorldXYData(self.world_environment)
-
         self.action_space = gym.spaces.Box(
             np.array([
                 0.0,
@@ -50,7 +51,7 @@ class WorldGenerateEnvironment(gym.Env):
                 np.inf                                   # position
             ], dtype=np.float32)
         )
-        self.observation_space = gym.spaces.Box(low=0, high=255, shape=(3, 1024, 1024), dtype=np.uint8)
+        self.observation_space = gym.spaces.Box(low=0, high=255, shape=(3, self.observation_width, self.observation_height), dtype=np.uint8)
         return
 
     def initWorld(self):
@@ -78,7 +79,9 @@ class WorldGenerateEnvironment(gym.Env):
         self.innerwall_num = 1
         self.container_room_num_max = 4
 
-        self.observation = np.zeros((4, 256, 256))
+        self.world_generate_observation.initObservation(self.observation_width, self.observation_height)
+
+        self.world_generate_observation.getObservation(self.world_environment)
 
         self.run_time = 0
         return

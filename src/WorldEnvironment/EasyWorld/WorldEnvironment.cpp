@@ -10,8 +10,30 @@ bool WorldEnvironment::reset()
         return false;
     }
 
-    world_place_generator_.reset();
-    world_editor_.reset();
+    if(!world_place_generator_.reset())
+    {
+        std::cout << "WorldEnvironment::reset :\n" <<
+          "reset world_place_generator_ failed!\n";
+
+        return false;
+    }
+
+    if(!world_observation_.reset())
+    {
+        std::cout << "WorldEnvironment::reset :\n" <<
+          "reset world_observation_ failed!\n";
+
+        return false;
+    }
+
+    if(!world_editor_.reset())
+    {
+        std::cout << "WorldEnvironment::reset :\n" <<
+          "reset world_editor_ failed!\n";
+
+        return false;
+    }
+
     return true;
 }
 

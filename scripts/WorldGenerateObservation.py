@@ -167,7 +167,6 @@ class WorldGenerateObservation(object):
         self.fillPolyInObservation(self.scene_channel_idx, self.roomcontainer_boundary_data_vec_in_image, 255)
         return True
 
-
     def generateWallObservation(self):
         self.drawPolyLinesInObservation(self.wall_channel_idx, self.outerwall_boundary_data_vec_in_image, 255)
         self.drawPolyLinesInObservation(self.wall_channel_idx, self.innerwall_boundary_data_vec_in_image, 255)
@@ -188,6 +187,7 @@ class WorldGenerateObservation(object):
         return True
 
     def updateObservation(self, world_environment):
+        self.observation = np.zeros((4, self.image_width, self.image_height))
         self.getWorldBoundaryData(world_environment)
         self.generateSceneObservation()
         self.generateWallObservation()

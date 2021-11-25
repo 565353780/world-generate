@@ -33,6 +33,7 @@ class WorldGenerateEnvironment(gym.Env):
         self.outerwall_num = None
         self.innerwall_num = None
         self.container_room_num_max = None
+        self.wall_length_max = None
 
         self.width_prefix = 4
         self.height_prefix = 4
@@ -49,14 +50,10 @@ class WorldGenerateEnvironment(gym.Env):
             np.array([
                 self.outerwall_num + self.innerwall_num, # wall_idx
                 self.wall_edge_num_max,                  # wall_edge_idx
-                np.inf                                   # position
+                self.wall_length_max                     # position
             ], dtype=np.float32)
         )
         self.observation_space = gym.spaces.Box(low=0, high=255, shape=(4, self.observation_width, self.observation_height), dtype=np.uint8)
-
-        self.step([0, 0, 0])
-
-        self.world_generate_observation.updateObservation(self.world_environment)
 
         return
 
@@ -84,11 +81,14 @@ class WorldGenerateEnvironment(gym.Env):
         self.outerwall_num = 1
         self.innerwall_num = 1
         self.container_room_num_max = 4
+        self.wall_length_max = 30
 
         self.world_generate_observation.initObservation(
             self.observation_width,
             self.observation_height,
             self.observation_free)
+
+        self.world_generate_observation.updateObservation(self.world_environment)
 
         self.run_time = 0
         return
@@ -138,6 +138,8 @@ class WorldGenerateEnvironment(gym.Env):
                 self.height_prefix,
                 self.room_num_prefix)
 
+        self.world_generate_observation.updateObservation(self.world_environment)
+
         return self.world_generate_observation.observation, reward, done, {}
 
         #  reward = self.world_environment.getReward()
@@ -151,6 +153,7 @@ class WorldGenerateEnvironment(gym.Env):
 
     def reset(self):
         self.world_environment.resetButRemainWall()
+        self.world_generate_observation.updateObservation(self.world_environment)
         return self.world_generate_observation.observation
 
     def render(self, mode="human"):
@@ -166,4 +169,6 @@ class WorldGenerateEnvironment(gym.Env):
 
 if __name__ == "__main__":
     world_generate_environment = WorldGenerateEnvironment()
+    world_generate_environment.step([0, 0, 0])
+    world_generate_environment.reset()
 

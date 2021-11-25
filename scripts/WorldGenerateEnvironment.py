@@ -165,7 +165,7 @@ class WorldGenerateEnvironment(gym.Env):
         return self.observation
 
     def render(self, mode="human"):
-        self.world_generate_observation.render(1)
+        self.world_generate_observation.render(0)
         return None
 
     def close(self):
@@ -178,6 +178,11 @@ class WorldGenerateEnvironment(gym.Env):
 
 if __name__ == "__main__":
     world_generate_environment = WorldGenerateEnvironment()
+    done = False
+    while not done:
+        _, _, done, _ = world_generate_environment.step(world_generate_environment.action_space.sample())
+    exit()
+
     world_generate_environment.step(world_generate_environment.action_space.sample())
     world_generate_environment.render()
     world_generate_environment.step(world_generate_environment.action_space.sample())

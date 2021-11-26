@@ -65,7 +65,10 @@ if __name__ == "__main__":
     start_step_num = 0
 
     if start_episode > 0:
-        model = PPO.load("PPO_" + game_name + "_" + str(start_episode), env)
+        model = PPO.load(
+            "PPO_" + game_name + "_" + str(start_episode),
+            env,
+            tensorboard_log="./PPO_WE_tb/")
     else:
         file_list = os.listdir(os.getcwd())
 
@@ -77,14 +80,23 @@ if __name__ == "__main__":
                     start_step_num = current_step_num
         
         if start_step_num > 0:
-            model = PPO.load("PPO_" + game_name + "_" + str(start_step_num), env)
+            model = PPO.load(
+                "PPO_" + game_name + "_" + str(start_step_num),
+                env,
+                tensorboard_log="./PPO_WE_tb/")
         else:
             if game_name == "MyEnv":
-                model = PPO(policy, env, verbose=1)
+                model = PPO(
+                    policy,
+                    env,
+                    verbose=1,
+                    tensorboard_log="./PPO_WE_tb/")
             else:
-                model = PPO("MlpPolicy", env, verbose=1)
-
-    # callback = SaveOnBestTrainingRewardCallback(check_freq=1000, log_dir=log_dir)
+                model = PPO(
+                    "MlpPolicy",
+                    env,
+                    verbose=1,
+                    tensorboard_log="./PPO_WE_tb/")
 
     if train_mode:
         round = 0
@@ -92,8 +104,10 @@ if __name__ == "__main__":
         model.learning_rate = 1e-4
 
         while True:
-            # model.learn(total_timesteps=total_time_step, callback=callback)
-            model.learn(total_timesteps=total_time_step)
+            model.learn(
+                total_timesteps=total_time_step,
+                tb_log_name="PPO_WE_run",
+                reset_num_timesteps=False)
 
             try:
                 os.remove("PPO_" + game_name + "_" + str(start_step_num + round * total_time_step) + ".zip")
@@ -106,10 +120,6 @@ if __name__ == "__main__":
 
         del model
     else:
-
-        # results_plotter.plot_results([log_dir], total_time_step, results_plotter.X_TIMESTEPS, "PPO MyEnv")
-        # plt.show()
-
         while True:
             obs = env.reset()
             if policy == "CnnLnLstmPolicy" or policy == "CnnLstmPolicy":

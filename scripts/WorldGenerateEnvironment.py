@@ -9,29 +9,6 @@ import random
 from WorldEnvironment import WorldEnvironment
 from WorldGenerateObservation import WorldGenerateObservation
 from WorldGenerateReward import WorldGenerateReward
-from stable_baselines3.common.callbacks import BaseCallback
-
-class TensorboardCallback(BaseCallback):
-    """
-    Custom callback for plotting additional values in tensorboard.
-    """
-
-    def __init__(self, verbose=0):
-        super(TensorboardCallback, self).__init__(verbose)
-        self.key = None
-        self.value = None
-
-    def _on_step(self) -> bool:
-        self.logger.record(self.key, self.value)
-        return True
-
-    def setKey(self, key):
-        self.key = key
-        return True
-
-    def setValue(self, value):
-        self.value = value
-        return True
 
 class WorldGenerateEnvironment(gym.Env):
     metadata = {
@@ -100,8 +77,7 @@ class WorldGenerateEnvironment(gym.Env):
         self.reward = self.world_generate_reward.getReward(self.observation)
 
         self.episode_reward = None
-        self.tensorboard_callback = TensorboardCallback()
-        self.tensorboard_callback.setKey("episode reward")
+        self.done = None
         return
 
     def initWorld(self):
@@ -133,18 +109,27 @@ class WorldGenerateEnvironment(gym.Env):
         self.run_time = 0
 
         self.episode_reward = 0
+        self.last_episode_reward = 0
         return
 
+    def afterStep(self):
+        self.episode_reward += self.reward
+        if self.done:
+            self.last_episode_reward = self.episode_reward
+            self.episode_reward = 0
+        return self.observation, self.reward, self.done, info
+
     def step(self, action):
-        done = False
+        self.done = False
         self.run_time += 1
         if self.run_time > 34:
             self.run_time = 0
-            done = True
+            self.done = True
 
         if not self.action_space.contains(action):
             print("WorldGenerateEnvironment::step :\nthis action is not valid!")
-            return self.observation, -1000, done, {}
+            self.reward = -1000
+            return self.afterStep()
 
         wall_idx = int(action[0])
         wall_edge_idx = int(action[1])
@@ -155,17 +140,21 @@ class WorldGenerateEnvironment(gym.Env):
             room_num = 1
 
         if wall_idx == -1:
-            self.tensorboard_callback.logger.record("episode reward", )
-            return self.observation, 0, True, {}
+            self.reward = 0
+            self.done = True
+            return self.afterStep()
 
         if wall_idx >= self.outerwall_num + self.innerwall_num:
-            return self.observation, -100, done, {}
+            self.reward = -100
+            return self.afterStep()
 
         if wall_idx < self.outerwall_num:
             if wall_edge_idx >= self.outerwall_edge_num_vec[wall_idx]:
-                return self.observation, -100, done, {}
+                self.reward = -100
+                return self.afterStep()
         elif wall_edge_idx >= self.innerwall_edge_num_vec[wall_idx - self.outerwall_num]:
-            return self.observation, -100, done, {}
+            self.reward = -100
+            return self.afterStep()
 
         if wall_idx < self.outerwall_num:
             self.world_environment.placeOuterWallRoomContainer(
@@ -187,7 +176,7 @@ class WorldGenerateEnvironment(gym.Env):
         self.observation = self.world_generate_observation.getObservation(self.world_environment)
         self.reward = self.world_generate_reward.getReward(self.observation)
 
-        return self.observation, self.reward, done, {}
+        return self.afterStep()
 
     def reset(self):
         self.world_environment.resetButRemainWall()

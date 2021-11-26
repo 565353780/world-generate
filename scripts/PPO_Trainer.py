@@ -8,8 +8,19 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecNormalize, VecFrameStack
+from stable_baselines3.common.callbacks import BaseCallback
 
 from WorldGenerateEnvironment import WorldGenerateEnvironment
+
+class TensorboardCallback(BaseCallback):
+    def __init__(self, verbose=0):
+        super(TensorboardCallback, self).__init__(verbose)
+        return
+
+    def _on_step(self) -> bool:
+        if self.training_env.done:
+            self.logger.record("reward", self.training_env.last_episode_reward)
+        return True
 
 if __name__ == "__main__":
     game_name = "MyEnv"
@@ -107,7 +118,8 @@ if __name__ == "__main__":
             model.learn(
                 total_timesteps=total_time_step,
                 tb_log_name="PPO_WE_run",
-                reset_num_timesteps=False)
+                reset_num_timesteps=False,
+                callback=TensorboardCallback())
 
             try:
                 os.remove("PPO_" + game_name + "_" + str(start_step_num + round * total_time_step) + ".zip")

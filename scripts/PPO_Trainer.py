@@ -17,7 +17,7 @@ if __name__ == "__main__":
     policy = "CnnPolicy"
     log_dir = "./tmp/"
     start_episode = 0
-    total_time_step =2500000
+    total_time_step =50000
     num_cpu = 6
     global_seeds = 0
 

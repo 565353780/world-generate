@@ -9,8 +9,29 @@ import random
 from WorldEnvironment import WorldEnvironment
 from WorldGenerateObservation import WorldGenerateObservation
 from WorldGenerateReward import WorldGenerateReward
+from stable_baselines3.common.callbacks import BaseCallback
 
-#  world_environment.generateFreeRoomContainer(4, 4, 0.5, 2)
+class TensorboardCallback(BaseCallback):
+    """
+    Custom callback for plotting additional values in tensorboard.
+    """
+
+    def __init__(self, verbose=0):
+        super(TensorboardCallback, self).__init__(verbose)
+        self.key = None
+        self.value = None
+
+    def _on_step(self) -> bool:
+        self.logger.record(self.key, self.value)
+        return True
+
+    def setKey(self, key):
+        self.key = key
+        return True
+
+    def setValue(self, value):
+        self.value = value
+        return True
 
 class WorldGenerateEnvironment(gym.Env):
     metadata = {
@@ -54,7 +75,7 @@ class WorldGenerateEnvironment(gym.Env):
                 0.0
             ], dtype=np.float32),
             np.array([
-                self.outerwall_num + self.innerwall_num, # wall_idx, finish eposide if < 0
+                self.outerwall_num + self.innerwall_num, # wall_idx, finish episode if < 0
                 self.wall_edge_num_max,                  # wall_edge_idx
                 self.wall_length_max                     # position
             ], dtype=np.float32)
@@ -78,6 +99,9 @@ class WorldGenerateEnvironment(gym.Env):
             self.escapable_weight)
         self.reward = self.world_generate_reward.getReward(self.observation)
 
+        self.episode_reward = None
+        self.tensorboard_callback = TensorboardCallback()
+        self.tensorboard_callback.setKey("episode reward")
         return
 
     def initWorld(self):
@@ -107,6 +131,8 @@ class WorldGenerateEnvironment(gym.Env):
         self.wall_length_max = 30
 
         self.run_time = 0
+
+        self.episode_reward = 0
         return
 
     def step(self, action):
@@ -129,6 +155,7 @@ class WorldGenerateEnvironment(gym.Env):
             room_num = 1
 
         if wall_idx == -1:
+            self.tensorboard_callback.logger.record("episode reward", )
             return self.observation, 0, True, {}
 
         if wall_idx >= self.outerwall_num + self.innerwall_num:

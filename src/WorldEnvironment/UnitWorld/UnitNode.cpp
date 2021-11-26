@@ -273,13 +273,6 @@ bool UnitNode::removeAllChild()
     return true;
 }
 
-bool UnitNode::getPointPosition(
-    const float& point_param,
-    EasyPoint2D& point_position)
-{
-    return true;
-}
-
 bool UnitNode::outputInfo(
     const size_t &info_level) const
 {

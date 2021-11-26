@@ -13,7 +13,6 @@ from WorldGenerateReward import WorldGenerateReward
 class WorldGenerateEnvironment(gym.Env):
     metadata = {
         'render.modes': ['human']
-        #  'video.frames_per_second': 2
     }
     
     def __init__(self):

@@ -52,6 +52,15 @@ public:
 
     float getPolygonAreaAbs() const;
 
+    bool getPointPosition(
+        const float& point_param,
+        EasyPoint2D& point_position,
+        EasyPoint2D& point_direction);
+
+    bool getPointParam(
+        const EasyPoint2D &point_position,
+        float& point_param);
+
 private:
     bool updateRect();
 

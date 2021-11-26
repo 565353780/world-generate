@@ -65,14 +65,6 @@ public:
 
     bool removeAllChild();
 
-    bool getPointPosition(
-        const float& point_param,
-        EasyPoint2D& point_position);
-
-    bool getPointParam(
-        const EasyPoint2D &point_position,
-        float& point_param);
-
     bool outputInfo(
         const size_t &info_level) const;
 

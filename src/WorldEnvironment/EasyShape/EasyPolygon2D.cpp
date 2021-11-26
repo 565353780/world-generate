@@ -11,6 +11,12 @@ bool EasyPolygon2D::reset()
 bool EasyPolygon2D::addPoint(
     const EasyPoint2D &point)
 {
+    if((point.x == point_list.back().x && point.y == point_list.back().y) ||
+        (point.x == point_list[0].x && point.y == point_list[0].y))
+    {
+        return true;
+    }
+
     point_list.emplace_back(point);
 
     if(!update())
@@ -45,6 +51,15 @@ bool EasyPolygon2D::insertPoint(
     {
         std::cout << "insert point to polygon failed!" << std::endl;
         return false;
+    }
+
+    const size_t next_point_idx = (insert_idx + 1) % point_list.size();
+    const size_t prev_point_idx = (insert_idx - 1 + point_list.size()) % point_list.size();
+
+    if((point.x == point_list[next_point_idx].x && point.y == point_list[next_point_idx].y) ||
+        (point.x == point_list[prev_point_idx].x && point.y == point_list[prev_point_idx].y))
+    {
+        return true;
     }
 
     point_list.insert(point_list.begin() + insert_idx, point);
@@ -104,7 +119,28 @@ bool EasyPolygon2D::setPointPosition(
         return false;
     }
 
-    point_list[point_idx] = point_position;
+    const size_t next_point_idx = (point_idx + 1) % point_list.size();
+    const size_t prev_point_idx = (point_idx - 1 + point_list.size()) % point_list.size();
+
+    if((point_position.x == point_list[next_point_idx].x && point_position.y == point_list[next_point_idx].y) ||
+        (point_position.x == point_list[prev_point_idx].x && point_position.y == point_list[prev_point_idx].y))
+    {
+        if(!removePoint(point_idx))
+        {
+            std::cout << "EasyPolygon2D::setPointPosition :\n" <<
+              "Input :\n" <<
+              "\t point_idx = " << point_idx << std::endl <<
+              "\t point_position = [" << point_position.x << "," <<
+              point_position.y << "]\n" <<
+              "removePoint failed!\n";
+
+            return false;
+        }
+    }
+    else
+    {
+        point_list[point_idx] = point_position;
+    }
 
     if(!update())
     {
@@ -179,6 +215,92 @@ float EasyPolygon2D::getPolygonAreaAbs() const
     return std::abs(polygon_area);
 }
 
+
+bool EasyPolygon2D::getPointPosition(
+    const float& point_param,
+    EasyPoint2D& point_position,
+    EasyPoint2D& point_direction)
+{
+    point_position.setPosition(0, 0);
+    point_direction.setPosition(0, 0);
+
+    if(point_param < 0 || point_param > 1)
+    {
+        std::cout << "EasyPolygon2D::getPointPosition :\n" <<
+          "Input :\n" <<
+          "\t point_param = " << point_param << std::endl <<
+          "\t point_position = [" << point_position.x << "," <<
+          point_position.y << "]\n" <<
+          "\t point_direction = [" << point_direction.x << "," <<
+          point_direction.y << "]\n" <<
+          "point_param out of range!\n";
+
+        return false;
+    }
+
+    if(point_list.size() == 0)
+    {
+        std::cout << "EasyPolygon2D::getPointPosition :\n" <<
+          "Input :\n" <<
+          "\t point_param = " << point_param << std::endl <<
+          "\t point_position = [" << point_position.x << "," <<
+          point_position.y << "]\n" <<
+          "\t point_direction = [" << point_direction.x << "," <<
+          point_direction.y << "]\n" <<
+          "polygon is empty!\n";
+
+        return false;
+    }
+
+    if(perimeter == 0)
+    {
+        point_position = point_list[0];
+        return true;
+    }
+
+    const float point_length = point_param * perimeter;
+
+    size_t point_on_line_idx = -1;
+    for(const float& polygon_point_length : point_length_vec)
+    {
+        if(point_length < polygon_point_length)
+        {
+            break;
+        }
+
+        ++point_on_line_idx;
+    }
+
+    const float point_length_remain = point_length - point_length_vec[point_on_line_idx];
+
+    const float line_length = point_length_vec[point_on_line_idx + 1] - point_length_vec[point_on_line_idx];
+
+    const size_t next_point_idx = (point_on_line_idx + 1) % point_list.size();
+
+    const float point_scale = point_length_remain / line_length;
+
+    const EasyPoint2D& line_start_point = point_list[point_on_line_idx];
+    const EasyPoint2D& line_end_point = point_list[next_point_idx];
+
+    const float unit_line_x_diff = (line_end_point.x - line_start_point.x) / line_length;
+    const float unit_line_y_diff = (line_end_point.y - line_start_point.y) / line_length;
+
+    point_position.setPosition(
+        line_start_point.x + unit_line_x_diff * point_scale,
+        line_start_point.y + unit_line_y_diff * point_scale);
+
+    point_direction.setPosition(-unit_line_y_diff, unit_line_x_diff);
+
+    return true;
+}
+
+bool EasyPolygon2D::getPointParam(
+    const EasyPoint2D &point_position,
+    float& point_param)
+{
+    return true;
+}
+
 bool EasyPolygon2D::updateRect()
 {
     if(point_list.size() == 0)
@@ -209,7 +331,7 @@ bool EasyPolygon2D::updatePolygonPerimeter()
 {
     perimeter = 0;
 
-    point_length_vec.resize(point_list.size());
+    point_length_vec.resize(point_list.size() + 1);
 
     if(point_list.size() == 0)
     {
@@ -230,6 +352,8 @@ bool EasyPolygon2D::updatePolygonPerimeter()
 
         perimeter += std::sqrt(line_length2);
     }
+
+    point_length_vec[point_list.size()] = perimeter;
 
     return true;
 }

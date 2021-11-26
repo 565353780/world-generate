@@ -9,7 +9,6 @@ import random
 from WorldEnvironment import WorldEnvironment
 from WorldGenerateObservation import WorldGenerateObservation
 from WorldGenerateReward import WorldGenerateReward
-from stable_baselines3.common.logger import Logger
 
 class WorldGenerateEnvironment(gym.Env):
     metadata = {

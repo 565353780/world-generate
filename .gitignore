@@ -27,3 +27,6 @@ compile_commands.json
 
 # python compiled
 __pycache__
+
+# train generate
+tmp

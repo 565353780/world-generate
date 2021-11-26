@@ -32,46 +32,6 @@ if __name__ == "__main__":
     num_cpu = 6
     global_seeds = 0
 
-    def set_global_seeds(seed=0):
-        global_seeds = seed
-
-    def make_env(rank, seed=0):
-        def _init():
-            env = WorldGenerateEnvironment()
-            return env
-        set_global_seeds(seed)
-        return _init
-    
-    def make_framestack_env(rank, seed=0):
-        def _init():
-            env = WorldGenerateEnvironment()
-            env = DummyVecEnv([lambda : env])
-            env = VecFrameStack(env, n_stack=4)
-            return env
-        set_global_seeds(seed)
-        return _init
-
-    env = None
-    if game_name == "MyEnv":
-        if train_mode:
-            if policy == "CnnLnLstmPolicy" or policy == "CnnLstmPolicy":
-                env = SubprocVecEnv([make_env(10, i) for i in range(num_cpu)])
-            elif policy == "CnnPolicy":
-                env = SubprocVecEnv([make_env(10, i) for i in range(num_cpu)])
-        else:
-            if policy == "CnnLnLstmPolicy" or policy == "CnnLstmPolicy":
-                env = SubprocVecEnv([make_env(10, i) for i in range(num_cpu)])
-            elif policy == "CnnPolicy":
-                env = WorldGenerateEnvironment()
-                env = DummyVecEnv([lambda : env])
-    else:
-        if train_mode:
-            env = make_vec_env(game_name, n_envs=4)
-        else:
-            env = make_vec_env(game_name, n_envs=1)
-
-    #  check_env(env)
-
     model = None
     start_step_num = 0
 
@@ -108,6 +68,48 @@ if __name__ == "__main__":
                     env,
                     verbose=1,
                     tensorboard_log="./PPO_WE_tb/")
+
+    def set_global_seeds(seed=0):
+        global_seeds = seed
+
+    def make_env(rank, seed=0):
+        def _init():
+            env = WorldGenerateEnvironment()
+            env.setLogger(model.logger)
+            return env
+        set_global_seeds(seed)
+        return _init
+    
+    def make_framestack_env(rank, seed=0):
+        def _init():
+            env = WorldGenerateEnvironment()
+            env.setLogger(model.logger)
+            env = DummyVecEnv([lambda : env])
+            env = VecFrameStack(env, n_stack=4)
+            return env
+        set_global_seeds(seed)
+        return _init
+
+    env = None
+    if game_name == "MyEnv":
+        if train_mode:
+            if policy == "CnnLnLstmPolicy" or policy == "CnnLstmPolicy":
+                env = SubprocVecEnv([make_env(10, i) for i in range(num_cpu)])
+            elif policy == "CnnPolicy":
+                env = SubprocVecEnv([make_env(10, i) for i in range(num_cpu)])
+        else:
+            if policy == "CnnLnLstmPolicy" or policy == "CnnLstmPolicy":
+                env = SubprocVecEnv([make_env(10, i) for i in range(num_cpu)])
+            elif policy == "CnnPolicy":
+                env = WorldGenerateEnvironment()
+                env = DummyVecEnv([lambda : env])
+    else:
+        if train_mode:
+            env = make_vec_env(game_name, n_envs=4)
+        else:
+            env = make_vec_env(game_name, n_envs=1)
+
+    #  check_env(env)
 
     if train_mode:
         round = 0

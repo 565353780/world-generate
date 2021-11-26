@@ -9,6 +9,7 @@ import random
 from WorldEnvironment import WorldEnvironment
 from WorldGenerateObservation import WorldGenerateObservation
 from WorldGenerateReward import WorldGenerateReward
+from stable_baselines3.common.logger import Logger
 
 class WorldGenerateEnvironment(gym.Env):
     metadata = {
@@ -78,7 +79,7 @@ class WorldGenerateEnvironment(gym.Env):
 
         self.done = None
         self.episode_reward = 0
-        self.last_episode_reward = 0
+        self.logger = None
         return
 
     def initWorld(self):
@@ -110,10 +111,14 @@ class WorldGenerateEnvironment(gym.Env):
         self.run_time = 0
         return
 
+    def setLogger(self, logger):
+        self.logger = logger
+
     def afterStep(self):
         self.episode_reward += self.reward
         if self.done:
-            self.last_episode_reward = self.episode_reward
+            if self.logger is not None:
+                self.logger.record("reward", self.episode_reward)
             self.episode_reward = 0
         return self.observation, self.reward, self.done, {}
 
@@ -199,7 +204,7 @@ if __name__ == "__main__":
     done = False
     while not done:
         _, _, done, _ = world_generate_environment.step(world_generate_environment.action_space.sample())
-    exit()
+    print("finish test episode, start render episode")
 
     world_generate_environment.step(world_generate_environment.action_space.sample())
     world_generate_environment.render()
@@ -220,4 +225,5 @@ if __name__ == "__main__":
     world_generate_environment.step(world_generate_environment.action_space.sample())
     world_generate_environment.render()
     world_generate_environment.reset()
+    print("finish render episode")
 

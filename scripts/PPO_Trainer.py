@@ -22,15 +22,13 @@ if __name__ == "__main__":
     num_cpu = 6
     global_seeds = 0
 
-    logger = configure(log_dir + "PPO_WE_reward/", ["tensorboard"])
-
     def set_global_seeds(seed=0):
         global_seeds = seed
 
     def make_env(rank, seed=0):
         def _init():
             env = WorldGenerateEnvironment()
-            env.setLogger(logger)
+            env.setLogger(configure(log_dir + "PPO_WE_reward/", ["tensorboard"]))
             return env
         set_global_seeds(seed)
         return _init
@@ -38,7 +36,7 @@ if __name__ == "__main__":
     def make_framestack_env(rank, seed=0):
         def _init():
             env = WorldGenerateEnvironment()
-            env.setLogger(logger)
+            env.setLogger(configure(log_dir + "PPO_WE_reward/", ["tensorboard"]))
             env = DummyVecEnv([lambda : env])
             env = VecFrameStack(env, n_stack=4)
             return env

@@ -832,6 +832,8 @@ bool BoundaryLineManager::getMaxHeight(
 {
     max_height = std::numeric_limits<float>::max();
 
+    const float error_max = 0.01;
+
     size_t wall_boundary_line_list_idx;
 
     if(!getWallBoundaryLineListIdx(wall_id, wall_type, wall_boundary_line_list_idx))
@@ -865,7 +867,7 @@ bool BoundaryLineManager::getMaxHeight(
         return false;
     }
 
-    if(boundary_line.line_start_position == boundary_line.line_end_position)
+    if((boundary_line.line_end_position - boundary_line.line_start_position) < error_max)
     {
         max_height = 0;
         return true;

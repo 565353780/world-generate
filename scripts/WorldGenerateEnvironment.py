@@ -48,12 +48,12 @@ class WorldGenerateEnvironment(gym.Env):
 
         self.action_space = gym.spaces.Box(
             np.array([
-                0.0,
+                -1.0,
                 0.0,
                 0.0
             ], dtype=np.float32),
             np.array([
-                self.outerwall_num + self.innerwall_num, # wall_idx
+                self.outerwall_num + self.innerwall_num, # wall_idx, finish eposide if < 0
                 self.wall_edge_num_max,                  # wall_edge_idx
                 self.wall_length_max                     # position
             ], dtype=np.float32)
@@ -110,14 +110,13 @@ class WorldGenerateEnvironment(gym.Env):
     def step(self, action):
         done = False
         self.run_time += 1
-        if self.run_time > 10:
+        if self.run_time > 34:
             self.run_time = 0
             done = True
 
         if not self.action_space.contains(action):
             print("WorldGenerateEnvironment::step :\nthis action is not valid!")
             return self.observation, -1000, done, {}
-
 
         wall_idx = int(action[0])
         wall_edge_idx = int(action[1])
@@ -127,12 +126,15 @@ class WorldGenerateEnvironment(gym.Env):
         if room_num == 0:
             room_num = 1
 
+        if wall_idx == -1:
+            return self.observation, 0, True, {}
+
         if wall_idx >= self.outerwall_num + self.innerwall_num:
             return self.observation, -100, done, {}
 
         if wall_idx < self.outerwall_num:
             if wall_edge_idx >= self.outerwall_edge_num_vec[wall_idx]:
-                return self.world_generate_observation.observation, -100, done, {}
+                return self.observation, -100, done, {}
         elif wall_edge_idx >= self.innerwall_edge_num_vec[wall_idx - self.outerwall_num]:
             return self.observation, -100, done, {}
 
@@ -165,7 +167,7 @@ class WorldGenerateEnvironment(gym.Env):
         return self.observation
 
     def render(self, mode="human"):
-        self.world_generate_observation.render(0)
+        self.world_generate_observation.render(100)
         return None
 
     def close(self):

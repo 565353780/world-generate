@@ -112,7 +112,7 @@ if __name__ == "__main__":
 
         while True:
             obs = env.reset()
-            if policy == CnnLnLstmPolicy or policy == CnnLstmPolicy:
+            if policy == "CnnLnLstmPolicy" or policy == "CnnLstmPolicy":
                 done = [False, False]
                 while not all(done):
                     action, _states = model.predict(obs)

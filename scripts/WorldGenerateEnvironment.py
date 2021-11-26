@@ -28,6 +28,7 @@ class WorldGenerateEnvironment(gym.Env):
         self.observation_height = 256
         self.observation_free = 20
 
+        self.step_weight = 1
         self.space_utilization_weight = 0.01
         self.movable_weight = 1
         self.escapable_weight = 1
@@ -71,6 +72,7 @@ class WorldGenerateEnvironment(gym.Env):
         self.observation = self.world_generate_observation.getObservation(self.world_environment)
 
         self.world_generate_reward.initReward(
+            self.step_weight,
             self.space_utilization_weight,
             self.movable_weight,
             self.escapable_weight)

@@ -15,12 +15,14 @@ class WorldGenerateReward(object):
 
         self.reward = None
 
+        self.step_weight = None
         self.space_utilization_weight = None
         self.movable_weight = None
         self.escapable_weight = None
 
         self.previous_observation = None
 
+        self.step_score = None
         self.space_utilization_score = None
         self.movable_score = None
         self.escapable_score = None
@@ -29,10 +31,15 @@ class WorldGenerateReward(object):
         self.previous_movable_score = None
         self.previous_escapable_score = None
 
-    def initReward(self, space_utilization_weight, movable_weight, escapable_weight):
+    def initReward(self, step_weight, space_utilization_weight, movable_weight, escapable_weight):
+        self.step_weight = step_weight
         self.space_utilization_weight = space_utilization_weight
         self.movable_weight = movable_weight
         self.escapable_weight = escapable_weight
+        return True
+
+    def getStepScore(self):
+        self.step_score = 1
         return True
 
     def getSpaceUtilizationScore(self, observation):
@@ -51,6 +58,7 @@ class WorldGenerateReward(object):
 
     def updateReward(self, observation):
         self.reward = 0
+        self.getStepScore()
         self.getSpaceUtilizationScore(observation)
         self.getMovableScore(observation)
         self.getEscapableScore(observation)
@@ -58,6 +66,7 @@ class WorldGenerateReward(object):
         if self.previous_space_utilization_score is None:
             self.reward += self.space_utilization_weight * self.space_utilization_score
         else:
+            self.reward -= self.step_weight * self.step_score
             self.reward += self.space_utilization_weight * \
                 (self.space_utilization_score - self.previous_space_utilization_score)
             self.reward -= self.movable_weight * \

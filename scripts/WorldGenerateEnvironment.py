@@ -154,9 +154,9 @@ class WorldGenerateEnvironment(gym.Env):
         if wall_idx >= self.outerwall_num + self.innerwall_num:
             wall_idx -= 1
         if wall_idx < self.outerwall_num:
-            wall_edge_idx = min(wall_edge_idx, self.outerwall_edge_num_vec[wall_idx])
-        elif wall_edge_idx >= self.innerwall_edge_num_vec[wall_idx - self.outerwall_num]:
-            wall_edge_idx = min(wall_edge_idx, self.innerwall_edge_num_vec[wall_idx - self.outerwall_num])
+            wall_edge_idx = min(wall_edge_idx, self.outerwall_edge_num_vec[wall_idx] - 1)
+        else:
+            wall_edge_idx = min(wall_edge_idx, self.innerwall_edge_num_vec[wall_idx - self.outerwall_num] - 1)
 
         if wall_idx < self.outerwall_num:
             self.world_environment.placeOuterWallRoomContainer(

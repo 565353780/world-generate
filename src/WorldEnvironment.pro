@@ -50,7 +50,6 @@ SOURCES += \
     WorldEnvironment/EasyWorld/WorldDescriptor.cpp \
     WorldEnvironment/EasyWorld/WorldEditor.cpp \
     WorldEnvironment/EasyWorld/WorldObservation.cpp \
-    WorldEnvironment/EasyWorld/WorldReward.cpp \
     WorldEnvironment/EasyWorld/WorldEnvironment.cpp
 
 HEADERS += \
@@ -65,7 +64,6 @@ HEADERS += \
     WorldEnvironment/EasyWorld/WorldDescriptor.h \
     WorldEnvironment/EasyWorld/WorldEditor.h \
     WorldEnvironment/EasyWorld/WorldObservation.h \
-    WorldEnvironment/EasyWorld/WorldReward.h \
     WorldEnvironment/EasyWorld/WorldEnvironment.h
 
 HEADERS += \

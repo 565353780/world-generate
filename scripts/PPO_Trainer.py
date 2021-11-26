@@ -4,11 +4,12 @@
 import os
 import gym
 
+from torch.utils.tensorboard import SummaryWriter
+
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecNormalize, VecFrameStack
-from stable_baselines3.common.logger import configure
 
 from WorldGenerateEnvironment import WorldGenerateEnvironment
 
@@ -28,7 +29,7 @@ if __name__ == "__main__":
     def make_env(rank, seed=0):
         def _init():
             env = WorldGenerateEnvironment()
-            env.setLogger(configure(log_dir + "PPO_WE_reward/", ["tensorboard"]))
+            env.setWriter(SummaryWriter(log_dir + "PPO_WE_reward/"), seed)
             return env
         set_global_seeds(seed)
         return _init
@@ -36,7 +37,7 @@ if __name__ == "__main__":
     def make_framestack_env(rank, seed=0):
         def _init():
             env = WorldGenerateEnvironment()
-            env.setLogger(configure(log_dir + "PPO_WE_reward/", ["tensorboard"]))
+            env.setWriter(SummaryWriter(log_dir + "PPO_WE_reward/"), seed)
             env = DummyVecEnv([lambda : env])
             env = VecFrameStack(env, n_stack=4)
             return env

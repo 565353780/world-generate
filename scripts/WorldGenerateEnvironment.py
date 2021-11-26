@@ -78,7 +78,9 @@ class WorldGenerateEnvironment(gym.Env):
 
         self.done = None
         self.episode_reward = 0
-        self.logger = None
+        self.writer = None
+        self.env_idx = None
+        self.round = 0
         return
 
     def initWorld(self):
@@ -110,15 +112,17 @@ class WorldGenerateEnvironment(gym.Env):
         self.run_time = 0
         return
 
-    def setLogger(self, logger):
-        self.logger = logger
+    def setWriter(self, writer, env_idx):
+        self.writer = writer
+        self.env_idx = env_idx
 
     def afterStep(self):
         self.episode_reward += self.reward
         if self.done:
-            if self.logger is not None:
-                self.logger.record("reward", self.episode_reward)
+            if self.writer is not None:
+                self.writer.add_scalar("Reward/reward_" + str(self.env_idx), self.episode_reward, self.round)
             self.episode_reward = 0
+            self.round += 1
         return self.observation, self.reward, self.done, {}
 
     def step(self, action):

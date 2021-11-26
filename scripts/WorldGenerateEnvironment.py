@@ -76,8 +76,9 @@ class WorldGenerateEnvironment(gym.Env):
             self.escapable_weight)
         self.reward = self.world_generate_reward.getReward(self.observation)
 
-        self.episode_reward = None
         self.done = None
+        self.episode_reward = 0
+        self.last_episode_reward = 0
         return
 
     def initWorld(self):
@@ -107,9 +108,6 @@ class WorldGenerateEnvironment(gym.Env):
         self.wall_length_max = 30
 
         self.run_time = 0
-
-        self.episode_reward = 0
-        self.last_episode_reward = 0
         return
 
     def afterStep(self):

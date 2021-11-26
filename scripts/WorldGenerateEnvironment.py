@@ -115,7 +115,7 @@ class WorldGenerateEnvironment(gym.Env):
         if self.done:
             self.last_episode_reward = self.episode_reward
             self.episode_reward = 0
-        return self.observation, self.reward, self.done, info
+        return self.observation, self.reward, self.done, {}
 
     def step(self, action):
         self.done = False

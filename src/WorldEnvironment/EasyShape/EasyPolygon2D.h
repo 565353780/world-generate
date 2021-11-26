@@ -24,9 +24,6 @@ public:
     bool setID(
         const int &id_data);
 
-    bool updateRect(
-        const EasyPoint2D &new_point);
-
     bool addPoint(
         const EasyPoint2D &point_2d);
 
@@ -41,6 +38,10 @@ public:
     bool removePoint(
         const size_t &remove_idx);
 
+    bool setPointPosition(
+        const size_t& point_idx,
+        const EasyPoint2D& point_position);
+
     bool isClockWise() const;
 
     bool setClockWise();
@@ -51,12 +52,22 @@ public:
 
     float getPolygonAreaAbs() const;
 
-    bool getPolygonRect(
-        EasyRect2D &rect_2d) const;
+private:
+    bool updateRect();
+
+    bool updatePolygonPerimeter();
+
+    bool update();
+
+public:
+    float perimeter;
 
     std::vector<EasyPoint2D> point_list;
 
     EasyRect2D rect;
+
+private:
+    std::vector<float> point_length_vec;
 };
 
 #endif //EASYPOLYGON_H

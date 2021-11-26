@@ -69,6 +69,13 @@ HEADERS += \
 HEADERS += \
     WorldEnvironment/EasyWorld/EasyWorld.h
 
+# UnitWorld
+SOURCES += \
+    WorldEnvironment/UnitWorld/UnitNode.cpp
+
+HEADERS += \
+    WorldEnvironment/UnitWorld/UnitNode.h
+
 SOURCES += \
     main.cpp \
     EasyWorldWidget.cpp \

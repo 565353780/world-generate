@@ -767,11 +767,8 @@ bool EasyComputation::isPolygonCross(
     EasyPolygon2D &polygon_1,
     EasyPolygon2D &polygon_2)
 {
-    EasyRect2D pylygon_1_rect;
-    EasyRect2D polygon_2_rect;
-
-    polygon_1.getPolygonRect(pylygon_1_rect);
-    polygon_2.getPolygonRect(polygon_2_rect);
+    EasyRect2D pylygon_1_rect = polygon_1.rect;
+    EasyRect2D polygon_2_rect = polygon_2.rect;
 
     if(!isRectCross(pylygon_1_rect, polygon_2_rect))
     {

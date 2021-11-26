@@ -6,7 +6,6 @@
 #include "EasyWorld/WallGenerator.h"
 #include "EasyWorld/WorldPlaceGenerator.h"
 #include "EasyWorld/WorldObservation.h"
-#include "EasyWorld/WorldReward.h"
 #include "EasyWorld/WorldEditor.h"
 
 #if defined(EXPORT_PYBIND)
@@ -85,7 +84,6 @@ public:
     WorldController world_controller_;
     WorldPlaceGenerator world_place_generator_;
     WorldObservation world_observation_;
-    WorldReward world_reward_;
     WorldEditor world_editor_;
 };
 

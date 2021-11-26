@@ -19,7 +19,7 @@ if __name__ == "__main__":
     log_dir = "./tmp/"
     start_episode = 0
     total_time_step =50000
-    num_cpu = 1
+    num_cpu = 6
     global_seeds = 0
 
     logger = configure(log_dir + "PPO_WE_reward/", ["tensorboard"])

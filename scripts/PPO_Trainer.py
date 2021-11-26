@@ -28,7 +28,7 @@ if __name__ == "__main__":
     def make_env(rank, seed=0):
         def _init():
             env = WorldGenerateEnvironment()
-            env.setLogger(configure(log_dir + "PPO_WE_tb_reward/", ["tensorboard"]))
+            env.setLogger(configure(log_dir + "PPO_WE_reward/", ["tensorboard"]))
             return env
         set_global_seeds(seed)
         return _init
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     def make_framestack_env(rank, seed=0):
         def _init():
             env = WorldGenerateEnvironment()
-            env.setLogger(configure(log_dir + "PPO_WE_tb_reward/", ["tensorboard"]))
+            env.setLogger(configure(log_dir + "PPO_WE_reward/", ["tensorboard"]))
             env = DummyVecEnv([lambda : env])
             env = VecFrameStack(env, n_stack=4)
             return env
@@ -71,7 +71,7 @@ if __name__ == "__main__":
         model = PPO.load(
             "PPO_" + game_name + "_" + str(start_episode),
             env,
-            tensorboard_log=log_dir + "PPO_WE_tb/")
+            tensorboard_log=log_dir)
     else:
         file_list = os.listdir(os.getcwd())
 
@@ -86,20 +86,20 @@ if __name__ == "__main__":
             model = PPO.load(
                 "PPO_" + game_name + "_" + str(start_step_num),
                 env,
-                tensorboard_log=log_dir + "PPO_WE_tb/")
+                tensorboard_log=log_dir)
         else:
             if game_name == "MyEnv":
                 model = PPO(
                     policy,
                     env,
                     verbose=1,
-                    tensorboard_log=log_dir + "PPO_WE_tb/")
+                    tensorboard_log=log_dir)
             else:
                 model = PPO(
                     "MlpPolicy",
                     env,
                     verbose=1,
-                    tensorboard_log=log_dir + "PPO_WE_tb/")
+                    tensorboard_log=log_dir)
 
     if train_mode:
         round = 0

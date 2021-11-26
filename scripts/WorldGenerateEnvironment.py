@@ -133,7 +133,8 @@ class WorldGenerateEnvironment(gym.Env):
             self.done = True
 
         if not self.action_space.contains(action):
-            print("WorldGenerateEnvironment::step :\nthis action is not valid!")
+            print("WorldGenerateEnvironment::step :")
+            print("\t this action is not valid!")
             self.reward = -1000
             return self.afterStep()
 
@@ -151,16 +152,11 @@ class WorldGenerateEnvironment(gym.Env):
             return self.afterStep()
 
         if wall_idx >= self.outerwall_num + self.innerwall_num:
-            self.reward = -100
-            return self.afterStep()
-
+            wall_idx -= 1
         if wall_idx < self.outerwall_num:
-            if wall_edge_idx >= self.outerwall_edge_num_vec[wall_idx]:
-                self.reward = -100
-                return self.afterStep()
+            wall_edge_idx = min(wall_edge_idx, self.outerwall_edge_num_vec[wall_idx])
         elif wall_edge_idx >= self.innerwall_edge_num_vec[wall_idx - self.outerwall_num]:
-            self.reward = -100
-            return self.afterStep()
+            wall_edge_idx = min(wall_edge_idx, self.innerwall_edge_num_vec[wall_idx - self.outerwall_num])
 
         if wall_idx < self.outerwall_num:
             self.world_environment.placeOuterWallRoomContainer(

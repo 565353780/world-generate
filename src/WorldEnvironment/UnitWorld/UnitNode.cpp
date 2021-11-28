@@ -22,9 +22,14 @@ UnitNode::~UnitNode()
 
 bool UnitNode::reset()
 {
+    name = "";
     id = 0;
-
     type = NodeType::NodeFree;
+
+    boundary_polygon.reset();
+    right_down_point_idx = 0;
+    right_up_point_idx = 0;
+    left_up_point_idx = 0;
 
     if(parent != nullptr)
     {
@@ -42,12 +47,14 @@ bool UnitNode::reset()
             }
         }
     }
-
     child_vec.clear();
 
-    boundary_polygon.reset();
-
-    param_on_parent_polygon = -1;
+    polygon_point_on_parent_polygon.reset();
+    dist_to_parent_polygon = -1;
+    target_width = -1;
+    target_height = -1;
+    real_width = -1;
+    real_height = -1;
 
     return true;
 }
@@ -273,6 +280,348 @@ bool UnitNode::removeAllChild()
     return true;
 }
 
+bool UnitNode::setPositionOnParentPolygonByPolygonParam(
+    const float& point_param_on_parent_polygon,
+    const float& new_dist_to_parent_polygon,
+    const float& new_target_width,
+    const float& new_target_height,
+    const float& new_left_angle,
+    const float& new_right_angle)
+{
+    polygon_point_on_parent_polygon.reset();
+
+    if(parent == nullptr)
+    {
+        std::cout << "UnitNode::setPositionOnParentPolygonByPolygonParam :\n" <<
+          "\t point_param_on_parent_polygon = " << point_param_on_parent_polygon << std::endl <<
+          "\t new_dist_to_parent_polygon = " << new_dist_to_parent_polygon << std::endl <<
+          "\t new_target_size = [" << new_target_width << "," <<
+          new_target_height << "]\n" <<
+          "\t new_angle = [" << new_left_angle << "," <<
+          new_right_angle << "]\n" <<
+          "parent not exist!\n";
+
+        return false;
+    }
+
+    if(!polygon_point_on_parent_polygon.updateByPolygonParam(
+          parent->boundary_polygon, point_param_on_parent_polygon))
+    {
+        std::cout << "UnitNode::setPositionOnParentPolygonByPolygonParam :\n" <<
+          "\t point_param_on_parent_polygon = " << point_param_on_parent_polygon << std::endl <<
+          "\t new_dist_to_parent_polygon = " << new_dist_to_parent_polygon << std::endl <<
+          "\t new_target_size = [" << new_target_width << "," <<
+          new_target_height << "]\n" <<
+          "\t new_angle = [" << new_left_angle << "," <<
+          new_right_angle << "]\n" <<
+          "updateByPolygonParam failed!\n";
+
+        return false;
+    }
+
+    dist_to_parent_polygon = new_dist_to_parent_polygon;
+    target_width = new_target_width;
+    target_height = new_target_height;
+    left_angle = new_left_angle;
+    right_angle = new_right_angle;
+    real_width = -1;
+    real_height = -1;
+
+    if(!updatePolygon())
+    {
+        std::cout << "UnitNode::setPositionOnParentPolygonByPolygonParam :\n" <<
+          "\t point_param_on_parent_polygon = " << point_param_on_parent_polygon << std::endl <<
+          "\t new_dist_to_parent_polygon = " << new_dist_to_parent_polygon << std::endl <<
+          "\t new_target_size = [" << new_target_width << "," <<
+          new_target_height << "]\n" <<
+          "\t new_angle = [" << new_left_angle << "," <<
+          new_right_angle << "]\n" <<
+          "updatePolygon failed!\n";
+
+        return false;
+    }
+
+    return true;
+}
+
+bool UnitNode::setPositionOnParentPolygonByLineParam(
+    const size_t& parent_polygon_line_idx,
+    const float& point_param_on_line,
+    const float& new_dist_to_parent_polygon,
+    const float& new_target_width,
+    const float& new_target_height,
+    const float& new_left_angle,
+    const float& new_right_angle)
+{
+    polygon_point_on_parent_polygon.reset();
+
+    if(parent == nullptr)
+    {
+        std::cout << "UnitNode::setPositionOnParentPolygonByLineParam :\n" <<
+          "\t parent_polygon_line_idx = " << parent_polygon_line_idx << std::endl <<
+          "\t point_param_on_line = " << point_param_on_line << std::endl <<
+          "\t new_dist_to_parent_polygon = " << new_dist_to_parent_polygon << std::endl <<
+          "\t new_target_size = [" << new_target_width << "," <<
+          new_target_height << "]\n" <<
+          "\t new_angle = [" << new_left_angle << "," <<
+          new_right_angle << "]\n" <<
+          "parent not exist!\n";
+
+        return false;
+    }
+
+    if(!polygon_point_on_parent_polygon.updateByLineParam(
+          parent->boundary_polygon, parent_polygon_line_idx, point_param_on_line))
+    {
+        std::cout << "UnitNode::setPositionOnParentPolygonByLineParam :\n" <<
+          "\t parent_polygon_line_idx = " << parent_polygon_line_idx << std::endl <<
+          "\t point_param_on_line = " << point_param_on_line << std::endl <<
+          "\t new_dist_to_parent_polygon = " << new_dist_to_parent_polygon << std::endl <<
+          "\t new_target_size = [" << new_target_width << "," <<
+          new_target_height << "]\n" <<
+          "\t new_angle = [" << new_left_angle << "," <<
+          new_right_angle << "]\n" <<
+          "updateByPolygonParam failed!\n";
+
+        return false;
+    }
+
+    dist_to_parent_polygon = new_dist_to_parent_polygon;
+    target_width = new_target_width;
+    target_height = new_target_height;
+    left_angle = new_left_angle;
+    right_angle = new_right_angle;
+    real_width = -1;
+    real_height = -1;
+
+    if(!updatePolygon())
+    {
+        std::cout << "UnitNode::setPositionOnParentPolygonByLineParam :\n" <<
+          "\t parent_polygon_line_idx = " << parent_polygon_line_idx << std::endl <<
+          "\t point_param_on_line = " << point_param_on_line << std::endl <<
+          "\t new_dist_to_parent_polygon = " << new_dist_to_parent_polygon << std::endl <<
+          "\t new_target_size = [" << new_target_width << "," <<
+          new_target_height << "]\n" <<
+          "\t new_angle = [" << new_left_angle << "," <<
+          new_right_angle << "]\n" <<
+          "updatePolygon failed!\n";
+
+        return false;
+    }
+
+    return true;
+}
+
+bool UnitNode::setPositionOnParentPolygonByLength(
+    const float& point_length,
+    const float& new_dist_to_parent_polygon,
+    const float& new_target_width,
+    const float& new_target_height,
+    const float& new_left_angle,
+    const float& new_right_angle)
+{
+    polygon_point_on_parent_polygon.reset();
+
+    if(parent == nullptr)
+    {
+        std::cout << "UnitNode::setPositionOnParentPolygonByLength :\n" <<
+          "\t point_length = " << point_length << std::endl <<
+          "\t new_dist_to_parent_polygon = " << new_dist_to_parent_polygon << std::endl <<
+          "\t new_target_size = [" << new_target_width << "," <<
+          new_target_height << "]\n" <<
+          "\t new_angle = [" << new_left_angle << "," <<
+          new_right_angle << "]\n" <<
+          "parent not exist!\n";
+
+        return false;
+    }
+
+    if(!polygon_point_on_parent_polygon.updateByLength(
+          parent->boundary_polygon, point_length))
+    {
+        std::cout << "UnitNode::setPositionOnParentPolygonByLength :\n" <<
+          "\t point_length = " << point_length << std::endl <<
+          "\t new_dist_to_parent_polygon = " << new_dist_to_parent_polygon << std::endl <<
+          "\t new_target_size = [" << new_target_width << "," <<
+          new_target_height << "]\n" <<
+          "\t new_angle = [" << new_left_angle << "," <<
+          new_right_angle << "]\n" <<
+          "updateByPolygonParam failed!\n";
+
+        return false;
+    }
+
+    dist_to_parent_polygon = new_dist_to_parent_polygon;
+    target_width = new_target_width;
+    target_height = new_target_height;
+    left_angle = new_left_angle;
+    right_angle = new_right_angle;
+    real_width = -1;
+    real_height = -1;
+
+    if(!updatePolygon())
+    {
+        std::cout << "UnitNode::setPositionOnParentPolygonByLength :\n" <<
+          "\t point_length = " << point_length << std::endl <<
+          "\t new_dist_to_parent_polygon = " << new_dist_to_parent_polygon << std::endl <<
+          "\t new_target_size = [" << new_target_width << "," <<
+          new_target_height << "]\n" <<
+          "\t new_angle = [" << new_left_angle << "," <<
+          new_right_angle << "]\n" <<
+          "updatePolygon failed!\n";
+
+        return false;
+    }
+
+    return true;
+}
+
+bool UnitNode::setPositionOnParentPolygonByPosition(
+    const EasyPoint2D& point_position,
+    const float& new_dist_to_parent_polygon,
+    const float& new_target_width,
+    const float& new_target_height,
+    const float& new_left_angle,
+    const float& new_right_angle)
+{
+    polygon_point_on_parent_polygon.reset();
+
+    if(parent == nullptr)
+    {
+        std::cout << "UnitNode::setPositionOnParentPolygonByLineParam :\n" <<
+          "\t point_position = [" << point_position.x << "," <<
+          point_position.y << "]\n" <<
+          "\t new_dist_to_parent_polygon = " << new_dist_to_parent_polygon << std::endl <<
+          "\t new_target_size = [" << new_target_width << "," <<
+          new_target_height << "]\n" <<
+          "\t new_angle = [" << new_left_angle << "," <<
+          new_right_angle << "]\n" <<
+          "parent not exist!\n";
+
+        return false;
+    }
+
+    if(!polygon_point_on_parent_polygon.updateByPosition(
+          parent->boundary_polygon, point_position))
+    {
+        std::cout << "UnitNode::setPositionOnParentPolygonByLineParam :\n" <<
+          "\t point_position = [" << point_position.x << "," <<
+          point_position.y << "]\n" <<
+          "\t new_dist_to_parent_polygon = " << new_dist_to_parent_polygon << std::endl <<
+          "\t new_target_size = [" << new_target_width << "," <<
+          new_target_height << "]\n" <<
+          "\t new_angle = [" << new_left_angle << "," <<
+          new_right_angle << "]\n" <<
+          "updateByPolygonParam failed!\n";
+
+        return false;
+    }
+
+    dist_to_parent_polygon = new_dist_to_parent_polygon;
+    target_width = new_target_width;
+    target_height = new_target_height;
+    left_angle = new_left_angle;
+    right_angle = new_right_angle;
+    real_width = -1;
+    real_height = -1;
+
+    if(!updatePolygon())
+    {
+        std::cout << "UnitNode::setPositionOnParentPolygonByLineParam :\n" <<
+          "\t point_position = [" << point_position.x << "," <<
+          point_position.y << "]\n" <<
+          "\t new_dist_to_parent_polygon = " << new_dist_to_parent_polygon << std::endl <<
+          "\t new_target_size = [" << new_target_width << "," <<
+          new_target_height << "]\n" <<
+          "\t new_angle = [" << new_left_angle << "," <<
+          new_right_angle << "]\n" <<
+          "updatePolygon failed!\n";
+
+        return false;
+    }
+
+    return true;
+}
+
+bool UnitNode::updatePolygon()
+{
+    boundary_polygon.reset();
+
+    EasyPolygonPoint2D left_point_on_parent_polygon;
+    const float left_length = polygon_point_on_parent_polygon.length - target_width / 2.0;
+
+    if(!left_point_on_parent_polygon.updateByLength(parent->boundary_polygon, left_length))
+    {
+        std::cout << "UnitNode::updatePolygon :\n" <<
+          "updateByLength for left point failed!\n";
+
+        return false;
+    }
+
+    EasyPolygonPoint2D right_point_on_parent_polygon;
+    const float right_length = polygon_point_on_parent_polygon.length + target_width / 2.0;
+
+    if(!right_point_on_parent_polygon.updateByLength(parent->boundary_polygon, right_length))
+    {
+        std::cout << "UnitNode::updatePolygon :\n" <<
+          "updateByLength for right point failed!\n";
+
+        return false;
+    }
+
+    boundary_polygon.addPoint(left_point_on_parent_polygon.position);
+
+    if(left_point_on_parent_polygon.line_idx < right_point_on_parent_polygon.line_idx)
+    {
+        for(size_t i = left_point_on_parent_polygon.line_idx + 1;
+            i <= right_point_on_parent_polygon.line_idx; ++i)
+        {
+            boundary_polygon.addPoint(parent->boundary_polygon.point_list[i]);
+        }
+    }
+
+    right_down_point_idx = boundary_polygon.point_list.size();
+    boundary_polygon.addPoint(right_point_on_parent_polygon.position);
+
+    EasyPoint2D left_line_direction;
+    left_line_direction.setPosition(
+        cos(left_angle) * left_point_on_parent_polygon.left_direction.x -
+        sin(left_angle) * left_point_on_parent_polygon.left_direction.y,
+        sin(left_angle) * left_point_on_parent_polygon.left_direction.x +
+        cos(left_angle) * left_point_on_parent_polygon.left_direction.y);
+
+    EasyPoint2D right_line_direction;
+    right_line_direction.setPosition(
+        cos(right_angle) * right_point_on_parent_polygon.right_direction.x -
+        sin(right_angle) * right_point_on_parent_polygon.right_direction.y,
+        sin(right_angle) * right_point_on_parent_polygon.right_direction.x +
+        cos(right_angle) * right_point_on_parent_polygon.right_direction.y);
+
+    EasyPoint2D left_end_point;
+    left_end_point.setPosition(
+        left_point_on_parent_polygon.position.x + left_line_direction.x * target_height,
+        left_point_on_parent_polygon.position.y + left_line_direction.y * target_height);
+
+    EasyPoint2D right_end_point;
+    right_end_point.setPosition(
+        right_point_on_parent_polygon.position.x + right_line_direction.x * target_height,
+        right_point_on_parent_polygon.position.y + right_line_direction.y * target_height);
+
+    right_up_point_idx = boundary_polygon.point_list.size();
+    boundary_polygon.addPoint(right_end_point);
+
+    left_up_point_idx = boundary_polygon.point_list.size();
+    boundary_polygon.addPoint(left_end_point);
+
+    // EasyLine2D left_line;
+    // left_line.setPosition(left_point_on_parent_polygon.position, left_end_point);
+
+    // EasyLine2D right_line;
+    // right_line.setPosition(right_point_on_parent_polygon.position, right_end_point);
+
+    return true;
+}
+
 bool UnitNode::outputInfo(
     const size_t &info_level) const
 {
@@ -282,20 +631,20 @@ bool UnitNode::outputInfo(
         line_start += "\t";
     }
 
-    std::cout << line_start << "UnitNode :" << std::endl <<
-      line_start << "\tname = " << name << std::endl <<
-      line_start << "\tid = " << id << std::endl <<
-      line_start << "\ttype = " << type << std::endl;
+    std::cout << line_start << "UnitNode :\n" <<
+      line_start << "\t name = " << name << std::endl <<
+      line_start << "\t id = " << id << std::endl <<
+      line_start << "\t type = " << type << std::endl;
 
     if(parent != nullptr)
     {
-        std::cout << line_start << "\tparent : id = " << parent->id <<
+        std::cout << line_start << "\t parent : id = " << parent->id <<
           " type = " << parent->type << std::endl;
     }
 
     if(child_vec.size() > 0)
     {
-        std::cout << line_start << "\tchild :" << std::endl;
+        std::cout << line_start << "\t child :\n";
         for(const UnitNode* child_node : child_vec)
         {
             child_node->outputInfo(info_level + 1);

@@ -73,10 +73,15 @@ HEADERS += \
 
 # UnitWorld
 SOURCES += \
-    WorldEnvironment/UnitWorld/UnitNode.cpp
+    WorldEnvironment/UnitWorld/UnitNode.cpp \
+    WorldEnvironment/UnitWorld/UnitTree.cpp
 
 HEADERS += \
-    WorldEnvironment/UnitWorld/UnitNode.h
+    WorldEnvironment/UnitWorld/UnitNode.h \
+    WorldEnvironment/UnitWorld/UnitTree.h
+
+HEADERS += \
+    WorldEnvironment/UnitWorld/UnitWorld.h
 
 SOURCES += \
     main.cpp \

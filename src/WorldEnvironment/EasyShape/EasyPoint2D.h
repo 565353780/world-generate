@@ -11,6 +11,8 @@ public:
     {
     }
 
+    bool reset();
+
     bool setPosition(
         const float &position_x,
         const float &position_y);

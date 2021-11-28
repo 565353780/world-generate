@@ -8,7 +8,7 @@
 #include <QPainter>
 #include <QPolygon>
 
-#include "EasyShape/EasyShape.h"
+#include "UnitWorld/UnitWorld.h"
 
 namespace Ui {
 class UnitWorldWidget;
@@ -38,24 +38,29 @@ private:
     EasyPoint2D getPointInWorld(
         const QPoint& point_in_image);
 
+    bool chooseRoomContainer(
+        const QPoint& mouse_position_in_image);
+
     bool setMousePosition(
         const QPoint& mouse_position_in_image);
 
     bool drawBackGround();
-    bool drawPolygon();
-    bool drawPolygonPoint();
+    bool drawWall();
+    bool drawRoom();
 
 private:
     Ui::UnitWorldWidget *ui;
 
-    std::vector<EasyPolygon2D> polygon_vec_;
+    UnitTree unit_tree_;
     EasyPolygonPoint2D polygon_point_;
 
     float zoom_;
     float offset_x_;
     float offset_y_;
 
-    bool mouse_pressed_;
+    size_t current_choose_node_id_;
+    NodeType current_choose_node_type_;
+    size_t new_room_idx_;
 };
 
 #endif // UNITWORLDWIDGET_H

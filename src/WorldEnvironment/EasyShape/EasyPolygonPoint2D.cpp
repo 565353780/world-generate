@@ -278,10 +278,6 @@ bool EasyPolygonPoint2D::updateByPosition(
 
     const float point_param_on_polygon = point_length / polygon.perimeter;
 
-    std::cout <<
-      "point_length = " << point_length << std::endl <<
-      "point_param_on_polygon = " << point_param_on_polygon << std::endl;
-
     return updateByPolygonParam(polygon, point_param_on_polygon);
 }
 

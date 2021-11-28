@@ -11,13 +11,20 @@ bool EasyPolygon2D::reset()
 bool EasyPolygon2D::addPoint(
     const EasyPoint2D &point)
 {
-    if((point.x == point_list.back().x && point.y == point_list.back().y) ||
-        (point.x == point_list[0].x && point.y == point_list[0].y))
+    if(point_list.size() == 0)
     {
-        return true;
+        point_list.emplace_back(point);
     }
+    else
+    {
+        if((point.x == point_list.back().x && point.y == point_list.back().y) ||
+            (point.x == point_list[0].x && point.y == point_list[0].y))
+        {
+            return true;
+        }
 
-    point_list.emplace_back(point);
+        point_list.emplace_back(point);
+    }
 
     if(!update())
     {

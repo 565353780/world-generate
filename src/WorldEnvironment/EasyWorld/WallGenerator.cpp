@@ -57,7 +57,9 @@ bool WallGenerator::addPointForWall(
         EasyPolygon2D& wall_boundary_polygon =
           outerwall_vec_[wall_idx];
 
+        std::cout << "in addPoint\n";
         wall_boundary_polygon.addPoint(point_x, point_y);
+        std::cout << "out addPointForWall\n";
 
         return true;
     }

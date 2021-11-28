@@ -241,6 +241,17 @@ public:
         std::vector<EasyPolygon2D> &polygon_vec,
         std::vector<EasyPolygon2D> &union_polygon_vec);
 
+    bool getPointPositionOnPolygon(
+        const EasyPolygon2D& polygon,
+        const float& point_param,
+        EasyPoint2D& point_position,
+        EasyPoint2D& point_direction);
+
+    bool getPointParamOnPolygon(
+        const EasyPolygon2D& polygon,
+        const EasyPoint2D &point_position,
+        float& point_param);
+
 private:
     size_t connected_polygon_point_num_=0;
 };

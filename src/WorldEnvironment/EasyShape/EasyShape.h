@@ -6,6 +6,7 @@
 #include "EasyLine2D.h"
 #include "EasyIntersection2D.h"
 #include "EasyPolygon2D.h"
+#include "EasyPolygonPoint2D.h"
 #include "EasyComputation.h"
 
 #endif //EASY_SHAPE_H

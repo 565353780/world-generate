@@ -13,7 +13,7 @@ DESTDIR = ../bin_linux
 
 INCLUDEPATH += ../lib
 HEADERS += \
-    ../lib/export_library_global.h \
+    ../lib/export_library_global.h
 
 INCLUDEPATH += WorldEnvironment
 
@@ -24,6 +24,7 @@ SOURCES += \
     WorldEnvironment/EasyShape/EasyLine2D.cpp \
     WorldEnvironment/EasyShape/EasyIntersection2D.cpp \
     WorldEnvironment/EasyShape/EasyPolygon2D.cpp \
+    WorldEnvironment/EasyShape/EasyPolygonPoint2D.cpp \
     WorldEnvironment/EasyShape/EasyComputation.cpp
 
 HEADERS += \
@@ -32,6 +33,7 @@ HEADERS += \
     WorldEnvironment/EasyShape/EasyLine2D.h \
     WorldEnvironment/EasyShape/EasyIntersection2D.h \
     WorldEnvironment/EasyShape/EasyPolygon2D.h \
+    WorldEnvironment/EasyShape/EasyPolygonPoint2D.h \
     WorldEnvironment/EasyShape/EasyComputation.h
 
 HEADERS += \
@@ -79,14 +81,17 @@ HEADERS += \
 SOURCES += \
     main.cpp \
     EasyWorldWidget.cpp \
+    UnitWorldWidget.cpp \
     MainWindow.cpp
 
 HEADERS += \
     EasyWorldWidget.h \
+    UnitWorldWidget.h \
     MainWindow.h
 
 FORMS += \
     EasyWorldWidget.ui \
+    UnitWorldWidget.ui \
     MainWindow.ui
 
 TRANSLATIONS += \

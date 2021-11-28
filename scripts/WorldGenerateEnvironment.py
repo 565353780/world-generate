@@ -26,7 +26,7 @@ class WorldGenerateEnvironment(gym.Env):
         self.observation_free = 20
 
         self.step_weight = 1
-        self.space_utilization_weight = 0.01
+        self.space_utilization_weight = 0.1
         self.movable_weight = 1
         self.escapable_weight = 1
 
@@ -186,7 +186,7 @@ class WorldGenerateEnvironment(gym.Env):
         return self.observation
 
     def render(self, mode="human"):
-        self.world_generate_observation.render(100)
+        self.world_generate_observation.render(200)
         return None
 
     def close(self):

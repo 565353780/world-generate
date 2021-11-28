@@ -15,7 +15,7 @@ from WorldGenerateEnvironment import WorldGenerateEnvironment
 
 if __name__ == "__main__":
     game_name = "MyEnv"
-    train_mode = True
+    train_mode = False
     policy = "CnnPolicy"
     log_dir = "./tmp/"
     start_episode = 0
@@ -56,7 +56,7 @@ if __name__ == "__main__":
                 env = SubprocVecEnv([make_env(10, i) for i in range(num_cpu)])
             elif policy == "CnnPolicy":
                 env = WorldGenerateEnvironment()
-                env = DummyVecEnv([lambda : env])
+                #  env = DummyVecEnv([lambda : env])
     else:
         if train_mode:
             env = make_vec_env(game_name, n_envs=4)
@@ -138,6 +138,11 @@ if __name__ == "__main__":
                 while not done:
                     action, _states = model.predict(obs)
                     obs, rewards, dones, info = env.step(action)
+                    print("a=", action, end="")
+                    print(", r=", rewards, end="")
+                    print(", tr=", env.episode_reward)
+                    if dones:
+                        print("=================")
                     env.render()
                     done = dones
 

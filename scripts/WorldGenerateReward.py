@@ -81,5 +81,7 @@ class WorldGenerateReward(object):
 
     def getReward(self, observation):
         self.updateReward(observation)
+        if self.space_utilization_score == self.previous_space_utilization_score:
+            self.reward -= 10 * self.step_weight
         return self.reward
 

@@ -100,8 +100,8 @@ bool EasyPolygonPoint2D::updateByPolygonParam(
     const float unit_line_y_diff = (next_point.y - current_point.y) / current_line_length;
 
     position.setPosition(
-        current_point.x + unit_line_x_diff * param_on_line,
-        current_point.y + unit_line_y_diff * param_on_line);
+        current_point.x + unit_line_x_diff * param_on_line * current_line_length,
+        current_point.y + unit_line_y_diff * param_on_line * current_line_length);
 
     if(param_on_line == 0)
     {
@@ -272,13 +272,15 @@ bool EasyPolygonPoint2D::updateByPosition(
         }
     }
 
-    const float current_line_length =
-      polygon.point_length_vec[min_dist_line_idx + 1] - polygon.point_length_vec[min_dist_line_idx];
-
     const float point_length =
-      current_line_length + EasyComputation::pointDist(nearest_point_on_line, polygon.point_list[min_dist_line_idx]);
+      polygon.point_length_vec[min_dist_line_idx] +
+      EasyComputation::pointDist(nearest_point_on_line, polygon.point_list[min_dist_line_idx]);
 
     const float point_param_on_polygon = point_length / polygon.perimeter;
+
+    std::cout <<
+      "point_length = " << point_length << std::endl <<
+      "point_param_on_polygon = " << point_param_on_polygon << std::endl;
 
     return updateByPolygonParam(polygon, point_param_on_polygon);
 }

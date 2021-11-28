@@ -145,7 +145,7 @@ bool UnitWorldWidget::drawPolygonPoint()
 {
     QPainter painter(this);
 
-    QPen pen(QColor(0, 255, 0), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(QColor(0, 255, 0), 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     painter.setPen(pen);
 
@@ -155,3 +155,4 @@ bool UnitWorldWidget::drawPolygonPoint()
 
     return true;
 }
+

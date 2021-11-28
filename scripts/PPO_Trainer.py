@@ -15,7 +15,7 @@ from WorldGenerateEnvironment import WorldGenerateEnvironment
 
 if __name__ == "__main__":
     game_name = "MyEnv"
-    train_mode = False
+    train_mode = True
     policy = "CnnPolicy"
     log_dir = "./tmp/"
     start_episode = 0

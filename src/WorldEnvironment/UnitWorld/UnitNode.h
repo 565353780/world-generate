@@ -113,6 +113,8 @@ public:
     float real_left_width;
 
     std::vector<EasyIntersection2D> intersection_vec_;
+    EasyPolygonPoint2D test_;
+    EasyLine2D test_line_;
 };
 
 #endif // UNIT_NODE_H

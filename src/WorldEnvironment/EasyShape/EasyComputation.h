@@ -138,6 +138,10 @@ public:
         const EasyPoint2D &point,
         const EasyLine2D &line);
 
+    static bool isPointOnLine(
+        const EasyPoint2D &point,
+        const EasyLine2D &line);
+
     static int isPointInPolygon(
         const EasyPoint2D &point,
         const EasyPolygon2D &polygon);

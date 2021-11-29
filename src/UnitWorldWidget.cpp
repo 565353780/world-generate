@@ -192,6 +192,7 @@ bool UnitWorldWidget::drawRoom()
 
     QPen pen(QColor(0, 255, 0), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen pen_red(QColor(255, 0, 0), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_blue(QColor(0, 0, 255), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     painter.setPen(pen);
 
@@ -216,6 +217,15 @@ bool UnitWorldWidget::drawRoom()
             for(const EasyIntersection2D& inter : room_node->intersection_vec_)
             {
                 painter.drawPoint(getPointInImage(inter.point));
+            }
+
+            painter.setPen(pen_blue);
+            if(room_node->test_.is_valid)
+            {
+                painter.drawPoint(getPointInImage(room_node->test_.position));
+                painter.drawLine(
+                    getPointInImage(room_node->test_line_.point_1),
+                    getPointInImage(room_node->test_line_.point_2));
             }
         }
     }

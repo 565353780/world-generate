@@ -774,6 +774,67 @@ bool EasyComputation::isPointOnOpenBoundedLine(
     return false;
 }
 
+bool EasyComputation::isPointOnLine(
+    const EasyPoint2D &point,
+    const EasyLine2D &line)
+{
+    const float error_max = 0.0001;
+
+    if(line.point_1.x == line.point_2.x)
+    {
+        if(std::abs(point.x - line.point_1.x) > error_max)
+        {
+            return false;
+        }
+
+        if(line.point_1.y == line.point_2.y)
+        {
+            if(std::abs(point.y - line.point_1.y) > error_max)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        std::pair<float, float> line_y_minmax_pair = std::minmax(line.point_1.y, line.point_2.y);
+
+        if(point.y < line_y_minmax_pair.first || point.y > line_y_minmax_pair.second)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    if(line.point_1.y == line.point_2.y)
+    {
+        if(std::abs(point.y - line.point_1.y) > error_max)
+        {
+            return false;
+        }
+
+        std::pair<float, float> line_x_minmax_pair = std::minmax(line.point_1.x, line.point_2.x);
+
+        if(point.x < line_x_minmax_pair.first || point.x > line_x_minmax_pair.second)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    EasyLine2D line_point_1_to_point;
+    line_point_1_to_point.setPosition(line.point_1, point);
+
+    if(std::abs(cross(line, line_point_1_to_point)) > error_max)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 int EasyComputation::isPointInPolygon(
     const EasyPoint2D &point,
     const EasyPolygon2D &polygon)

@@ -544,8 +544,6 @@ bool UnitNode::updateWidth()
 
     EasyPolygon2D polygon;
     intersection_vec_.clear();
-    test_.reset();
-    test_line_.setPosition(0, 0, 0, 0);
 
     EasyPolygonPoint2D left_point_on_parent_polygon;
     float left_length = polygon_point_on_parent_polygon.length - width / 2.0;
@@ -601,28 +599,21 @@ bool UnitNode::updateWidth()
 
     }
 
-    // if(left_point_on_parent_polygon.line_idx != right_point_on_parent_polygon.line_idx)
-    // {
-        // real_left_width = width / 2.0;
-        // real_right_width = width / 2.0;
-        // return true;
-    // }
-
     polygon.addPoint(right_point_on_parent_polygon.position);
 
     EasyPoint2D left_line_direction;
     left_line_direction.setPosition(
-        cos(left_angle) * left_point_on_parent_polygon.left_direction.x -
-        sin(left_angle) * left_point_on_parent_polygon.left_direction.y,
-        sin(left_angle) * left_point_on_parent_polygon.left_direction.x +
-        cos(left_angle) * left_point_on_parent_polygon.left_direction.y);
+        std::cos(left_angle) * left_point_on_parent_polygon.left_direction.x -
+        std::sin(left_angle) * left_point_on_parent_polygon.left_direction.y,
+        std::sin(left_angle) * left_point_on_parent_polygon.left_direction.x +
+        std::cos(left_angle) * left_point_on_parent_polygon.left_direction.y);
 
     EasyPoint2D right_line_direction;
     right_line_direction.setPosition(
-        cos(right_angle) * right_point_on_parent_polygon.right_direction.x -
-        sin(right_angle) * right_point_on_parent_polygon.right_direction.y,
-        sin(right_angle) * right_point_on_parent_polygon.right_direction.x +
-        cos(right_angle) * right_point_on_parent_polygon.right_direction.y);
+        std::cos(right_angle) * right_point_on_parent_polygon.right_direction.x -
+        std::sin(right_angle) * right_point_on_parent_polygon.right_direction.y,
+        std::sin(right_angle) * right_point_on_parent_polygon.right_direction.x +
+        std::cos(right_angle) * right_point_on_parent_polygon.right_direction.y);
 
     EasyPoint2D left_end_point;
     left_end_point.setPosition(
@@ -750,9 +741,6 @@ bool UnitNode::updateWidth()
             {
                 real_right_width =  intersection_polygon_point.length - polygon_point_on_parent_polygon.length;
 
-                test_ = intersection_polygon_point;
-                test_line_ = left_line;
-
                 return true;
             }
         }
@@ -768,7 +756,7 @@ bool UnitNode::updateWidth()
     {
         if(EasyComputation::isPointOnLine(intersection_polygon_point.position, right_line))
         {
-            real_right_width = polygon_point_on_parent_polygon.length - intersection_polygon_point.length;
+            real_left_width = polygon_point_on_parent_polygon.length - intersection_polygon_point.length;
 
             return true;
         }
@@ -850,17 +838,17 @@ bool UnitNode::updatePolygon()
 
     EasyPoint2D left_line_direction;
     left_line_direction.setPosition(
-        cos(left_angle) * left_point_on_parent_polygon.left_direction.x -
-        sin(left_angle) * left_point_on_parent_polygon.left_direction.y,
-        sin(left_angle) * left_point_on_parent_polygon.left_direction.x +
-        cos(left_angle) * left_point_on_parent_polygon.left_direction.y);
+        std::cos(left_angle) * left_point_on_parent_polygon.left_direction.x -
+        std::sin(left_angle) * left_point_on_parent_polygon.left_direction.y,
+        std::sin(left_angle) * left_point_on_parent_polygon.left_direction.x +
+        std::cos(left_angle) * left_point_on_parent_polygon.left_direction.y);
 
     EasyPoint2D right_line_direction;
     right_line_direction.setPosition(
-        cos(right_angle) * right_point_on_parent_polygon.right_direction.x -
-        sin(right_angle) * right_point_on_parent_polygon.right_direction.y,
-        sin(right_angle) * right_point_on_parent_polygon.right_direction.x +
-        cos(right_angle) * right_point_on_parent_polygon.right_direction.y);
+        std::cos(right_angle) * right_point_on_parent_polygon.right_direction.x -
+        std::sin(right_angle) * right_point_on_parent_polygon.right_direction.y,
+        std::sin(right_angle) * right_point_on_parent_polygon.right_direction.x +
+        std::cos(right_angle) * right_point_on_parent_polygon.right_direction.y);
 
     EasyPoint2D left_end_point;
     left_end_point.setPosition(

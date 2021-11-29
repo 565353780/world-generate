@@ -220,13 +220,13 @@ bool UnitWorldWidget::drawRoom()
             }
 
             painter.setPen(pen_blue);
-            if(room_node->test_.is_valid)
-            {
-                painter.drawPoint(getPointInImage(room_node->test_.position));
-                painter.drawLine(
-                    getPointInImage(room_node->test_line_.point_1),
-                    getPointInImage(room_node->test_line_.point_2));
-            }
+            painter.drawLine(
+                getPointInImage(room_node->test_left_.point_1),
+                getPointInImage(room_node->test_left_.point_2));
+            painter.setPen(pen_red);
+            painter.drawLine(
+                getPointInImage(room_node->test_right_.point_1),
+                getPointInImage(room_node->test_right_.point_2));
         }
     }
 

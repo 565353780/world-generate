@@ -585,22 +585,12 @@ bool EasyComputation::isRectCross(
     const EasyLine2D &line_1,
     const EasyLine2D &line_2)
 {
-    if(line_1.rect.x_max < line_2.rect.x_min)
-    {
-        return false;
-    }
+    const float error_max = 0.0001;
 
-    if(line_1.rect.x_min > line_2.rect.x_max)
-    {
-        return false;
-    }
-
-    if(line_1.rect.y_max < line_2.rect.y_min)
-    {
-        return false;
-    }
-
-    if(line_1.rect.y_min > line_2.rect.y_max)
+    if(line_1.rect.x_max < line_2.rect.x_min - error_max ||
+        line_1.rect.x_min > line_2.rect.x_max + error_max ||
+        line_1.rect.y_max < line_2.rect.y_min - error_max ||
+        line_1.rect.y_min > line_2.rect.y_max + error_max)
     {
         return false;
     }
@@ -612,22 +602,10 @@ bool EasyComputation::isRectCross(
     const EasyRect2D &rect_1,
     const EasyRect2D &rect_2)
 {
-    if(rect_1.x_max < rect_2.x_min)
-    {
-        return false;
-    }
-
-    if(rect_1.x_min > rect_2.x_max)
-    {
-        return false;
-    }
-
-    if(rect_1.y_max < rect_2.y_min)
-    {
-        return false;
-    }
-
-    if(rect_1.y_min > rect_2.y_max)
+    if(rect_1.x_max < rect_2.x_min ||
+        rect_1.x_min > rect_2.x_max ||
+        rect_1.y_max < rect_2.y_min ||
+        rect_1.y_min > rect_2.y_max)
     {
         return false;
     }
@@ -644,6 +622,14 @@ bool EasyComputation::isLineCross(
     if(!isRectCross(line_1, line_2))
     {
         return false;
+    }
+
+    if(isPointOnLine(line_1.point_1, line_2) ||
+        isPointOnLine(line_1.point_2, line_2) ||
+        isPointOnLine(line_2.point_1, line_1) ||
+        isPointOnLine(line_2.point_2, line_1))
+    {
+        return true;
     }
 
     EasyLine2D line_22_to_11;
@@ -671,7 +657,6 @@ bool EasyComputation::isLineCross(
         line_1_point_2_cross_line_2 = 0;
     }
 
-    // if(std::abs(line_1_point_1_cross_line_2) <= error_max)
     if(line_1_point_1_cross_line_2 == 0)
     {
         if(line_1_point_2_cross_line_2 == 0)

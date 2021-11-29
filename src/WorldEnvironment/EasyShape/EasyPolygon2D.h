@@ -21,8 +21,9 @@ public:
 
     bool reset();
 
-    bool setID(
-        const int &id_data);
+    bool isSamePoint(
+        const EasyPoint2D& point_1,
+        const EasyPoint2D& point_2);
 
     bool addPoint(
         const EasyPoint2D &point_2d);

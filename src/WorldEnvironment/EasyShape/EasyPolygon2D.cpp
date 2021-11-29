@@ -8,6 +8,27 @@ bool EasyPolygon2D::reset()
     return true;
 }
 
+bool EasyPolygon2D::isSamePoint(
+    const EasyPoint2D& point_1,
+    const EasyPoint2D& point_2)
+{
+    const float error_max = 0.0001;
+
+    const float point_x_diff = point_1.x - point_2.x;
+    const float point_y_diff = point_1.y - point_2.y;
+
+    const float point_dist2 =
+      point_x_diff * point_x_diff +
+      point_y_diff * point_y_diff;
+
+    if(point_dist2 > error_max)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 bool EasyPolygon2D::addPoint(
     const EasyPoint2D &point)
 {
@@ -17,8 +38,8 @@ bool EasyPolygon2D::addPoint(
     }
     else
     {
-        if((point.x == point_list.back().x && point.y == point_list.back().y) ||
-            (point.x == point_list[0].x && point.y == point_list[0].y))
+        if(isSamePoint(point, point_list.back()) ||
+            isSamePoint(point, point_list[0]))
         {
             return true;
         }
@@ -63,8 +84,8 @@ bool EasyPolygon2D::insertPoint(
     const size_t next_point_idx = (insert_idx + 1) % point_list.size();
     const size_t prev_point_idx = (insert_idx - 1 + point_list.size()) % point_list.size();
 
-    if((point.x == point_list[next_point_idx].x && point.y == point_list[next_point_idx].y) ||
-        (point.x == point_list[prev_point_idx].x && point.y == point_list[prev_point_idx].y))
+    if(isSamePoint(point, point_list[next_point_idx]) ||
+        isSamePoint(point, point_list[prev_point_idx]))
     {
         return true;
     }
@@ -129,8 +150,8 @@ bool EasyPolygon2D::setPointPosition(
     const size_t next_point_idx = (point_idx + 1) % point_list.size();
     const size_t prev_point_idx = (point_idx - 1 + point_list.size()) % point_list.size();
 
-    if((point_position.x == point_list[next_point_idx].x && point_position.y == point_list[next_point_idx].y) ||
-        (point_position.x == point_list[prev_point_idx].x && point_position.y == point_list[prev_point_idx].y))
+    if(isSamePoint(point_position, point_list[next_point_idx]) ||
+        isSamePoint(point_position, point_list[prev_point_idx]))
     {
         if(!removePoint(point_idx))
         {

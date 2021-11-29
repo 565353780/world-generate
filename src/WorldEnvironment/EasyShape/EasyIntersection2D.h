@@ -34,6 +34,7 @@ public:
     }
 
     EasyPoint2D point;
+    // std::vector<std::pair<polygon_idx, std::vector<polygon_intersection_line_idx>>>
     std::vector<std::pair<size_t, std::vector<size_t>>> polygon_point_idx_vec_pair_vec;
 };
 

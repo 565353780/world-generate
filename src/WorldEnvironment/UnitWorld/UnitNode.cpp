@@ -653,15 +653,39 @@ bool UnitNode::updatePolygon()
     boundary_polygon.addPoint(left_end_point);
 
     std::vector<EasyPolygon2D> polygon_vec;
+    std::vector<EasyIntersection2D> intersection_vec;
     polygon_vec.emplace_back(boundary_polygon);
     polygon_vec.emplace_back(parent->boundary_polygon);
-    if(!EasyComputation::getPolygonIntersection(polygon_vec, intersection_vec_))
+    if(!EasyComputation::getPolygonIntersection(polygon_vec, intersection_vec))
     {
         std::cout << "UnitNode::updatePolygon :\n" <<
           "getPolygonIntersection failed!\n";
 
         return false;
     }
+
+    std::vector<EasyIntersection2D> inner_intersection_vec;
+
+    for(const EasyIntersection2D& intersection : intersection_vec)
+    {
+        bool is_intersection_valid = true;
+        for(const EasyPoint2D& polygon_point : boundary_polygon.point_list)
+        {
+            if(EasyComputation::isSamePoint(
+                  intersection.point, polygon_point))
+            {
+                is_intersection_valid = false;
+                break;
+            }
+        }
+
+        if(is_intersection_valid)
+        {
+            inner_intersection_vec.emplace_back(intersection);
+        }
+    }
+
+    intersection_vec_ = inner_intersection_vec;
 
     return true;
 }

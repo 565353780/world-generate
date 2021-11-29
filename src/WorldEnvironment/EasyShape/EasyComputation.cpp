@@ -518,7 +518,8 @@ bool EasyComputation::isSamePoint(
     const EasyPoint2D &point_1,
     const EasyPoint2D &point_2)
 {
-    if(point_1.x == point_2.x && point_1.y == point_2.y)
+    const float error_max = 0.0001;
+    if(pointDist2(point_1, point_2) <= error_max * error_max)
     {
         return true;
     }
@@ -1164,7 +1165,6 @@ bool EasyComputation::getPolygonIntersection(
         {
             EasyPolygon2D &polygon_2 = polygon_vec[j];
 
-            std::cout << "==============\n";
             for(size_t k = 0; k < polygon_1.point_list.size(); ++k)
             {
                 EasyLine2D polygon_1_line;
@@ -1189,12 +1189,9 @@ bool EasyComputation::getPolygonIntersection(
                     {
                         continue;
                     }
-                    std::cout << "p1-" << k << " inter p2-" << l << " at ";
 
                     for(const EasyPoint2D &line_cross_point : line_cross_point_vec)
                     {
-                        std::cout << "[" << line_cross_point.x << "," <<
-                          line_cross_point.y << "]";
                         bool cross_point_exist = false;
 
                         for(EasyIntersection2D &exist_intersection : intersection_vec)
@@ -1221,7 +1218,6 @@ bool EasyComputation::getPolygonIntersection(
                             intersection_vec.emplace_back(intersection);
                         }
                     }
-                    std::cout << std::endl;
                 }
             }
         }

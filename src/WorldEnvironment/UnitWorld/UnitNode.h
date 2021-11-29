@@ -111,10 +111,6 @@ public:
 
     float real_right_width;
     float real_left_width;
-
-    std::vector<EasyIntersection2D> intersection_vec_;
-    EasyLine2D test_left_;
-    EasyLine2D test_right_;
 };
 
 #endif // UNIT_NODE_H

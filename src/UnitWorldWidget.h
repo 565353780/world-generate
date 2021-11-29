@@ -4,15 +4,25 @@
 #include <QWidget>
 #include <QPaintEvent>
 #include <QMouseEvent>
+#include <QKeyEvent>
 #include <QPen>
 #include <QPainter>
 #include <QPolygon>
+
+#include <string>
 
 #include "UnitWorld/UnitWorldController.h"
 
 namespace Ui {
 class UnitWorldWidget;
 }
+
+enum CreateMode
+{
+    CreateFree = 0,
+    CreateWall = 1,
+    CreateRoom = 2
+};
 
 class UnitWorldWidget : public QWidget
 {
@@ -31,6 +41,8 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
 
+    void keyPressEvent(QKeyEvent *event);
+
 private:
     QPoint getPointInImage(
         const EasyPoint2D& point_in_world);
@@ -38,7 +50,10 @@ private:
     EasyPoint2D getPointInWorld(
         const QPoint& point_in_image);
 
-    bool chooseRoomContainer(
+    bool chooseWall(
+        const QPoint& mouse_position_in_image);
+
+    bool chooseRoom(
         const QPoint& mouse_position_in_image);
 
     bool setMousePosition(
@@ -52,8 +67,8 @@ private:
     Ui::UnitWorldWidget *ui;
 
     UnitWorldController unit_world_controller_;
-    EasyPolygonPoint2D polygon_point_;
 
+    CreateMode create_mode_;
     float zoom_;
     float offset_x_;
     float offset_y_;

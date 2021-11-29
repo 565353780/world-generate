@@ -543,7 +543,6 @@ bool UnitNode::updateWidth()
     const float error_max = 0.0001;
 
     EasyPolygon2D polygon;
-    intersection_vec_.clear();
 
     EasyPolygonPoint2D left_point_on_parent_polygon;
     float left_length = polygon_point_on_parent_polygon.length - width / 2.0;
@@ -684,8 +683,6 @@ bool UnitNode::updateWidth()
         }
 
         intersection_polygon_point_vec.emplace_back(intersection_polygon_point);
-
-        intersection_vec_.emplace_back(intersection);
     }
 
     if(intersection_polygon_point_vec.size() == 0)

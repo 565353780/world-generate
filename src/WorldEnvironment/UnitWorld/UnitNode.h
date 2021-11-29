@@ -83,6 +83,8 @@ public:
         const float& target_left_angle,
         const float& target_right_angle);
 
+    bool updateWidth();
+
     bool updatePolygon();
 
     bool outputInfo(
@@ -107,8 +109,9 @@ public:
     float left_angle;
     float right_angle;
 
-    EasyPoint2D left_direction_;
-    EasyPoint2D right_direction_;
+    float real_right_width;
+    float real_left_width;
+
     std::vector<EasyIntersection2D> intersection_vec_;
 };
 

@@ -53,6 +53,11 @@ bool UnitNode::reset()
     dist_to_parent_polygon = -1;
     width = -1;
     height = -1;
+    left_angle = 0;
+    right_angle = 0;
+
+    real_right_width = -1;
+    real_left_width = -1;
 
     return true;
 }
@@ -533,13 +538,217 @@ bool UnitNode::setPositionOnParentPolygonByPosition(
     return true;
 }
 
-bool UnitNode::updatePolygon()
+bool UnitNode::updateWidth()
 {
-    boundary_polygon.reset();
+    EasyPolygon2D polygon;
     intersection_vec_.clear();
 
     EasyPolygonPoint2D left_point_on_parent_polygon;
     float left_length = polygon_point_on_parent_polygon.length - width / 2.0;
+    if(left_length < 0)
+    {
+        left_length += parent->boundary_polygon.perimeter;
+    }
+
+    if(!left_point_on_parent_polygon.updateByLength(parent->boundary_polygon, left_length))
+    {
+        std::cout << "UnitNode::updateWidth :\n" <<
+          "updateByLength for left point failed!\n";
+
+        return false;
+    }
+
+    EasyPolygonPoint2D right_point_on_parent_polygon;
+    float right_length = polygon_point_on_parent_polygon.length + width / 2.0;
+    if(right_length >= parent->boundary_polygon.perimeter)
+    {
+        right_length -= parent->boundary_polygon.perimeter;
+    }
+
+    if(!right_point_on_parent_polygon.updateByLength(parent->boundary_polygon, right_length))
+    {
+        std::cout << "UnitNode::updateWidth :\n" <<
+          "updateByLength for right point failed!\n";
+
+        return false;
+    }
+
+    polygon.addPoint(left_point_on_parent_polygon.position);
+
+    if(left_point_on_parent_polygon.line_idx < right_point_on_parent_polygon.line_idx)
+    {
+        for(size_t i = left_point_on_parent_polygon.line_idx + 1;
+            i <= right_point_on_parent_polygon.line_idx; ++i)
+        {
+            polygon.addPoint(parent->boundary_polygon.point_list[i]);
+        }
+    }
+    else if(left_point_on_parent_polygon.line_idx > right_point_on_parent_polygon.line_idx)
+    {
+        const size_t right_point_line_real_idx =
+          right_point_on_parent_polygon.line_idx + parent->boundary_polygon.point_list.size();
+
+        for(size_t i = left_point_on_parent_polygon.line_idx + 1;
+            i <= right_point_line_real_idx; ++i)
+        {
+            polygon.addPoint(parent->boundary_polygon.point_list[
+                i % parent->boundary_polygon.point_list.size()]);
+        }
+
+    }
+
+    const size_t polygon_right_down_point_idx = polygon.point_list.size();
+    polygon.addPoint(right_point_on_parent_polygon.position);
+
+    EasyPoint2D left_line_direction;
+    left_line_direction.setPosition(
+        cos(left_angle) * left_point_on_parent_polygon.left_direction.x -
+        sin(left_angle) * left_point_on_parent_polygon.left_direction.y,
+        sin(left_angle) * left_point_on_parent_polygon.left_direction.x +
+        cos(left_angle) * left_point_on_parent_polygon.left_direction.y);
+
+    EasyPoint2D right_line_direction;
+    right_line_direction.setPosition(
+        cos(right_angle) * right_point_on_parent_polygon.right_direction.x -
+        sin(right_angle) * right_point_on_parent_polygon.right_direction.y,
+        sin(right_angle) * right_point_on_parent_polygon.right_direction.x +
+        cos(right_angle) * right_point_on_parent_polygon.right_direction.y);
+
+    EasyPoint2D left_end_point;
+    left_end_point.setPosition(
+        left_point_on_parent_polygon.position.x + left_line_direction.x * height,
+        left_point_on_parent_polygon.position.y + left_line_direction.y * height);
+
+    EasyPoint2D right_end_point;
+    right_end_point.setPosition(
+        right_point_on_parent_polygon.position.x + right_line_direction.x * height,
+        right_point_on_parent_polygon.position.y + right_line_direction.y * height);
+
+    EasyLine2D left_line;
+    left_line.setPosition(left_point_on_parent_polygon.position, left_end_point);
+
+    EasyLine2D right_line;
+    right_line.setPosition(right_point_on_parent_polygon.position, right_end_point);
+
+    if(EasyComputation::isLineCross(left_line, right_line))
+    {
+        EasyPoint2D line_cross_point;
+        if(!EasyComputation::getLineCrossPoint(left_line, right_line, line_cross_point))
+        {
+            std::cout << "UnitNode::updateWidth :\n" <<
+              "getLineCrossPoint failed!\n";
+
+            return false;
+        }
+
+        real_right_width = width / 2.0;
+        real_left_width = width / 2.0;
+
+        return true;
+    }
+
+    polygon.addPoint(right_end_point);
+    polygon.addPoint(left_end_point);
+
+    std::vector<EasyPolygon2D> polygon_vec;
+    std::vector<EasyIntersection2D> intersection_vec;
+    polygon_vec.emplace_back(polygon);
+    polygon_vec.emplace_back(parent->boundary_polygon);
+    if(!EasyComputation::getPolygonIntersection(polygon_vec, intersection_vec))
+    {
+        std::cout << "UnitNode::updateWidth :\n" <<
+          "getPolygonIntersection failed!\n";
+
+        return false;
+    }
+
+    std::vector<EasyPolygonPoint2D> intersection_polygon_point_vec;
+
+    for(const EasyIntersection2D& intersection : intersection_vec)
+    {
+        if(EasyComputation::isSamePoint(polygon.point_list[0], intersection.point) ||
+            EasyComputation::isSamePoint(polygon.point_list[polygon_right_down_point_idx], intersection.point))
+        {
+            continue;
+        }
+
+        EasyPolygonPoint2D intersection_polygon_point;
+        if(!intersection_polygon_point.updateByPosition(parent->boundary_polygon, intersection.point))
+        {
+            std::cout << "UnitNode::updateWidth :\n" <<
+              "getPolygonIntersection failed!\n";
+
+            return false;
+        }
+
+        intersection_polygon_point_vec.emplace_back(intersection_polygon_point);
+
+        intersection_vec_.emplace_back(intersection);
+    }
+
+    if(intersection_polygon_point_vec.size() == 0)
+    {
+        real_right_width = width / 2.0;
+        real_left_width = width / 2.0;
+
+        return true;
+    }
+
+    float min_right_param_diff = 1.0;
+    float min_left_param_diff = 1.0;
+
+    for(const EasyPolygonPoint2D& intersection_polygon_point : intersection_polygon_point_vec)
+    {
+        float current_min_right_param_diff =
+          intersection_polygon_point.param_on_polygon - polygon_point_on_parent_polygon.param_on_polygon;
+
+        if(current_min_right_param_diff < 0)
+        {
+            current_min_right_param_diff += 1.0;
+        }
+
+        if(current_min_right_param_diff < min_right_param_diff)
+        {
+            min_right_param_diff = current_min_right_param_diff;
+        }
+
+        const float current_min_left_param_diff = 1.0 - current_min_right_param_diff;
+        if(current_min_left_param_diff < min_left_param_diff)
+        {
+            min_left_param_diff = current_min_left_param_diff;
+        }
+    }
+
+    if(min_right_param_diff < min_left_param_diff)
+    {
+        real_left_width = width / 2.0;
+
+        real_right_width = (1 - min_left_param_diff) * parent->boundary_polygon.perimeter;
+
+        return true;
+    }
+
+    real_right_width = width / 2.0;
+
+    real_left_width = (1 - min_right_param_diff) * parent->boundary_polygon.perimeter;
+
+    return true;
+}
+
+bool UnitNode::updatePolygon()
+{
+    boundary_polygon.reset();
+
+    if(!updateWidth())
+    {
+        std::cout << "UnitNode::updatePolygon :\n" <<
+          "updateWidth failed!\n";
+
+        return false;
+    }
+
+    EasyPolygonPoint2D left_point_on_parent_polygon;
+    float left_length = polygon_point_on_parent_polygon.length - real_left_width;
     if(left_length < 0)
     {
         left_length += parent->boundary_polygon.perimeter;
@@ -554,7 +763,7 @@ bool UnitNode::updatePolygon()
     }
 
     EasyPolygonPoint2D right_point_on_parent_polygon;
-    float right_length = polygon_point_on_parent_polygon.length + width / 2.0;
+    float right_length = polygon_point_on_parent_polygon.length + real_right_width;
     if(right_length >= parent->boundary_polygon.perimeter)
     {
         right_length -= parent->boundary_polygon.perimeter;
@@ -609,9 +818,6 @@ bool UnitNode::updatePolygon()
         sin(right_angle) * right_point_on_parent_polygon.right_direction.x +
         cos(right_angle) * right_point_on_parent_polygon.right_direction.y);
 
-    left_direction_ = left_line_direction;
-    right_direction_ = right_line_direction;
-
     EasyPoint2D left_end_point;
     left_end_point.setPosition(
         left_point_on_parent_polygon.position.x + left_line_direction.x * height,
@@ -646,46 +852,29 @@ bool UnitNode::updatePolygon()
         return true;
     }
 
+    if(real_right_width != width / 2.0)
+    {
+        right_up_point_idx = boundary_polygon.point_list.size();
+        left_up_point_idx = boundary_polygon.point_list.size();
+        boundary_polygon.addPoint(left_end_point);
+
+        return true;
+    }
+
+    if(real_left_width != width / 2.0)
+    {
+        right_up_point_idx = boundary_polygon.point_list.size();
+        left_up_point_idx = boundary_polygon.point_list.size();
+        boundary_polygon.addPoint(right_end_point);
+
+        return true;
+    }
+
     right_up_point_idx = boundary_polygon.point_list.size();
     boundary_polygon.addPoint(right_end_point);
 
     left_up_point_idx = boundary_polygon.point_list.size();
     boundary_polygon.addPoint(left_end_point);
-
-    std::vector<EasyPolygon2D> polygon_vec;
-    std::vector<EasyIntersection2D> intersection_vec;
-    polygon_vec.emplace_back(boundary_polygon);
-    polygon_vec.emplace_back(parent->boundary_polygon);
-    if(!EasyComputation::getPolygonIntersection(polygon_vec, intersection_vec))
-    {
-        std::cout << "UnitNode::updatePolygon :\n" <<
-          "getPolygonIntersection failed!\n";
-
-        return false;
-    }
-
-    std::vector<EasyIntersection2D> inner_intersection_vec;
-
-    for(const EasyIntersection2D& intersection : intersection_vec)
-    {
-        bool is_intersection_valid = true;
-        for(const EasyPoint2D& polygon_point : boundary_polygon.point_list)
-        {
-            if(EasyComputation::isSamePoint(
-                  intersection.point, polygon_point))
-            {
-                is_intersection_valid = false;
-                break;
-            }
-        }
-
-        if(is_intersection_valid)
-        {
-            inner_intersection_vec.emplace_back(intersection);
-        }
-    }
-
-    intersection_vec_ = inner_intersection_vec;
 
     return true;
 }

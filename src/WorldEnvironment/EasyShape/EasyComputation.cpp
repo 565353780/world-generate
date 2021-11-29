@@ -519,7 +519,7 @@ bool EasyComputation::isSamePoint(
     const EasyPoint2D &point_2)
 {
     const float error_max = 0.0001;
-    if(pointDist2(point_1, point_2) <= error_max * error_max)
+    if(pointDist2(point_1, point_2) <= error_max)
     {
         return true;
     }
@@ -1054,9 +1054,11 @@ bool EasyComputation::getLineCrossPoint(
     const EasyLine2D &line_2,
     EasyPoint2D &line_cross_point)
 {
+    const float error_max = 0.0001;
+
     float line_cross = cross(line_1, line_2);
 
-    if(line_cross == 0)
+    if(std::abs(line_cross) <= error_max)
     {
         std::cout << "EasyPolygon2D::getLineCrossPoint : lines are parallel!" << std::endl;
         return false;

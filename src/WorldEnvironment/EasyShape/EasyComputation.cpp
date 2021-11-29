@@ -638,6 +638,8 @@ bool EasyComputation::isLineCross(
     const EasyLine2D &line_1,
     const EasyLine2D &line_2)
 {
+    const float error_max = 0.0001;
+
     if(!isRectCross(line_1, line_2))
     {
         return false;
@@ -655,12 +657,23 @@ bool EasyComputation::isLineCross(
 
     float line_1_point_1_cross_line_2 =
       cross(line_22_to_11, line_2);
-    float line_1_point_2_corss_line_2 =
+    float line_1_point_2_cross_line_2 =
       cross(line_22_to_12, line_2);
 
+    if(std::abs(line_1_point_1_cross_line_2) <= error_max)
+    {
+        line_1_point_1_cross_line_2 = 0;
+    }
+
+    if(std::abs(line_1_point_2_cross_line_2) <= error_max)
+    {
+        line_1_point_2_cross_line_2 = 0;
+    }
+
+    // if(std::abs(line_1_point_1_cross_line_2) <= error_max)
     if(line_1_point_1_cross_line_2 == 0)
     {
-        if(line_1_point_2_corss_line_2 == 0)
+        if(line_1_point_2_cross_line_2 == 0)
         {
             return true;
         }
@@ -668,24 +681,69 @@ bool EasyComputation::isLineCross(
         return isPointInLineRect(line_1.point_1, line_2);
     }
 
-    if(line_1_point_2_corss_line_2 == 0)
+    if(line_1_point_2_cross_line_2 == 0)
     {
         return isPointInLineRect(line_1.point_2, line_2);
     }
 
-    if(line_1_point_1_cross_line_2 * line_1_point_2_corss_line_2 < 0)
+    if(line_1_point_1_cross_line_2 * line_1_point_2_cross_line_2 > 0)
     {
-        return true;
+        return false;
     }
 
-    return false;
+    EasyLine2D line_12_to_21;
+    EasyLine2D line_12_to_22;
+
+    line_12_to_21.setPosition(
+        line_1.point_2,
+        line_2.point_1);
+    line_12_to_22.setPosition(
+        line_1.point_2,
+        line_2.point_2);
+
+    float line_2_point_1_cross_line_1 =
+      cross(line_12_to_21, line_1);
+    float line_2_point_2_cross_line_1 =
+      cross(line_12_to_22, line_1);
+
+    if(std::abs(line_2_point_1_cross_line_1) <= error_max)
+    {
+        line_2_point_1_cross_line_1 = 0;
+    }
+    if(std::abs(line_2_point_2_cross_line_1) <= error_max)
+    {
+        line_2_point_2_cross_line_1 = 0;
+    }
+
+    if(line_2_point_1_cross_line_1 == 0)
+    {
+        if(line_2_point_2_cross_line_1 == 0)
+        {
+            return true;
+        }
+
+        return isPointInLineRect(line_2.point_1, line_1);
+    }
+
+    if(line_2_point_2_cross_line_1 == 0)
+    {
+        return isPointInLineRect(line_2.point_2, line_1);
+    }
+
+    if(line_2_point_1_cross_line_1 * line_2_point_2_cross_line_1 > 0)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool EasyComputation::isLineParallel(
     const EasyLine2D &line_1,
     const EasyLine2D &line_2)
 {
-    if(cross(line_1, line_2) == 0)
+    const float error_max = 0.0001;
+    if(std::abs(cross(line_1, line_2)) < error_max)
     {
         return true;
     }
@@ -1106,6 +1164,7 @@ bool EasyComputation::getPolygonIntersection(
         {
             EasyPolygon2D &polygon_2 = polygon_vec[j];
 
+            std::cout << "==============\n";
             for(size_t k = 0; k < polygon_1.point_list.size(); ++k)
             {
                 EasyLine2D polygon_1_line;
@@ -1130,9 +1189,12 @@ bool EasyComputation::getPolygonIntersection(
                     {
                         continue;
                     }
+                    std::cout << "p1-" << k << " inter p2-" << l << " at ";
 
                     for(const EasyPoint2D &line_cross_point : line_cross_point_vec)
                     {
+                        std::cout << "[" << line_cross_point.x << "," <<
+                          line_cross_point.y << "]";
                         bool cross_point_exist = false;
 
                         for(EasyIntersection2D &exist_intersection : intersection_vec)
@@ -1159,6 +1221,7 @@ bool EasyComputation::getPolygonIntersection(
                             intersection_vec.emplace_back(intersection);
                         }
                     }
+                    std::cout << std::endl;
                 }
             }
         }

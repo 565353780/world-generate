@@ -8,7 +8,7 @@
 #include <QPainter>
 #include <QPolygon>
 
-#include "UnitWorld/UnitWorld.h"
+#include "UnitWorld/UnitWorldController.h"
 
 namespace Ui {
 class UnitWorldWidget;
@@ -51,7 +51,7 @@ private:
 private:
     Ui::UnitWorldWidget *ui;
 
-    UnitTree unit_tree_;
+    UnitWorldController unit_world_controller_;
     EasyPolygonPoint2D polygon_point_;
 
     float zoom_;

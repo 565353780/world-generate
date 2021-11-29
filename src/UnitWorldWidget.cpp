@@ -20,21 +20,21 @@ UnitWorldWidget::~UnitWorldWidget()
 
 void UnitWorldWidget::run_example()
 {
-    unit_tree_.createTree();
+    unit_world_controller_.createWorld();
 
-    unit_tree_.createNode("Outerwall 0", 0, NodeType::OuterWall, 0, NodeType::World);
+    unit_world_controller_.createWall("Outerwall 0", 0, NodeType::OuterWall);
     EasyPolygon2D polygon;
     polygon.addPoint(0, 0);
     polygon.addPoint(30, 0);
     polygon.addPoint(0, 30);
-    unit_tree_.setBoundaryPolygon(0, NodeType::OuterWall, polygon);
+    unit_world_controller_.setBoundaryPolygon(0, NodeType::OuterWall, polygon);
 
-    unit_tree_.createNode("Innerwall 0", 0, NodeType::InnerWall, 0, NodeType::World);
+    unit_world_controller_.createWall("Innerwall 0", 0, NodeType::InnerWall);
     polygon.reset();
     polygon.addPoint(8, 8);
     polygon.addPoint(14, 8);
     polygon.addPoint(8, 14);
-    unit_tree_.setBoundaryPolygon(0, InnerWall, polygon);
+    unit_world_controller_.setBoundaryPolygon(0, InnerWall, polygon);
 
     zoom_ = 20;
     offset_x_ = 100;
@@ -58,19 +58,17 @@ void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
 {
     if(!chooseRoomContainer(event->pos()))
     {
-        unit_tree_.createNode(
+        unit_world_controller_.createRoom(
             "Room " + std::to_string(new_room_idx_),
-            new_room_idx_,
-            NodeType::WallRoom,
-            0,
-            NodeType::OuterWall);
+            new_room_idx_, NodeType::WallRoom,
+            0, NodeType::OuterWall);
         current_choose_node_id_ = new_room_idx_;
         current_choose_node_type_ = NodeType::WallRoom;
         ++new_room_idx_;
 
         EasyPoint2D mouse_position_in_world = getPointInWorld(event->pos());
 
-        unit_tree_.setNodePositionOnParentPolygonByPosition(
+        unit_world_controller_.unit_tree_.setNodePositionOnParentPolygonByPosition(
             current_choose_node_id_,
             current_choose_node_type_,
             mouse_position_in_world,
@@ -84,7 +82,7 @@ void UnitWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
     EasyPoint2D mouse_position_in_world = getPointInWorld(event->pos());
 
-    unit_tree_.setNodePositionOnParentPolygonByPosition(
+    unit_world_controller_.unit_tree_.setNodePositionOnParentPolygonByPosition(
         current_choose_node_id_,
         current_choose_node_type_,
         mouse_position_in_world,
@@ -126,7 +124,7 @@ bool UnitWorldWidget::chooseRoomContainer(
     current_choose_node_id_ = 0;
     current_choose_node_type_ = NodeType::NodeFree;
 
-    for(UnitNode* wall_node : unit_tree_.root->child_vec)
+    for(UnitNode* wall_node : unit_world_controller_.unit_tree_.root->child_vec)
     {
         for(UnitNode* room_node : wall_node->child_vec)
         {
@@ -169,7 +167,7 @@ bool UnitWorldWidget::drawWall()
 
     painter.setPen(pen);
 
-    for(UnitNode* wall_node : unit_tree_.root->child_vec)
+    for(UnitNode* wall_node : unit_world_controller_.unit_tree_.root->child_vec)
     {
         const EasyPolygon2D& polygon = wall_node->boundary_polygon;
 
@@ -179,9 +177,7 @@ bool UnitWorldWidget::drawWall()
         for(size_t i = 0; i < polygon.point_list.size(); ++i)
         {
             const EasyPoint2D& polygon_point = polygon.point_list[i];
-            q_polygon.setPoint(i, QPoint(
-                  offset_x_ + zoom_ * polygon_point.x,
-                  offset_y_ + zoom_ * polygon_point.y));
+            q_polygon.setPoint(i, getPointInImage(polygon_point));
         }
 
         painter.drawPolygon(q_polygon);
@@ -195,10 +191,11 @@ bool UnitWorldWidget::drawRoom()
     QPainter painter(this);
 
     QPen pen(QColor(0, 255, 0), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen_red(QColor(255, 0, 0), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     painter.setPen(pen);
 
-    for(UnitNode* wall_node : unit_tree_.root->child_vec)
+    for(UnitNode* wall_node : unit_world_controller_.unit_tree_.root->child_vec)
     {
         for(UnitNode* room_node : wall_node->child_vec)
         {
@@ -209,12 +206,17 @@ bool UnitWorldWidget::drawRoom()
             for(size_t i = 0; i < polygon.point_list.size(); ++i)
             {
                 const EasyPoint2D& polygon_point = polygon.point_list[i];
-                q_polygon.setPoint(i, QPoint(
-                      offset_x_ + zoom_ * polygon_point.x,
-                      offset_y_ + zoom_ * polygon_point.y));
+                q_polygon.setPoint(i, getPointInImage(polygon_point));
             }
 
+            painter.setPen(pen);
             painter.drawPolygon(q_polygon);
+
+            painter.setPen(pen_red);
+            for(const EasyIntersection2D& inter : room_node->intersection_vec_)
+            {
+                painter.drawPoint(getPointInImage(inter.point));
+            }
         }
     }
 

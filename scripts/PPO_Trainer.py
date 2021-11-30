@@ -17,6 +17,7 @@ if __name__ == "__main__":
     game_name = "MyEnv"
     train_mode = True
     policy = "CnnPolicy"
+    learning_rate = 1e-4
     log_dir = "./tmp/"
     start_episode = 0
     total_time_step =50000
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     if train_mode:
         round = 0
 
-        model.learning_rate = 1e-4
+        model.learning_rate = learning_rate
 
         while True:
             model.learn(

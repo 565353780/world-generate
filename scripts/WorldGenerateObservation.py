@@ -207,13 +207,11 @@ class WorldGenerateObservation(object):
         self.updateObservation(world_environment)
         return self.observation
 
-    def render(self, wait_key):
-        cv2.imshow("observation", np.hstack((
+    def getObservationHStack(self):
+        return np.hstack((
             self.observation[self.scene_channel_idx],
             self.observation[self.wall_channel_idx],
             self.observation[self.room_channel_idx],
             self.observation[self.free_channel_idx],
-            self.observation[self.connect_channel_idx])))
-        cv2.waitKey(wait_key)
-        return True
+            self.observation[self.connect_channel_idx]))
 

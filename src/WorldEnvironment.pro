@@ -75,11 +75,13 @@ HEADERS += \
 SOURCES += \
     WorldEnvironment/UnitWorld/UnitNode.cpp \
     WorldEnvironment/UnitWorld/UnitTree.cpp \
+    WorldEnvironment/UnitWorld/UnitNodeLineManager.cpp \
     WorldEnvironment/UnitWorld/UnitWorldController.cpp
 
 HEADERS += \
     WorldEnvironment/UnitWorld/UnitNode.h \
     WorldEnvironment/UnitWorld/UnitTree.h \
+    WorldEnvironment/UnitWorld/UnitNodeLineManager.h \
     WorldEnvironment/UnitWorld/UnitWorldController.h
 
 HEADERS += \

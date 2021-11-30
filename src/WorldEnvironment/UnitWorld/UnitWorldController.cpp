@@ -70,22 +70,3 @@ bool UnitWorldController::createRoom(
     return true;
 }
 
-bool UnitWorldController::setBoundaryPolygon(
-    const size_t& node_id,
-    const NodeType& node_type,
-    const EasyPolygon2D& boundary_polygon)
-{
-    if(!unit_tree_.setBoundaryPolygon(node_id, node_type, boundary_polygon))
-    {
-        std::cout << "UnitWorldController::setBoundaryPolygon :\n" <<
-          "Input :\n" <<
-          "\t node_id = " << node_id << std::endl <<
-          "\t node_type = " << node_type << std::endl <<
-          "setBoundaryPolygon failed!\n";
-
-        return false;
-    }
-
-    return true;
-}
-

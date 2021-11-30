@@ -46,12 +46,12 @@ class WorldGenerateEnvironment(gym.Env):
 
         self.action_space = gym.spaces.Box(
             np.array([
-                -1.0,
+                #  0.0,
                 0.0,
                 0.0
             ], dtype=np.float32),
             np.array([
-                self.outerwall_num + self.innerwall_num, # wall_idx, finish episode if < 0
+                #  self.outerwall_num + self.innerwall_num, # wall_idx, finish episode if < 0
                 self.wall_edge_num_max,                  # wall_edge_idx
                 self.wall_length_max                     # position
             ], dtype=np.float32)
@@ -122,6 +122,7 @@ class WorldGenerateEnvironment(gym.Env):
                 self.writer.add_scalar("Reward/reward_" + str(self.env_idx), self.episode_reward, self.round)
             self.episode_reward = 0
             self.round += 1
+            self.reset()
         return self.observation, self.reward, self.done, {}
 
     def step(self, action):
@@ -131,24 +132,19 @@ class WorldGenerateEnvironment(gym.Env):
             self.run_time = 0
             self.done = True
 
-        if not self.action_space.contains(action):
-            print("WorldGenerateEnvironment::step :")
-            print("\t this action is not valid!")
-            self.reward = -1000
-            return self.afterStep()
-
-        wall_idx = int(action[0])
-        wall_edge_idx = int(action[1])
-        room_position = action[2]
+        #  wall_idx = int(action[0])
+        wall_idx = 0
+        wall_edge_idx = int(action[0])
+        room_position = action[1]
         #  room_num = int(action[5])
         room_num = int(self.room_num_prefix)
-        if room_num == 0:
-            room_num = 1
+        #  if room_num == 0:
+            #  room_num = 1
 
-        if wall_idx == -1:
-            self.reward = 0
-            self.done = True
-            return self.afterStep()
+        #  if wall_idx == -1:
+            #  self.reward = 0
+            #  self.done = True
+            #  return self.afterStep()
 
         if wall_idx >= self.outerwall_num + self.innerwall_num:
             wall_idx -= 1
@@ -186,7 +182,7 @@ class WorldGenerateEnvironment(gym.Env):
         return self.observation
 
     def render(self, mode="human"):
-        self.world_generate_observation.render(200)
+        self.world_generate_observation.render(500)
         return None
 
     def close(self):
@@ -203,6 +199,7 @@ if __name__ == "__main__":
     while not done:
         _, _, done, _ = world_generate_environment.step(world_generate_environment.action_space.sample())
     print("finish test episode, start render episode")
+    world_generate_environment.render()
 
     world_generate_environment.step(world_generate_environment.action_space.sample())
     world_generate_environment.render()

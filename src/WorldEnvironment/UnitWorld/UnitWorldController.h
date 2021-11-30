@@ -26,13 +26,6 @@ public:
         const size_t& on_wall_id,
         const NodeType& on_wall_type);
 
-    bool setBoundaryPolygon(
-        const size_t& node_id,
-        const NodeType& node_type,
-        const EasyPolygon2D& boundary_polygon);
-
-    bool setNodePositionOnParentPolygonByPolygonParam();
-
     UnitTree unit_tree_;
 };
 

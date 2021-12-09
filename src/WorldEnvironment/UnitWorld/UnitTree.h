@@ -77,6 +77,10 @@ public:
         const float& new_left_angle,
         const float& new_right_angle);
 
+    bool updateNodePolygon(
+        const size_t& node_id,
+        const NodeType& node_type);
+
     bool outputInfo(
         const size_t& info_level) const;
 

@@ -21,7 +21,6 @@ public:
     bool outputInfo(
         const size_t &info_level) const;
 
-    float center_param;
     float target_left_param;
     float target_right_param;
     float real_left_param;
@@ -43,17 +42,50 @@ public:
     bool reset();
 
     bool findNearestUnusedPosition(
-        const UnitNodePosition& new_position,
+        const UnitNodePosition& target_position,
         float &nearest_unused_left_param,
         float &nearest_unused_right_param);
 
-    bool updateNearestUnusedPosition(
-        UnitNodePosition& new_position);
+    bool findNearestValidPosition(
+        const UnitNodePosition& target_position,
+        UnitNodePosition& valid_position);
+
+    bool insertValidPosition(
+        const UnitNodePosition &valid_position);
 
     UnitNodePosition* position_line;
 };
 
-class UnitNodeLineManager
+class LIBRARY_EXPORT WallUnitNodeLine
+{
+public:
+    WallUnitNodeLine()
+    {
+    }
+
+    bool resetPositionLine();
+
+    bool reset();
+
+    bool setWall(
+        const size_t &target_wall_id,
+        const NodeType &target_wall_type);
+
+    bool setBoundaryPolygon(
+        const EasyPolygon2D &boundary_polygon);
+
+    bool insertPosition(
+        const UnitNodePosition& target_position,
+        UnitNodePosition& valid_position);
+
+    size_t wall_id;
+    NodeType wall_type;
+    EasyPolygon2D wall_boundary_polygon;
+
+    UnitNodeLine wall_boundary_line;
+};
+
+class LIBRARY_EXPORT UnitNodeLineManager
 {
 public:
     UnitNodeLineManager()

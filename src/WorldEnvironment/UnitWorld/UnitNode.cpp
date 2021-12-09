@@ -328,7 +328,7 @@ bool UnitNode::setPositionOnParentPolygonByPolygonParam(
     left_angle = target_left_angle;
     right_angle = target_right_angle;
 
-    if(!updatePolygon())
+    if(!updateWidth())
     {
         std::cout << "UnitNode::setPositionOnParentPolygonByPolygonParam :\n" <<
           "\t point_param_on_parent_polygon = " << point_param_on_parent_polygon << std::endl <<
@@ -337,7 +337,7 @@ bool UnitNode::setPositionOnParentPolygonByPolygonParam(
           target_height << "]\n" <<
           "\t target_angle = [" << target_left_angle << "," <<
           target_right_angle << "]\n" <<
-          "updatePolygon failed!\n";
+          "updateWidth failed!\n";
 
         return false;
     }
@@ -393,7 +393,7 @@ bool UnitNode::setPositionOnParentPolygonByLineParam(
     left_angle = target_left_angle;
     right_angle = target_right_angle;
 
-    if(!updatePolygon())
+    if(!updateWidth())
     {
         std::cout << "UnitNode::setPositionOnParentPolygonByLineParam :\n" <<
           "\t parent_polygon_line_idx = " << parent_polygon_line_idx << std::endl <<
@@ -403,7 +403,7 @@ bool UnitNode::setPositionOnParentPolygonByLineParam(
           target_height << "]\n" <<
           "\t target_angle = [" << target_left_angle << "," <<
           target_right_angle << "]\n" <<
-          "updatePolygon failed!\n";
+          "updateWidth failed!\n";
 
         return false;
     }
@@ -456,7 +456,7 @@ bool UnitNode::setPositionOnParentPolygonByLength(
     left_angle = target_left_angle;
     right_angle = target_right_angle;
 
-    if(!updatePolygon())
+    if(!updateWidth())
     {
         std::cout << "UnitNode::setPositionOnParentPolygonByLength :\n" <<
           "\t point_length = " << point_length << std::endl <<
@@ -465,7 +465,7 @@ bool UnitNode::setPositionOnParentPolygonByLength(
           target_height << "]\n" <<
           "\t target_angle = [" << target_left_angle << "," <<
           target_right_angle << "]\n" <<
-          "updatePolygon failed!\n";
+          "updateWidth failed!\n";
 
         return false;
     }
@@ -520,7 +520,7 @@ bool UnitNode::setPositionOnParentPolygonByPosition(
     left_angle = target_left_angle;
     right_angle = target_right_angle;
 
-    if(!updatePolygon())
+    if(!updateWidth())
     {
         std::cout << "UnitNode::setPositionOnParentPolygonByLineParam :\n" <<
           "\t point_position = [" << point_position.x << "," <<
@@ -530,7 +530,7 @@ bool UnitNode::setPositionOnParentPolygonByPosition(
           target_height << "]\n" <<
           "\t target_angle = [" << target_left_angle << "," <<
           target_right_angle << "]\n" <<
-          "updatePolygon failed!\n";
+          "updateWidth failed!\n";
 
         return false;
     }
@@ -767,14 +767,6 @@ bool UnitNode::updateWidth()
 bool UnitNode::updatePolygon()
 {
     boundary_polygon.reset();
-
-    if(!updateWidth())
-    {
-        std::cout << "UnitNode::updatePolygon :\n" <<
-          "updateWidth failed!\n";
-
-        return false;
-    }
 
     EasyPolygonPoint2D left_point_on_parent_polygon;
     float left_length = polygon_point_on_parent_polygon.length - real_left_width;

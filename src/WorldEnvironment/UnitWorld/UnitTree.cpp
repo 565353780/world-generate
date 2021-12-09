@@ -199,7 +199,7 @@ bool UnitTree::setNodePositionOnParentPolygonByPolygonParam(
           new_target_height << "]\n" <<
           "\t new_angle = [" << new_left_angle << "," <<
           new_right_angle << "]\n" <<
-          "parent not exist!\n";
+          "this node not exist!\n";
 
         return false;
     }
@@ -254,7 +254,7 @@ bool UnitTree::setNodePositionOnParentPolygonByLineParam(
           new_target_height << "]\n" <<
           "\t new_angle = [" << new_left_angle << "," <<
           new_right_angle << "]\n" <<
-          "parent not exist!\n";
+          "this node not exist!\n";
 
         return false;
     }
@@ -309,7 +309,7 @@ bool UnitTree::setNodePositionOnParentPolygonByLength(
           new_target_height << "]\n" <<
           "\t new_angle = [" << new_left_angle << "," <<
           new_right_angle << "]\n" <<
-          "parent not exist!\n";
+          "this node not exist!\n";
 
         return false;
     }
@@ -363,7 +363,7 @@ bool UnitTree::setNodePositionOnParentPolygonByPosition(
           new_target_height << "]\n" <<
           "\t new_angle = [" << new_left_angle << "," <<
           new_right_angle << "]\n" <<
-          "parent not exist!\n";
+          "this node not exist!\n";
 
         return false;
     }
@@ -387,6 +387,37 @@ bool UnitTree::setNodePositionOnParentPolygonByPosition(
           "\t new_angle = [" << new_left_angle << "," <<
           new_right_angle << "]\n" <<
           "setPositionOnParentPolygonByPolygonParam failed!\n";
+
+        return false;
+    }
+
+    return true;
+}
+
+bool UnitTree::updateNodePolygon(
+    const size_t& node_id,
+    const NodeType& node_type)
+{
+    UnitNode* search_node = findNode(node_id, node_type);
+
+    if(search_node == nullptr)
+    {
+        std::cout << "UnitTree::updateNodePolygon :\n" <<
+          "Input :\n" <<
+          "\t node_id = " << node_id << std::endl <<
+          "\t node_type = " << node_type << std::endl <<
+          "this node not exist!\n";
+
+        return false;
+    }
+
+    if(!search_node->updatePolygon())
+    {
+        std::cout << "UnitTree::updateNodePolygon :\n" <<
+          "Input :\n" <<
+          "\t node_id = " << node_id << std::endl <<
+          "\t node_type = " << node_type << std::endl <<
+          "updatePolygon failed!\n";
 
         return false;
     }

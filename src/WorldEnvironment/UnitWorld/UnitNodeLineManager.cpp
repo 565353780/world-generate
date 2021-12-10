@@ -244,8 +244,8 @@ bool WallUnitNodeLine::setWall(
     wall_id = 0;
     wall_type = NodeType::NodeFree;
 
-    if(wall_type != NodeType::OuterWall &&
-        wall_type != NodeType::InnerWall)
+    if(target_wall_type != NodeType::OuterWall &&
+        target_wall_type != NodeType::InnerWall)
     {
         std::cout << "WallUnitNodeLine::setWall :\n" <<
           "Input :\n" <<
@@ -407,7 +407,7 @@ bool UnitNodeLineManager::createWallLine(
 
     WallUnitNodeLine new_wall_line;
 
-    if(new_wall_line.setWall(wall_id, wall_type))
+    if(!new_wall_line.setWall(wall_id, wall_type))
     {
         std::cout << "UnitNodeLineManager::createWallLine :\n" <<
           "Input :\n" <<

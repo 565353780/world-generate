@@ -38,7 +38,7 @@ void UnitWorldWidget::run_example()
             a * std::cos(2.0 * PI * i / point_num),
             b * std::sin(2.0 * PI * i / point_num));
     }
-    unit_world_controller_.unit_tree_.setBoundaryPolygon(0, NodeType::OuterWall, polygon);
+    unit_world_controller_.unit_tree.setBoundaryPolygon(0, NodeType::OuterWall, polygon);
 
     a = 11;
     b = 4;
@@ -50,7 +50,7 @@ void UnitWorldWidget::run_example()
             a * std::cos(2.0 * PI * i / point_num),
             b * std::sin(2.0 * PI * i / point_num));
     }
-    unit_world_controller_.unit_tree_.setBoundaryPolygon(0, InnerWall, polygon);
+    unit_world_controller_.unit_tree.setBoundaryPolygon(0, InnerWall, polygon);
 
     zoom_ = 20;
     offset_x_ = this->width();
@@ -91,13 +91,13 @@ void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
 
         EasyPoint2D mouse_position_in_world = getPointInWorld(event->pos());
 
-        unit_world_controller_.unit_tree_.setNodePositionOnParentPolygonByPosition(
+        unit_world_controller_.unit_tree.setNodePositionOnParentPolygonByPosition(
             current_choose_node_id_,
             current_choose_node_type_,
             mouse_position_in_world,
             0, 2, 2, PI / 2.0, PI / 2.0);
 
-        unit_world_controller_.unit_tree_.updateNodePolygon(
+        unit_world_controller_.unit_tree.updateNodePolygon(
             current_choose_node_id_,
             current_choose_node_type_);
 
@@ -109,13 +109,13 @@ void UnitWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
     EasyPoint2D mouse_position_in_world = getPointInWorld(event->pos());
 
-    unit_world_controller_.unit_tree_.setNodePositionOnParentPolygonByPosition(
+    unit_world_controller_.unit_tree.setNodePositionOnParentPolygonByPosition(
         current_choose_node_id_,
         current_choose_node_type_,
         mouse_position_in_world,
         0, 2, 2, PI / 2.0, PI / 2.0);
 
-    unit_world_controller_.unit_tree_.updateNodePolygon(
+    unit_world_controller_.unit_tree.updateNodePolygon(
         current_choose_node_id_,
         current_choose_node_type_);
 
@@ -181,7 +181,7 @@ bool UnitWorldWidget::chooseWall(
     current_choose_node_id_ = 0;
     current_choose_node_type_ = NodeType::NodeFree;
 
-    for(UnitNode* wall_node : unit_world_controller_.unit_tree_.root->child_vec)
+    for(UnitNode* wall_node : unit_world_controller_.unit_tree.root->child_vec)
     {
         const EasyPoint2D mouse_position_in_world =
           getPointInWorld(mouse_position_in_image);
@@ -196,7 +196,7 @@ bool UnitWorldWidget::chooseRoom(
     current_choose_node_id_ = 0;
     current_choose_node_type_ = NodeType::NodeFree;
 
-    for(UnitNode* wall_node : unit_world_controller_.unit_tree_.root->child_vec)
+    for(UnitNode* wall_node : unit_world_controller_.unit_tree.root->child_vec)
     {
         for(UnitNode* room_node : wall_node->child_vec)
         {
@@ -239,7 +239,7 @@ bool UnitWorldWidget::drawWall()
 
     painter.setPen(pen);
 
-    for(UnitNode* wall_node : unit_world_controller_.unit_tree_.root->child_vec)
+    for(UnitNode* wall_node : unit_world_controller_.unit_tree.root->child_vec)
     {
         const EasyPolygon2D& polygon = wall_node->boundary_polygon;
 
@@ -266,7 +266,7 @@ bool UnitWorldWidget::drawRoom()
 
     painter.setPen(pen);
 
-    for(UnitNode* wall_node : unit_world_controller_.unit_tree_.root->child_vec)
+    for(UnitNode* wall_node : unit_world_controller_.unit_tree.root->child_vec)
     {
         for(UnitNode* room_node : wall_node->child_vec)
         {

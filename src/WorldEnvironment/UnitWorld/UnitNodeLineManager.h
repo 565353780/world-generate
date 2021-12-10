@@ -23,8 +23,10 @@ public:
 
     float target_left_param;
     float target_right_param;
+    float target_height;
     float real_left_param;
     float real_right_param;
+    float real_height;
 
     UnitNodePosition* prev_position;
     UnitNodePosition* next_position;
@@ -46,9 +48,8 @@ public:
         float &nearest_unused_left_param,
         float &nearest_unused_right_param);
 
-    bool findNearestValidPosition(
-        const UnitNodePosition& target_position,
-        UnitNodePosition& valid_position);
+    bool updatePosition(
+        UnitNodePosition& target_position);
 
     bool insertValidPosition(
         const UnitNodePosition &valid_position);
@@ -75,8 +76,7 @@ public:
         const EasyPolygon2D &boundary_polygon);
 
     bool insertPosition(
-        const UnitNodePosition& target_position,
-        UnitNodePosition& valid_position);
+        UnitNodePosition& target_position);
 
     size_t wall_id;
     NodeType wall_type;
@@ -94,7 +94,40 @@ public:
     
     bool reset();
 
-    UnitTree unit_tree_;
+    bool resetButRemainWall();
+
+    bool haveThisWallLine(
+        const size_t& wall_id,
+        const NodeType& wall_type);
+
+    bool getWallLineIdx(
+        const size_t& wall_id,
+        const NodeType& wall_type,
+        size_t& wall_line_idx);
+
+    bool createWallLine(
+        const size_t& wall_id,
+        const NodeType& wall_type);
+
+    bool setBoundaryPolygon(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const EasyPolygon2D &boundary_polygon);
+
+    bool getMaxHeight(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        const UnitNodePosition& target_position,
+        float &max_height);
+
+    bool insertPosition(
+        const size_t &wall_id,
+        const NodeType &wall_type,
+        UnitNodePosition& target_position);
+
+    std::vector<WallUnitNodeLine> wall_line_vec;
+
+    std::vector<EasyPolygon2D> valid_boundary_polygon_vec;
 };
 
 #endif // UNIT_NODE_LINE_MANAGER_H

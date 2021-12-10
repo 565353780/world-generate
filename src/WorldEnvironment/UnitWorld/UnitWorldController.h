@@ -2,6 +2,7 @@
 #define UNIT_WORLD_CONTROLLER_H
 
 #include "UnitTree.h"
+#include "UnitNodeLineManager.h"
 
 class UnitWorldController
 {
@@ -26,7 +27,22 @@ public:
         const size_t& on_wall_id,
         const NodeType& on_wall_type);
 
-    UnitTree unit_tree_;
+    bool setWallBoundaryPolygon(
+        const size_t& wall_id,
+        const NodeType& wall_type,
+        const EasyPolygon2D& wall_boundary_polygon);
+
+    bool setRoomPositionOnTree(
+        const size_t& room_id,
+        const NodeType& room_type,
+        const size_t& parent_id,
+        const NodeType& parent_type,
+        const float& room_target_param,
+        const float& room_target_width,
+        const float& room_target_height);
+
+    UnitTree unit_tree;
+    UnitNodeLineManager unit_node_line_manager;
 };
 
 #endif // UNIT_WORLD_CONTROLLER_H

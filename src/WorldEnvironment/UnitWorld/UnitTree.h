@@ -31,6 +31,12 @@ public:
         const size_t &parent_node_id,
         const NodeType &parent_node_type);
 
+    bool setNodeParent(
+        const size_t& node_id,
+        const NodeType& node_type,
+        const size_t& parent_node_id,
+        const NodeType& parent_node_type);
+
     bool setBoundaryPolygon(
         const size_t& node_id,
         const NodeType& node_type,

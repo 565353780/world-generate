@@ -4,8 +4,10 @@ bool UnitNodePosition::reset()
 {
     target_left_param = -1;
     target_right_param = -1;
+    target_height = -1;
     real_left_param = -1;
     real_right_param = -1;
+    real_height = -1;
 
     if(next_position != nullptr)
     {
@@ -30,8 +32,10 @@ bool UnitNodePosition::outputInfo(
     std::cout << line_start << "UnitNodePosition :\n" <<
       line_start << "\t target_param = [" << target_left_param << "," <<
       target_right_param << "]\n" <<
+      line_start << "\t target_height = " << target_height << std::endl <<
       line_start << "\t real_param = [" << real_left_param << "," <<
-      real_right_param << "]" << std::endl;
+      real_right_param << "]\n" <<
+      line_start << "\t real_height = " << real_height << std::endl;
 
     return true;
 }
@@ -79,7 +83,7 @@ bool UnitNodeLine::findNearestUnusedPosition(
         if(current_unused_right_param > current_unused_left_param)
         {
             float current_min_dist_to_unused_line_start =
-              std::fabs(current_unused_left_param - target_position.real_left_param);
+              std::abs(current_unused_left_param - target_position.real_left_param);
 
             if(current_min_dist_to_unused_line_start < min_dist_to_unused_position)
             {
@@ -90,7 +94,7 @@ bool UnitNodeLine::findNearestUnusedPosition(
             }
 
             float current_min_dist_to_unused_line_end =
-              std::fabs(current_unused_right_param - target_position.real_left_param);
+              std::abs(current_unused_right_param - target_position.real_left_param);
 
             if(current_min_dist_to_unused_line_end < min_dist_to_unused_position)
             {
@@ -119,9 +123,8 @@ bool UnitNodeLine::findNearestUnusedPosition(
     return true;
 }
 
-bool UnitNodeLine::findNearestValidPosition(
-    const UnitNodePosition& target_position,
-    UnitNodePosition& valid_position)
+bool UnitNodeLine::updatePosition(
+    UnitNodePosition& target_position)
 {
     float nearest_unused_left_param;
     float nearest_unused_right_param;
@@ -131,7 +134,7 @@ bool UnitNodeLine::findNearestValidPosition(
           nearest_unused_left_param,
           nearest_unused_right_param))
     {
-        std::cout << "UnitNodeLine::findNearestValidPosition :\n" <<
+        std::cout << "UnitNodeLine::updatePosition :\n" <<
           "Input :\n" <<
           "\t target_position = [" << target_position.target_left_param << "," <<
           target_position.target_right_param << "]\n" <<
@@ -140,25 +143,28 @@ bool UnitNodeLine::findNearestValidPosition(
         return false;
     }
 
-    valid_position = target_position;
-
     if(nearest_unused_right_param - nearest_unused_left_param <
         target_position.target_right_param - target_position.target_left_param)
     {
-        valid_position.real_left_param = nearest_unused_left_param;
-        valid_position.real_right_param = nearest_unused_right_param;
+        target_position.real_left_param = nearest_unused_left_param;
+        target_position.real_right_param = nearest_unused_right_param;
     }
     else if(target_position.target_right_param > nearest_unused_right_param)
     {
-        valid_position.real_right_param = nearest_unused_right_param;
-        valid_position.real_left_param = nearest_unused_right_param -
+        target_position.real_right_param = nearest_unused_right_param;
+        target_position.real_left_param = nearest_unused_right_param -
           (target_position.target_right_param - target_position.target_left_param);
     }
     else if(target_position.target_left_param < nearest_unused_left_param)
     {
-        valid_position.real_left_param = nearest_unused_left_param;
-        valid_position.real_right_param = nearest_unused_left_param +
+        target_position.real_left_param = nearest_unused_left_param;
+        target_position.real_right_param = nearest_unused_left_param +
           (target_position.target_right_param - target_position.target_left_param);
+    }
+    else
+    {
+        target_position.real_left_param = target_position.target_left_param;
+        target_position.real_right_param = target_position.target_right_param;
     }
 
     return true;
@@ -170,8 +176,10 @@ bool UnitNodeLine::insertValidPosition(
     UnitNodePosition* insert_position = new UnitNodePosition();
     insert_position->target_left_param = valid_position.target_left_param;
     insert_position->target_right_param = valid_position.target_right_param;
+    insert_position->target_height = valid_position.target_height;
     insert_position->real_left_param = valid_position.real_left_param;
     insert_position->real_right_param = valid_position.real_right_param;
+    insert_position->real_height = valid_position.real_height;
 
     if(position_line == nullptr)
     {
@@ -273,20 +281,17 @@ bool WallUnitNodeLine::setBoundaryPolygon(
 }
 
 bool WallUnitNodeLine::insertPosition(
-    const UnitNodePosition& target_position,
-    UnitNodePosition& valid_position)
+    UnitNodePosition& target_position)
 {
-    valid_position.reset();
-
-    if(!wall_boundary_line.findNearestValidPosition(target_position, valid_position))
+    if(!wall_boundary_line.updatePosition(target_position))
     {
         std::cout << "WallUnitNodeLine::insertPosition :\n" <<
-          "findNearestValidPosition failed!\n";
+          "updatePosition failed!\n";
 
         return false;
     }
 
-    if(!wall_boundary_line.insertValidPosition(valid_position))
+    if(!wall_boundary_line.insertValidPosition(target_position))
     {
         std::cout << "WallUnitNodeLine::insertPosition :\n" <<
           "insertValidPosition failed!\n";
@@ -299,6 +304,347 @@ bool WallUnitNodeLine::insertPosition(
 
 bool UnitNodeLineManager::reset()
 {
+    for(WallUnitNodeLine& wall_line : wall_line_vec)
+    {
+        wall_line.reset();
+    }
+
+    wall_line_vec.clear();
+
+    valid_boundary_polygon_vec.clear();
+
+    return true;
+}
+
+bool UnitNodeLineManager::resetButRemainWall()
+{
+    for(WallUnitNodeLine& wall_line : wall_line_vec)
+    {
+        wall_line.reset();
+    }
+
+    valid_boundary_polygon_vec.clear();
+
+    return true;
+}
+
+bool UnitNodeLineManager::haveThisWallLine(
+    const size_t& wall_id,
+    const NodeType& wall_type)
+{
+    if(wall_line_vec.size() == 0)
+    {
+        return false;
+    }
+
+    for(const WallUnitNodeLine& wall_line : wall_line_vec)
+    {
+        if(wall_line.wall_id == wall_id && wall_line.wall_type == wall_type)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool UnitNodeLineManager::getWallLineIdx(
+    const size_t& wall_id,
+    const NodeType& wall_type,
+    size_t& wall_line_idx)
+{
+    wall_line_idx = 0;
+
+    if(wall_line_vec.size() == 0)
+    {
+        std::cout << "UnitNodeLineManager::getWallLineIdx :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "wall_line_vec is empty!\n";
+
+        return false;
+    }
+
+    for(size_t i = 0; i < wall_line_vec.size(); ++i)
+    {
+        const WallUnitNodeLine& wall_line = wall_line_vec[i];
+
+        if(wall_line.wall_id != wall_id ||
+            wall_line.wall_type != wall_type)
+        {
+            continue;
+        }
+
+        wall_line_idx = i;
+
+        return true;
+    }
+
+    std::cout << "UnitNodeLineManager::getWallLineIdx :\n" <<
+      "Input :\n" <<
+      "\t wall_id = " << wall_id << std::endl <<
+      "\t wall_type = " << wall_type << std::endl <<
+      "this wall not exist!\n";
+
+    return false;
+}
+
+bool UnitNodeLineManager::createWallLine(
+    const size_t& wall_id,
+    const NodeType& wall_type)
+{
+    if(haveThisWallLine(wall_id, wall_type))
+    {
+        std::cout << "UnitNodeLineManager::createWallLine :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "this wall already exist!\n";
+
+        return false;
+    }
+
+    WallUnitNodeLine new_wall_line;
+
+    if(new_wall_line.setWall(wall_id, wall_type))
+    {
+        std::cout << "UnitNodeLineManager::createWallLine :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "setWall failed!\n";
+
+        return false;
+    }
+
+    wall_line_vec.emplace_back(new_wall_line);
+
+    return true;
+}
+
+bool UnitNodeLineManager::setBoundaryPolygon(
+    const size_t &wall_id,
+    const NodeType &wall_type,
+    const EasyPolygon2D &boundary_polygon)
+{
+    if(wall_line_vec.size() == 0)
+    {
+        std::cout << "UnitNodeLineManager::setBoundaryPolygon :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "wall_line_vec is empty!\n";
+
+        return false;
+    }
+
+    size_t wall_line_idx;
+
+    if(!getWallLineIdx(wall_id, wall_type, wall_line_idx))
+    {
+        std::cout << "UnitNodeLineManager::setBoundaryPolygon :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "getWallLineIdx failed!\n";
+
+        return false;
+    }
+
+    WallUnitNodeLine& wall_line = wall_line_vec[wall_line_idx];
+
+    if(!wall_line.setBoundaryPolygon(boundary_polygon))
+    {
+        std::cout << "UnitNodeLineManager::setBoundaryPolygon :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "setBoundaryPolygon failed!\n";
+
+        return false;
+    }
+
+    return true;
+}
+
+bool UnitNodeLineManager::getMaxHeight(
+    const size_t &wall_id,
+    const NodeType &wall_type,
+    const UnitNodePosition& target_position,
+    float &max_height)
+{
+    max_height = std::numeric_limits<float>::max();
+
+    const float error_max = 0.0001;
+
+    size_t wall_line_idx;
+
+    if(!getWallLineIdx(wall_id, wall_type, wall_line_idx))
+    {
+        std::cout << "UnitNodeLineManager::getMaxHeight :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "\t target_position = [" << target_position.target_left_param << "," <<
+          target_position.target_right_param << "]\n" <<
+          "getWallLineIdx failed!\n";
+
+        return false;
+    }
+
+    WallUnitNodeLine& wall_line = wall_line_vec[wall_line_idx];
+
+    if(target_position.real_right_param - target_position.real_left_param < error_max)
+    {
+        max_height = 0;
+        return true;
+    }
+
+    EasyLine2D base_line;
+    EasyPolygonPoint2D base_line_start_point, base_line_end_point;
+
+    if(!base_line_start_point.updateByPolygonParam(
+          wall_line.wall_boundary_polygon,
+          target_position.real_left_param))
+    {
+        std::cout << "UnitNodeLineManager::getMaxHeight :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "\t target_position = [" << target_position.target_left_param << "," <<
+          target_position.target_right_param << "]\n" <<
+          "updateByPolygonParam for left polygon point failed!\n";
+
+        return false;
+    }
+
+    if(!base_line_end_point.updateByPolygonParam(
+          wall_line.wall_boundary_polygon,
+          target_position.real_right_param))
+    {
+        std::cout << "UnitNodeLineManager::getMaxHeight :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "\t target_position = [" << target_position.target_left_param << "," <<
+          target_position.target_right_param << "]\n" <<
+          "updateByPolygonParam for right polygon point failed!\n";
+
+        return false;
+    }
+
+    base_line.setPosition(base_line_start_point.position, base_line_end_point.position);
+
+    for(const WallUnitNodeLine& wall_line : wall_line_vec)
+    {
+        const EasyPolygon2D& wall_boundary_polygon = wall_line.wall_boundary_polygon;
+
+        if(wall_line.wall_id != wall_id || wall_line.wall_type != wall_type)
+        {
+            const float polygon_dist_to_line = EasyComputation::getPolygonDistToLine(
+                wall_boundary_polygon, base_line);
+
+            max_height = std::min(max_height, polygon_dist_to_line);
+
+            continue;
+        }
+
+        for(size_t i = 0; i < wall_boundary_polygon.point_list.size(); ++i)
+        {
+            const EasyPoint2D &currnet_point = wall_boundary_polygon.point_list[i];
+            const EasyPoint2D &next_point = wall_boundary_polygon.point_list[
+              (i + 1) % wall_boundary_polygon.point_list.size()];
+
+            EasyLine2D polygon_line;
+            polygon_line.setPosition(currnet_point, next_point);
+
+            const float polygon_line_dist_to_line = EasyComputation::getLineDistToLine(
+                base_line, polygon_line);
+
+            max_height = std::min(max_height, polygon_line_dist_to_line);
+        }
+    }
+
+    for(const EasyPolygon2D &valid_boundary_polygon : valid_boundary_polygon_vec)
+    {
+        const float polygon_dist_to_line = EasyComputation::getPolygonDistToLine(
+            valid_boundary_polygon, base_line);
+
+        max_height = std::min(max_height, polygon_dist_to_line);
+    }
+
+    return true;
+}
+
+bool UnitNodeLineManager::insertPosition(
+    const size_t &wall_id,
+    const NodeType &wall_type,
+    UnitNodePosition& target_position)
+{
+    size_t wall_line_idx;
+
+    if(!getWallLineIdx(wall_id, wall_type, wall_line_idx))
+    {
+        std::cout << "UnitNodeLineManager::insertPosition :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "getWallLineIdx failed!\n";
+
+        return false;
+    }
+
+    WallUnitNodeLine& wall_line = wall_line_vec[wall_line_idx];
+
+    if(!wall_line.wall_boundary_line.updatePosition(target_position))
+    {
+        std::cout << "UnitNodeLineManager::insertPosition :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "updatePosition failed!\n";
+
+        return false;
+    }
+
+    if(target_position.real_left_param > target_position.real_right_param)
+    {
+        std::cout << "UnitNodeLineManager::insertPosition :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "this real position not valid!\n";
+
+        return false;
+    }
+
+    float max_height;
+
+    if(!getMaxHeight(wall_id, wall_type, target_position, max_height))
+    {
+        std::cout << "UnitNodeLineManager::insertPosition :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "getMaxHeight failed!\n";
+
+        return false;
+    }
+
+    target_position.real_height = std::min(max_height, target_position.target_height);
+
+    if(!wall_line.wall_boundary_line.insertValidPosition(target_position))
+    {
+        std::cout << "UnitNodeLineManager::insertPosition :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "insertValidPosition failed!\n";
+
+        return false;
+    }
+
     return true;
 }
 

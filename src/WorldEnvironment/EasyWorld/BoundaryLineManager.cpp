@@ -928,7 +928,7 @@ bool BoundaryLineManager::getMaxHeight(
 
             const EasyPoint2D &currnet_point = wall_boundary_polygon.point_list[i];
             const EasyPoint2D &next_point = wall_boundary_polygon.point_list[
-            (i + 1) % wall_boundary_polygon.point_list.size()];
+              (i + 1) % wall_boundary_polygon.point_list.size()];
 
             EasyLine2D polygon_line;
             polygon_line.setPosition(currnet_point, next_point);

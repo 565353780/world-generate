@@ -153,6 +153,61 @@ bool UnitTree::createNode(
     return true;
 }
 
+bool UnitTree::setNodeParent(
+    const size_t& node_id,
+    const NodeType& node_type,
+    const size_t& parent_node_id,
+    const NodeType& parent_node_type)
+{
+    UnitNode* search_node = findNode(node_id, node_type);
+
+    if(search_node == nullptr)
+    {
+        std::cout << "UnitTree::setNodeParent :\n" <<
+          "\t node_id = " << node_id << std::endl <<
+          "\t node_type = " << node_type << std::endl <<
+          "\t parent_node_id = " << parent_node_id << std::endl <<
+          "\t parent_node_type = " << parent_node_type << std::endl <<
+          "this node not exist!\n";
+
+        return false;
+    }
+
+    UnitNode* search_node_parent = search_node->parent;
+
+    if(search_node_parent != nullptr)
+    {
+        if(search_node_parent->id == parent_node_id &&
+            search_node_parent->type == parent_node_type)
+        {
+            return true;
+        }
+    }
+
+    UnitNode* search_parent_node = findNode(parent_node_id, parent_node_type);
+
+    if(search_parent_node == nullptr)
+    {
+        std::cout << "UnitTree::setNodeParent :\n" <<
+          "\t node_id = " << node_id << std::endl <<
+          "\t node_type = " << node_type << std::endl <<
+          "\t parent_node_id = " << parent_node_id << std::endl <<
+          "\t parent_node_type = " << parent_node_type << std::endl <<
+          "parent node not exist!\n";
+
+        return false;
+    }
+
+    if(search_node_parent != nullptr)
+    {
+        search_node_parent->removeChildButRemainData(node_id, node_type);
+    }
+
+    search_parent_node->addChild(search_node);
+
+    return true;
+}
+
 bool UnitTree::setBoundaryPolygon(
     const size_t& node_id,
     const NodeType& node_type,

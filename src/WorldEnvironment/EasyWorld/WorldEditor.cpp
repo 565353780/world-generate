@@ -32,8 +32,8 @@ bool WorldEditor::setWallRoomContainerPosition(
     new_position_in_world.setPosition(new_position_x, new_position_y);
 
     float min_dist2_to_wall_boundary_line = std::numeric_limits<float>::max();
-    size_t min_dist_wall_id;
-    NodeType min_dist_wall_type;
+    size_t min_dist_wall_id = 0;
+    NodeType min_dist_wall_type = NodeType::NodeFree;
     size_t min_dist_wall_boundary_idx;
     EasyPoint2D min_dist_wall_boundary_start_point;
     EasyPoint2D nearest_point_on_line;
@@ -95,7 +95,7 @@ bool WorldEditor::setWallRoomContainerPosition(
         {
             const EasyPoint2D &current_point = current_wall_boundary_polygon.point_list[j];
             const EasyPoint2D &next_point = current_wall_boundary_polygon.point_list[
-            (j + 1) % current_wall_boundary_polygon.point_list.size()];
+              (j + 1) % current_wall_boundary_polygon.point_list.size()];
 
             EasyLine2D current_wall_boundary_line;
             current_wall_boundary_line.setPosition(current_point, next_point);
@@ -116,6 +116,19 @@ bool WorldEditor::setWallRoomContainerPosition(
                 nearest_point_on_line = current_nearest_point_on_line;
             }
         }
+    }
+
+    if(min_dist_wall_type == NodeType::NodeFree)
+    {
+        std::cout << "WorldEditor::setWallRoomContainerPosition : " << std::endl <<
+          "Input :\n" <<
+          "\twall_roomcontainer_id = " << wall_roomcontainer_id << std::endl <<
+          "\tnew_position = [" << new_position_x << "," <<
+          new_position_y << "]" << std::endl <<
+          "\tmouse_pos_x_direction_delta = " << mouse_pos_x_direction_delta << std::endl <<
+          "no valid wall found!" << std::endl;
+
+        return false;
     }
 
     WallRoomContainerData &wall_roomcontainer_data =

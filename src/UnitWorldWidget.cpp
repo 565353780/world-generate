@@ -91,11 +91,16 @@ void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
 
         EasyPoint2D mouse_position_in_world = getPointInWorld(event->pos());
 
-        unit_world_controller_.unit_tree.setNodePositionOnParentPolygonByPosition(
+        unit_world_controller_.setRoomPositionOnTreeByPosition(
             current_choose_node_id_,
             current_choose_node_type_,
-            mouse_position_in_world,
-            0, 2, 2, PI / 2.0, PI / 2.0);
+            mouse_position_in_world);
+
+        // unit_world_controller_.unit_tree.setNodePositionOnParentPolygonByPosition(
+            // current_choose_node_id_,
+            // current_choose_node_type_,
+            // mouse_position_in_world,
+            // 0, 2, 2, PI / 2.0, PI / 2.0);
 
         unit_world_controller_.unit_tree.updateNodePolygon(
             current_choose_node_id_,
@@ -109,11 +114,16 @@ void UnitWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
     EasyPoint2D mouse_position_in_world = getPointInWorld(event->pos());
 
-    unit_world_controller_.unit_tree.setNodePositionOnParentPolygonByPosition(
+    unit_world_controller_.setRoomPositionOnTreeByPosition(
         current_choose_node_id_,
         current_choose_node_type_,
-        mouse_position_in_world,
-        0, 2, 2, PI / 2.0, PI / 2.0);
+        mouse_position_in_world);
+
+    // unit_world_controller_.unit_tree.setNodePositionOnParentPolygonByPosition(
+        // current_choose_node_id_,
+        // current_choose_node_type_,
+        // mouse_position_in_world,
+        // 0, 2, 2, PI / 2.0, PI / 2.0);
 
     unit_world_controller_.unit_tree.updateNodePolygon(
         current_choose_node_id_,

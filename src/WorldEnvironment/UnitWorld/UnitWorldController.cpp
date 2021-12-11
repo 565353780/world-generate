@@ -1,4 +1,5 @@
 #include "UnitWorldController.h"
+#include <cstddef>
 
 bool UnitWorldController::reset()
 {
@@ -114,6 +115,74 @@ bool UnitWorldController::setWallBoundaryPolygon(
           "\t wall_id = " << wall_id << std::endl <<
           "\t wall_type = " << wall_type << std::endl <<
           "setBoundaryPolygon in manager failed!\n";
+
+        return false;
+    }
+
+    return true;
+}
+
+bool UnitWorldController::getNearestWall(
+    const EasyPoint2D& point,
+    size_t& nearest_wall_id,
+    NodeType& nearest_wall_type)
+{
+    nearest_wall_id = 0;
+    nearest_wall_type = NodeType::NodeFree;
+
+    if(unit_node_line_manager.wall_line_vec.size() == 0)
+    {
+        std::cout << "UnitWorldController::getNearestWall :\n" <<
+          "Input :\n" <<
+          "\t point = [" << point.x << "," <<
+          point.y << "]\n" <<
+          "no wall has been saved!\n";
+
+        return false;
+    }
+
+    float min_dist2_to_wall = std::numeric_limits<float>::max();
+
+    for(const WallUnitNodeLine& wall_line : unit_node_line_manager.wall_line_vec)
+    {
+        const EasyPolygon2D& wall_boundary_polygon = wall_line.wall_boundary_polygon;
+
+        if(wall_boundary_polygon.point_list.size() == 0)
+        {
+            continue;
+        }
+
+        for(size_t i = 0; i < wall_boundary_polygon.point_list.size(); ++i)
+        {
+            const EasyPoint2D& current_point = wall_boundary_polygon.point_list[i];
+            const EasyPoint2D& next_point = wall_boundary_polygon.point_list[
+              (i + 1) % wall_boundary_polygon.point_list.size()];
+
+            EasyLine2D current_wall_boundary_line;
+            current_wall_boundary_line.setPosition(current_point, next_point);
+
+            const EasyPoint2D current_nearest_point_on_line = EasyComputation::getNearestPointOnLine(
+                current_wall_boundary_line, point);
+
+            const float current_min_dist2_to_wall_boundary_line =
+              EasyComputation::pointDist2(current_nearest_point_on_line, point);
+
+            if(current_min_dist2_to_wall_boundary_line < min_dist2_to_wall)
+            {
+                min_dist2_to_wall = current_min_dist2_to_wall_boundary_line;
+                nearest_wall_id = wall_line.wall_id;
+                nearest_wall_type = wall_line.wall_type;
+            }
+        }
+    }
+
+    if(nearest_wall_type == NodeType::NodeFree)
+    {
+        std::cout << "UnitWorldController::getNearestWall :\n" <<
+          "Input :\n" <<
+          "\t point = [" << point.x << "," <<
+          point.y << "]\n" <<
+          "no valid wall found!\n";
 
         return false;
     }
@@ -291,6 +360,82 @@ bool UnitWorldController::setRoomPositionOnTree(
           "\t room_target_size = [" << room_target_width << "," <<
           room_target_height << "]\n" <<
           "setNodePositionOnParentPolygonByPolygonParam failed!\n";
+
+        return false;
+    }
+
+    return true;
+}
+
+bool UnitWorldController::setRoomPositionOnTreeByPosition(
+    const size_t& room_id,
+    const NodeType& room_type,
+    const EasyPoint2D& point)
+{
+    size_t nearest_wall_id = 0;
+    NodeType nearest_wall_type = NodeType::NodeFree;
+
+    if(!getNearestWall(point, nearest_wall_id, nearest_wall_type))
+    {
+        std::cout << "UnitWorldController::setRoomPositionOnTreeByPosition :\n" <<
+          "Input :\n" <<
+          "\t room_id = " << room_id << std::endl <<
+          "\t room_type = " << room_type << std::endl <<
+          "\t point = [" << point.x << "," <<
+          point.y << "]\n" <<
+          "getNearestWall failed!\n";
+
+        return false;
+    }
+
+    UnitNode* search_wall_node = unit_tree.findNode(nearest_wall_id, nearest_wall_type);
+
+    if(search_wall_node == nullptr)
+    {
+        std::cout << "UnitWorldController::setRoomPositionOnTreeByPosition :\n" <<
+          "Input :\n" <<
+          "\t room_id = " << room_id << std::endl <<
+          "\t room_type = " << room_type << std::endl <<
+          "\t point = [" << point.x << "," <<
+          point.y << "]\n" <<
+          "this wall node not exist!\n";
+
+        return false;
+    }
+
+    const EasyPolygon2D& search_wall_boundary_polygon = search_wall_node->boundary_polygon;
+
+    EasyPolygonPoint2D polygon_point;
+
+    if(!polygon_point.updateByPosition(search_wall_boundary_polygon, point))
+    {
+        std::cout << "UnitWorldController::setRoomPositionOnTreeByPosition :\n" <<
+          "Input :\n" <<
+          "\t room_id = " << room_id << std::endl <<
+          "\t room_type = " << room_type << std::endl <<
+          "\t point = [" << point.x << "," <<
+          point.y << "]\n" <<
+          "updateByPosition failed!\n";
+
+        return false;
+    }
+
+    const float point_dist_to_wall_polygon =
+      EasyComputation::pointDist(point, polygon_point.position);
+
+    if(!setRoomPositionOnTree(
+          room_id, room_type,
+          nearest_wall_id, nearest_wall_type,
+          polygon_point.param_on_polygon,
+          point_dist_to_wall_polygon, point_dist_to_wall_polygon))
+    {
+        std::cout << "UnitWorldController::setRoomPositionOnTreeByPosition :\n" <<
+          "Input :\n" <<
+          "\t room_id = " << room_id << std::endl <<
+          "\t room_type = " << room_type << std::endl <<
+          "\t point = [" << point.x << "," <<
+          point.y << "]\n" <<
+          "setRoomPositionOnTree failed!\n";
 
         return false;
     }

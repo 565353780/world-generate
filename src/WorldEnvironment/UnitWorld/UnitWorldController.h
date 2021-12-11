@@ -32,6 +32,11 @@ public:
         const NodeType& wall_type,
         const EasyPolygon2D& wall_boundary_polygon);
 
+    bool getNearestWall(
+        const EasyPoint2D& point,
+        size_t& nearest_wall_id,
+        NodeType& nearest_wall_type);
+
     bool setRoomPositionOnTree(
         const size_t& room_id,
         const NodeType& room_type,
@@ -40,6 +45,11 @@ public:
         const float& room_target_param,
         const float& room_target_width,
         const float& room_target_height);
+
+    bool setRoomPositionOnTreeByPosition(
+        const size_t& room_id,
+        const NodeType& room_type,
+        const EasyPoint2D& point);
 
     UnitTree unit_tree;
     UnitNodeLineManager unit_node_line_manager;

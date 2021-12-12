@@ -75,48 +75,69 @@ bool UnitNodeLine::findNearestUnusedPosition(
         return true;
     }
 
-    UnitNodePosition* search_position = position_line;
+    float real_target_position_left_param = target_position.target_left_param;
+    float real_target_position_right_param = target_position.target_right_param;
+
+    if(real_target_position_left_param > real_target_position_right_param)
+    {
+        real_target_position_right_param += 1;
+    }
+
     float current_unused_left_param = 0;
     float current_unused_right_param;
     float min_dist_to_unused_position = std::numeric_limits<float>::max();
+
+    UnitNodePosition* last_position = position_line;
+    if(last_position != nullptr)
+    {
+        while(last_position->next_position != nullptr)
+        {
+            last_position = last_position->next_position;
+        }
+
+        if(last_position->real_right_param > 1)
+        {
+            current_unused_left_param = last_position->real_right_param - 1;
+        }
+    }
+
+    UnitNodePosition* search_position = position_line;
 
     while(search_position != nullptr)
     {
         current_unused_right_param = search_position->real_left_param;
 
-        if(current_unused_right_param > current_unused_left_param)
+        if(current_unused_right_param <= current_unused_left_param)
         {
-            float current_min_dist_to_unused_line_left =
-              std::abs(current_unused_left_param - target_position.target_left_param);
+            search_position = search_position->next_position;
 
-            if(current_min_dist_to_unused_line_left < min_dist_to_unused_position)
-            {
-                min_dist_to_unused_position = current_min_dist_to_unused_line_left;
-
-                nearest_unused_left_param = current_unused_left_param;
-                nearest_unused_right_param = current_unused_right_param;
-            }
-
-            float current_min_dist_to_unused_line_right =
-              std::abs(current_unused_right_param - target_position.target_left_param);
-
-            if(current_min_dist_to_unused_line_right < min_dist_to_unused_position)
-            {
-                min_dist_to_unused_position = current_min_dist_to_unused_line_right;
-
-                nearest_unused_left_param = current_unused_left_param;
-                nearest_unused_right_param = current_unused_right_param;
-            }
+            continue;
         }
 
-        if(target_position.target_left_param < current_unused_right_param)
-        {
-            if(nearest_unused_left_param >= 1)
-            {
-                nearest_unused_left_param -= 1.0;
-                nearest_unused_right_param -= 1.0;
-            }
+        const float current_min_dist_to_unused_line_left =
+          std::abs(current_unused_left_param - real_target_position_left_param);
 
+        if(current_min_dist_to_unused_line_left < min_dist_to_unused_position)
+        {
+            min_dist_to_unused_position = current_min_dist_to_unused_line_left;
+
+            nearest_unused_left_param = current_unused_left_param;
+            nearest_unused_right_param = current_unused_right_param;
+        }
+
+        const float current_min_dist_to_unused_line_right =
+          std::abs(current_unused_right_param - real_target_position_left_param);
+
+        if(current_min_dist_to_unused_line_right < min_dist_to_unused_position)
+        {
+            min_dist_to_unused_position = current_min_dist_to_unused_line_right;
+
+            nearest_unused_left_param = current_unused_left_param;
+            nearest_unused_right_param = current_unused_right_param;
+        }
+
+        if(real_target_position_left_param < current_unused_right_param)
+        {
             return true;
         }
 
@@ -125,7 +146,17 @@ bool UnitNodeLine::findNearestUnusedPosition(
         search_position = search_position->next_position;
     }
 
-    current_unused_right_param = 2;
+    if(last_position != nullptr)
+    {
+        if(last_position->real_right_param >= 1)
+        {
+            current_unused_right_param = last_position->real_left_param;
+        }
+        else
+        {
+            current_unused_right_param = 1;
+        }
+    }
 
     nearest_unused_left_param = current_unused_left_param;
     nearest_unused_right_param = current_unused_right_param;
@@ -133,7 +164,6 @@ bool UnitNodeLine::findNearestUnusedPosition(
     if(nearest_unused_left_param >= 1)
     {
         nearest_unused_left_param -= 1;
-        nearest_unused_right_param -= 1;
     }
 
     return true;
@@ -159,33 +189,39 @@ bool UnitNodeLine::updatePosition(
         return false;
     }
 
+    float real_target_right_param = target_position.target_right_param;
+
+    if(target_position.target_left_param > real_target_right_param)
+    {
+        real_target_right_param += 1;
+    }
+
     if(nearest_unused_right_param - nearest_unused_left_param <
-        target_position.target_right_param - target_position.target_left_param)
+        real_target_right_param - target_position.target_left_param)
     {
         target_position.real_left_param = nearest_unused_left_param;
         target_position.real_right_param = nearest_unused_right_param;
     }
-    else if(target_position.target_right_param > nearest_unused_right_param)
+    else if(real_target_right_param > nearest_unused_right_param)
     {
         target_position.real_right_param = nearest_unused_right_param;
         target_position.real_left_param = nearest_unused_right_param -
-          (target_position.target_right_param - target_position.target_left_param);
+          (real_target_right_param - target_position.target_left_param);
     }
     else if(target_position.target_left_param < nearest_unused_left_param)
     {
         target_position.real_left_param = nearest_unused_left_param;
         target_position.real_right_param = nearest_unused_left_param +
-          (target_position.target_right_param - target_position.target_left_param);
+          (real_target_right_param - target_position.target_left_param);
     }
     else
     {
         target_position.real_left_param = target_position.target_left_param;
-        target_position.real_right_param = target_position.target_right_param;
+        target_position.real_right_param = real_target_right_param;
     }
 
-    if(target_position.real_left_param >= 1)
+    if(target_position.real_right_param >= 1)
     {
-        target_position.real_left_param -= 1;
         target_position.real_right_param -= 1;
     }
 
@@ -221,7 +257,7 @@ bool UnitNodeLine::insertValidPosition(
 
     while(search_position != nullptr)
     {
-        if(valid_position.real_right_param <= search_position->real_left_param)
+        if(insert_position->real_right_param <= search_position->real_left_param)
         {
             insert_position->next_position = search_position;
             search_position->prev_position = insert_position;

@@ -345,6 +345,11 @@ bool UnitWorldController::setRoomPositionOnTree(
 
     const float valid_room_width = valid_param_diff * parent_boundary_polygon.perimeter;
 
+    std::cout << "room real param is :\n" <<
+      "param = " << valid_param << std::endl <<
+      "width = " << valid_room_width << std::endl <<
+      "height = " << target_position.real_height << std::endl;
+
     if(!unit_tree.setNodePositionOnParentPolygonByPolygonParam(
           room_id, room_type,
           valid_param, 0,

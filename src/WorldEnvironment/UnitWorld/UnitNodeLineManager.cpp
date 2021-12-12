@@ -562,6 +562,11 @@ bool UnitNodeLineManager::getMaxHeight(
             const float polygon_line_dist_to_line = EasyComputation::getLineDistToLine(
                 base_line, polygon_line);
 
+            if(polygon_line_dist_to_line < error_max)
+            {
+                continue;
+            }
+
             max_height = std::min(max_height, polygon_line_dist_to_line);
         }
     }

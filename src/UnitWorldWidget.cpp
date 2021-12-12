@@ -38,7 +38,7 @@ void UnitWorldWidget::run_example()
             a * std::cos(2.0 * PI * i / point_num),
             b * std::sin(2.0 * PI * i / point_num));
     }
-    unit_world_controller_.unit_tree.setBoundaryPolygon(0, NodeType::OuterWall, polygon);
+    unit_world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, polygon);
 
     a = 11;
     b = 4;
@@ -50,7 +50,7 @@ void UnitWorldWidget::run_example()
             a * std::cos(2.0 * PI * i / point_num),
             b * std::sin(2.0 * PI * i / point_num));
     }
-    unit_world_controller_.unit_tree.setBoundaryPolygon(0, InnerWall, polygon);
+    unit_world_controller_.setWallBoundaryPolygon(0, InnerWall, polygon);
 
     zoom_ = 20;
     offset_x_ = this->width();
@@ -59,6 +59,34 @@ void UnitWorldWidget::run_example()
     current_choose_node_id_ = 0;
     current_choose_node_type_ = NodeType::NodeFree;
     new_room_idx_ = 0;
+
+    unit_world_controller_.createRoom(
+        "Room " + std::to_string(new_room_idx_),
+        new_room_idx_, NodeType::WallRoom,
+        0, NodeType::OuterWall);
+    current_choose_node_id_ = new_room_idx_;
+    current_choose_node_type_ = NodeType::WallRoom;
+    ++new_room_idx_;
+
+    EasyPoint2D mouse_position_in_world;
+    mouse_position_in_world.setPosition(7, 7);
+
+    // unit_world_controller_.setRoomPositionOnTreeByPosition(
+        // current_choose_node_id_,
+        // current_choose_node_type_,
+        // mouse_position_in_world);
+
+    unit_world_controller_.unit_tree.setNodePositionOnParentPolygonByPosition(
+        current_choose_node_id_,
+        current_choose_node_type_,
+        mouse_position_in_world,
+        0, 2, 2, PI / 2.0, PI / 2.0);
+
+    unit_world_controller_.unit_tree.updateNodePolygon(
+        current_choose_node_id_,
+        current_choose_node_type_);
+
+    update();
 }
 
 void UnitWorldWidget::paintEvent(QPaintEvent *event)
@@ -91,16 +119,16 @@ void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
 
         EasyPoint2D mouse_position_in_world = getPointInWorld(event->pos());
 
-        unit_world_controller_.setRoomPositionOnTreeByPosition(
-            current_choose_node_id_,
-            current_choose_node_type_,
-            mouse_position_in_world);
-
-        // unit_world_controller_.unit_tree.setNodePositionOnParentPolygonByPosition(
+        // unit_world_controller_.setRoomPositionOnTreeByPosition(
             // current_choose_node_id_,
             // current_choose_node_type_,
-            // mouse_position_in_world,
-            // 0, 2, 2, PI / 2.0, PI / 2.0);
+            // mouse_position_in_world);
+
+        unit_world_controller_.unit_tree.setNodePositionOnParentPolygonByPosition(
+            current_choose_node_id_,
+            current_choose_node_type_,
+            mouse_position_in_world,
+            0, 2, 2, PI / 2.0, PI / 2.0);
 
         unit_world_controller_.unit_tree.updateNodePolygon(
             current_choose_node_id_,

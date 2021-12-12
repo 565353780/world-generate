@@ -60,7 +60,7 @@ void UnitWorldWidget::run_example()
     current_choose_node_type_ = NodeType::NodeFree;
     new_room_idx_ = 0;
 
-    for(size_t i = 1; i < 10; ++i)
+    for(int i = -10; i < 10; i+=2)
     {
         unit_world_controller_.createRoom(
             "Room " + std::to_string(new_room_idx_),
@@ -111,7 +111,7 @@ void UnitWorldWidget::paintEvent(QPaintEvent *event)
     painter.setPen(pen);
 
     EasyPoint2D point;
-    for(size_t i = 1; i < 10; ++i)
+    for(int i = -10; i < 10; i+=2)
     {
         point.setPosition(i, i);
         painter.drawPoint(getPointInImage(point));

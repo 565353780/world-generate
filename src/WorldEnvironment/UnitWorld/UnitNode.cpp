@@ -857,20 +857,32 @@ bool UnitNode::updatePolygon()
 
     if(EasyComputation::isLineCross(left_line, right_line))
     {
-        EasyPoint2D line_cross_point;
-        if(!EasyComputation::getLineCrossPoint(left_line, right_line, line_cross_point))
+        const float real_width2 = EasyComputation::pointDist2(left_line.point_1, right_line.point_1);
+
+        if(real_width2 > 0.0001)
         {
-            std::cout << "UnitNode::updatePolygon :\n" <<
-              "getLineCrossPoint failed!\n";
+            std::cout << "=================\n";
+            std::cout << "Line Cross :\n";
+            left_line.outputInfo(1);
+            right_line.outputInfo(1);
+            std::cout << "width = " << EasyComputation::pointDist(right_point_on_parent_polygon.position,
+                left_point_on_parent_polygon.position) << std::endl;
+            std::cout << "=================\n";
+            EasyPoint2D line_cross_point;
+            if(!EasyComputation::getLineCrossPoint(left_line, right_line, line_cross_point))
+            {
+                std::cout << "UnitNode::updatePolygon :\n" <<
+                  "getLineCrossPoint failed!\n";
 
-            return false;
+                return false;
+            }
+
+            right_up_point_idx = boundary_polygon.point_list.size();
+            left_up_point_idx = boundary_polygon.point_list.size();
+            boundary_polygon.addPoint(line_cross_point);
+
+            return true;
         }
-
-        right_up_point_idx = boundary_polygon.point_list.size();
-        left_up_point_idx = boundary_polygon.point_list.size();
-        boundary_polygon.addPoint(line_cross_point);
-
-        return true;
     }
 
     if(real_right_width != width / 2.0)

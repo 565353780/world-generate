@@ -23,6 +23,9 @@ public:
         const EasyPoint2D &point_1_data,
         const EasyPoint2D &point_2_data);
 
+    bool outputInfo(
+        const size_t& info_level);
+
     EasyPoint2D point_1;
     EasyPoint2D point_2;
 

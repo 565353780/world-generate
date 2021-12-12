@@ -57,3 +57,20 @@ bool EasyLine2D::setPosition(
         point_2_data.y);
 }
 
+bool EasyLine2D::outputInfo(
+    const size_t& info_level)
+{
+    std::string line_start = "";
+    for(size_t i = 0; i < info_level; ++i)
+    {
+        line_start += "\t";
+    }
+
+    std::cout << "EasyLine2D :\n" <<
+      line_start << "\t line = [" << point_1.x << "," <<
+      point_1.y << "]->[" <<
+      point_2.x << "," << point_2.y << "]\n";
+
+    return true;
+}
+

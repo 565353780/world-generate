@@ -82,30 +82,30 @@ bool UnitNodeLine::findNearestUnusedPosition(
 
         if(current_unused_right_param > current_unused_left_param)
         {
-            float current_min_dist_to_unused_line_start =
-              std::abs(current_unused_left_param - target_position.real_left_param);
+            float current_min_dist_to_unused_line_left =
+              std::abs(current_unused_left_param - target_position.target_left_param);
 
-            if(current_min_dist_to_unused_line_start < min_dist_to_unused_position)
+            if(current_min_dist_to_unused_line_left < min_dist_to_unused_position)
             {
-                min_dist_to_unused_position = current_min_dist_to_unused_line_start;
+                min_dist_to_unused_position = current_min_dist_to_unused_line_left;
 
                 nearest_unused_left_param = current_unused_left_param;
                 nearest_unused_right_param = current_unused_right_param;
             }
 
-            float current_min_dist_to_unused_line_end =
-              std::abs(current_unused_right_param - target_position.real_left_param);
+            float current_min_dist_to_unused_line_right =
+              std::abs(current_unused_right_param - target_position.target_left_param);
 
-            if(current_min_dist_to_unused_line_end < min_dist_to_unused_position)
+            if(current_min_dist_to_unused_line_right < min_dist_to_unused_position)
             {
-                min_dist_to_unused_position = current_min_dist_to_unused_line_end;
+                min_dist_to_unused_position = current_min_dist_to_unused_line_right;
 
                 nearest_unused_left_param = current_unused_left_param;
                 nearest_unused_right_param = current_unused_right_param;
             }
         }
 
-        if(target_position.real_left_param < current_unused_right_param)
+        if(target_position.target_left_param < current_unused_right_param)
         {
             return true;
         }

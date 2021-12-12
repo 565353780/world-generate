@@ -540,7 +540,9 @@ bool UnitNode::setPositionOnParentPolygonByPosition(
 
 bool UnitNode::updateWidth()
 {
-    const float error_max = 0.01;
+    test_intersection_vec_.clear();
+
+    const float error_max = 1;
 
     EasyPolygon2D polygon;
 
@@ -683,6 +685,8 @@ bool UnitNode::updateWidth()
         }
 
         intersection_polygon_point_vec.emplace_back(intersection_polygon_point);
+
+        test_intersection_vec_.emplace_back(intersection_polygon_point.position);
     }
 
     if(intersection_polygon_point_vec.size() == 0)
@@ -708,6 +712,7 @@ bool UnitNode::updateWidth()
 
         if(current_right_param_diff > max_right_param_diff)
         {
+
             if(intersection_polygon_point.line_idx == polygon_point_on_parent_polygon.line_idx)
             {
                 continue;
@@ -719,6 +724,7 @@ bool UnitNode::updateWidth()
         const float current_left_param_diff = 1.0 - current_right_param_diff;
         if(current_left_param_diff > max_left_param_diff)
         {
+
             if(intersection_polygon_point.line_idx == polygon_point_on_parent_polygon.line_idx)
             {
                 continue;
@@ -861,6 +867,15 @@ bool UnitNode::updatePolygon()
 
         if(real_width2 > 0.0001)
         {
+
+            // std::cout << "=================\n";
+            // std::cout << "Line Cross :\n";
+            // left_line.outputInfo(1);
+            // right_line.outputInfo(1);
+            // std::cout << "width = " << EasyComputation::pointDist(right_point_on_parent_polygon.position,
+                // left_point_on_parent_polygon.position) << std::endl;
+            // std::cout << "=================\n";
+
             EasyPoint2D line_cross_point;
             if(!EasyComputation::getLineCrossPoint(left_line, right_line, line_cross_point))
             {

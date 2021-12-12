@@ -70,6 +70,25 @@ void UnitWorldWidget::paintEvent(QPaintEvent *event)
     drawBackGround();
     drawWall();
     drawRoom();
+
+    QPainter painter(this);
+    QPen pen(QColor(255, 0, 0), 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    painter.setPen(pen);
+
+    if(current_choose_node_type_ != NodeType::NodeFree)
+    {
+        UnitNode* current_choose_node = unit_world_controller_.unit_tree.findNode(
+            current_choose_node_id_, current_choose_node_type_);
+
+        if(current_choose_node != nullptr)
+        {
+            for(const EasyPoint2D& point : current_choose_node->test_intersection_vec_)
+            {
+                painter.drawPoint(getPointInImage(point));
+            }
+        }
+    }
+
 }
 
 void UnitWorldWidget::mousePressEvent(QMouseEvent *event)

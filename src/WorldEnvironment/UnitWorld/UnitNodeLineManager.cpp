@@ -70,7 +70,7 @@ bool UnitNodeLine::findNearestUnusedPosition(
     if(position_line == nullptr)
     {
         nearest_unused_left_param = 0;
-        nearest_unused_right_param = 1;
+        nearest_unused_right_param = 2;
 
         return true;
     }
@@ -119,7 +119,7 @@ bool UnitNodeLine::findNearestUnusedPosition(
         search_position = search_position->next_position;
     }
 
-    current_unused_right_param = 1.0;
+    current_unused_right_param = 2;
 
     nearest_unused_left_param = current_unused_left_param;
     nearest_unused_right_param = current_unused_right_param;
@@ -186,6 +186,11 @@ bool UnitNodeLine::insertValidPosition(
     insert_position->real_left_param = valid_position.real_left_param;
     insert_position->real_right_param = valid_position.real_right_param;
     insert_position->real_height = valid_position.real_height;
+
+    if(insert_position->real_left_param > insert_position->real_right_param)
+    {
+        insert_position->real_right_param += 1.0;
+    }
 
     if(position_line == nullptr)
     {
@@ -679,17 +684,6 @@ bool UnitNodeLineManager::insertPosition(
           "\t wall_id = " << wall_id << std::endl <<
           "\t wall_type = " << wall_type << std::endl <<
           "updatePosition failed!\n";
-
-        return false;
-    }
-
-    if(target_position.real_left_param > target_position.real_right_param)
-    {
-        std::cout << "UnitNodeLineManager::insertPosition :\n" <<
-          "Input :\n" <<
-          "\t wall_id = " << wall_id << std::endl <<
-          "\t wall_type = " << wall_type << std::endl <<
-          "this real position not valid!\n";
 
         return false;
     }

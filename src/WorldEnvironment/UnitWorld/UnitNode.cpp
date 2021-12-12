@@ -861,13 +861,15 @@ bool UnitNode::updatePolygon()
 
         if(real_width2 > 0.0001)
         {
-            std::cout << "=================\n";
-            std::cout << "Line Cross :\n";
-            left_line.outputInfo(1);
-            right_line.outputInfo(1);
-            std::cout << "width = " << EasyComputation::pointDist(right_point_on_parent_polygon.position,
-                left_point_on_parent_polygon.position) << std::endl;
-            std::cout << "=================\n";
+
+            // std::cout << "=================\n";
+            // std::cout << "Line Cross :\n";
+            // left_line.outputInfo(1);
+            // right_line.outputInfo(1);
+            // std::cout << "width = " << EasyComputation::pointDist(right_point_on_parent_polygon.position,
+                // left_point_on_parent_polygon.position) << std::endl;
+            // std::cout << "=================\n";
+
             EasyPoint2D line_cross_point;
             if(!EasyComputation::getLineCrossPoint(left_line, right_line, line_cross_point))
             {

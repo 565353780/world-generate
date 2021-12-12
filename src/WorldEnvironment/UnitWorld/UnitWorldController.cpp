@@ -344,7 +344,7 @@ bool UnitWorldController::setRoomPositionOnTree(
     if(!unit_tree.setNodePositionOnParentPolygonByPolygonParam(
           room_id, room_type,
           valid_param, 0,
-          valid_room_width, target_position.real_height,
+          valid_room_width, target_position.target_height,
           PI / 2.0, PI / 2.0))
     {
         std::cout << "UnitWorldController::setRoomPositionOnTree :\n" <<

@@ -60,39 +60,6 @@ void UnitWorldWidget::run_example()
     current_choose_node_type_ = NodeType::NodeFree;
     new_room_idx_ = 0;
 
-    for(int i = -10; i < 10; i+=2)
-    {
-        unit_world_controller_.createRoom(
-            "Room " + std::to_string(new_room_idx_),
-            new_room_idx_, NodeType::WallRoom,
-            0, NodeType::OuterWall);
-        current_choose_node_id_ = new_room_idx_;
-        current_choose_node_type_ = NodeType::WallRoom;
-        ++new_room_idx_;
-
-        EasyPoint2D mouse_position_in_world;
-
-        mouse_position_in_world.setPosition(i, i);
-        unit_world_controller_.setRoomPositionOnTreeByPosition(
-            current_choose_node_id_,
-            current_choose_node_type_,
-            mouse_position_in_world);
-
-        unit_world_controller_.unit_tree.updateNodePolygon(
-            current_choose_node_id_,
-            current_choose_node_type_);
-    }
-
-    // unit_world_controller_.unit_tree.setNodePositionOnParentPolygonByPosition(
-        // current_choose_node_id_,
-        // current_choose_node_type_,
-        // mouse_position_in_world,
-        // 0, 2, 2, PI / 2.0, PI / 2.0);
-
-    // unit_world_controller_.unit_tree.updateNodePolygon(
-        // current_choose_node_id_,
-        // current_choose_node_type_);
-
     update();
 }
 
@@ -103,17 +70,6 @@ void UnitWorldWidget::paintEvent(QPaintEvent *event)
     drawBackGround();
     drawWall();
     drawRoom();
-
-    QPainter painter(this);
-    QPen pen(QColor(255, 0, 0), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    painter.setPen(pen);
-    EasyPoint2D point;
-
-    for(int i = -10; i < 10; i+=2)
-    {
-        point.setPosition(i, i);
-        painter.drawPoint(getPointInImage(point));
-    }
 }
 
 void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
@@ -142,12 +98,6 @@ void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
             current_choose_node_type_,
             mouse_position_in_world);
 
-        // unit_world_controller_.unit_tree.setNodePositionOnParentPolygonByPosition(
-            // current_choose_node_id_,
-            // current_choose_node_type_,
-            // mouse_position_in_world,
-            // 0, 2, 2, PI / 2.0, PI / 2.0);
-
         unit_world_controller_.unit_tree.updateNodePolygon(
             current_choose_node_id_,
             current_choose_node_type_);
@@ -158,7 +108,6 @@ void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
 
 void UnitWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    return;
     EasyPoint2D mouse_position_in_world = getPointInWorld(event->pos());
 
     unit_world_controller_.setRoomPositionOnTreeByPosition(

@@ -2,6 +2,8 @@
 
 bool UnitNodePosition::reset()
 {
+    node_id = 0;
+    node_type = NodeType::NodeFree;
     target_left_param = -1;
     target_right_param = -1;
     target_height = -1;
@@ -30,6 +32,8 @@ bool UnitNodePosition::outputInfo(
     }
 
     std::cout << line_start << "UnitNodePosition :\n" <<
+      line_start << "\t node_id = " << node_id << std::endl <<
+      line_start << "\t node_type = " << node_type << std::endl <<
       line_start << "\t target_param = [" << target_left_param << "," <<
       target_right_param << "]\n" <<
       line_start << "\t target_height = " << target_height << std::endl <<
@@ -174,6 +178,8 @@ bool UnitNodeLine::insertValidPosition(
     const UnitNodePosition &valid_position)
 {
     UnitNodePosition* insert_position = new UnitNodePosition();
+    insert_position->node_id = valid_position.node_id;
+    insert_position->node_type = valid_position.node_type;
     insert_position->target_left_param = valid_position.target_left_param;
     insert_position->target_right_param = valid_position.target_right_param;
     insert_position->target_height = valid_position.target_height;
@@ -582,11 +588,75 @@ bool UnitNodeLineManager::getMaxHeight(
     return true;
 }
 
+bool UnitNodeLineManager::removePosition(
+    const size_t& node_id,
+    const NodeType& node_type)
+{
+    for(WallUnitNodeLine& wall_line : wall_line_vec)
+    {
+        UnitNodePosition* position = wall_line.wall_boundary_line.position_line;
+
+        while(position != nullptr)
+        {
+            if(position->node_id != node_id || position->node_type != node_type)
+            {
+                position = position->next_position;
+                continue;
+            }
+
+            if(position->prev_position != nullptr)
+            {
+                if(position->next_position != nullptr)
+                {
+                    position->prev_position->next_position = position->next_position;
+                    position->next_position->prev_position = position->prev_position;
+
+                    delete(position);
+
+                    return true;
+                }
+
+                position->prev_position->next_position = nullptr;
+
+                delete(position);
+
+                return true;
+            }
+
+            if(position->next_position != nullptr)
+            {
+                wall_line.wall_boundary_line.position_line = position->next_position;
+                position->next_position->prev_position = nullptr;
+
+                delete(position);
+
+                return true;
+            }
+
+            wall_line.wall_boundary_line.position_line = nullptr;
+
+            delete(position);
+
+            return true;
+        }
+    }
+
+    // std::cout << "UnitNodeLineManager::removePosition :\n" <<
+      // "Input :\n" <<
+      // "\t node_id = " << node_id << std::endl <<
+      // "\t node_type = " << node_type << std::endl <<
+      // "this node not found!\n";
+
+    return false;
+}
+
 bool UnitNodeLineManager::insertPosition(
     const size_t &wall_id,
     const NodeType &wall_type,
     UnitNodePosition& target_position)
 {
+    removePosition(target_position.node_id, target_position.node_type);
+
     size_t wall_line_idx;
 
     if(!getWallLineIdx(wall_id, wall_type, wall_line_idx))

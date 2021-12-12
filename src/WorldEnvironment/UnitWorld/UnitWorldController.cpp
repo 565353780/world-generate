@@ -214,24 +214,7 @@ bool UnitWorldController::setRoomPositionOnTree(
         return false;
     }
 
-    UnitNode* search_node = unit_tree.findNode(room_id, room_type);
-
-    if(search_node == nullptr)
-    {
-        std::cout << "UnitWorldController::setRoomPositionOnTree :\n" <<
-          "\t room_id = " << room_id << std::endl <<
-          "\t room_type = " << room_type << std::endl <<
-          "\t parent_id = " << parent_id << std::endl <<
-          "\t parent_type = " << parent_type << std::endl <<
-          "\t room_target_param = " << room_target_param << std::endl <<
-          "\t room_target_size = [" << room_target_width << "," <<
-          room_target_height << "]\n" <<
-          "this node not exist!\n";
-
-        return false;
-    }
-
-    UnitNode* search_node_parent = search_node->parent;
+    UnitNode* search_node_parent = unit_tree.findNode(parent_id, parent_type);
 
     if(search_node_parent == nullptr)
     {
@@ -314,6 +297,8 @@ bool UnitWorldController::setRoomPositionOnTree(
     const float room_target_right_param = trans_point.param_on_polygon;
 
     UnitNodePosition target_position;
+    target_position.node_id = room_id;
+    target_position.node_type = room_type;
     target_position.target_left_param = room_target_left_param;
     target_position.target_right_param = room_target_right_param;
     target_position.target_height = room_target_height;

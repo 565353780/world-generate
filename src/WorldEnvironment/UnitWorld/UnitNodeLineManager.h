@@ -21,6 +21,8 @@ public:
     bool outputInfo(
         const size_t &info_level) const;
 
+    size_t node_id;
+    NodeType node_type;
     float target_left_param;
     float target_right_param;
     float target_height;
@@ -119,6 +121,10 @@ public:
         const NodeType &wall_type,
         const UnitNodePosition& target_position,
         float &max_height);
+
+    bool removePosition(
+        const size_t& node_id,
+        const NodeType& node_type);
 
     bool insertPosition(
         const size_t &wall_id,

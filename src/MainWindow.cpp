@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    this->setMaximumSize(800, 800);
+    this->setMaximumSize(1600, 1600);
 
     // widget_ = new EasyWorldWidget(this);
     widget_ = new UnitWorldWidget(this);

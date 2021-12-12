@@ -52,9 +52,9 @@ void UnitWorldWidget::run_example()
     }
     unit_world_controller_.setWallBoundaryPolygon(0, InnerWall, polygon);
 
-    zoom_ = 20;
-    offset_x_ = this->width();
-    offset_y_ = this->height();
+    zoom_ = 40;
+    offset_x_ = 800;
+    offset_y_ = 600;
 
     current_choose_node_id_ = 0;
     current_choose_node_type_ = NodeType::NodeFree;
@@ -81,6 +81,12 @@ void UnitWorldWidget::run_example()
         unit_world_controller_.unit_tree.updateNodePolygon(
             current_choose_node_id_,
             current_choose_node_type_);
+
+        for(const EasyPoint2D& point :
+            unit_world_controller_.unit_tree.findNode(current_choose_node_id_, current_choose_node_type_)->test_intersection_vec_)
+        {
+            test_intersection_vec_.emplace_back(point);
+        }
     }
 
     // unit_world_controller_.unit_tree.setNodePositionOnParentPolygonByPosition(
@@ -105,15 +111,18 @@ void UnitWorldWidget::paintEvent(QPaintEvent *event)
     drawRoom();
 
     QPainter painter(this);
-
     QPen pen(QColor(255, 0, 0), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-
     painter.setPen(pen);
-
     EasyPoint2D point;
-    for(int i = -10; i < 10; i+=2)
+
+    // for(int i = -10; i < 10; i+=2)
+    // {
+        // point.setPosition(i, i);
+        // painter.drawPoint(getPointInImage(point));
+    // }
+
+    for(const EasyPoint2D& point : test_intersection_vec_)
     {
-        point.setPosition(i, i);
         painter.drawPoint(getPointInImage(point));
     }
 }

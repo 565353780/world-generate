@@ -76,6 +76,8 @@ private:
     size_t current_choose_node_id_;
     NodeType current_choose_node_type_;
     size_t new_room_idx_;
+
+    std::vector<EasyPoint2D> test_intersection_vec_;
 };
 
 #endif // UNITWORLDWIDGET_H

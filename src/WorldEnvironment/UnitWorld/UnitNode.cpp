@@ -540,7 +540,9 @@ bool UnitNode::setPositionOnParentPolygonByPosition(
 
 bool UnitNode::updateWidth()
 {
-    const float error_max = 0.0001;
+    test_intersection_vec_.clear();
+
+    const float error_max = 0.01;
 
     EasyPolygon2D polygon;
 
@@ -683,6 +685,8 @@ bool UnitNode::updateWidth()
         }
 
         intersection_polygon_point_vec.emplace_back(intersection_polygon_point);
+
+        test_intersection_vec_.emplace_back(intersection_polygon_point.position);
     }
 
     if(intersection_polygon_point_vec.size() == 0)
@@ -708,10 +712,10 @@ bool UnitNode::updateWidth()
 
         if(current_right_param_diff > max_right_param_diff)
         {
-            if(intersection_polygon_point.line_idx == polygon_point_on_parent_polygon.line_idx)
-            {
-                continue;
-            }
+            // if(intersection_polygon_point.line_idx == polygon_point_on_parent_polygon.line_idx)
+            // {
+            //     continue;
+            // }
 
             max_right_param_diff = current_right_param_diff;
         }
@@ -719,10 +723,10 @@ bool UnitNode::updateWidth()
         const float current_left_param_diff = 1.0 - current_right_param_diff;
         if(current_left_param_diff > max_left_param_diff)
         {
-            if(intersection_polygon_point.line_idx == polygon_point_on_parent_polygon.line_idx)
-            {
-                continue;
-            }
+            // if(intersection_polygon_point.line_idx == polygon_point_on_parent_polygon.line_idx)
+            // {
+            //     continue;
+            // }
 
             max_left_param_diff = current_left_param_diff;
         }
@@ -887,10 +891,15 @@ bool UnitNode::updatePolygon()
         }
     }
 
+    std::cout << "width compare : " << width / 2.0 << "," <<
+      real_left_width << "," <<
+      real_right_width << std::endl;
+
     if(real_right_width != width / 2.0)
     {
         right_up_point_idx = boundary_polygon.point_list.size();
         left_up_point_idx = boundary_polygon.point_list.size();
+        std::cout << "line cross 2!\n";
         boundary_polygon.addPoint(left_end_point);
 
         return true;
@@ -900,6 +909,7 @@ bool UnitNode::updatePolygon()
     {
         right_up_point_idx = boundary_polygon.point_list.size();
         left_up_point_idx = boundary_polygon.point_list.size();
+        std::cout << "line cross 3!\n";
         boundary_polygon.addPoint(right_end_point);
 
         return true;

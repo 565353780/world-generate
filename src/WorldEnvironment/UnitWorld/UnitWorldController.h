@@ -1,10 +1,12 @@
 #ifndef UNIT_WORLD_CONTROLLER_H
 #define UNIT_WORLD_CONTROLLER_H
 
+#include "export_library_global.h"
+
 #include "UnitTree.h"
 #include "UnitNodeLineManager.h"
 
-class UnitWorldController
+class LIBRARY_EXPORT UnitWorldController
 {
 public:
     UnitWorldController()

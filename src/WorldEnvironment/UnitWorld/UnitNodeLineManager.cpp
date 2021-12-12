@@ -75,10 +75,9 @@ bool UnitNodeLine::findNearestUnusedPosition(
         return true;
     }
 
-    float real_target_position_left_param = target_position.target_left_param;
     float real_target_position_right_param = target_position.target_right_param;
 
-    if(real_target_position_left_param > real_target_position_right_param)
+    if(target_position.target_left_param > real_target_position_right_param)
     {
         real_target_position_right_param += 1;
     }
@@ -109,13 +108,23 @@ bool UnitNodeLine::findNearestUnusedPosition(
 
         if(current_unused_right_param <= current_unused_left_param)
         {
+            if(current_unused_right_param == current_unused_left_param &&
+                search_position->prev_position != nullptr)
+            {
+                if(search_position->prev_position->real_right_param ==
+                    search_position->real_left_param)
+                {
+                    current_unused_left_param = search_position->real_right_param;
+                }
+            }
+
             search_position = search_position->next_position;
 
             continue;
         }
 
         const float current_min_dist_to_unused_line_left =
-          std::abs(current_unused_left_param - real_target_position_left_param);
+          std::abs(current_unused_left_param - target_position.target_left_param);
 
         if(current_min_dist_to_unused_line_left < min_dist_to_unused_position)
         {
@@ -126,7 +135,7 @@ bool UnitNodeLine::findNearestUnusedPosition(
         }
 
         const float current_min_dist_to_unused_line_right =
-          std::abs(current_unused_right_param - real_target_position_left_param);
+          std::abs(current_unused_right_param - target_position.target_left_param);
 
         if(current_min_dist_to_unused_line_right < min_dist_to_unused_position)
         {
@@ -136,7 +145,7 @@ bool UnitNodeLine::findNearestUnusedPosition(
             nearest_unused_right_param = current_unused_right_param;
         }
 
-        if(real_target_position_left_param < current_unused_right_param)
+        if(target_position.target_left_param < current_unused_right_param)
         {
             return true;
         }

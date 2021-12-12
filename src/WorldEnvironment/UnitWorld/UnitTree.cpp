@@ -281,10 +281,6 @@ bool UnitTree::setNodePositionOnParentPolygonByPolygonParam(
         return false;
     }
 
-    std::cout << "room " << node_id << " now at " <<
-      search_node->polygon_point_on_parent_polygon.position.x << "," <<
-      search_node->polygon_point_on_parent_polygon.position.y << std::endl;
-
     return true;
 }
 

@@ -81,12 +81,6 @@ void UnitWorldWidget::run_example()
         unit_world_controller_.unit_tree.updateNodePolygon(
             current_choose_node_id_,
             current_choose_node_type_);
-
-        for(const EasyPoint2D& point :
-            unit_world_controller_.unit_tree.findNode(current_choose_node_id_, current_choose_node_type_)->test_intersection_vec_)
-        {
-            test_intersection_vec_.emplace_back(point);
-        }
     }
 
     // unit_world_controller_.unit_tree.setNodePositionOnParentPolygonByPosition(
@@ -115,14 +109,9 @@ void UnitWorldWidget::paintEvent(QPaintEvent *event)
     painter.setPen(pen);
     EasyPoint2D point;
 
-    // for(int i = -10; i < 10; i+=2)
-    // {
-        // point.setPosition(i, i);
-        // painter.drawPoint(getPointInImage(point));
-    // }
-
-    for(const EasyPoint2D& point : test_intersection_vec_)
+    for(int i = -10; i < 10; i+=2)
     {
+        point.setPosition(i, i);
         painter.drawPoint(getPointInImage(point));
     }
 }

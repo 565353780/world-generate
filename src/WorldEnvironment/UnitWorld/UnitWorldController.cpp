@@ -96,7 +96,18 @@ bool UnitWorldController::setWallBoundaryPolygon(
     const NodeType& wall_type,
     const EasyPolygon2D& wall_boundary_polygon)
 {
-    if(!unit_tree.setBoundaryPolygon(wall_id, wall_type, wall_boundary_polygon))
+    EasyPolygon2D valid_wall_boundary_polygon = wall_boundary_polygon;
+
+    if(wall_type == NodeType::OuterWall)
+    {
+        valid_wall_boundary_polygon.setAntiClockWise();
+    }
+    else
+    {
+        valid_wall_boundary_polygon.setClockWise();
+    }
+
+    if(!unit_tree.setBoundaryPolygon(wall_id, wall_type, valid_wall_boundary_polygon))
     {
         std::cout << "UnitWorldController::setWallBoundaryPolygon :\n" <<
           "Input :\n" <<
@@ -108,7 +119,7 @@ bool UnitWorldController::setWallBoundaryPolygon(
     }
 
     if(!unit_node_line_manager.setBoundaryPolygon(
-          wall_id, wall_type, wall_boundary_polygon))
+          wall_id, wall_type, valid_wall_boundary_polygon))
     {
         std::cout << "UnitWorldController::setWallBoundaryPolygon :\n" <<
           "Input :\n" <<

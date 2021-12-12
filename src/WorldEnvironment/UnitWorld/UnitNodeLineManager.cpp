@@ -111,6 +111,12 @@ bool UnitNodeLine::findNearestUnusedPosition(
 
         if(target_position.target_left_param < current_unused_right_param)
         {
+            if(nearest_unused_left_param >= 1)
+            {
+                nearest_unused_left_param -= 1.0;
+                nearest_unused_right_param -= 1.0;
+            }
+
             return true;
         }
 
@@ -123,6 +129,12 @@ bool UnitNodeLine::findNearestUnusedPosition(
 
     nearest_unused_left_param = current_unused_left_param;
     nearest_unused_right_param = current_unused_right_param;
+
+    if(nearest_unused_left_param >= 1)
+    {
+        nearest_unused_left_param -= 1;
+        nearest_unused_right_param -= 1;
+    }
 
     return true;
 }
@@ -169,6 +181,12 @@ bool UnitNodeLine::updatePosition(
     {
         target_position.real_left_param = target_position.target_left_param;
         target_position.real_right_param = target_position.target_right_param;
+    }
+
+    if(target_position.real_left_param >= 1)
+    {
+        target_position.real_left_param -= 1;
+        target_position.real_right_param -= 1;
     }
 
     return true;

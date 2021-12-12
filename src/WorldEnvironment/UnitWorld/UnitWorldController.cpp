@@ -329,8 +329,19 @@ bool UnitWorldController::setRoomPositionOnTree(
         return false;
     }
 
-    const float valid_param =
+    float valid_param =
       (target_position.real_left_param + target_position.real_right_param) / 2.0;
+    if(target_position.real_left_param > target_position.real_right_param)
+    {
+        if(valid_param > 0.5)
+        {
+            valid_param -= 0.5;
+        }
+        else
+        {
+            valid_param += 0.5;
+        }
+    }
 
     float valid_param_diff =
       target_position.real_right_param - target_position.real_left_param;

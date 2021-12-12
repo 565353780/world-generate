@@ -679,7 +679,8 @@ bool UnitNode::updateWidth()
 
         const float length_diff = std::abs(intersection_polygon_point.length - polygon_point_on_parent_polygon.length);
 
-        if(length_diff <= width / 2.0 + error_max)
+        if(length_diff <= width / 2.0 + error_max ||
+            parent->boundary_polygon.perimeter - length_diff <= width / 2.0 + error_max)
         {
             continue;
         }

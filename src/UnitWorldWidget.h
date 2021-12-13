@@ -9,20 +9,11 @@
 #include <QPainter>
 #include <QPolygon>
 
-#include <string>
-
 #include "UnitWorld/UnitWorldEnvironment.h"
 
 namespace Ui {
 class UnitWorldWidget;
 }
-
-enum CreateMode
-{
-    CreateFree = 0,
-    CreateWall = 1,
-    CreateRoom = 2
-};
 
 class UnitWorldWidget : public QWidget
 {

@@ -131,11 +131,6 @@ bool UnitWorldTransformer::updateTransform()
     offset_x_ = 0.5 * image_width_ - zoomed_wall_center_x;
     offset_y_ = 0.5 * image_height_ - zoomed_wall_center_y;
 
-    std::cout << "wall size = " << x_min_ << "," << x_max_ << ";" <<
-      y_min_ << "," << y_max_ << std::endl <<
-      "zoom = " << zoom_ << std::endl <<
-      "offset = " << offset_x_ << "," << offset_y_ << std::endl;
-
     return true;
 }
 

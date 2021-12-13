@@ -8,9 +8,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    this->setMaximumSize(1600, 1600);
+    this->setFixedSize(1600, 900);
 
-    // widget_ = new EasyWorldWidget(this);
     widget_ = new UnitWorldWidget(this);
 
     this->ui->VLayout->addWidget(widget_);

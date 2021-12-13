@@ -10,6 +10,8 @@ UnitWorldWidget::UnitWorldWidget(QWidget *parent) :
 
     this->grabKeyboard();
 
+    this->setFixedSize(1400, 700);
+
     run_example();
 
     this->show();
@@ -22,7 +24,7 @@ UnitWorldWidget::~UnitWorldWidget()
 
 void UnitWorldWidget::run_example()
 {
-    unit_world_environment_.setImageSize(1600, 1600, 5);
+    unit_world_environment_.setImageSize(this->width(), this->height(), 20);
 
     unit_world_environment_.createNewWorld();
 

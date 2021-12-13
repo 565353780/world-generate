@@ -100,7 +100,7 @@ PYBIND11_MODULE(UnitWorldEnvironment, m)
         .def("setWallRoomPositionByPosition", &UnitWorldEnvironment::setWallRoomPositionByPosition)
         .def("getOuterWallBoundaryDataVec", &UnitWorldEnvironment::getOuterWallBoundaryDataVec)
         .def("getInnerWallBoundaryDataVec", &UnitWorldEnvironment::getInnerWallBoundaryDataVec)
-        .def("getWallRoomBoundaryDataVec", &UnitWorldEnvironment::getWallRoomBoundaryDataVec)
+        .def("getWallRoomBoundaryDataVec", &UnitWorldEnvironment::getWallRoomBoundaryDataVec);
 }
 #endif
 

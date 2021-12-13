@@ -6,7 +6,9 @@ import gym
 import numpy as np
 import random
 
-from WorldEnvironment import WorldEnvironment
+#  from WorldEnvironment import WorldEnvironment
+from WorldEnvironment import UnitWorldEnvironment as WorldEnvironment
+
 from WorldGenerateObservation import WorldGenerateObservation
 from WorldGenerateReward import WorldGenerateReward
 
@@ -45,16 +47,8 @@ class WorldGenerateEnvironment(gym.Env):
         self.initWorld()
 
         self.action_space = gym.spaces.Box(
-            np.array([
-                0.0,
-                0.0,
-                0.0
-            ], dtype=np.float32),
-            np.array([
-                1.0,    # wall_idx, finish episode if < 0
-                1.0,    # wall_edge_idx
-                1.0     # position
-            ], dtype=np.float32)
+            np.array([0.0, 0.0], dtype=np.float32),
+            np.array([1.0, 1.0], dtype=np.float32)
         )
         self.observation_space = gym.spaces.Box(
             low=0,
@@ -83,7 +77,10 @@ class WorldGenerateEnvironment(gym.Env):
         return
 
     def initWorld(self):
-        self.world_environment.createNewWorld(0, 0)
+        self.world_environment.setImageSize(
+            self.observation_width, self.observation_height, self.observation_free)
+
+        self.world_environment.createNewWorld()
 
         self.world_environment.createOuterWall()
         self.world_environment.createInnerWall()
@@ -99,14 +96,6 @@ class WorldGenerateEnvironment(gym.Env):
         self.world_environment.addPointForInnerWall(0, 10, 20)
 
         self.world_environment.generateWall()
-
-        self.wall_edge_num_max = 4
-        self.outerwall_edge_num_vec = [4]
-        self.innerwall_edge_num_vec = [4]
-        self.outerwall_num = 1
-        self.innerwall_num = 1
-        self.container_room_num_max = 4
-        self.wall_length_max = 30
 
         self.run_time = 0
         return

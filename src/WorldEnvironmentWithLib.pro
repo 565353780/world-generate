@@ -27,6 +27,7 @@ HEADERS += \
     WorldEnvironment/EasyShape/EasyLine2D.h \
     WorldEnvironment/EasyShape/EasyIntersection2D.h \
     WorldEnvironment/EasyShape/EasyPolygon2D.h \
+    WorldEnvironment/EasyShape/EasyPolygonPoint2D.h \
     WorldEnvironment/EasyShape/EasyComputation.h
 
 HEADERS += \
@@ -45,23 +46,37 @@ HEADERS += \
     WorldEnvironment/EasyWorld/WorldDescriptor.h \
     WorldEnvironment/EasyWorld/WorldEditor.h \
     WorldEnvironment/EasyWorld/WorldObservation.h \
-    WorldEnvironment/EasyWorld/WorldReward.h \
     WorldEnvironment/EasyWorld/WorldEnvironment.h
 
 HEADERS += \
     WorldEnvironment/EasyWorld/EasyWorld.h
 
+# UnitWorld
+HEADERS += \
+    WorldEnvironment/UnitWorld/UnitNode.h \
+    WorldEnvironment/UnitWorld/UnitTree.h \
+    WorldEnvironment/UnitWorld/UnitNodeLineManager.h \
+    WorldEnvironment/UnitWorld/UnitWorldController.h \
+    WorldEnvironment/UnitWorld/UnitWorldTransformer.h \
+    WorldEnvironment/UnitWorld/UnitWorldEnvironment.h
+
+HEADERS += \
+    WorldEnvironment/UnitWorld/UnitWorld.h
+
 SOURCES += \
     main.cpp \
     EasyWorldWidget.cpp \
+    UnitWorldWidget.cpp \
     MainWindow.cpp
 
 HEADERS += \
     EasyWorldWidget.h \
+    UnitWorldWidget.h \
     MainWindow.h
 
 FORMS += \
     EasyWorldWidget.ui \
+    UnitWorldWidget.ui \
     MainWindow.ui
 
 TRANSLATIONS += \

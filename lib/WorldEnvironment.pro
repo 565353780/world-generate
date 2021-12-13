@@ -22,6 +22,7 @@ SOURCES += \
     ../src/WorldEnvironment/EasyShape/EasyLine2D.cpp \
     ../src/WorldEnvironment/EasyShape/EasyIntersection2D.cpp \
     ../src/WorldEnvironment/EasyShape/EasyPolygon2D.cpp \
+    ../src/WorldEnvironment/EasyShape/EasyPolygonPoint2D.cpp \
     ../src/WorldEnvironment/EasyShape/EasyComputation.cpp
 
 HEADERS += \
@@ -30,6 +31,7 @@ HEADERS += \
     ../src/WorldEnvironment/EasyShape/EasyLine2D.h \
     ../src/WorldEnvironment/EasyShape/EasyIntersection2D.h \
     ../src/WorldEnvironment/EasyShape/EasyPolygon2D.h \
+    ../src/WorldEnvironment/EasyShape/EasyPolygonPoint2D.h \
     ../src/WorldEnvironment/EasyShape/EasyComputation.h
 
 HEADERS += \
@@ -66,6 +68,26 @@ HEADERS += \
 
 HEADERS += \
     ../src/WorldEnvironment/EasyWorld/EasyWorld.h
+
+# UnitWorld
+SOURCES += \
+    ../src/WorldEnvironment/UnitWorld/UnitNode.cpp \
+    ../src/WorldEnvironment/UnitWorld/UnitTree.cpp \
+    ../src/WorldEnvironment/UnitWorld/UnitNodeLineManager.cpp \
+    ../src/WorldEnvironment/UnitWorld/UnitWorldController.cpp \
+    ../src/WorldEnvironment/UnitWorld/UnitWorldTransformer.cpp \
+    ../src/WorldEnvironment/UnitWorld/UnitWorldEnvironment.cpp
+
+HEADERS += \
+    ../src/WorldEnvironment/UnitWorld/UnitNode.h \
+    ../src/WorldEnvironment/UnitWorld/UnitTree.h \
+    ../src/WorldEnvironment/UnitWorld/UnitNodeLineManager.h \
+    ../src/WorldEnvironment/UnitWorld/UnitWorldController.h \
+    ../src/WorldEnvironment/UnitWorld/UnitWorldTransformer.h \
+    ../src/WorldEnvironment/UnitWorld/UnitWorldEnvironment.h
+
+HEADERS += \
+    ../src/WorldEnvironment/UnitWorld/UnitWorld.h
 
 # Default rules for deployment.
 unix {

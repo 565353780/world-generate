@@ -82,8 +82,6 @@ void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
             event->pos().x(),
             event->pos().y());
 
-        std::cout << "current place room " << new_room_idx_ << std::endl;
-
         current_choose_node_id_ = new_room_idx_;
         current_choose_node_type_ = NodeType::WallRoom;
 
@@ -95,7 +93,6 @@ void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
 
 void UnitWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    return;
     if(current_choose_node_type_ == NodeType::WallRoom)
     {
         unit_world_environment_.setWallRoomPositionByPosition(

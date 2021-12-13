@@ -310,6 +310,18 @@ bool UnitWorldEnvironment::placeWallRoomByPosition(
         return false;
     }
 
+    if(!unit_world_controller_.unit_tree.updateNodePolygon(
+          new_wall_room_info.id, new_wall_room_info.type))
+    {
+        std::cout << "UnitWorldEnvironment::placeWallRoomByPosition :\n" <<
+          "Input :\n" <<
+          "\t point_in_image = [" << point_x_in_image << "," <<
+          point_y_in_image << "]\n" <<
+          "updateNodePolygon failed!\n";
+
+        return false;
+    }
+
     wall_room_info_vec_.emplace_back(new_wall_room_info);
 
     return true;

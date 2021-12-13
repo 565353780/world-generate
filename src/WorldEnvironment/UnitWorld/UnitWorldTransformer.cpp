@@ -11,9 +11,9 @@ bool UnitWorldTransformer::reset()
 
 bool UnitWorldTransformer::resetImageSize()
 {
-    image_width_ = -1;
-    image_height_ = -1;
-    free_area_width_ = -1;
+    image_width_ = 0;
+    image_height_ = 0;
+    free_area_width_ = 0;
 
     resetTransform();
 
@@ -84,7 +84,7 @@ bool UnitWorldTransformer::expandArea(
 
 bool UnitWorldTransformer::updateTransform()
 {
-    if(image_width_ <= 0 || image_height_ <= 0 || free_area_width_ == -1)
+    if(image_width_ == 0 || image_height_ == 0)
     {
         std::cout << "UnitWorldTransformer::updateTransform :\n" <<
           "image size not valid!\n";

@@ -54,9 +54,6 @@ private:
         const std::vector<std::vector<std::vector<size_t>>>& node_boundary_data_vec,
         QColor color);
 
-    bool drawWall();
-    bool drawRoom();
-
 private:
     Ui::UnitWorldWidget *ui;
 

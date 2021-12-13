@@ -25,9 +25,11 @@ void UnitWorldWidget::run_example()
     unit_world_environment_.setImageSize(this->width(), this->height(), 5);
 
     unit_world_environment_.createNewWorld();
+    std::cout << "create new world finished!\n";
 
     unit_world_environment_.createOuterWall();
     unit_world_environment_.createInnerWall();
+    std::cout << "create wall finished!\n";
 
     float a = 18;
     float b = 10;
@@ -53,8 +55,10 @@ void UnitWorldWidget::run_example()
             a * std::cos(2.0 * PI * i / point_num),
             b * std::sin(2.0 * PI * i / point_num));
     }
+    std::cout << "add wall point finished!\n";
 
     unit_world_environment_.generateWall();
+    std::cout << "generateWall finished!\n";
 
     current_choose_node_id_ = 0;
     current_choose_node_type_ = NodeType::NodeFree;
@@ -68,8 +72,14 @@ void UnitWorldWidget::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
 
     drawBackGround();
-    drawWall();
-    drawRoom();
+    std::cout << "drawBackGround finished!\n";
+
+    drawNode(unit_world_environment_.getOuterWallBoundaryDataVec(), QColor(255, 255, 255));
+    std::cout << "drawOuterWall finished!\n";
+    drawNode(unit_world_environment_.getInnerWallBoundaryDataVec(), QColor(255, 255, 255));
+    std::cout << "drawInnerWall finished!\n";
+    drawNode(unit_world_environment_.getWallRoomBoundaryDataVec(), QColor(0, 255, 0));
+    std::cout << "drawWallRoom finished!\n";
 }
 
 void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
@@ -166,6 +176,8 @@ bool UnitWorldWidget::drawNode(
         node_boundary_data_vec)
     {
         QPolygon q_polygon;
+        q_polygon.resize(node_boundary_data.size());
+
         for(size_t i = 0; i < node_boundary_data.size(); ++i)
         {
             const std::vector<size_t>& node_boundary_point_data =
@@ -177,22 +189,6 @@ bool UnitWorldWidget::drawNode(
 
         painter.drawPolygon(q_polygon);
     }
-
-    return true;
-}
-
-
-bool UnitWorldWidget::drawWall()
-{
-    drawNode(unit_world_environment_.getOuterWallBoundaryDataVec(), QColor(255, 255, 255));
-    drawNode(unit_world_environment_.getInnerWallBoundaryDataVec(), QColor(255, 255, 255));
-
-    return true;
-}
-
-bool UnitWorldWidget::drawRoom()
-{
-    drawNode(unit_world_environment_.getWallRoomBoundaryDataVec(), QColor(0, 255, 0));
 
     return true;
 }

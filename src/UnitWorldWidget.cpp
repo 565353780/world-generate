@@ -22,10 +22,12 @@ UnitWorldWidget::~UnitWorldWidget()
 
 void UnitWorldWidget::run_example()
 {
-    unit_world_controller_.createWorld();
+    unit_world_environment_.setImageSize(this->width(), this->height(), 5);
 
-    unit_world_controller_.createWall("Outerwall 0", 0, NodeType::OuterWall);
-    unit_world_controller_.createWall("Innerwall 0", 0, NodeType::InnerWall);
+    unit_world_environment_.createNewWorld();
+
+    unit_world_environment_.createOuterWall();
+    unit_world_environment_.createInnerWall();
 
     float a = 18;
     float b = 10;
@@ -34,11 +36,11 @@ void UnitWorldWidget::run_example()
     EasyPolygon2D polygon;
     for(size_t i = 0; i < point_num; ++i)
     {
-        polygon.addPoint(
+        unit_world_environment_.addPointForOuterWall(
+            0,
             a * std::cos(2.0 * PI * i / point_num),
             b * std::sin(2.0 * PI * i / point_num));
     }
-    unit_world_controller_.setWallBoundaryPolygon(0, NodeType::OuterWall, polygon);
 
     a = 11;
     b = 4;
@@ -46,15 +48,13 @@ void UnitWorldWidget::run_example()
     polygon.reset();
     for(size_t i = 0; i < point_num; ++i)
     {
-        polygon.addPoint(
+        unit_world_environment_.addPointForInnerWall(
+            0,
             a * std::cos(2.0 * PI * i / point_num),
             b * std::sin(2.0 * PI * i / point_num));
     }
-    unit_world_controller_.setWallBoundaryPolygon(0, InnerWall, polygon);
 
-    zoom_ = 40;
-    offset_x_ = 800;
-    offset_y_ = 600;
+    unit_world_environment_.generateWall();
 
     current_choose_node_id_ = 0;
     current_choose_node_type_ = NodeType::NodeFree;
@@ -70,56 +70,18 @@ void UnitWorldWidget::paintEvent(QPaintEvent *event)
     drawBackGround();
     drawWall();
     drawRoom();
-
-    QPainter painter(this);
-    QPen pen(QColor(255, 0, 0), 20, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    painter.setPen(pen);
-
-    if(current_choose_node_type_ != NodeType::NodeFree)
-    {
-        UnitNode* current_choose_node = unit_world_controller_.unit_tree.findNode(
-            current_choose_node_id_, current_choose_node_type_);
-
-        if(current_choose_node != nullptr)
-        {
-            for(const EasyPoint2D& point : current_choose_node->test_intersection_vec_)
-            {
-                painter.drawPoint(getPointInImage(point));
-            }
-        }
-    }
-
 }
 
 void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
 {
-    if(create_mode_ == CreateMode::CreateWall)
-    {
-        if(!chooseWall(event->pos()))
-        {
-        }
-    }
-
     if(!chooseRoom(event->pos()))
     {
-        unit_world_controller_.createRoom(
-            "Room " + std::to_string(new_room_idx_),
-            new_room_idx_, NodeType::WallRoom,
-            0, NodeType::OuterWall);
-        current_choose_node_id_ = new_room_idx_;
-        current_choose_node_type_ = NodeType::WallRoom;
+        unit_world_environment_.setWallRoomPositionByPosition(
+            new_room_idx_,
+            event->pos().x(),
+            event->pos().y());
+
         ++new_room_idx_;
-
-        EasyPoint2D mouse_position_in_world = getPointInWorld(event->pos());
-
-        unit_world_controller_.setRoomPositionOnTreeByPosition(
-            current_choose_node_id_,
-            current_choose_node_type_,
-            mouse_position_in_world);
-
-        unit_world_controller_.unit_tree.updateNodePolygon(
-            current_choose_node_id_,
-            current_choose_node_type_);
 
         update();
     }
@@ -127,16 +89,13 @@ void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
 
 void UnitWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    EasyPoint2D mouse_position_in_world = getPointInWorld(event->pos());
-
-    unit_world_controller_.setRoomPositionOnTreeByPosition(
-        current_choose_node_id_,
-        current_choose_node_type_,
-        mouse_position_in_world);
-
-    unit_world_controller_.unit_tree.updateNodePolygon(
-        current_choose_node_id_,
-        current_choose_node_type_);
+    if(current_choose_node_type_ == NodeType::WallRoom)
+    {
+        unit_world_environment_.setWallRoomPositionByPosition(
+            current_choose_node_id_,
+            event->pos().x(),
+            event->pos().y());
+    }
 
     update();
 }
@@ -149,78 +108,23 @@ void UnitWorldWidget::mouseReleaseEvent(QMouseEvent *event)
     current_choose_node_type_ = NodeType::NodeFree;
 }
 
-void UnitWorldWidget::keyPressEvent(QKeyEvent *event)
-{
-    if(event->key() == Qt::Key_F)
-    {
-        create_mode_ = CreateMode::CreateFree;
-        std::cout << "Change to CreateFree Mode!\n";
-        return;
-    }
-
-    if(event->key() == Qt::Key_W)
-    {
-        create_mode_ = CreateMode::CreateWall;
-        std::cout << "Change to CreateWall Mode!\n";
-        return;
-    }
-
-    if(event->key() == Qt::Key_R)
-    {
-        create_mode_ = CreateMode::CreateRoom;
-        std::cout << "Change to CreateRoom Mode!\n";
-        return;
-    }
-}
-
-QPoint UnitWorldWidget::getPointInImage(
-    const EasyPoint2D& point_in_world)
-{
-    QPoint point_in_image = QPoint(
-        offset_x_ + zoom_ * point_in_world.x,
-        offset_y_ + zoom_ * point_in_world.y);
-
-    return point_in_image;
-}
-
-EasyPoint2D UnitWorldWidget::getPointInWorld(
-    const QPoint& point_in_image)
-{
-    EasyPoint2D point_in_world;
-    point_in_world.setPosition(
-        (point_in_image.x() - offset_x_) / zoom_,
-        (point_in_image.y() - offset_y_) / zoom_);
-
-    return point_in_world;
-}
-
-bool UnitWorldWidget::chooseWall(
-    const QPoint& mouse_position_in_image)
-{
-    current_choose_node_id_ = 0;
-    current_choose_node_type_ = NodeType::NodeFree;
-
-    for(UnitNode* wall_node : unit_world_controller_.unit_tree.root->child_vec)
-    {
-        const EasyPoint2D mouse_position_in_world =
-          getPointInWorld(mouse_position_in_image);
-    }
-
-    return true;
-}
-
 bool UnitWorldWidget::chooseRoom(
     const QPoint& mouse_position_in_image)
 {
     current_choose_node_id_ = 0;
     current_choose_node_type_ = NodeType::NodeFree;
 
-    for(UnitNode* wall_node : unit_world_controller_.unit_tree.root->child_vec)
+    for(UnitNode* wall_node : unit_world_environment_.unit_world_controller_.unit_tree.root->child_vec)
     {
         for(UnitNode* room_node : wall_node->child_vec)
         {
-            const EasyPoint2D mouse_position_in_world =
-              getPointInWorld(mouse_position_in_image);
+            float mouse_position_x_in_world, mouse_position_y_in_world;
+            unit_world_environment_.unit_world_transformer_.transPointToWorld(
+                mouse_position_in_image.x(), mouse_position_in_image.y(),
+                mouse_position_x_in_world, mouse_position_y_in_world);
+
+            EasyPoint2D mouse_position_in_world;
+            mouse_position_in_world.setPosition(mouse_position_x_in_world, mouse_position_y_in_world);
 
             if(EasyComputation::isPointInPolygon(
                   mouse_position_in_world,
@@ -250,25 +154,25 @@ bool UnitWorldWidget::drawBackGround()
     return true;
 }
 
-bool UnitWorldWidget::drawWall()
+bool UnitWorldWidget::drawNode(
+    const std::vector<std::vector<std::vector<size_t>>>& node_boundary_data_vec,
+    const QColor color)
 {
     QPainter painter(this);
-
-    QPen pen(QColor(255, 255, 255), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-
+    QPen pen(color, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     painter.setPen(pen);
 
-    for(UnitNode* wall_node : unit_world_controller_.unit_tree.root->child_vec)
+    for(const std::vector<std::vector<size_t>>& node_boundary_data :
+        node_boundary_data_vec)
     {
-        const EasyPolygon2D& polygon = wall_node->boundary_polygon;
-
         QPolygon q_polygon;
-        q_polygon.resize(polygon.point_list.size());
-
-        for(size_t i = 0; i < polygon.point_list.size(); ++i)
+        for(size_t i = 0; i < node_boundary_data.size(); ++i)
         {
-            const EasyPoint2D& polygon_point = polygon.point_list[i];
-            q_polygon.setPoint(i, getPointInImage(polygon_point));
+            const std::vector<size_t>& node_boundary_point_data =
+              node_boundary_data[i];
+
+            q_polygon.setPoint(
+                i, node_boundary_point_data[0], node_boundary_point_data[1]);
         }
 
         painter.drawPolygon(q_polygon);
@@ -277,31 +181,18 @@ bool UnitWorldWidget::drawWall()
     return true;
 }
 
+
+bool UnitWorldWidget::drawWall()
+{
+    drawNode(unit_world_environment_.getOuterWallBoundaryDataVec(), QColor(255, 255, 255));
+    drawNode(unit_world_environment_.getInnerWallBoundaryDataVec(), QColor(255, 255, 255));
+
+    return true;
+}
+
 bool UnitWorldWidget::drawRoom()
 {
-    QPainter painter(this);
-
-    QPen pen(QColor(0, 255, 0), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-
-    painter.setPen(pen);
-
-    for(UnitNode* wall_node : unit_world_controller_.unit_tree.root->child_vec)
-    {
-        for(UnitNode* room_node : wall_node->child_vec)
-        {
-            const EasyPolygon2D& polygon = room_node->boundary_polygon;
-            QPolygon q_polygon;
-            q_polygon.resize(polygon.point_list.size());
-
-            for(size_t i = 0; i < polygon.point_list.size(); ++i)
-            {
-                const EasyPoint2D& polygon_point = polygon.point_list[i];
-                q_polygon.setPoint(i, getPointInImage(polygon_point));
-            }
-
-            painter.drawPolygon(q_polygon);
-        }
-    }
+    drawNode(unit_world_environment_.getWallRoomBoundaryDataVec(), QColor(0, 255, 0));
 
     return true;
 }

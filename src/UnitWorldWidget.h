@@ -11,7 +11,7 @@
 
 #include <string>
 
-#include "UnitWorld/UnitWorldController.h"
+#include "UnitWorld/UnitWorldEnvironment.h"
 
 namespace Ui {
 class UnitWorldWidget;
@@ -41,18 +41,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
 
-    void keyPressEvent(QKeyEvent *event);
-
 private:
-    QPoint getPointInImage(
-        const EasyPoint2D& point_in_world);
-
-    EasyPoint2D getPointInWorld(
-        const QPoint& point_in_image);
-
-    bool chooseWall(
-        const QPoint& mouse_position_in_image);
-
     bool chooseRoom(
         const QPoint& mouse_position_in_image);
 
@@ -60,18 +49,18 @@ private:
         const QPoint& mouse_position_in_image);
 
     bool drawBackGround();
+
+    bool drawNode(
+        const std::vector<std::vector<std::vector<size_t>>>& node_boundary_data_vec,
+        QColor color);
+
     bool drawWall();
     bool drawRoom();
 
 private:
     Ui::UnitWorldWidget *ui;
 
-    UnitWorldController unit_world_controller_;
-
-    CreateMode create_mode_;
-    float zoom_;
-    float offset_x_;
-    float offset_y_;
+    UnitWorldEnvironment unit_world_environment_;
 
     size_t current_choose_node_id_;
     NodeType current_choose_node_type_;

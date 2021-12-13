@@ -14,6 +14,7 @@ public:
     }
 
     bool reset();
+    bool resetButRemainWall();
 
     bool createWorld();
 

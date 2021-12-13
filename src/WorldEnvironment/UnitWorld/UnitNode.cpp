@@ -540,8 +540,6 @@ bool UnitNode::setPositionOnParentPolygonByPosition(
 
 bool UnitNode::updateWidth()
 {
-    test_intersection_vec_.clear();
-
     const float error_max = 1;
 
     EasyPolygon2D polygon;
@@ -686,8 +684,6 @@ bool UnitNode::updateWidth()
         }
 
         intersection_polygon_point_vec.emplace_back(intersection_polygon_point);
-
-        test_intersection_vec_.emplace_back(intersection_polygon_point.position);
     }
 
     if(intersection_polygon_point_vec.size() == 0)

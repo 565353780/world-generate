@@ -59,10 +59,10 @@ bool UnitTree::resetButRemainWall()
 
 bool UnitTree::createTree()
 {
-    if(root != nullptr)
+    if(!reset())
     {
         std::cout << "UnitTree::createTree :\n" <<
-          "tree root already exist!\n";
+          "reset failed!\n";
 
         return false;
     }

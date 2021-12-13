@@ -22,6 +22,27 @@ bool UnitWorldController::reset()
     return true;
 }
 
+bool UnitWorldController::resetButRemainWall()
+{
+    if(!unit_tree.resetButRemainWall())
+    {
+        std::cout << "UnitWorldController::resetButRemainWall :\n" <<
+          "resetButRemainWall for unit_tree failed!\n";
+
+        return false;
+    }
+
+    if(!unit_node_line_manager.resetButRemainWall())
+    {
+        std::cout << "UnitWorldController::resetButRemainWall :\n" <<
+          "resetButRemainWall for unit_node_line_manager failed!\n";
+
+        return false;
+    }
+
+    return true;
+}
+
 bool UnitWorldController::createWorld()
 {
     if(!unit_tree.createTree())
@@ -210,6 +231,26 @@ bool UnitWorldController::setRoomPositionOnTree(
     const float& room_target_width,
     const float& room_target_height)
 {
+    UnitNode* room_node = unit_tree.findNode(room_id, room_type);
+
+    if(room_node == nullptr)
+    {
+        if(!createRoom("WallRoom", room_id, room_type, parent_id, parent_type))
+        {
+            std::cout << "UnitWorldController::setRoomPositionOnTree :\n" <<
+              "\t room_id = " << room_id << std::endl <<
+              "\t room_type = " << room_type << std::endl <<
+              "\t parent_id = " << parent_id << std::endl <<
+              "\t parent_type = " << parent_type << std::endl <<
+              "\t room_target_param = " << room_target_param << std::endl <<
+              "\t room_target_size = [" << room_target_width << "," <<
+              room_target_height << "]\n" <<
+              "createRoom failed!\n";
+
+            return false;
+        }
+    }
+
     if(!unit_tree.setNodeParent(room_id, room_type, parent_id, parent_type))
     {
         std::cout << "UnitWorldController::setRoomPositionOnTree :\n" <<

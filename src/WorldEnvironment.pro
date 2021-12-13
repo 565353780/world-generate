@@ -76,13 +76,17 @@ SOURCES += \
     WorldEnvironment/UnitWorld/UnitNode.cpp \
     WorldEnvironment/UnitWorld/UnitTree.cpp \
     WorldEnvironment/UnitWorld/UnitNodeLineManager.cpp \
-    WorldEnvironment/UnitWorld/UnitWorldController.cpp
+    WorldEnvironment/UnitWorld/UnitWorldController.cpp \
+    WorldEnvironment/UnitWorld/UnitWorldTransformer.cpp \
+    WorldEnvironment/UnitWorld/UnitWorldEnvironment.cpp
 
 HEADERS += \
     WorldEnvironment/UnitWorld/UnitNode.h \
     WorldEnvironment/UnitWorld/UnitTree.h \
     WorldEnvironment/UnitWorld/UnitNodeLineManager.h \
-    WorldEnvironment/UnitWorld/UnitWorldController.h
+    WorldEnvironment/UnitWorld/UnitWorldController.h \
+    WorldEnvironment/UnitWorld/UnitWorldTransformer.h \
+    WorldEnvironment/UnitWorld/UnitWorldEnvironment.h
 
 HEADERS += \
     WorldEnvironment/UnitWorld/UnitWorld.h

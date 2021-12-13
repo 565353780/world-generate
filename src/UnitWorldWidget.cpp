@@ -22,14 +22,12 @@ UnitWorldWidget::~UnitWorldWidget()
 
 void UnitWorldWidget::run_example()
 {
-    unit_world_environment_.setImageSize(this->width(), this->height(), 5);
+    unit_world_environment_.setImageSize(1600, 1600, 5);
 
     unit_world_environment_.createNewWorld();
-    std::cout << "create new world finished!\n";
 
     unit_world_environment_.createOuterWall();
     unit_world_environment_.createInnerWall();
-    std::cout << "create wall finished!\n";
 
     float a = 18;
     float b = 10;
@@ -55,10 +53,8 @@ void UnitWorldWidget::run_example()
             a * std::cos(2.0 * PI * i / point_num),
             b * std::sin(2.0 * PI * i / point_num));
     }
-    std::cout << "add wall point finished!\n";
 
     unit_world_environment_.generateWall();
-    std::cout << "generateWall finished!\n";
 
     current_choose_node_id_ = 0;
     current_choose_node_type_ = NodeType::NodeFree;
@@ -72,24 +68,24 @@ void UnitWorldWidget::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
 
     drawBackGround();
-    std::cout << "drawBackGround finished!\n";
 
     drawNode(unit_world_environment_.getOuterWallBoundaryDataVec(), QColor(255, 255, 255));
-    std::cout << "drawOuterWall finished!\n";
     drawNode(unit_world_environment_.getInnerWallBoundaryDataVec(), QColor(255, 255, 255));
-    std::cout << "drawInnerWall finished!\n";
     drawNode(unit_world_environment_.getWallRoomBoundaryDataVec(), QColor(0, 255, 0));
-    std::cout << "drawWallRoom finished!\n";
 }
 
 void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
 {
     if(!chooseRoom(event->pos()))
     {
-        unit_world_environment_.setWallRoomPositionByPosition(
-            new_room_idx_,
+        unit_world_environment_.placeWallRoomByPosition(
             event->pos().x(),
             event->pos().y());
+
+        std::cout << "current place room " << new_room_idx_ << std::endl;
+
+        current_choose_node_id_ = new_room_idx_;
+        current_choose_node_type_ = NodeType::WallRoom;
 
         ++new_room_idx_;
 
@@ -99,6 +95,7 @@ void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
 
 void UnitWorldWidget::mouseMoveEvent(QMouseEvent *event)
 {
+    return;
     if(current_choose_node_type_ == NodeType::WallRoom)
     {
         unit_world_environment_.setWallRoomPositionByPosition(

@@ -298,7 +298,7 @@ bool UnitWorldEnvironment::placeWallRoomByPosition(
     EasyPoint2D point_in_world;
     point_in_world.setPosition(point_x_in_world, point_y_in_world);
 
-    if(unit_world_controller_.setRoomPositionOnTreeByPosition(
+    if(!unit_world_controller_.setRoomPositionOnTreeByPosition(
           new_wall_room_info.id, new_wall_room_info.type, point_in_world))
     {
         std::cout << "UnitWorldEnvironment::placeWallRoomByPosition :\n" <<

@@ -20,7 +20,7 @@ class WorldGenerateReward(object):
         self.movable_weight = None
         self.escapable_weight = None
 
-        self.previous_observation = None
+        #  self.previous_observation = None
 
         self.step_score = None
         self.space_utilization_score = None
@@ -44,6 +44,7 @@ class WorldGenerateReward(object):
 
     def getSpaceUtilizationScore(self, observation):
         self.space_utilization_score = float(np.sum(observation[self.room_channel_idx] > 0))
+        self.space_utilization_score /= observation.shape[1] * observation.shape[2]
         return True
 
     def getMovableScore(self, observation):
@@ -63,10 +64,11 @@ class WorldGenerateReward(object):
         self.getMovableScore(observation)
         self.getEscapableScore(observation)
 
+        self.reward -= self.step_weight * self.step_score
+
         if self.previous_space_utilization_score is None:
             self.reward += self.space_utilization_weight * self.space_utilization_score
         else:
-            self.reward -= self.step_weight * self.step_score
             self.reward += self.space_utilization_weight * \
                 (self.space_utilization_score - self.previous_space_utilization_score)
             self.reward -= self.movable_weight * \

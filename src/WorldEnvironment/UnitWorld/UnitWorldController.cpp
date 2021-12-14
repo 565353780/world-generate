@@ -471,6 +471,19 @@ bool UnitWorldController::setRoomPositionOnTreeByPosition(
     const float point_dist_to_wall_polygon =
       EasyComputation::pointDist(point, polygon_point.position);
 
+    if(point_dist_to_wall_polygon == 0)
+    {
+        std::cout << "UnitWorldController::setRoomPositionOnTreeByPosition :\n" <<
+          "Input :\n" <<
+          "\t room_id = " << room_id << std::endl <<
+          "\t room_type = " << room_type << std::endl <<
+          "\t point = [" << point.x << "," <<
+          point.y << "]\n" <<
+          "room size not valid!\n";
+
+        return false;
+    }
+
     if(!setRoomPositionOnTree(
           room_id, room_type,
           nearest_wall_id, nearest_wall_type,

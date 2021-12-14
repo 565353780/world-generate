@@ -27,8 +27,8 @@ class WorldGenerateEnvironment(gym.Env):
         self.observation_height = 256
         self.observation_free = 20
 
-        self.step_weight = 1
-        self.space_utilization_weight = 0.1
+        self.step_weight = 0.1
+        self.space_utilization_weight = 500
         self.movable_weight = 1
         self.escapable_weight = 1
 
@@ -154,31 +154,13 @@ class WorldGenerateEnvironment(gym.Env):
 
 if __name__ == "__main__":
     world_generate_environment = WorldGenerateEnvironment()
-    done = False
-    while not done:
-        _, _, done, _ = world_generate_environment.step(world_generate_environment.action_space.sample())
+    while True:
+        done = False
+        while not done:
+            observation, reward, done, info = world_generate_environment.step(
+                world_generate_environment.action_space.sample())
+            world_generate_environment.render()
+            print("reward =", world_generate_environment.episode_reward)
+        world_generate_environment.reset()
         world_generate_environment.render()
-    world_generate_environment.reset()
-    world_generate_environment.render()
-
-    world_generate_environment.step(world_generate_environment.action_space.sample())
-    world_generate_environment.render()
-    world_generate_environment.step(world_generate_environment.action_space.sample())
-    world_generate_environment.render()
-    world_generate_environment.step(world_generate_environment.action_space.sample())
-    world_generate_environment.render()
-    world_generate_environment.step(world_generate_environment.action_space.sample())
-    world_generate_environment.render()
-    world_generate_environment.reset()
-    world_generate_environment.render()
-    world_generate_environment.step(world_generate_environment.action_space.sample())
-    world_generate_environment.render()
-    world_generate_environment.step(world_generate_environment.action_space.sample())
-    world_generate_environment.render()
-    world_generate_environment.step(world_generate_environment.action_space.sample())
-    world_generate_environment.render()
-    world_generate_environment.step(world_generate_environment.action_space.sample())
-    world_generate_environment.render()
-    world_generate_environment.reset()
-    print("finish render episode")
 

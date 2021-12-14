@@ -282,13 +282,57 @@ bool UnitWorldEnvironment::placeWallRoomByPosition(
         return false;
     }
 
+    EasyPoint2D point_in_world;
+    point_in_world.setPosition(point_x_in_world, point_y_in_world);
+
+    bool is_point_in_any_outer_wall_boundary_polygon_area = false;
+    for(WallUnitNodeLine& wall_line : unit_world_controller_.unit_node_line_manager.wall_line_vec)
+    {
+        const EasyPolygon2D& wall_boundary_polygon = wall_line.wall_boundary_polygon;
+
+        if(wall_line.wall_type == NodeType::OuterWall)
+        {
+            if(is_point_in_any_outer_wall_boundary_polygon_area)
+            {
+                continue;
+            }
+            if(EasyComputation::isPointInPolygon(point_in_world, wall_boundary_polygon))
+            {
+                is_point_in_any_outer_wall_boundary_polygon_area = true;
+                continue;
+            }
+        }
+
+        if(wall_line.wall_type == NodeType::InnerWall)
+        {
+            if(EasyComputation::isPointInPolygon(point_in_world, wall_boundary_polygon))
+            {
+                std::cout << "UnitWorldEnvironment::placeWallRoomByPosition :\n" <<
+                  "Input :\n" <<
+                  "\t point_in_image = [" << point_x_in_image << "," <<
+                  point_y_in_image << "]\n" <<
+                  "point in inner wall boundary polygon area!\n";
+
+                return false;
+            }
+        }
+    }
+
+    if(!is_point_in_any_outer_wall_boundary_polygon_area)
+    {
+        std::cout << "UnitWorldEnvironment::placeWallRoomByPosition :\n" <<
+          "Input :\n" <<
+          "\t point_in_image = [" << point_x_in_image << "," <<
+          point_y_in_image << "]\n" <<
+          "point not in any outer wall boundary polygon area!\n";
+
+        return false;
+    }
+
     EasyNodeInfo new_wall_room_info;
     new_wall_room_info.name = "WallRoom";
     new_wall_room_info.id = wall_room_info_vec_.size();
     new_wall_room_info.type = NodeType::WallRoom;
-
-    EasyPoint2D point_in_world;
-    point_in_world.setPosition(point_x_in_world, point_y_in_world);
 
     if(!unit_world_controller_.setRoomPositionOnTreeByPosition(
           new_wall_room_info.id, new_wall_room_info.type, point_in_world))

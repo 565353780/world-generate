@@ -7,7 +7,7 @@ import numpy as np
 import random
 
 #  from WorldEnvironment import WorldEnvironment
-from WorldEnvironment import UnitWorldEnvironment as WorldEnvironment
+from UnitWorldEnvironment import UnitWorldEnvironment as WorldEnvironment
 
 from WorldGenerateObservation import WorldGenerateObservation
 from WorldGenerateReward import WorldGenerateReward
@@ -108,7 +108,8 @@ class WorldGenerateEnvironment(gym.Env):
         self.episode_reward += self.reward
         if self.done:
             if self.writer is not None:
-                self.writer.add_scalar("Reward/reward_" + str(self.env_idx), self.episode_reward, self.round)
+                self.writer.add_scalar(
+                    "Reward/reward_" + str(self.env_idx), self.episode_reward, self.round)
             self.episode_reward = 0
             self.round += 1
         return self.observation, self.reward, self.done, {}
@@ -120,42 +121,11 @@ class WorldGenerateEnvironment(gym.Env):
             self.run_time = 0
             self.done = True
 
-        wall_idx = int(action[0] * (self.outerwall_num + self.innerwall_num))
-        wall_edge_idx = int(action[1] * self.wall_edge_num_max)
-        room_position = action[2] * self.wall_length_max
-        #  room_num = int(action[5])
-        room_num = int(self.room_num_prefix)
-        #  if room_num == 0:
-            #  room_num = 1
+        position_x = int(action[0] * (self.observation_width - 1))
+        position_y = int(action[1] * (self.observation_height - 1))
 
-        #  if wall_idx == -1:
-            #  self.reward = 0
-            #  self.done = True
-            #  return self.afterStep()
-
-        if wall_idx >= self.outerwall_num + self.innerwall_num:
-            wall_idx -= 1
-        if wall_idx < self.outerwall_num:
-            wall_edge_idx = min(wall_edge_idx, self.outerwall_edge_num_vec[wall_idx] - 1)
-        else:
-            wall_edge_idx = min(wall_edge_idx, self.innerwall_edge_num_vec[wall_idx - self.outerwall_num] - 1)
-
-        if wall_idx < self.outerwall_num:
-            self.world_environment.placeOuterWallRoomContainer(
-                wall_idx,
-                wall_edge_idx,
-                room_position,
-                self.width_prefix,
-                self.height_prefix,
-                self.room_num_prefix)
-        else:
-            self.world_environment.placeInnerWallRoomContainer(
-                wall_idx - self.outerwall_num,
-                wall_edge_idx,
-                room_position,
-                self.width_prefix,
-                self.height_prefix,
-                self.room_num_prefix)
+        self.world_environment.placeWallRoomByPosition(
+            position_x, position_y)
 
         self.observation = self.world_generate_observation.getObservation(self.world_environment)
         self.reward = self.world_generate_reward.getReward(self.observation)
@@ -184,9 +154,12 @@ class WorldGenerateEnvironment(gym.Env):
 
 if __name__ == "__main__":
     world_generate_environment = WorldGenerateEnvironment()
+    print("init finished!")
     done = False
     while not done:
+        print("step!")
         _, _, done, _ = world_generate_environment.step(world_generate_environment.action_space.sample())
+        world_generate_environment.render()
     print("finish test episode, start render episode")
     world_generate_environment.reset()
     world_generate_environment.render()

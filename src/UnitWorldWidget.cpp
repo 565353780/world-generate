@@ -78,18 +78,28 @@ void UnitWorldWidget::paintEvent(QPaintEvent *event)
 
 void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
 {
-    if(!chooseRoom(event->pos()))
+    if(event->button() == Qt::LeftButton)
     {
-        unit_world_environment_.placeWallRoomByPosition(
-            event->pos().x(),
-            event->pos().y());
+        if(!chooseRoom(event->pos()))
+        {
+            unit_world_environment_.placeWallRoomByPosition(
+                event->pos().x(),
+                event->pos().y());
 
-        current_choose_node_id_ = new_room_idx_;
-        current_choose_node_type_ = NodeType::WallRoom;
+            current_choose_node_id_ = new_room_idx_;
+            current_choose_node_type_ = NodeType::WallRoom;
 
-        ++new_room_idx_;
+            ++new_room_idx_;
 
-        update();
+            update();
+        }
+    }
+    else if(event->button() == Qt::RightButton)
+    {
+      unit_world_environment_.resetButRemainWall();
+      new_room_idx_ = 0;
+
+      update();
     }
 }
 

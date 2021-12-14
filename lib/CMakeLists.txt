@@ -24,5 +24,5 @@ include_directories(
 # add_library(${PROJECT_NAME}Lib SHARED ${SOURCES})
 
 find_package(pybind11 REQUIRED)
-pybind11_add_module(WorldEnvironment ${SOURCES})
+pybind11_add_module(UnitWorldEnvironment ${SOURCES})
 

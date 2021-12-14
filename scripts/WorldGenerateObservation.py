@@ -32,6 +32,10 @@ class WorldGenerateObservation(object):
         self.free_area_width = free
         return True
 
+    def transData(self, source_data_vec):
+        trans_data_vec = np.array(source_data_vec, dtype=np.uint)
+        return trans_data_vec
+
     def getWorldBoundaryData(self, world_environment):
         self.outerwall_boundary_data_vec = world_environment.getOuterWallBoundaryDataVec()
         self.innerwall_boundary_data_vec = world_environment.getInnerWallBoundaryDataVec()
@@ -39,46 +43,50 @@ class WorldGenerateObservation(object):
         return True
 
     def drawPolyLinesInObservation(self, channel_idx, poly_data, color):
-        cv2.polylines(
-            self.observation[channel_idx],
-            poly_data,
-            True, color)
+        for polygon in poly_data:
+            trans_data = self.transData([polygon])
+            cv2.polylines(
+                self.observation[channel_idx],
+                trans_data,
+                True, color)
         return True
 
     def fillPolyInObservation(self, channel_idx, poly_data, color):
-        cv2.fillPoly(
-            self.observation[channel_idx],
-            poly_data,
-            color)
+        for polygon in poly_data:
+            trans_data = self.transData([polygon])
+            cv2.fillPoly(
+                self.observation[channel_idx],
+                trans_data,
+                color)
         return True
 
     def generateSceneObservation(self):
-        self.drawPolyLinesInObservation(self.scene_channel_idx, self.outerwall_boundary_data_vec_in_image, 255)
-        self.drawPolyLinesInObservation(self.scene_channel_idx, self.innerwall_boundary_data_vec_in_image, 255)
+        self.drawPolyLinesInObservation(self.scene_channel_idx, self.outerwall_boundary_data_vec, 255)
+        self.drawPolyLinesInObservation(self.scene_channel_idx, self.innerwall_boundary_data_vec, 255)
 
-        self.fillPolyInObservation(self.scene_channel_idx, self.wallroom_boundary_data_vec_in_image, 255)
+        self.fillPolyInObservation(self.scene_channel_idx, self.wallroom_boundary_data_vec, 255)
         return True
 
     def generateWallObservation(self):
-        self.drawPolyLinesInObservation(self.wall_channel_idx, self.outerwall_boundary_data_vec_in_image, 255)
-        self.drawPolyLinesInObservation(self.wall_channel_idx, self.innerwall_boundary_data_vec_in_image, 255)
+        self.drawPolyLinesInObservation(self.wall_channel_idx, self.outerwall_boundary_data_vec, 255)
+        self.drawPolyLinesInObservation(self.wall_channel_idx, self.innerwall_boundary_data_vec, 255)
         return True
 
     def generateRoomObservation(self):
-        self.fillPolyInObservation(self.room_channel_idx, self.wallroom_boundary_data_vec_in_image, 255)
+        self.fillPolyInObservation(self.room_channel_idx, self.wallroom_boundary_data_vec, 255)
         return True
 
     def generateFreeObservation(self):
-        self.fillPolyInObservation(self.free_channel_idx, self.outerwall_boundary_data_vec_in_image, 255)
-        self.fillPolyInObservation(self.free_channel_idx, self.innerwall_boundary_data_vec_in_image, 0)
-        self.fillPolyInObservation(self.free_channel_idx, self.wallroom_boundary_data_vec_in_image, 0)
+        self.fillPolyInObservation(self.free_channel_idx, self.outerwall_boundary_data_vec, 255)
+        self.fillPolyInObservation(self.free_channel_idx, self.innerwall_boundary_data_vec, 0)
+        self.fillPolyInObservation(self.free_channel_idx, self.wallroom_boundary_data_vec, 0)
         return True
 
     def generateConnectObservation(self):
-        self.fillPolyInObservation(self.connect_channel_idx, self.outerwall_boundary_data_vec_in_image, 255)
-        self.fillPolyInObservation(self.connect_channel_idx, self.innerwall_boundary_data_vec_in_image, 0)
+        self.fillPolyInObservation(self.connect_channel_idx, self.outerwall_boundary_data_vec, 255)
+        self.fillPolyInObservation(self.connect_channel_idx, self.innerwall_boundary_data_vec, 0)
 
-        self.drawPolyLinesInObservation(self.connect_channel_idx, self.wallroom_boundary_data_vec_in_image, 0)
+        self.drawPolyLinesInObservation(self.connect_channel_idx, self.wallroom_boundary_data_vec, 0)
         return True
 
     def updateObservation(self, world_environment):

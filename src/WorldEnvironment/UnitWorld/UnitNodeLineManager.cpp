@@ -394,7 +394,7 @@ bool UnitNodeLineManager::resetButRemainWall()
 {
     for(WallUnitNodeLine& wall_line : wall_line_vec)
     {
-        wall_line.reset();
+        wall_line.resetPositionLine();
     }
 
     valid_boundary_polygon_vec.clear();

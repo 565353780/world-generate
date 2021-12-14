@@ -42,15 +42,12 @@ bool UnitTree::resetButRemainWall()
 
     for(UnitNode* wall_node : root->child_vec)
     {
-        for(UnitNode* wall_child_node : wall_node->child_vec)
+        if(!wall_node->removeAllChild())
         {
-            if(!wall_child_node->removeAllChild())
-            {
-                std::cout << "UnitTree::resetButRemainWall :\n" <<
-                  "removeAllChild failed!\n";
+            std::cout << "UnitTree::resetButRemainWall :\n" <<
+              "removeAllChild failed!\n";
 
-                return false;
-            }
+            return false;
         }
     }
 

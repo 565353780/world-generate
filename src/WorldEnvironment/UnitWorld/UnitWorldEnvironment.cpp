@@ -35,14 +35,6 @@ bool UnitWorldEnvironment::resetButRemainWall()
         return false;
     }
 
-    if(!unit_world_transformer_.resetTransform())
-    {
-        std::cout << "UnitWorldEnvironment::resetButRemainWall :\n" <<
-          "resetTransform failed!\n";
-
-        return false;
-    }
-
     wall_room_info_vec_.clear();
 
     return true;

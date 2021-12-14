@@ -154,13 +154,10 @@ class WorldGenerateEnvironment(gym.Env):
 
 if __name__ == "__main__":
     world_generate_environment = WorldGenerateEnvironment()
-    print("init finished!")
     done = False
     while not done:
-        print("step!")
         _, _, done, _ = world_generate_environment.step(world_generate_environment.action_space.sample())
         world_generate_environment.render()
-    print("finish test episode, start render episode")
     world_generate_environment.reset()
     world_generate_environment.render()
 

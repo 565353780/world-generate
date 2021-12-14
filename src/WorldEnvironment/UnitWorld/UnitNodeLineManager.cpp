@@ -766,6 +766,29 @@ bool UnitNodeLineManager::insertPosition(
 
     target_position.real_height = std::min(max_height, target_position.target_height);
 
+    float target_position_target_right_param = target_position.target_right_param;
+    if(target_position_target_right_param < target_position.target_left_param)
+    {
+        target_position_target_right_param += 1;
+    }
+    float target_position_real_right_param = target_position.real_right_param;
+    if(target_position_real_right_param < target_position.real_left_param)
+    {
+        target_position_real_right_param += 1;
+    }
+
+    if(target_position_real_right_param < target_position.target_left_param ||
+        target_position_target_right_param < target_position.real_left_param)
+    {
+        std::cout << "UnitNodeLineManager::insertPosition :\n" <<
+          "Input :\n" <<
+          "\t wall_id = " << wall_id << std::endl <<
+          "\t wall_type = " << wall_type << std::endl <<
+          "this place position not valid!\n";
+
+        return false;
+    }
+
     if(!wall_line.wall_boundary_line.insertValidPosition(target_position))
     {
         std::cout << "UnitNodeLineManager::insertPosition :\n" <<

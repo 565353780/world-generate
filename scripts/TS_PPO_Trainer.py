@@ -33,9 +33,9 @@ def get_args():
     parser.add_argument('--episode-per-collect', type=int, default=16)
     parser.add_argument('--repeat-per-collect', type=int, default=2)
     parser.add_argument('--batch-size', type=int, default=128)
-    parser.add_argument('--hidden-sizes', type=int, nargs='*', default=[64, 64])
-    parser.add_argument('--training-num', type=int, default=1)
-    parser.add_argument('--test-num', type=int, default=1)
+    parser.add_argument('--hidden-sizes', type=int, nargs='*', default=[1, 1])
+    parser.add_argument('--training-num', type=int, default=10)
+    parser.add_argument('--test-num', type=int, default=100)
     parser.add_argument('--logdir', type=str, default='log')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
@@ -61,7 +61,8 @@ def make_env(seed=0, trainning=False):
     def _init():
         env = WorldGenerateEnvironment()
         if trainning:
-            env.setWriter(SummaryWriter("log/PPO_WE_reward/"), seed)
+            pass
+            #  env.setWriter(SummaryWriter("log/PPO_WE_reward/"), seed)
         return env
     #  set_global_seeds(seed)
     return _init()

@@ -1,81 +1,207 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import gym, torch, numpy as np, torch.nn as nn
+import argparse
+import os
+import pprint
+
+import gym
+import numpy as np
+import torch
+from torch.distributions import Independent, Normal
 from torch.utils.tensorboard import SummaryWriter
-import tianshou as ts
+
+from tianshou.data import Collector, VectorReplayBuffer
+from tianshou.env import DummyVectorEnv, SubprocVectorEnv
+from tianshou.policy import PPOPolicy
+from tianshou.trainer import onpolicy_trainer
+from tianshou.utils import TensorboardLogger
+from tianshou.utils.net.common import ActorCritic, Net
+from tianshou.utils.net.continuous import ActorProb, Critic
 
 from WorldGenerateEnvironment import WorldGenerateEnvironment
 
-if __name__ == "__main__":
-    task = 'CartPole-v0'
-    lr, epoch, batch_size = 1e-3, 10, 64
-    train_num, test_num = 10, 100
-    #  num_cpu = 6
-    gamma, n_step, target_freq = 0.9, 3, 320
-    buffer_size = 20000
-    eps_train, eps_test = 0.1, 0.05
-    step_per_epoch, step_per_collect = 10000, 10
-    logger = ts.utils.TensorboardLogger(SummaryWriter('log/dqn'))  # TensorBoard is supported!
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--task', type=str, default='Pendulum-v0')
+    parser.add_argument('--seed', type=int, default=1)
+    parser.add_argument('--buffer-size', type=int, default=20000)
+    parser.add_argument('--lr', type=float, default=1e-3)
+    parser.add_argument('--gamma', type=float, default=0.95)
+    parser.add_argument('--epoch', type=int, default=50000)
+    parser.add_argument('--step-per-epoch', type=int, default=1500)
+    parser.add_argument('--episode-per-collect', type=int, default=16)
+    parser.add_argument('--repeat-per-collect', type=int, default=2)
+    parser.add_argument('--batch-size', type=int, default=128)
+    parser.add_argument('--hidden-sizes', type=int, nargs='*', default=[64, 64])
+    parser.add_argument('--training-num', type=int, default=1)
+    parser.add_argument('--test-num', type=int, default=1)
+    parser.add_argument('--logdir', type=str, default='log')
+    parser.add_argument('--render', type=float, default=0.)
+    parser.add_argument(
+        '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
+    )
+    # ppo special
+    parser.add_argument('--vf-coef', type=float, default=0.25)
+    parser.add_argument('--ent-coef', type=float, default=0.0)
+    parser.add_argument('--eps-clip', type=float, default=0.2)
+    parser.add_argument('--max-grad-norm', type=float, default=0.5)
+    parser.add_argument('--gae-lambda', type=float, default=0.95)
+    parser.add_argument('--rew-norm', type=int, default=1)
+    parser.add_argument('--dual-clip', type=float, default=None)
+    parser.add_argument('--value-clip', type=int, default=1)
+    parser.add_argument('--norm-adv', type=int, default=1)
+    parser.add_argument('--recompute-adv', type=int, default=0)
+    parser.add_argument('--resume', action="store_true")
+    parser.add_argument("--save-interval", type=int, default=1)
+    args = parser.parse_known_args()[0]
+    return args
 
-    def set_global_seeds(seed=0):
-        global_seeds = seed
+def make_env(seed=0, trainning=False):
+    def _init():
+        env = WorldGenerateEnvironment()
+        if trainning:
+            env.setWriter(SummaryWriter("log/PPO_WE_reward/"), seed)
+        return env
+    #  set_global_seeds(seed)
+    return _init()
 
-    def make_env(rank, seed=0):
-        def _init():
-            env = WorldGenerateEnvironment()
-            env.setWriter(SummaryWriter(log_dir + "PPO_WE_reward/"), seed)
-            return env
-        set_global_seeds(seed)
-        return _init
-    
-    def make_framestack_env(rank, seed=0):
-        def _init():
-            env = WorldGenerateEnvironment()
-            env.setWriter(SummaryWriter(log_dir + "PPO_WE_reward/"), seed)
-            env = DummyVecEnv([lambda : env])
-            env = VecFrameStack(env, n_stack=4)
-            return env
-        set_global_seeds(seed)
-        return _init
+def test_ppo(args=get_args()):
+    #  env = gym.make(args.task)
+    env = WorldGenerateEnvironment()
+    args.state_shape = env.observation_space.shape or env.observation_space.n
+    args.action_shape = env.action_space.shape or env.action_space.n
+    args.max_action = env.action_space.high[0]
+    # you can also use tianshou.env.SubprocVectorEnv
+    # train_envs = gym.make(args.task)
+    train_envs = SubprocVectorEnv(
+        #  [lambda: gym.make(args.task) for _ in range(args.training_num)]
+        [lambda: make_env(i, True) for i in range(args.training_num)]
+    )
+    # test_envs = gym.make(args.task)
+    test_envs = SubprocVectorEnv(
+        #  [lambda: gym.make(args.task) for _ in range(args.test_num)]
+        [lambda: make_env(i) for i in range(args.test_num)]
+    )
+    # seed
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    train_envs.seed(args.seed)
+    test_envs.seed(args.seed)
+    # model
+    net = Net(args.state_shape, hidden_sizes=args.hidden_sizes, device=args.device)
+    actor = ActorProb(
+        net, args.action_shape, max_action=args.max_action, device=args.device
+    ).to(args.device)
+    critic = Critic(
+        Net(args.state_shape, hidden_sizes=args.hidden_sizes, device=args.device),
+        device=args.device
+    ).to(args.device)
+    actor_critic = ActorCritic(actor, critic)
+    # orthogonal initialization
+    for m in actor_critic.modules():
+        if isinstance(m, torch.nn.Linear):
+            torch.nn.init.orthogonal_(m.weight)
+            torch.nn.init.zeros_(m.bias)
+    optim = torch.optim.Adam(actor_critic.parameters(), lr=args.lr)
 
-    # you can also try with SubprocVectorEnv
+    # replace DiagGuassian with Independent(Normal) which is equivalent
+    # pass *logits to be consistent with policy.forward
+    def dist(*logits):
+        return Independent(Normal(*logits), 1)
 
-    train_envs = ts.env.DummyVectorEnv([lambda: gym.make(task) for _ in range(train_num)])
-    test_envs = ts.env.DummyVectorEnv([lambda: gym.make(task) for _ in range(test_num)])
+    policy = PPOPolicy(
+        actor,
+        critic,
+        optim,
+        dist,
+        discount_factor=args.gamma,
+        max_grad_norm=args.max_grad_norm,
+        eps_clip=args.eps_clip,
+        vf_coef=args.vf_coef,
+        ent_coef=args.ent_coef,
+        reward_normalization=args.rew_norm,
+        advantage_normalization=args.norm_adv,
+        recompute_advantage=args.recompute_adv,
+        dual_clip=args.dual_clip,
+        value_clip=args.value_clip,
+        gae_lambda=args.gae_lambda,
+        action_space=env.action_space
+    )
+    # collector
+    train_collector = Collector(
+        policy, train_envs, VectorReplayBuffer(args.buffer_size, len(train_envs))
+    )
+    test_collector = Collector(policy, test_envs)
+    # log
+    log_path = os.path.join(args.logdir, args.task, 'ppo')
+    writer = SummaryWriter(log_path)
+    logger = TensorboardLogger(writer, save_interval=args.save_interval)
 
-    #  train_envs = ts.env.DummyVectorEnv([lambda: make_env(i) for i in range(train_num)])
-    #  test_envs = ts.env.DummyVectorEnv([lambda: make_env(i + train_num) for i in range(test_num)])
+    def save_fn(policy):
+        torch.save(policy.state_dict(), os.path.join(log_path, 'policy.pth'))
 
-    from tianshou.utils.net.common import Net
-    # you can define other net by following the API:
-    # https://tianshou.readthedocs.io/en/master/tutorials/dqn.html#build-the-network
-    env = gym.make(task)
-    state_shape = env.observation_space.shape or env.observation_space.n
-    action_shape = env.action_space.shape or env.action_space.n
-    net = Net(state_shape=state_shape, action_shape=action_shape, hidden_sizes=[128, 128, 128])
-    optim = torch.optim.Adam(net.parameters(), lr=lr)
+    def stop_fn(mean_rewards):
+        return False
+        return mean_rewards >= env.spec.reward_threshold
 
-    policy = ts.policy.DQNPolicy(net, optim, gamma, n_step, target_update_freq=target_freq)
-    train_collector = ts.data.Collector(
-        policy, train_envs, ts.data.VectorReplayBuffer(buffer_size, train_num), exploration_noise=True)
-    test_collector = ts.data.Collector(
-        policy, test_envs, exploration_noise=True)  # because DQN uses epsilon-greedy method
+    def save_checkpoint_fn(epoch, env_step, gradient_step):
+        # see also: https://pytorch.org/tutorials/beginner/saving_loading_models.html
+        torch.save(
+            {
+                'model': policy.state_dict(),
+                'optim': optim.state_dict(),
+            }, os.path.join(log_path, 'checkpoint.pth')
+        )
 
-    result = ts.trainer.offpolicy_trainer(
-    policy, train_collector, test_collector, epoch, step_per_epoch, step_per_collect,
-    test_num, batch_size, update_per_step=1 / step_per_collect,
-    train_fn=lambda epoch, env_step: policy.set_eps(eps_train),
-    test_fn=lambda epoch, env_step: policy.set_eps(eps_test),
-    stop_fn=lambda mean_rewards: mean_rewards >= env.spec.reward_threshold,
-    logger=logger)
-    print(f'Finished training! Use {result["duration"]}')
+    if args.resume:
+        # load from existing checkpoint
+        print(f"Loading agent under {log_path}")
+        ckpt_path = os.path.join(log_path, 'checkpoint.pth')
+        if os.path.exists(ckpt_path):
+            checkpoint = torch.load(ckpt_path, map_location=args.device)
+            policy.load_state_dict(checkpoint['model'])
+            optim.load_state_dict(checkpoint['optim'])
+            print("Successfully restore policy and optim.")
+        else:
+            print("Fail to restore policy and optim.")
 
-    torch.save(policy.state_dict(), 'dqn.pth')
-    policy.load_state_dict(torch.load('dqn.pth'))
+    # trainer
+    result = onpolicy_trainer(
+        policy,
+        train_collector,
+        test_collector,
+        args.epoch,
+        args.step_per_epoch,
+        args.repeat_per_collect,
+        args.test_num,
+        args.batch_size,
+        episode_per_collect=args.episode_per_collect,
+        stop_fn=stop_fn,
+        save_fn=save_fn,
+        logger=logger,
+        resume_from_log=args.resume,
+        save_checkpoint_fn=save_checkpoint_fn
+    )
+    assert stop_fn(result['best_reward'])
 
-    policy.eval()
-    policy.set_eps(eps_test)
-    collector = ts.data.Collector(policy, env, exploration_noise=True)
-    collector.collect(n_episode=1, render=1 / 35)
+    if __name__ == '__main__':
+        pprint.pprint(result)
+        # Let's watch its performance!
+        #  env = gym.make(args.task)
+        env = WorldGenerateEnvironment()
+        policy.eval()
+        collector = Collector(policy, env)
+        result = collector.collect(n_episode=1, render=args.render)
+        rews, lens = result["rews"], result["lens"]
+        print(f"Final reward: {rews.mean()}, length: {lens.mean()}")
+
+
+def test_ppo_resume(args=get_args()):
+    args.resume = True
+    test_ppo(args)
+
+
+if __name__ == '__main__':
+    test_ppo_resume()
 

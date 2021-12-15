@@ -31,4 +31,5 @@ __pycache__
 # train generate
 tmp
 *.zip
+log
 

@@ -21,9 +21,9 @@ from tianshou.utils.net.continuous import ActorProb, Critic
 
 from WorldGenerateEnvironment import WorldGenerateEnvironment
 
-def make_env(seed=0, trainning=False):
+def make_env(seed=0, logging=False):
     env = WorldGenerateEnvironment()
-    if trainning:
+    if logging:
         env.setWriter(SummaryWriter("log/MyEnv_reward/"), seed)
     return env
 
@@ -161,34 +161,40 @@ def test_ppo(args=get_args()):
             print("Fail to restore policy and optim.")
 
     # trainer
-    result = onpolicy_trainer(
-        policy,
-        train_collector,
-        test_collector,
-        args.epoch,
-        args.step_per_epoch,
-        args.repeat_per_collect,
-        args.test_num,
-        args.batch_size,
-        episode_per_collect=args.episode_per_collect,
-        stop_fn=stop_fn,
-        save_fn=save_fn,
-        logger=logger,
-        resume_from_log=args.resume,
-        save_checkpoint_fn=save_checkpoint_fn
-    )
-    assert stop_fn(result['best_reward'])
+
+    #  result = onpolicy_trainer(
+        #  policy,
+        #  train_collector,
+        #  test_collector,
+        #  args.epoch,
+        #  args.step_per_epoch,
+        #  args.repeat_per_collect,
+        #  args.test_num,
+        #  args.batch_size,
+        #  episode_per_collect=args.episode_per_collect,
+        #  stop_fn=stop_fn,
+        #  save_fn=save_fn,
+        #  logger=logger,
+        #  resume_from_log=args.resume,
+        #  save_checkpoint_fn=save_checkpoint_fn
+    #  )
+    #  assert stop_fn(result['best_reward'])
 
     if __name__ == '__main__':
-        pprint.pprint(result)
+        #  pprint.pprint(result)
         # Let's watch its performance!
         #  env = gym.make(args.task)
-        env = WorldGenerateEnvironment()
+        env = make_env(0, True)
         policy.eval()
         collector = Collector(policy, env)
-        result = collector.collect(n_episode=1, render=args.render)
+        #  result = collector.collect(n_episode=100, render=args.render)
+        result = collector.collect(n_episode=100, render=1 / 35)
         rews, lens = result["rews"], result["lens"]
+        rew, len_ = result["rew"], result["len"]
+        print("reward list:")
+        print(rews)
         print(f"Final reward: {rews.mean()}, length: {lens.mean()}")
+        print(f"Final reward: {rew}, length: {len_}")
 
 
 def test_ppo_resume(args=get_args()):

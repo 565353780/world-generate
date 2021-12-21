@@ -35,7 +35,6 @@ void UnitWorldWidget::run_example()
     float b = 10;
     size_t point_num = 100;
 
-    EasyPolygon2D polygon;
     for(size_t i = 0; i < point_num; ++i)
     {
         unit_world_environment_.addPointForOuterWall(
@@ -47,7 +46,6 @@ void UnitWorldWidget::run_example()
     a = 11;
     b = 4;
     point_num = 50;
-    polygon.reset();
     for(size_t i = 0; i < point_num; ++i)
     {
         unit_world_environment_.addPointForInnerWall(
@@ -84,7 +82,8 @@ void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
         {
             unit_world_environment_.placeWallRoomByPosition(
                 event->pos().x(),
-                event->pos().y());
+                event->pos().y(),
+                2, 2);
 
             current_choose_node_id_ = new_room_idx_;
             current_choose_node_type_ = NodeType::WallRoom;
@@ -110,7 +109,8 @@ void UnitWorldWidget::mouseMoveEvent(QMouseEvent *event)
         unit_world_environment_.setWallRoomPositionByPosition(
             current_choose_node_id_,
             event->pos().x(),
-            event->pos().y());
+            event->pos().y(),
+            2, 2);
     }
 
     update();

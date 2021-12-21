@@ -418,10 +418,10 @@ bool UnitWorldController::setRoomPositionOnTree(
 bool UnitWorldController::setRoomPositionOnTreeByPosition(
     const size_t& room_id,
     const NodeType& room_type,
-    const EasyPoint2D& point)
+    const EasyPoint2D& point,
+    const float& room_target_width,
+    const float& room_target_height)
 {
-    const float error_max = 0.0001;
-
     size_t nearest_wall_id = 0;
     NodeType nearest_wall_type = NodeType::NodeFree;
 
@@ -433,6 +433,8 @@ bool UnitWorldController::setRoomPositionOnTreeByPosition(
           "\t room_type = " << room_type << std::endl <<
           "\t point = [" << point.x << "," <<
           point.y << "]\n" <<
+          "\t room_target_size = " << room_target_width << "," <<
+          room_target_height << std::endl <<
           "getNearestWall failed!\n";
 
         return false;
@@ -448,6 +450,8 @@ bool UnitWorldController::setRoomPositionOnTreeByPosition(
           "\t room_type = " << room_type << std::endl <<
           "\t point = [" << point.x << "," <<
           point.y << "]\n" <<
+          "\t room_target_size = " << room_target_width << "," <<
+          room_target_height << std::endl <<
           "this wall node not exist!\n";
 
         return false;
@@ -465,23 +469,9 @@ bool UnitWorldController::setRoomPositionOnTreeByPosition(
           "\t room_type = " << room_type << std::endl <<
           "\t point = [" << point.x << "," <<
           point.y << "]\n" <<
+          "\t room_target_size = " << room_target_width << "," <<
+          room_target_height << std::endl <<
           "updateByPosition failed!\n";
-
-        return false;
-    }
-
-    const float point_dist_to_wall_polygon =
-      EasyComputation::pointDist(point, polygon_point.position);
-
-    if(point_dist_to_wall_polygon <= error_max)
-    {
-        std::cout << "UnitWorldController::setRoomPositionOnTreeByPosition :\n" <<
-          "Input :\n" <<
-          "\t room_id = " << room_id << std::endl <<
-          "\t room_type = " << room_type << std::endl <<
-          "\t point = [" << point.x << "," <<
-          point.y << "]\n" <<
-          "room size not valid!\n";
 
         return false;
     }
@@ -490,7 +480,7 @@ bool UnitWorldController::setRoomPositionOnTreeByPosition(
           room_id, room_type,
           nearest_wall_id, nearest_wall_type,
           polygon_point.param_on_polygon,
-          point_dist_to_wall_polygon, point_dist_to_wall_polygon))
+          room_target_width, room_target_height))
     {
         std::cout << "UnitWorldController::setRoomPositionOnTreeByPosition :\n" <<
           "Input :\n" <<
@@ -498,6 +488,8 @@ bool UnitWorldController::setRoomPositionOnTreeByPosition(
           "\t room_type = " << room_type << std::endl <<
           "\t point = [" << point.x << "," <<
           point.y << "]\n" <<
+          "\t room_target_size = " << room_target_width << "," <<
+          room_target_height << std::endl <<
           "setRoomPositionOnTree failed!\n";
 
         return false;

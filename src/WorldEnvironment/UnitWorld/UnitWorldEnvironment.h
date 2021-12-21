@@ -57,12 +57,16 @@ public:
 
     bool placeWallRoomByPosition(
         const size_t& point_x_in_image,
-        const size_t& point_y_in_image);
+        const size_t& point_y_in_image,
+        const float& room_target_width,
+        const float& room_target_height);
 
     bool setWallRoomPositionByPosition(
         const size_t& wall_room_idx,
         const size_t& point_x_in_image,
-        const size_t& point_y_in_image);
+        const size_t& point_y_in_image,
+        const float& room_target_width,
+        const float& room_target_height);
 
 private:
     std::vector<std::vector<std::vector<size_t>>> getNodeBoundaryDataVec(

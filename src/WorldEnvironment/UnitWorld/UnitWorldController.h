@@ -52,7 +52,9 @@ public:
     bool setRoomPositionOnTreeByPosition(
         const size_t& room_id,
         const NodeType& room_type,
-        const EasyPoint2D& point);
+        const EasyPoint2D& point,
+        const float& room_target_width,
+        const float& room_target_height);
 
     UnitTree unit_tree;
     UnitNodeLineManager unit_node_line_manager;

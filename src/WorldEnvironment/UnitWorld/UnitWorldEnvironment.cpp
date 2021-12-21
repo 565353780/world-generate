@@ -265,7 +265,9 @@ bool UnitWorldEnvironment::generateWall()
 
 bool UnitWorldEnvironment::placeWallRoomByPosition(
     const size_t& point_x_in_image,
-    const size_t& point_y_in_image)
+    const size_t& point_y_in_image,
+    const float& room_target_width,
+    const float& room_target_height)
 {
     float point_x_in_world, point_y_in_world;
 
@@ -277,6 +279,8 @@ bool UnitWorldEnvironment::placeWallRoomByPosition(
           "Input :\n" <<
           "\t point_in_image = [" << point_x_in_image << "," <<
           point_y_in_image << "]\n" <<
+          "\t room_target_size = " << room_target_width << "," <<
+          room_target_height << std::endl <<
           "transPointToWorld failed!\n";
 
         return false;
@@ -311,6 +315,8 @@ bool UnitWorldEnvironment::placeWallRoomByPosition(
                   "Input :\n" <<
                   "\t point_in_image = [" << point_x_in_image << "," <<
                   point_y_in_image << "]\n" <<
+                  "\t room_target_size = " << room_target_width << "," <<
+                  room_target_height << std::endl <<
                   "point in inner wall boundary polygon area!\n";
 
                 return false;
@@ -324,6 +330,8 @@ bool UnitWorldEnvironment::placeWallRoomByPosition(
           "Input :\n" <<
           "\t point_in_image = [" << point_x_in_image << "," <<
           point_y_in_image << "]\n" <<
+          "\t room_target_size = " << room_target_width << "," <<
+          room_target_height << std::endl <<
           "point not in any outer wall boundary polygon area!\n";
 
         return false;
@@ -335,12 +343,14 @@ bool UnitWorldEnvironment::placeWallRoomByPosition(
     new_wall_room_info.type = NodeType::WallRoom;
 
     if(!unit_world_controller_.setRoomPositionOnTreeByPosition(
-          new_wall_room_info.id, new_wall_room_info.type, point_in_world))
+          new_wall_room_info.id, new_wall_room_info.type, point_in_world, room_target_width, room_target_height))
     {
         std::cout << "UnitWorldEnvironment::placeWallRoomByPosition :\n" <<
           "Input :\n" <<
           "\t point_in_image = [" << point_x_in_image << "," <<
           point_y_in_image << "]\n" <<
+          "\t room_target_size = " << room_target_width << "," <<
+          room_target_height << std::endl <<
           "setRoomPositionOnTreeByPosition failed!\n";
 
         return false;
@@ -353,6 +363,8 @@ bool UnitWorldEnvironment::placeWallRoomByPosition(
           "Input :\n" <<
           "\t point_in_image = [" << point_x_in_image << "," <<
           point_y_in_image << "]\n" <<
+          "\t room_target_size = " << room_target_width << "," <<
+          room_target_height << std::endl <<
           "updateNodePolygon failed!\n";
 
         return false;
@@ -366,7 +378,9 @@ bool UnitWorldEnvironment::placeWallRoomByPosition(
 bool UnitWorldEnvironment::setWallRoomPositionByPosition(
     const size_t& wall_room_idx,
     const size_t& point_x_in_image,
-    const size_t& point_y_in_image)
+    const size_t& point_y_in_image,
+    const float& room_target_width,
+    const float& room_target_height)
 {
     if(wall_room_idx >= wall_room_info_vec_.size())
     {
@@ -375,6 +389,8 @@ bool UnitWorldEnvironment::setWallRoomPositionByPosition(
           "\t wall_room_idx = " << wall_room_idx << std::endl <<
           "\t point_in_image = [" << point_x_in_image << "," <<
           point_y_in_image << "]\n" <<
+          "\t room_target_size = " << room_target_width << "," <<
+          room_target_height << std::endl <<
           "wall_room_idx out of range!\n";
 
         return false;
@@ -391,6 +407,8 @@ bool UnitWorldEnvironment::setWallRoomPositionByPosition(
           "\t wall_room_idx = " << wall_room_idx << std::endl <<
           "\t point_in_image = [" << point_x_in_image << "," <<
           point_y_in_image << "]\n" <<
+          "\t room_target_size = " << room_target_width << "," <<
+          room_target_height << std::endl <<
           "transPointToWorld failed!\n";
 
         return false;
@@ -402,13 +420,15 @@ bool UnitWorldEnvironment::setWallRoomPositionByPosition(
     point_in_world.setPosition(point_x_in_world, point_y_in_world);
 
     if(!unit_world_controller_.setRoomPositionOnTreeByPosition(
-          wall_room_info.id, wall_room_info.type, point_in_world))
+          wall_room_info.id, wall_room_info.type, point_in_world, room_target_width, room_target_height))
     {
         std::cout << "UnitWorldEnvironment::setWallRoomPositionByPosition :\n" <<
           "Input :\n" <<
           "\t wall_room_idx = " << wall_room_idx << std::endl <<
           "\t point_in_image = [" << point_x_in_image << "," <<
           point_y_in_image << "]\n" <<
+          "\t room_target_size = " << room_target_width << "," <<
+          room_target_height << std::endl <<
           "setRoomPositionOnTreeByPosition failed!\n";
 
         return false;
@@ -422,6 +442,8 @@ bool UnitWorldEnvironment::setWallRoomPositionByPosition(
           "\t wall_room_idx = " << wall_room_idx << std::endl <<
           "\t point_in_image = [" << point_x_in_image << "," <<
           point_y_in_image << "]\n" <<
+          "\t room_target_size = " << room_target_width << "," <<
+          room_target_height << std::endl <<
           "updateNodePolygon failed!\n";
 
         return false;

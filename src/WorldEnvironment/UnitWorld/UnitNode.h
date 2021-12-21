@@ -1,7 +1,6 @@
 #ifndef UNIT_NODE_H
 #define UNIT_NODE_H
 
-#include "EasyShape/EasyIntersection2D.h"
 #include "export_library_global.h"
 
 #include "EasyWorld/EasyNode.h"

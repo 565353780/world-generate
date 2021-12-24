@@ -21,7 +21,7 @@ class RL_Trainer:
         self.train_mode = True
         self.num_cpu = 6
         self.train_episode = -1
-        self.timesteps_per_episode = 50000
+        self.timesteps_per_episode = 5000
         self.verbose = 1
         self.model_save_path = "./trained_model/"
         self.log_dir = "./log/"
@@ -38,11 +38,16 @@ class RL_Trainer:
     def updatePath(self):
         if self.model_save_path[-1] != "/":
             self.model_save_path += "/"
-        self.model_save_path += self.platform + "/" + self.method + "/"
+
+        if not os.path.exists(self.model_save_path):
+            os.makedirs(self.model_save_path)
 
         if self.log_dir[-1] != "/":
             self.log_dir += "/"
-        self.log_dir += self.platform + "/" + self.method + "/"
+        self.log_dir += self.getModelCommonName() + "/"
+
+        if not os.path.exists(self.model_save_path):
+            os.makedirs(self.model_save_path)
         return True
 
     def setGlobalSeed(self, seed=0):
@@ -118,6 +123,9 @@ class RL_Trainer:
     def loadTrainedModelParam(self):
         self.start_step_num = 0
 
+        if not os.path.exists(self.model_save_path):
+            return False
+
         file_list = os.listdir(self.model_save_path)
 
         find_trained_model = False
@@ -190,19 +198,19 @@ class RL_Trainer:
         while current_episode != self.train_episode:
             self.model.learn(
                 total_timesteps=self.timesteps_per_episode,
-                tb_log_name=self.log_dir + "Train/",
+                tb_log_name="./",
                 reset_num_timesteps=False)
 
             try:
-                os.remove(self.getModelName(
+                os.remove(self.model_save_path + self.getModelName(
                     self.start_step_num + current_episode * self.timesteps_per_episode) + ".zip")
             except:
                 pass
 
             current_episode += 1
             
-            self.model.save(
-                self.getModelName(self.start_step_num + current_episode * self.timesteps_per_episode))
+            self.model.save(self.model_save_path + self.getModelName(
+                self.start_step_num + current_episode * self.timesteps_per_episode))
 
         del self.model
         return True
@@ -237,7 +245,7 @@ class RL_Trainer:
         return self.test()
 
 if __name__ == "__main__":
-    rl—trainer = RL_Trainer()
+    rl_trainer = RL_Trainer()
     rl_trainer.initEnv()
     rl_trainer.start()
 

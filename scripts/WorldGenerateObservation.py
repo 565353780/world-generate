@@ -7,13 +7,14 @@ import cv2
 class WorldGenerateObservation(object):
 
     def __init__(self):
-        # channels : scene, wall, room, free, connect
+        # channels : scene, wall, place, room, free, connect
         self.scene_channel_idx = 0
         self.wall_channel_idx = 1
-        self.room_channel_idx = 2
-        self.free_channel_idx = 3
-        self.connect_channel_idx = 4
-        self.image_channels = 5
+        self.place_channel_idx = 2
+        self.room_channel_idx = 3
+        self.free_channel_idx = 4
+        self.connect_channel_idx = 5
+        self.image_channels = 6
 
         self.observation = None
 
@@ -72,6 +73,11 @@ class WorldGenerateObservation(object):
         self.drawPolyLinesInObservation(self.wall_channel_idx, self.innerwall_boundary_data_vec, 255)
         return True
 
+    def generatePlaceObservation(self):
+        self.fillPolyInObservation(self.place_channel_idx, self.outerwall_boundary_data_vec, 255)
+        self.fillPolyInObservation(self.place_channel_idx, self.innerwall_boundary_data_vec, 0)
+        return True
+
     def generateRoomObservation(self):
         self.fillPolyInObservation(self.room_channel_idx, self.wallroom_boundary_data_vec, 255)
         return True
@@ -94,6 +100,7 @@ class WorldGenerateObservation(object):
         self.getWorldBoundaryData(world_environment)
         self.generateSceneObservation()
         self.generateWallObservation()
+        self.generatePlaceObservation()
         self.generateRoomObservation()
         self.generateFreeObservation()
         self.generateConnectObservation()
@@ -107,6 +114,7 @@ class WorldGenerateObservation(object):
         return np.hstack((
             self.observation[self.scene_channel_idx],
             self.observation[self.wall_channel_idx],
+            self.observation[self.place_channel_idx],
             self.observation[self.room_channel_idx],
             self.observation[self.free_channel_idx],
             self.observation[self.connect_channel_idx]))

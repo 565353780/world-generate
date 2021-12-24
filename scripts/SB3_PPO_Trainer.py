@@ -17,8 +17,8 @@ if __name__ == "__main__":
     game_name = "MyEnv"
     train_mode = True
     policy = "CnnPolicy"
-    learning_rate = 1e-4
-    log_dir = "./tmp/"
+    learning_rate = 1e-7
+    log_dir = "./log/"
     start_episode = 0
     total_time_step = 50000
     num_cpu = 6
@@ -95,6 +95,8 @@ if __name__ == "__main__":
                     policy,
                     env,
                     verbose=1,
+                    learning_rate=learning_rate,
+                    ent_coef=0.01,
                     tensorboard_log=log_dir)
             else:
                 model = PPO(
@@ -106,7 +108,8 @@ if __name__ == "__main__":
     if train_mode:
         round = 0
 
-        model.learning_rate = learning_rate
+        #  model.learning_rate = learning_rate
+        #  model.ent_coef = 0.01
 
         while True:
             model.learn(

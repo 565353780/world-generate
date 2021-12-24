@@ -26,13 +26,13 @@ class WorldGenerateEnvironment(gym.Env):
 
         self.observation_width = 256
         self.observation_height = 256
-        self.observation_free = 10
+        self.observation_free = 5
 
         self.step_weight = 0.1
-        self.space_utilization_weight = 1000
+        self.place_failed_weight = 100
+        self.space_utilization_weight = 2000
         self.movable_weight = 1
         self.escapable_weight = 1
-        self.place_failed_weight = 10
 
         self.width_prefix = 4
         self.height_prefix = 4
@@ -55,7 +55,7 @@ class WorldGenerateEnvironment(gym.Env):
         self.observation_space = gym.spaces.Box(
             low=0,
             high=255,
-            shape=(5, self.observation_width, self.observation_height),
+            shape=(6, self.observation_width, self.observation_height),
             dtype=np.uint8)
 
         self.world_generate_observation.initObservation(
@@ -66,6 +66,7 @@ class WorldGenerateEnvironment(gym.Env):
 
         self.world_generate_reward.initReward(
             self.step_weight,
+            self.place_failed_weight,
             self.space_utilization_weight,
             self.movable_weight,
             self.escapable_weight)
@@ -123,21 +124,17 @@ class WorldGenerateEnvironment(gym.Env):
     def step(self, action):
         self.done = False
         self.run_time += 1
-        if self.run_time > 34:
+        if self.run_time > 10:
             self.run_time = 0
             self.done = True
 
         position_x = int(action[0] * (self.observation_width - 1))
         position_y = int(action[1] * (self.observation_height - 1))
 
-        place_success = self.world_environment.placeWallRoomByPosition(
-            position_x, position_y, 2.0, 2.0)
+        self.world_environment.placeWallRoomByPosition(position_x, position_y, 2.0, 2.0)
 
         self.observation = self.world_generate_observation.getObservation(self.world_environment)
-        self.reward = self.world_generate_reward.getReward(self.observation)
-
-        if not place_success:
-            self.reward -= self.place_failed_weight
+        self.reward = self.world_generate_reward.getReward(self.observation, action)
 
         return self.afterStep()
 

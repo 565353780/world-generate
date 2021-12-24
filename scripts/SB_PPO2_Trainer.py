@@ -5,16 +5,23 @@ import os
 import gym
 
 from torch.utils.tensorboard import SummaryWriter
+print("load torch success")
 
 from stable_baselines import PPO2
+print("load ppo2 success")
 from stable_baselines.common.env_checker import check_env
+print("load check_env success")
 from stable_baselines.common.env_util import make_vec_env
+print("load make_vec_env success")
 from stable_baselines.common.policies import CnnPolicy, MlpPolicy, CnnLstmPolicy, CnnLnLstmPolicy
+print("load policies success")
 from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv, VecNormalize, VecFrameStack
+print("load Env type success")
+
+from WorldGenerateEnvironment_py37 import WorldGenerateEnvironment
+print("load MyEnv success")
 
 exit()
-
-from WorldGenerateEnvironment import WorldGenerateEnvironment
 
 if __name__ == "__main__":
     game_name = "MyEnv"

@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 import os
-import gym
 
 from torch.utils.tensorboard import SummaryWriter
 
-from stable_baselines3 import PPO as Method
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.env_util import make_vec_env
-from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecNormalize, VecFrameStack
 
+from stable_baselines3 import PPO as Method
+# DummyVecEnv, SubprocVecEnv, VecNormalize, VecFrameStack
+from stable_baselines3.common.vec_env import SubprocVecEnv as VecEnv
 from WorldGenerateEnvironment import WorldGenerateEnvironment as CustomEnv
 
-class RL_Trainer:
+class RLTrainer:
     def __init__(self):
         self.platform = "SB3"
         self.method = "PPO"
@@ -88,12 +88,12 @@ class RL_Trainer:
 
         if self.train_mode:
             if self.policy == "CnnLnLstmPolicy" or self.policy == "CnnLstmPolicy":
-                self.env = SubprocVecEnv([self.makeEnv(rank, i) for i in range(self.num_cpu)])
+                self.env = VecEnv([self.makeEnv(rank, i) for i in range(self.num_cpu)])
             elif self.policy == "CnnPolicy":
-                self.env = SubprocVecEnv([self.makeEnv(rank, i) for i in range(self.num_cpu)])
+                self.env = VecEnv([self.makeEnv(rank, i) for i in range(self.num_cpu)])
         else:
             if self.policy == "CnnLnLstmPolicy" or self.policy == "CnnLstmPolicy":
-                self.env = SubprocVecEnv([self.makeEnv(rank, i) for i in range(self.num_cpu)])
+                self.env = VecEnv([self.makeEnv(rank, i) for i in range(self.num_cpu)])
             elif self.policy == "CnnPolicy":
                 self.env = CustomEnv()
                 #  self.env = DummyVecEnv([lambda : env])
@@ -255,7 +255,7 @@ class RL_Trainer:
         return self.test()
 
 if __name__ == "__main__":
-    rl_trainer = RL_Trainer()
+    rl_trainer = RLTrainer()
     rl_trainer.initEnv()
     rl_trainer.start()
 

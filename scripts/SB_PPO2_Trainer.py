@@ -21,8 +21,6 @@ print("load Env type success")
 from WorldGenerateEnvironment_py37 import WorldGenerateEnvironment
 print("load MyEnv success")
 
-exit()
-
 if __name__ == "__main__":
     game_name = "MyEnv"
     train_mode = True

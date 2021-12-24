@@ -22,7 +22,7 @@ class RLTrainer:
         self.num_cpu = 6
         self.train_episode = -1
         self.timesteps_per_episode = 5000
-        self.verbose = 1
+        self.verbose = 0
         self.model_save_path = "./trained_model/"
         self.log_dir = "./log/"
 

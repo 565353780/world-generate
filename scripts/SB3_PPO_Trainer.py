@@ -120,6 +120,13 @@ class RL_Trainer:
         model_name = model_common_name + "_Step_" + str(step)
         return model_name
 
+    def getParamStrFromModelName(self, model_name, param_name):
+        if param_name not in model_name:
+            return None
+        param = model_name.split(".zip")[0].split(param_name + "_")[1].split("_")[0]
+        return param
+
+
     def loadTrainedModelParam(self):
         self.start_step_num = 0
 
@@ -132,7 +139,10 @@ class RL_Trainer:
         model_common_name = self.getModelCommonName()
         for file_name in file_list:
             if model_common_name in file_name:
-                step = int(file_name.split(".")[0].split("_Step_")[1])
+                param_str = self.getParamStrFromModelName(file_name, "Step")
+                if param_str is None:
+                    continue
+                step = int(param_str)
 
                 if step > self.start_step_num:
                     self.start_step_num = step
@@ -210,7 +220,7 @@ class RL_Trainer:
             current_episode += 1
             
             self.model.save(self.model_save_path + self.getModelName(
-                self.start_step_num + current_episode * self.timesteps_per_episode))
+                self.start_step_num + current_episode * self.timesteps_per_episode) + ".zip")
 
         del self.model
         return True

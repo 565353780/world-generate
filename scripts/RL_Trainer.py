@@ -21,7 +21,7 @@ class RLTrainer:
         self.train_mode = True
         self.num_cpu = 6
         self.train_episode = -1
-        self.timesteps_per_episode = 5000
+        self.timesteps_per_episode = 100000
         self.verbose = 0
         self.model_save_path = "./trained_model/"
         self.log_dir = "./log/"
@@ -54,18 +54,18 @@ class RLTrainer:
         self.global_seed = seed
         return True
 
-    def makeEnv(self, rank, seed=0):
+    def makeEnv(self, rank, seed=0, agent_idx=0):
         def _init():
             env = CustomEnv()
-            env.setWriter(SummaryWriter(self.log_dir + "Reward/"), seed)
+            env.setWriter(SummaryWriter(self.log_dir + "Reward/"), agent_idx)
             return env
         self.setGlobalSeed(seed)
         return _init
 
-    def makeFramestackEnv(self, rank, seed=0):
+    def makeFramestackEnv(self, rank, seed=0, agent_idx=0):
         def _init():
             env = CustomEnv()
-            env.setWriter(SummaryWriter(self.log_dir + "Reward/"), seed)
+            env.setWriter(SummaryWriter(self.log_dir + "Reward/"), agent_idx)
             env = DummyVecEnv([lambda : env])
             env = VecFrameStack(env, n_stack=4)
             return env
@@ -88,12 +88,12 @@ class RLTrainer:
 
         if self.train_mode:
             if self.policy == "CnnLnLstmPolicy" or self.policy == "CnnLstmPolicy":
-                self.env = VecEnv([self.makeEnv(rank, i) for i in range(self.num_cpu)])
+                self.env = VecEnv([self.makeEnv(rank, 0, i) for i in range(self.num_cpu)])
             elif self.policy == "CnnPolicy":
-                self.env = VecEnv([self.makeEnv(rank, i) for i in range(self.num_cpu)])
+                self.env = VecEnv([self.makeEnv(rank, 0, i) for i in range(self.num_cpu)])
         else:
             if self.policy == "CnnLnLstmPolicy" or self.policy == "CnnLstmPolicy":
-                self.env = VecEnv([self.makeEnv(rank, i) for i in range(self.num_cpu)])
+                self.env = VecEnv([self.makeEnv(rank, 0, i) for i in range(self.num_cpu)])
             elif self.policy == "CnnPolicy":
                 self.env = CustomEnv()
                 #  self.env = DummyVecEnv([lambda : env])
@@ -211,11 +211,11 @@ class RLTrainer:
                 tb_log_name="./",
                 reset_num_timesteps=False)
 
-            try:
-                os.remove(self.model_save_path + self.getModelName(
-                    self.start_step_num + current_episode * self.timesteps_per_episode) + ".zip")
-            except:
-                pass
+            #  try:
+                #  os.remove(self.model_save_path + self.getModelName(
+                    #  self.start_step_num + current_episode * self.timesteps_per_episode) + ".zip")
+            #  except:
+                #  pass
 
             current_episode += 1
             
@@ -242,7 +242,7 @@ class RLTrainer:
                     obs, rewards, dones, info = self.env.step(action)
                     print("a=", action, end="")
                     print(", r=", rewards, end="")
-                    print(", tr=", env.episode_reward)
+                    print(", tr=", self.env.episode_reward)
                     if dones:
                         print("=================")
                     self.env.render()

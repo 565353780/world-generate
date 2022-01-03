@@ -34,6 +34,10 @@ class WorldGenerateEnvironment(gym.Env):
         self.movable_weight = 1
         self.escapable_weight = 1
 
+        self.place_room_num = 10
+        self.success_reward = 10
+        self.failed_time_max = 10
+
         self.width_prefix = 4
         self.height_prefix = 4
         self.room_num_prefix = 1
@@ -77,6 +81,9 @@ class WorldGenerateEnvironment(gym.Env):
         self.writer = None
         self.env_idx = None
         self.round = 0
+
+        self.success_time = 0
+        self.failed_time = 0
         return
 
     def initWorld(self):
@@ -104,7 +111,8 @@ class WorldGenerateEnvironment(gym.Env):
 
         self.world_environment.generateWall()
 
-        self.run_time = 0
+        self.success_time = 0
+        self.failed_time = 0
         return
 
     def setWriter(self, writer, env_idx):
@@ -119,22 +127,31 @@ class WorldGenerateEnvironment(gym.Env):
                     "Reward/reward_" + str(self.env_idx), self.episode_reward, self.round)
             self.episode_reward = 0
             self.round += 1
+            self.success_time = 0
+            self.failed_time = 0
         return self.observation, self.reward, self.done, {}
 
     def step(self, action):
         self.done = False
-        self.run_time += 1
-        if self.run_time > 10:
-            self.run_time = 0
-            self.done = True
 
         position_x = int(action[0] * (self.observation_width - 1))
         position_y = int(action[1] * (self.observation_height - 1))
 
-        self.world_environment.placeWallRoomByPosition(position_x, position_y, 2.0, 2.0)
+        place_success = self.world_environment.placeWallRoomByPosition(position_x, position_y, 2.0, 2.0)
+        if place_success:
+            self.success_time += 1
+        else:
+            self.failed_time += 1
 
         self.observation = self.world_generate_observation.getObservation(self.world_environment)
         self.reward = self.world_generate_reward.getReward(self.observation, action)
+
+        if self.success_time >= self.place_room_num:
+            self.reward += self.success_reward
+            self.done = True
+        if self.failed_time >= self.failed_time_max:
+            self.reward -= self.success_reward
+            self.done = True
 
         return self.afterStep()
 

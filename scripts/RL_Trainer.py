@@ -39,9 +39,6 @@ class RLTrainer:
         if self.model_save_path[-1] != "/":
             self.model_save_path += "/"
 
-        if not os.path.exists(self.model_save_path):
-            os.makedirs(self.model_save_path)
-
         if self.log_dir[-1] != "/":
             self.log_dir += "/"
         self.log_dir += self.getModelCommonName() + "/"
@@ -126,7 +123,6 @@ class RLTrainer:
         param = model_name.split(".zip")[0].split(param_name + "_")[1].split("_")[0]
         return param
 
-
     def loadTrainedModelParam(self):
         self.start_step_num = 0
 
@@ -135,19 +131,31 @@ class RLTrainer:
 
         file_list = os.listdir(self.model_save_path)
 
-        find_trained_model = False
         model_common_name = self.getModelCommonName()
+
+        valid_step_list = []
+
         for file_name in file_list:
             if model_common_name in file_name:
                 param_str = self.getParamStrFromModelName(file_name, "Step")
                 if param_str is None:
                     continue
                 step = int(param_str)
+                valid_step_list.append(step)
 
-                if step > self.start_step_num:
-                    self.start_step_num = step
-                    find_trained_model = True
-        return find_trained_model
+        if len(valid_step_list) == 0:
+            return False
+
+        valid_step_list.sort()
+
+        print(valid_step_list)
+        start_step_num = input("Please select a step :").replace("k", "000").replace("w", "0000")
+
+        while int(start_step_num) not in valid_step_list:
+            start_step_num = int(input("This step not valid, please select a valid step :").replace("k", "000").replace("w", "0000"))
+
+        self.start_step_num = start_step_num
+        return True
 
     def loadModel(self):
         self.model = None

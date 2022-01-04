@@ -149,9 +149,9 @@ class RLTrainer:
         valid_step_list.sort()
 
         print(valid_step_list)
-        start_step_num = input("Please select a step :").replace("k", "000").replace("w", "0000")
+        start_step_num = int(input("Please select a step :").replace("k", "000").replace("w", "0000"))
 
-        while int(start_step_num) not in valid_step_list:
+        while start_step_num not in valid_step_list:
             start_step_num = int(input("This step not valid, please select a valid step :").replace("k", "000").replace("w", "0000"))
 
         self.start_step_num = start_step_num

@@ -75,13 +75,11 @@ class TorchCustomModel(TorchModelV2, nn.Module):
         return torch.reshape(self.torch_sub_model.value_function(), [-1])
 
 run = "PPO"
-framework = "torch"
 as_test = False
-stop_iters = 50
-stop_timesteps = 100000
-stop_reward = 0.1
 no_tune = False
 local_mode = False
+
+num_gpus = 1
 
 if __name__ == "__main__":
     ray.init(local_mode=local_mode)
@@ -95,19 +93,20 @@ if __name__ == "__main__":
             "corridor_length": 5,
         },
         # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
-        "num_gpus": int(os.environ.get("RLLIB_NUM_GPUS", "0")),
+        #  "num_gpus": int(os.environ.get("RLLIB_NUM_GPUS", "0")),
+        "num_gpus": 1,
         "model": {
             "custom_model": "my_model",
             "vf_share_layers": True,
         },
         "num_workers": 1,  # parallelism
-        "framework": args.framework,
+        "framework": "torch",
     }
 
     stop = {
-        "training_iteration": args.stop_iters,
-        "timesteps_total": args.stop_timesteps,
-        "episode_reward_mean": args.stop_reward,
+        "training_iteration": 50,
+        "timesteps_total": 100000,
+        "episode_reward_mean": 0.1,
     }
 
     if args.no_tune:

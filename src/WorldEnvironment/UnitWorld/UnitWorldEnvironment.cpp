@@ -452,17 +452,6 @@ bool UnitWorldEnvironment::setWallRoomPositionByPosition(
     return true;
 }
 
-bool UnitWorldEnvironment::outputParamLine()
-{
-    const std::vector<WallUnitNodeLine>& wall_line_vec = unit_world_controller_.unit_node_line_manager.wall_line_vec;
-
-    for(const WallUnitNodeLine& wall_line : wall_line_vec)
-    {
-      wall_line.outputInfo(1);
-    }
-    return true;
-}
-
 std::vector<std::vector<std::vector<size_t>>> UnitWorldEnvironment::getNodeBoundaryDataVec(
     const std::vector<EasyNodeInfo>& node_info_vec)
 {

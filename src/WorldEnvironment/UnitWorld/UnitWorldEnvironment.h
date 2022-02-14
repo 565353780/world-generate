@@ -68,8 +68,6 @@ public:
         const float& room_target_width,
         const float& room_target_height);
 
-    bool outputParamLine();
-
 private:
     std::vector<std::vector<std::vector<size_t>>> getNodeBoundaryDataVec(
         const std::vector<EasyNodeInfo>& node_info_vec);

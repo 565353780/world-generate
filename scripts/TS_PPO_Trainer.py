@@ -3,9 +3,7 @@
 
 import argparse
 import os
-import pprint
 
-import gym
 import numpy as np
 import torch
 from torch.distributions import Independent, Normal

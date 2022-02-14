@@ -294,6 +294,26 @@ bool UnitNodeLine::insertValidPosition(
     return true;
 }
 
+bool UnitNodeLine::outputInfo(
+    const size_t &info_level) const
+{
+    std::string line_start = "";
+    for(size_t i = 0; i < info_level; ++i)
+    {
+        line_start += "\t";
+    }
+
+    std::cout << line_start << "UnitNodeLine :\n";
+    UnitNodePosition* position = position_line;
+    while(position != nullptr)
+    {
+        position->outputInfo(info_level + 1);
+        position = position->next_position;
+    }
+
+    return true;
+}
+
 bool WallUnitNodeLine::resetPositionLine()
 {
     wall_boundary_line.reset();

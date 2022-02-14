@@ -56,6 +56,9 @@ public:
     bool insertValidPosition(
         const UnitNodePosition &valid_position);
 
+    bool outputInfo(
+        const size_t &info_level) const;
+
     UnitNodePosition* position_line;
 };
 

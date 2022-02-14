@@ -152,7 +152,8 @@ class RLTrainer:
         start_step_num = int(input("Please select a step :").replace("k", "000").replace("w", "0000"))
 
         while start_step_num not in valid_step_list:
-            start_step_num = int(input("This step not valid, please select a valid step :").replace("k", "000").replace("w", "0000"))
+            start_step_num = int(
+                input("This step not valid, please select a valid step :").replace("k", "000").replace("w", "0000"))
 
         self.start_step_num = start_step_num
         return True
@@ -161,7 +162,7 @@ class RLTrainer:
         self.model = None
 
         if self.env is None:
-            print("SB3_PPO_Trainer::loadModel: env not loaded!")
+            print("RL_Trainer::loadModel: env not loaded!")
             return False
 
         if self.loadTrainedModelParam():
@@ -262,8 +263,12 @@ class RLTrainer:
             return self.train()
         return self.test()
 
-if __name__ == "__main__":
+def demo():
     rl_trainer = RLTrainer()
     rl_trainer.initEnv()
     rl_trainer.start()
+    return True
+
+if __name__ == "__main__":
+    demo()
 

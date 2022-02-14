@@ -50,6 +50,15 @@ class WorldGenerateEnvironment(gym.Env):
         self.container_room_num_max = None
         self.wall_length_max = None
 
+        self.done = None
+        self.episode_reward = 0
+        self.writer = None
+        self.env_idx = None
+        self.round = 0
+
+        self.success_time = 0
+        self.failed_time = 0
+
         self.initWorld()
 
         self.action_space = gym.spaces.Box(
@@ -75,15 +84,6 @@ class WorldGenerateEnvironment(gym.Env):
             self.movable_weight,
             self.escapable_weight)
         self.reward = self.world_generate_reward.getReward(self.observation)
-
-        self.done = None
-        self.episode_reward = 0
-        self.writer = None
-        self.env_idx = None
-        self.round = 0
-
-        self.success_time = 0
-        self.failed_time = 0
         return
 
     def initWorld(self):
@@ -92,12 +92,10 @@ class WorldGenerateEnvironment(gym.Env):
 
         self.world_environment.createNewWorld()
 
-        self.world_environment.createOuterWall()
-        self.world_environment.createInnerWall()
-
         a = 18
         b = 10
         point_num = 100
+        self.world_environment.createOuterWall()
         for i in range(point_num):
             self.world_environment.addPointForOuterWall(
                 0, a * cos(2.0 * pi * i / point_num), b * sin(2.0 * pi * i / point_num))
@@ -105,6 +103,7 @@ class WorldGenerateEnvironment(gym.Env):
         a = 11
         b = 4
         point_num = 50
+        self.world_environment.createInnerWall()
         for i in range(point_num):
             self.world_environment.addPointForInnerWall(
                 0, a * cos(2.0 * pi * i / point_num), b * sin(2.0 * pi * i / point_num))

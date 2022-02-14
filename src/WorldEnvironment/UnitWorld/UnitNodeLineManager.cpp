@@ -606,7 +606,9 @@ bool UnitNodeLineManager::getMaxHeight(
 
     WallUnitNodeLine& wall_line = wall_line_vec[wall_line_idx];
 
-    if(target_position.real_right_param - target_position.real_left_param < error_max)
+    const float real_param_diff_abs =
+      std::abs(target_position.real_right_param - target_position.real_left_param);
+    if(real_param_diff_abs < error_max)
     {
         max_height = 0;
         return true;
@@ -676,6 +678,13 @@ bool UnitNodeLineManager::getMaxHeight(
             if(polygon_line_dist_to_line < error_max)
             {
                 continue;
+            }
+
+            if(max_height > polygon_line_dist_to_line)
+            {
+                std::cout << "HACK : with wall " << wall_line.wall_id << "," <<
+                  wall_line.wall_type << ", dist is " << polygon_line_dist_to_line <<
+                  ", max_height is " << max_height << std::endl;
             }
 
             max_height = std::min(max_height, polygon_line_dist_to_line);

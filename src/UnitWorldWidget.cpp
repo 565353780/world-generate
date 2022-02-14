@@ -72,41 +72,6 @@ void UnitWorldWidget::paintEvent(QPaintEvent *event)
     drawNode(unit_world_environment_.getOuterWallBoundaryDataVec(), QColor(255, 255, 255));
     drawNode(unit_world_environment_.getInnerWallBoundaryDataVec(), QColor(255, 255, 255));
     drawNode(unit_world_environment_.getWallRoomBoundaryDataVec(), QColor(0, 255, 0));
-
-    QPainter painter(this);
-    QPen pen_red(QColor(255, 0, 0), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    QPen pen_blue(QColor(0, 0, 255), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-
-    const EasyLine2D& error_base_line =
-      unit_world_environment_.unit_world_controller_.unit_node_line_manager.error_base_line;
-    const EasyLine2D& error_polygon_line =
-      unit_world_environment_.unit_world_controller_.unit_node_line_manager.error_polygon_line;
-
-    size_t error_base_line_point_1_x, error_base_line_point_1_y;
-    size_t error_base_line_point_2_x, error_base_line_point_2_y;
-    size_t error_polygon_line_point_1_x, error_polygon_line_point_1_y;
-    size_t error_polygon_line_point_2_x, error_polygon_line_point_2_y;
-    unit_world_environment_.unit_world_transformer_.transPointToImage(
-        error_base_line.point_1.x, error_base_line.point_1.y,
-        error_base_line_point_1_x, error_base_line_point_1_y);
-    unit_world_environment_.unit_world_transformer_.transPointToImage(
-        error_base_line.point_2.x, error_base_line.point_2.y,
-        error_base_line_point_2_x, error_base_line_point_2_y);
-    unit_world_environment_.unit_world_transformer_.transPointToImage(
-        error_polygon_line.point_1.x, error_polygon_line.point_1.y,
-        error_polygon_line_point_1_x, error_polygon_line_point_1_y);
-    unit_world_environment_.unit_world_transformer_.transPointToImage(
-        error_polygon_line.point_2.x, error_polygon_line.point_2.y,
-        error_polygon_line_point_2_x, error_polygon_line_point_2_y);
-
-    painter.setPen(pen_red);
-    painter.drawLine(
-        error_base_line_point_1_x, error_base_line_point_1_y,
-        error_base_line_point_2_x, error_base_line_point_2_y);
-    painter.setPen(pen_blue);
-    painter.drawLine(
-        error_polygon_line_point_1_x, error_polygon_line_point_1_y,
-        error_polygon_line_point_2_x, error_polygon_line_point_2_y);
 }
 
 void UnitWorldWidget::mousePressEvent(QMouseEvent *event)
@@ -146,8 +111,6 @@ void UnitWorldWidget::mouseMoveEvent(QMouseEvent *event)
             event->pos().x(),
             event->pos().y(),
             2, 2);
-
-        unit_world_environment_.outputParamLine();
     }
 
     update();

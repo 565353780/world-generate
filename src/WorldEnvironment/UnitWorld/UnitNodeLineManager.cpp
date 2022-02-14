@@ -739,20 +739,6 @@ bool UnitNodeLineManager::getMaxHeight(
                 continue;
             }
 
-            if(max_height > polygon_line_dist_to_line)
-            {
-                std::cout << "HACK : with wall " << wall_line.wall_id << "," <<
-                  wall_line.wall_type << ", dist is " << polygon_line_dist_to_line <<
-                  ", max_height is " << max_height << std::endl;
-
-                std::cout << "HACK : expand param is " << expand_real_left_param << "," <<
-                  expand_real_right_param << " ; current line param is " <<
-                  current_line_point_param << "," << next_line_point_param << std::endl;
-
-                error_base_line = base_line;
-                error_polygon_line = polygon_line;
-            }
-
             max_height = std::min(max_height, polygon_line_dist_to_line);
         }
     }
@@ -876,9 +862,6 @@ bool UnitNodeLineManager::insertPosition(
         return false;
     }
 
-    std::cout << "HACK : max_height = " << max_height << std::endl <<
-      "HACK : target_height = " << target_position.target_height << std::endl;
-
     target_position.real_height = std::min(max_height, target_position.target_height);
 
     float target_position_target_right_param = target_position.target_right_param;
@@ -892,8 +875,8 @@ bool UnitNodeLineManager::insertPosition(
         target_position_real_right_param += 1;
     }
 
-    if(target_position_real_right_param < target_position.target_left_param ||
-        target_position_target_right_param < target_position.real_left_param)
+    if(target_position_real_right_param < target_position.real_left_param ||
+        target_position_target_right_param < target_position.target_left_param)
     {
         std::cout << "UnitNodeLineManager::insertPosition :\n" <<
           "Input :\n" <<

@@ -111,6 +111,8 @@ void UnitWorldWidget::mouseMoveEvent(QMouseEvent *event)
             event->pos().x(),
             event->pos().y(),
             2, 2);
+
+        unit_world_environment_.outputParamLine();
     }
 
     update();

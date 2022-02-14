@@ -396,6 +396,23 @@ bool WallUnitNodeLine::insertPosition(
     return true;
 }
 
+bool WallUnitNodeLine::outputInfo(
+    const size_t &info_level) const
+{
+    std::string line_start = "";
+    for(size_t i = 0; i < info_level; ++i)
+    {
+        line_start += "\t";
+    }
+
+    std::cout << line_start << "WallUnitNodeLine :\n" <<
+      line_start << "\t wall_id = " << wall_id << std::endl <<
+      line_start << "\t wall_type = " << wall_type << std::endl;
+    wall_boundary_line.outputInfo(info_level + 1);
+
+    return true;
+}
+
 bool UnitNodeLineManager::reset()
 {
     for(WallUnitNodeLine& wall_line : wall_line_vec)

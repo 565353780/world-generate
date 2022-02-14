@@ -83,6 +83,9 @@ public:
     bool insertPosition(
         UnitNodePosition& target_position);
 
+    bool outputInfo(
+        const size_t &info_level) const;
+
     size_t wall_id;
     NodeType wall_type;
     EasyPolygon2D wall_boundary_polygon;

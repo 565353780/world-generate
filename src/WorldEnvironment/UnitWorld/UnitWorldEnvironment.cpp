@@ -454,8 +454,12 @@ bool UnitWorldEnvironment::setWallRoomPositionByPosition(
 
 bool UnitWorldEnvironment::outputParamLine()
 {
-    const UnitNodeLineManager& line_manager = unit_world_controller_.unit_node_line_manager;
+    const std::vector<WallUnitNodeLine>& wall_line_vec = unit_world_controller_.unit_node_line_manager.wall_line_vec;
 
+    for(const WallUnitNodeLine& wall_line : wall_line_vec)
+    {
+      wall_line.outputInfo(1);
+    }
     return true;
 }
 

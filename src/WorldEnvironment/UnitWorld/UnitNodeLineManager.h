@@ -140,6 +140,9 @@ public:
     std::vector<WallUnitNodeLine> wall_line_vec;
 
     std::vector<EasyPolygon2D> valid_boundary_polygon_vec;
+
+    EasyLine2D error_base_line;
+    EasyLine2D error_polygon_line;
 };
 
 #endif // UNIT_NODE_LINE_MANAGER_H

@@ -685,6 +685,9 @@ bool UnitNodeLineManager::getMaxHeight(
                 std::cout << "HACK : with wall " << wall_line.wall_id << "," <<
                   wall_line.wall_type << ", dist is " << polygon_line_dist_to_line <<
                   ", max_height is " << max_height << std::endl;
+
+                error_base_line = base_line;
+                error_polygon_line = polygon_line;
             }
 
             max_height = std::min(max_height, polygon_line_dist_to_line);

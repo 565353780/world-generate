@@ -801,6 +801,9 @@ bool UnitNodeLineManager::insertPosition(
         return false;
     }
 
+    std::cout << "HACK : max_height = " << max_height << std::endl <<
+      "HACK : target_height = " << target_position.target_height << std::endl;
+
     target_position.real_height = std::min(max_height, target_position.target_height);
 
     float target_position_target_right_param = target_position.target_right_param;

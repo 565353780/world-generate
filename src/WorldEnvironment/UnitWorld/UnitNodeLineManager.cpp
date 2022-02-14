@@ -606,9 +606,15 @@ bool UnitNodeLineManager::getMaxHeight(
 
     WallUnitNodeLine& wall_line = wall_line_vec[wall_line_idx];
 
-    const float real_param_diff_abs =
-      std::abs(target_position.real_right_param - target_position.real_left_param);
-    if(real_param_diff_abs < error_max)
+    const float expand_real_left_param = target_position.real_left_param;
+    float expand_real_right_param = target_position.real_right_param;
+    if(expand_real_right_param < expand_real_left_param)
+    {
+      expand_real_right_param += 1.0;
+    }
+
+    const float real_param_diff = expand_real_right_param - expand_real_left_param;
+    if(real_param_diff < error_max)
     {
         max_height = 0;
         return true;
@@ -663,11 +669,64 @@ bool UnitNodeLineManager::getMaxHeight(
             continue;
         }
 
+        if(wall_boundary_polygon.point_list.size() == 0)
+        {
+            continue;
+        }
+
+        EasyPolygonPoint2D current_line_point, next_line_point;
+        if(!next_line_point.updateByPosition(wall_boundary_polygon, wall_boundary_polygon.point_list[0]))
+        {
+            std::cout << "UnitNodeLineManager::getMaxHeight :\n" <<
+              "Input :\n" <<
+              "\t wall_id = " << wall_id << std::endl <<
+              "\t wall_type = " << wall_type << std::endl <<
+              "\t target_position = [" << target_position.target_left_param << "," <<
+              target_position.target_right_param << "]\n" <<
+              "updateByPolygonParam for polygon point 0 failed!\n";
+
+            return false;
+        }
+
         for(size_t i = 0; i < wall_boundary_polygon.point_list.size(); ++i)
         {
+            const size_t& next_polygon_point_idx = (i + 1) % wall_boundary_polygon.point_list.size();
+
+            current_line_point = next_line_point;
+            if(!next_line_point.updateByPosition(
+                  wall_boundary_polygon, wall_boundary_polygon.point_list[next_polygon_point_idx]))
+            {
+                std::cout << "UnitNodeLineManager::getMaxHeight :\n" <<
+                  "Input :\n" <<
+                  "\t wall_id = " << wall_id << std::endl <<
+                  "\t wall_type = " << wall_type << std::endl <<
+                  "\t target_position = [" << target_position.target_left_param << "," <<
+                  target_position.target_right_param << "]\n" <<
+                  "updateByPolygonParam for polygon point " << next_polygon_point_idx << " failed!\n";
+
+                return false;
+            }
+
+            const float current_line_point_param = current_line_point.param_on_polygon;
+            float next_line_point_param = next_line_point.param_on_polygon;
+            if(next_line_point_param < current_line_point_param)
+            {
+              next_line_point_param += 1.0;
+            }
+
+            if(current_line_point_param < expand_real_right_param &&
+                next_line_point_param > expand_real_left_param)
+            {
+              continue;
+            }
+            if(current_line_point_param + 1.0 < expand_real_right_param &&
+                next_line_point_param + 1.0 > expand_real_left_param)
+            {
+              continue;
+            }
+
             const EasyPoint2D &currnet_point = wall_boundary_polygon.point_list[i];
-            const EasyPoint2D &next_point = wall_boundary_polygon.point_list[
-              (i + 1) % wall_boundary_polygon.point_list.size()];
+            const EasyPoint2D &next_point = wall_boundary_polygon.point_list[next_polygon_point_idx];
 
             EasyLine2D polygon_line;
             polygon_line.setPosition(currnet_point, next_point);
@@ -685,6 +744,10 @@ bool UnitNodeLineManager::getMaxHeight(
                 std::cout << "HACK : with wall " << wall_line.wall_id << "," <<
                   wall_line.wall_type << ", dist is " << polygon_line_dist_to_line <<
                   ", max_height is " << max_height << std::endl;
+
+                std::cout << "HACK : expand param is " << expand_real_left_param << "," <<
+                  expand_real_right_param << " ; current line param is " <<
+                  current_line_point_param << "," << next_line_point_param << std::endl;
 
                 error_base_line = base_line;
                 error_polygon_line = polygon_line;

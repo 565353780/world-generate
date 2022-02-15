@@ -21,6 +21,11 @@ from WorldGenerateEnvironment import WorldGenerateEnvironment as MyEnv
 
 torch, nn = try_import_torch()
 
+class RayEnv(MyEnv):
+    def __init__(self, config: EnvContext):
+        MyEnv.__init__(self)
+        return
+
 class RayModel(TorchModelV2, nn.Module):
     def __init__(self, obs_space, action_space, num_outputs, model_config, name):
         TorchModelV2.__init__(
@@ -40,28 +45,22 @@ class RayModel(TorchModelV2, nn.Module):
     def value_function(self):
         return torch.reshape(self.torch_sub_model.value_function(), [-1])
 
-class RayEnv(MyEnv):
-    def __init__(self, config: EnvContext):
-        MyEnv.__init__(self)
-        return
-
 class RLlibTrainer(object):
     def __init__(self):
         self.run = "PPO"
         self.as_test = True
         self.config = {
             "env": RayEnv,
-            #  "env": SimpleCorridor,
-            #  "env_config": {
-            #      "corridor_length": 5,
-            #  },
-            "num_gpus": 1,
+            "env_config": {
+                "test": True,
+            },
             "model": {
                 "custom_model": RayModel,
                 "vf_share_layers": True,
             },
-            "num_workers": 1,
             "framework": "torch",
+            "num_gpus": 1,
+            "num_workers": 1,
             "evaluation_num_workers": 1,
             "evaluation_config": {
                 "render_env": True,
@@ -75,7 +74,7 @@ class RLlibTrainer(object):
         return
 
     def initRay(self):
-        ray.init()
+        ray.init(address="auto")
         return True
 
     def manualTrain(self):
@@ -126,5 +125,5 @@ def demo_tune_train():
     return True
 
 if __name__ == "__main__":
-    demo_manual_train()
+    demo_tune_train()
 

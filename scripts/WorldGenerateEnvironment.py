@@ -24,8 +24,8 @@ class WorldGenerateEnvironment(gym.Env):
         self.world_generate_observation = WorldGenerateObservation()
         self.world_generate_reward = WorldGenerateReward()
 
-        self.observation_width = 256
-        self.observation_height = 256
+        self.observation_width = 128
+        self.observation_height = 128
         self.observation_free = 5
 
         self.step_weight = 0.1

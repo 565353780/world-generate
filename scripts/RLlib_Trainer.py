@@ -17,9 +17,14 @@ from ray.rllib.utils.framework import try_import_torch
 from ray.rllib.utils.test_utils import check_learning_achieved
 from ray.tune.logger import pretty_print
 
-from WorldGenerateEnvironment import WorldGenerateEnvironment
+from WorldGenerateEnvironment import WorldGenerateEnvironment as MyEnv
 
 torch, nn = try_import_torch()
+
+class RayEnv(MyEnv):
+    def __init__(self, config: EnvContext):
+        MyEnv.__init__(self)
+        return
 
 class SimpleCorridor(gym.Env):
     """Example of a custom env in which you have to walk down a corridor.
@@ -75,13 +80,13 @@ class TorchCustomModel(TorchModelV2, nn.Module):
 class RLlibTrainer(object):
     def __init__(self):
         self.run = "PPO"
-        self.as_test = False
+        self.as_test = True
         self.config = {
-            #  "env": WorldGenerateEnvironment,
-            "env": SimpleCorridor,
-            "env_config": {
-                "corridor_length": 5,
-            },
+            "env": RayEnv,
+            #  "env": SimpleCorridor,
+            #  "env_config": {
+            #      "corridor_length": 5,
+            #  },
             "num_gpus": 1,
             "model": {
                 "custom_model": "my_model",
@@ -89,6 +94,10 @@ class RLlibTrainer(object):
             },
             "num_workers": 1,
             "framework": "torch",
+            "evaluation_num_workers": 1,
+            "evaluation_config": {
+                "render_env": True,
+            },
         }
         self.stop = {
             "training_iteration": 50,
@@ -112,7 +121,7 @@ class RLlibTrainer(object):
         ppo_config.update(self.config)
         ppo_config["lr"] = 1e-3
 
-        trainer = ppo.PPOTrainer(config=ppo_config, env=SimpleCorridor)
+        trainer = ppo.PPOTrainer(config=ppo_config, env=self.config["env"])
 
         for _ in range(self.stop["training_iteration"]):
             result = trainer.train()
@@ -120,6 +129,8 @@ class RLlibTrainer(object):
             if (result["timesteps_total"] >= self.stop["timesteps_total"] or
                 result["episode_reward_mean"] >= self.stop["episode_reward_mean"]):
                 break
+
+        trainer.evaluate()
         return True
 
     def tuneTrain(self):

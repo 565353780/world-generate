@@ -311,13 +311,14 @@ bool UnitWorldEnvironment::placeWallRoomByPosition(
         {
             if(EasyComputation::isPointInPolygon(point_in_world, wall_boundary_polygon))
             {
-                std::cout << "UnitWorldEnvironment::placeWallRoomByPosition :\n" <<
-                  "Input :\n" <<
-                  "\t point_in_image = [" << point_x_in_image << "," <<
-                  point_y_in_image << "]\n" <<
-                  "\t room_target_size = " << room_target_width << "," <<
-                  room_target_height << std::endl <<
-                  "point in inner wall boundary polygon area!\n";
+
+                // std::cout << "UnitWorldEnvironment::placeWallRoomByPosition :\n" <<
+                  // "Input :\n" <<
+                  // "\t point_in_image = [" << point_x_in_image << "," <<
+                  // point_y_in_image << "]\n" <<
+                  // "\t room_target_size = " << room_target_width << "," <<
+                  // room_target_height << std::endl <<
+                  // "point in inner wall boundary polygon area!\n";
 
                 return false;
             }
@@ -326,13 +327,14 @@ bool UnitWorldEnvironment::placeWallRoomByPosition(
 
     if(!is_point_in_any_outer_wall_boundary_polygon_area)
     {
-        std::cout << "UnitWorldEnvironment::placeWallRoomByPosition :\n" <<
-          "Input :\n" <<
-          "\t point_in_image = [" << point_x_in_image << "," <<
-          point_y_in_image << "]\n" <<
-          "\t room_target_size = " << room_target_width << "," <<
-          room_target_height << std::endl <<
-          "point not in any outer wall boundary polygon area!\n";
+
+        // std::cout << "UnitWorldEnvironment::placeWallRoomByPosition :\n" <<
+          // "Input :\n" <<
+          // "\t point_in_image = [" << point_x_in_image << "," <<
+          // point_y_in_image << "]\n" <<
+          // "\t room_target_size = " << room_target_width << "," <<
+          // room_target_height << std::endl <<
+          // "point not in any outer wall boundary polygon area!\n";
 
         return false;
     }

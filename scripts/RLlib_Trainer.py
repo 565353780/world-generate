@@ -59,8 +59,8 @@ class RLlibTrainer(object):
                 "vf_share_layers": True,
             },
             "framework": "torch",
-            "num_gpus": 1,
-            "num_workers": 1,
+            "num_gpus": 2,
+            "num_workers": 2,
             "evaluation_num_workers": 1,
             "evaluation_config": {
                 "render_env": True,

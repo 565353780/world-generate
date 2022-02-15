@@ -4,7 +4,6 @@
 import gym
 from gym.spaces import Discrete, Box
 import numpy as np
-import os
 import random
 
 import ray
@@ -74,69 +73,84 @@ class TorchCustomModel(TorchModelV2, nn.Module):
     def value_function(self):
         return torch.reshape(self.torch_sub_model.value_function(), [-1])
 
-run = "PPO"
-as_test = False
-no_tune = False
-local_mode = False
 
-num_gpus = 1
+class RLlibTrainer(object):
+    def __init__(self):
+        self.run = "PPO"
+        self.as_test = False
+        self.config = {
+            #  "env": WorldGenerateEnvironment,  # or "corridor" if registered above
+            "env": SimpleCorridor,  # or "corridor" if registered above
+            "env_config": {
+                "corridor_length": 5,
+            },
+            # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
+            #  "num_gpus": int(os.environ.get("RLLIB_NUM_GPUS", "0")),
+            "num_gpus": 1,
+            "model": {
+                "custom_model": "my_model",
+                "vf_share_layers": True,
+            },
+            "num_workers": 1,  # parallelism
+            "framework": "torch",
+        }
+        self.stop = {
+            "training_iteration": 50,
+            "timesteps_total": 100000,
+            "episode_reward_mean": 0.1,
+        }
+        return
 
-if __name__ == "__main__":
-    ray.init(local_mode=local_mode)
+    def initRay(self):
+        ray.init(local_mode=False)
+        ModelCatalog.register_custom_model("my_model", TorchCustomModel)
+        return True
 
-    ModelCatalog.register_custom_model("my_model", TorchCustomModel)
+    def manualTrain(self):
+        if self.run != "PPO":
+            print("[ERROR][RLlibTrainer::manualTrain]")
+            print("manual train only support PPO method!")
+            return False
 
-    config = {
-        #  "env": WorldGenerateEnvironment,  # or "corridor" if registered above
-        "env": SimpleCorridor,  # or "corridor" if registered above
-        "env_config": {
-            "corridor_length": 5,
-        },
-        # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
-        #  "num_gpus": int(os.environ.get("RLLIB_NUM_GPUS", "0")),
-        "num_gpus": 1,
-        "model": {
-            "custom_model": "my_model",
-            "vf_share_layers": True,
-        },
-        "num_workers": 1,  # parallelism
-        "framework": "torch",
-    }
-
-    stop = {
-        "training_iteration": 50,
-        "timesteps_total": 100000,
-        "episode_reward_mean": 0.1,
-    }
-
-    if args.no_tune:
-        # manual training with train loop using PPO and fixed learning rate
-        if args.run != "PPO":
-            raise ValueError("Only support --run PPO with --no-tune.")
-        print("Running manual train loop without Ray Tune.")
         ppo_config = ppo.DEFAULT_CONFIG.copy()
-        ppo_config.update(config)
-        # use fixed learning rate instead of grid search (needs tune)
+        ppo_config.update(self.config)
         ppo_config["lr"] = 1e-3
+
         trainer = ppo.PPOTrainer(config=ppo_config, env=SimpleCorridor)
-        # run manual training loop and print results after each iteration
-        for _ in range(args.stop_iters):
+
+        for _ in range(self.stop["training_iteration"]):
             result = trainer.train()
             print(pretty_print(result))
-            # stop training of the target train steps or reward are reached
-            if (
-                result["timesteps_total"] >= args.stop_timesteps
-                or result["episode_reward_mean"] >= args.stop_reward
-            ):
+            if (result["timesteps_total"] >= self.stop["timesteps_total"] or
+                result["episode_reward_mean"] >= self.stop["episode_reward_mean"]):
                 break
-    else:
-        # automated run with Tune and grid search and TensorBoard
-        print("Training automatically with Ray Tune")
-        results = tune.run(args.run, config=config, stop=stop)
+        return True
 
-        if args.as_test:
-            print("Checking if learning goals were achieved")
-            check_learning_achieved(results, args.stop_reward)
+    def tuneTrain(self):
+        results = tune.run(self.run, config=self.config, stop=self.stop)
 
-    ray.shutdown()
+        if self.as_test:
+            check_learning_achieved(results, self.stop["episode_reward_mean"])
+        return True
+
+    def closeRay(self):
+        ray.shutdown()
+        return True
+
+def demo_manual_train():
+    rllib_trainer = RLlibTrainer()
+    rllib_trainer.initRay()
+    rllib_trainer.manualTrain()
+    rllib_trainer.closeRay()
+    return True
+
+def demo_tune_train():
+    rllib_trainer = RLlibTrainer()
+    rllib_trainer.initRay()
+    rllib_trainer.tuneTrain()
+    rllib_trainer.closeRay()
+    return True
+
+if __name__ == "__main__":
+    demo_manual_train()
 

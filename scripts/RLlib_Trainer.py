@@ -31,7 +31,6 @@ class SimpleCorridor(gym.Env):
         self.cur_pos = 0
         self.action_space = Discrete(2)
         self.observation_space = Box(0.0, self.end_pos, shape=(1,), dtype=np.float32)
-        # Set the seed. This is only used for the final (reach goal) reward.
         self.seed(config.worker_index * config.num_workers)
 
     def reset(self):
@@ -45,7 +44,6 @@ class SimpleCorridor(gym.Env):
         elif action == 1:
             self.cur_pos += 1
         done = self.cur_pos >= self.end_pos
-        # Produce a random reward when we reach the goal.
         return [self.cur_pos], random.random() * 2 if done else -0.1, done, {}
 
     def seed(self, seed=None):
@@ -79,19 +77,17 @@ class RLlibTrainer(object):
         self.run = "PPO"
         self.as_test = False
         self.config = {
-            #  "env": WorldGenerateEnvironment,  # or "corridor" if registered above
-            "env": SimpleCorridor,  # or "corridor" if registered above
+            #  "env": WorldGenerateEnvironment,
+            "env": SimpleCorridor,
             "env_config": {
                 "corridor_length": 5,
             },
-            # Use GPUs iff `RLLIB_NUM_GPUS` env var set to > 0.
-            #  "num_gpus": int(os.environ.get("RLLIB_NUM_GPUS", "0")),
             "num_gpus": 1,
             "model": {
                 "custom_model": "my_model",
                 "vf_share_layers": True,
             },
-            "num_workers": 1,  # parallelism
+            "num_workers": 1,
             "framework": "torch",
         }
         self.stop = {

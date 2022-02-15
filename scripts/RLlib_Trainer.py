@@ -21,43 +21,7 @@ from WorldGenerateEnvironment import WorldGenerateEnvironment as MyEnv
 
 torch, nn = try_import_torch()
 
-class RayEnv(MyEnv):
-    def __init__(self, config: EnvContext):
-        MyEnv.__init__(self)
-        return
-
-class SimpleCorridor(gym.Env):
-    """Example of a custom env in which you have to walk down a corridor.
-
-    You can configure the length of the corridor via the env config."""
-
-    def __init__(self, config: EnvContext):
-        self.end_pos = config["corridor_length"]
-        self.cur_pos = 0
-        self.action_space = Discrete(2)
-        self.observation_space = Box(0.0, self.end_pos, shape=(1,), dtype=np.float32)
-        self.seed(config.worker_index * config.num_workers)
-
-    def reset(self):
-        self.cur_pos = 0
-        return [self.cur_pos]
-
-    def step(self, action):
-        assert action in [0, 1], action
-        if action == 0 and self.cur_pos > 0:
-            self.cur_pos -= 1
-        elif action == 1:
-            self.cur_pos += 1
-        done = self.cur_pos >= self.end_pos
-        return [self.cur_pos], random.random() * 2 if done else -0.1, done, {}
-
-    def seed(self, seed=None):
-        random.seed(seed)
-
-
-class TorchCustomModel(TorchModelV2, nn.Module):
-    """Example of a PyTorch custom model that just delegates to a fc-net."""
-
+class RayModel(TorchModelV2, nn.Module):
     def __init__(self, obs_space, action_space, num_outputs, model_config, name):
         TorchModelV2.__init__(
             self, obs_space, action_space, num_outputs, model_config, name
@@ -76,6 +40,10 @@ class TorchCustomModel(TorchModelV2, nn.Module):
     def value_function(self):
         return torch.reshape(self.torch_sub_model.value_function(), [-1])
 
+class RayEnv(MyEnv):
+    def __init__(self, config: EnvContext):
+        MyEnv.__init__(self)
+        return
 
 class RLlibTrainer(object):
     def __init__(self):
@@ -89,7 +57,7 @@ class RLlibTrainer(object):
             #  },
             "num_gpus": 1,
             "model": {
-                "custom_model": "my_model",
+                "custom_model": RayModel,
                 "vf_share_layers": True,
             },
             "num_workers": 1,
@@ -107,8 +75,7 @@ class RLlibTrainer(object):
         return
 
     def initRay(self):
-        ray.init(local_mode=False)
-        ModelCatalog.register_custom_model("my_model", TorchCustomModel)
+        ray.init()
         return True
 
     def manualTrain(self):

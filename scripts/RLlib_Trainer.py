@@ -1,16 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import gym
-from gym.spaces import Discrete, Box
-import numpy as np
-import random
-
 import ray
 from ray import tune
 from ray.rllib.agents import ppo
 from ray.rllib.env.env_context import EnvContext
-from ray.rllib.models import ModelCatalog
 from ray.rllib.models.torch.torch_modelv2 import TorchModelV2
 from ray.rllib.models.torch.fcnet import FullyConnectedNetwork as TorchFC
 from ray.rllib.utils.framework import try_import_torch
@@ -59,8 +53,8 @@ class RLlibTrainer(object):
                 "vf_share_layers": True,
             },
             "framework": "torch",
-            "num_gpus": 2,
-            "num_workers": 2,
+            "num_gpus": 1,
+            "num_workers": 1,
             "evaluation_num_workers": 1,
             "evaluation_config": {
                 "render_env": True,

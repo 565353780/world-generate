@@ -62,14 +62,15 @@ class RLlibTrainer(object):
             },
         }
         self.stop = {
-            "training_iteration": 50,
-            "timesteps_total": 100000,
+            "training_iteration": 5000,
+            "timesteps_total": 10000000,
             "episode_reward_mean": 100,
         }
         return
 
     def initRay(self):
-        ray.init(address="auto")
+        #  ray.init(address="auto")
+        ray.init()
         return True
 
     def manualTrain(self):

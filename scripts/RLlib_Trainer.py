@@ -18,6 +18,7 @@ torch, nn = try_import_torch()
 class RayEnv(MyEnv):
     def __init__(self, config: EnvContext):
         MyEnv.__init__(self)
+        self.config_test = config["test"]
         return
 
 class RayModel(TorchModelV2, nn.Module):
@@ -63,7 +64,7 @@ class RLlibTrainer(object):
         self.stop = {
             "training_iteration": 50,
             "timesteps_total": 100000,
-            "episode_reward_mean": 0.1,
+            "episode_reward_mean": 100,
         }
         return
 

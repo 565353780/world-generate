@@ -60,6 +60,7 @@ class RLlibTrainer(object):
             "evaluation_config": {
                 "render_env": True,
             },
+            "lr": tune.grid_search([1e-3, 1e-4, 1e-5, 1e-6, 1e-7]),
         }
         self.stop = {
             "training_iteration": 5000,

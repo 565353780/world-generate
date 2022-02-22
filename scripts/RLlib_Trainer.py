@@ -55,16 +55,16 @@ class RLlibTrainer(object):
             },
             "framework": "torch",
             "num_gpus": 1,
-            "num_workers": 1,
+            "num_workers": tune.grid_search([1, 2, 4, 8, 12]),
             "evaluation_num_workers": 1,
             "evaluation_config": {
                 "render_env": True,
             },
-            "lr": tune.grid_search([1e-3, 1e-4, 1e-5, 1e-6, 1e-7]),
+            "lr": 1e-5,
         }
         self.stop = {
-            "training_iteration": 5000,
-            "timesteps_total": 10000000,
+            "training_iteration": 500,
+            "timesteps_total": 1000000,
             "episode_reward_mean": 100,
         }
         return

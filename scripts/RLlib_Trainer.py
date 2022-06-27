@@ -55,7 +55,7 @@ class RLlibTrainer(object):
             },
             "framework": "torch",
             "num_gpus": 1,
-            "num_workers": tune.grid_search([1, 2, 4, 8, 12]),
+            "num_workers": 1,
             "evaluation_num_workers": 1,
             "evaluation_config": {
                 "render_env": True,
@@ -65,7 +65,7 @@ class RLlibTrainer(object):
         self.stop = {
             "training_iteration": 500,
             "timesteps_total": 1000000,
-            "episode_reward_mean": 100,
+            "episode_reward_mean": 60,
         }
         return
 
@@ -82,7 +82,7 @@ class RLlibTrainer(object):
 
         ppo_config = ppo.DEFAULT_CONFIG.copy()
         ppo_config.update(self.config)
-        ppo_config["lr"] = 1e-3
+        ppo_config["lr"] = 1e-5
 
         trainer = ppo.PPOTrainer(config=ppo_config, env=self.config["env"])
 
@@ -122,5 +122,5 @@ def demo_tune_train():
     return True
 
 if __name__ == "__main__":
-    demo_tune_train()
+    demo_manual_train()
 
